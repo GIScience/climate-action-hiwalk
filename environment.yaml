@@ -7,4 +7,4 @@ dependencies:
   - pytest=7.4.2
   - python=3.11.5
   - pip:
-      - git+https://climate-action:${GIT_PROJECT_TOKEN}@gitlab.gistools.geog.uni-heidelberg.de/climate-action/climatoology.git@make_plugin_announcer_robust
+      - git+https://climate-action:${GIT_PROJECT_TOKEN}@gitlab.gistools.geog.uni-heidelberg.de/climate-action/climatoology.git@main

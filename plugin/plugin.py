@@ -3,7 +3,7 @@ from pathlib import Path
 from typing import List
 
 from climatoology.app.plugin import PlatformPlugin
-from climatoology.base.operator import Operator, Info, Artifact, Concern, ArtifactModality
+from climatoology.base.operator import Operator, Info, Artifact, Concern, ArtifactModality, ComputationResources
 from climatoology.broker.message_broker import RabbitMQ
 from climatoology.store.object_store import MinioStorage
 from pydantic import BaseModel
@@ -24,8 +24,9 @@ class BlueprintOperator(Operator[BlueprintComputeInput]):
                     purpose='This Operator serves no purpose besides being a blueprint for real operators.',
                     methodology='This Operator uses no methodology because it does nothing.')
 
-    def compute(self, params: BlueprintComputeInput) -> List[Artifact]:
-        out_path = Path('/tmp/blueprint.txt')
+    def compute(self, resources: ComputationResources, params: BlueprintComputeInput) -> List[Artifact]:
+        out_path = Path(resources.computation_dir, 'blueprint.txt')
+
         with open(out_path, 'w') as out_file:
             out_file.write(params.model_dump_json())
 
