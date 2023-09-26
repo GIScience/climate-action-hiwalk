@@ -1,92 +1,86 @@
-# plugin-blueprint
+# Plugin Blueprint
 
+This repository is a plueprint for operator creators. Operators are science2production facilitators that will make it easy for you to bring your ideas and research results to the Climate Action (CA) platform. Operators are the main workers inside plugins. You will create a plugin but all you need to do is code the operator functionality, the plugin wrapper is already set to go. The terms Operator and Plugin are therefore mostly synonymous for you. For more information on the architecture, please contact the [CA team](https://heigit.org/).
 
+Please follow the subsequent steps to bring your operator to life.
 
-## Getting started
+## Preparation
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+A new operator should be thoroughly discussed with the CA team. But don't be hesitant, they are very welcoming to new ideas :-) !
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+### Git
 
-## Add your files
+The CA team will then fork this repository for you and you will get full access to the fork. You can then clone the fork and work on it as in any other git project. For the record, this is the forking process:
+ - create a new repository under the [operator contributions group](https://gitlab.gistools.geog.uni-heidelberg.de/climate-action/operator-contributions)
+ - in the plugin-blueprint (**this**) repository run `git remote add {your-operator-name} {your-new-url}`
+ - and `git push -u {your-operator-name} -f`. Now the new operator repository is ready to go.
 
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
+You can simply `git clone` that new repository. Create a new branch by running `git checkout -b my_new_operator`. After you have finished your implementation, you can create a merge request to the `main` branch that can be reviewed by the CA team. Yet we highly encourage you to create smaller intermediate MRs for review.
 
+### Python Environment
+
+We use [mamba](https://mamba.readthedocs.io/en/latest/) (i.e. conda) as an environment management system. Make sure you have it installed. Apart from python, pytest, pydantic and pip, there is only one fixed dependency for you, which is the [climatoology](https://gitlab.gistools.geog.uni-heidelberg.de/climate-action/climatoology) package that holds all the infrastructure functionality.
+
+The CA team will provide you with an access token. Head over to the [environment.yaml](environment.yaml) and replace 
+ 
+ - the environment name `ca-plugin-blueprint` with your plugin name. While we are at it, please also replace all occurences of that name in the [Dockerfile](Dockerfile).
+ - put the provided git token in a file called `GIT_PROJECT_TOKEN`. Then run `export GIT_PROJECT_TOKEN=$(cat GIT_PROJECT_TOKEN)` to set the token as en environment variable
+
+Run `mamba env create -f environment.yaml`. You are now ready to code within your mamba environment.
+
+## Start Coding
+
+### Tests
+
+We highly encourage [test driven development](https://en.wikipedia.org/wiki/Test-driven_development). In fact, we require two predefined test to successfully run on your plugin. These test ensure that the development contract is met.
+
+Please take some time to adapt the blueprint version of the tests. You will need a clear definition and description of your plugin as well as an idea of the required input and the produced output. You can of course adapt this later, but you should have a rough idea from the start.
+
+Ensure all tests are passing on the unmodified repository. Then open [test/test_plugin.py](test/test_plugin.py). Adapt the content of the three `pytest.fixture` functions to meet your expectations.
+
+The **info test** is quite easy to write: simply declare an `Info` element. Have a look at the classes source code to see all required attributes. Make sure you add the icon and bibliography files to your repository. The list of concerns is limited on purpose to have a curated set of keywords. If you feel that your operator would benefit, from an extension of that list, feel free to contact the CA team or create a MR in the [climatoology](https://gitlab.gistools.geog.uni-heidelberg.de/climate-action/climatoology) repository.
+
+The **compute tests** will probably grow over time. For now, you can leave the input fixture as is. But you should define a first output result you would like to create through your plugin. Define it in the test and add the required file to the repository. 
+
+That's it, the tests should fail, and you can start coding towards making them succeed.
+
+Unfortunately, if you use external services, they need to be mocked. The CA team can help you implement [mocks](https://docs.python.org/3/library/unittest.mock.html). But let's create some code first.
+
+### Names
+
+We have to replace names at multiple level. Let's start with refactoring the name of the `BlueprintComputeInput` and the `BlueprintOperator` classes in [plugin/plugin.py](plugin/plugin.py).
+
+### Info Function
+
+Now lets make the tests succeed. For the info function this is very simple. Just copy the test artifact declaration over to the plugin file. Done.
+
+### Compute Function
+
+Now comes the main coding part. This function is where you can explode your genius and create ohsome results. Keep in mind to update the input parameter class and the tests while you are coding away.
+
+If you need more inspiration, the full workflow above has been completed for the [dummy plugin](https://gitlab.gistools.geog.uni-heidelberg.de/climate-action/operator-contributions/dummy).
+
+## Finalisation
+
+If you are satisfied with the results and the tests pass, you have succeeded! Please create a merge request to main and ask the CA team for a review.
+
+Unfortunately, seeing your plugin in production takes a bit more setup. You will have to set up the [infrastructure](https://gitlab.gistools.geog.uni-heidelberg.de/climate-action/infrastructure) and set a range of environment variables. But the CA team can support you here.
+
+After your plugin is ready for production, the CA team will create a Docker image and deploy your code to the infrastructure.
+
+## Docker (for devs)
+
+To deploy this plugin run
+
+```shell
+DOCKER_BUILDKIT=1 docker build --secret id=GIT_PROJECT_TOKEN . --tag heigit/{plugin-name}:devel
+docker image push heigit/{plugin-name}:devel
 ```
-cd existing_repo
-git remote add origin https://gitlab.gistools.geog.uni-heidelberg.de/climate-action/plugin-blueprint.git
-git branch -M main
-git push -uf origin main
+
+If the infrastructure is reachable you can copy [.env_template](.env_template) to `.env` and then run 
+
+```shell
+docker run --env-file .env --network=host heigit/{plugin-name}:devel
 ```
 
-## Integrate with your tools
-
-- [ ] [Set up project integrations](https://gitlab.gistools.geog.uni-heidelberg.de/climate-action/plugin-blueprint/-/settings/integrations)
-
-## Collaborate with your team
-
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Automatically merge when pipeline succeeds](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
-
-## Test and Deploy
-
-Use the built-in continuous integration in GitLab.
-
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/index.html)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing(SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
-
-***
-
-# Editing this README
-
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thank you to [makeareadme.com](https://www.makeareadme.com/) for this template.
-
-## Suggestions for a good README
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
-
-## Name
-Choose a self-explaining name for your project.
-
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
-
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
-
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
-
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
-
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
-
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
-
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
-
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
-
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
-
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
-
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
-
-## License
-For open source projects, say how it is licensed.
-
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+Don't forget to add the plugin to the [infrastructure](https://gitlab.gistools.geog.uni-heidelberg.de/climate-action/infrastructure) and deploy it.

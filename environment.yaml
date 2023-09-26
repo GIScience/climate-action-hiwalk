@@ -1,0 +1,10 @@
+name: ca-plugin-blueprint
+channels:
+  - conda-forge
+dependencies:
+  - pip=23.2.1
+  - pydantic=2.3.0
+  - pytest=7.4.2
+  - python=3.11.5
+  - pip:
+      - git+https://climate-action:${GIT_PROJECT_TOKEN}@gitlab.gistools.geog.uni-heidelberg.de/climate-action/climatoology.git@make_plugin_announcer_robust
