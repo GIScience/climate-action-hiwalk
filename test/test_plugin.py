@@ -24,10 +24,10 @@ def expected_compute_input() -> BlueprintComputeInput:
 
 
 @pytest.fixture
-def expected_compute_output() -> List[Artifact]:
+def expected_compute_output(compute_resources) -> List[Artifact]:
     first_artifact = Artifact(name="Blueprint",
                               modality=ArtifactModality.TEXT,
-                              file_path=Path('resources/blueprint.txt'),
+                              file_path=Path(compute_resources.computation_dir / 'blueprint.txt'),
                               summary='The input parameter.',
                               description='Raw return of the input parameter')
     return [first_artifact]
@@ -38,6 +38,7 @@ def test_plugin_info_request(expected_info_output):
     assert operator.info() == expected_info_output
 
 
-def test_plugin_compute_request(expected_compute_input, expected_compute_output):
+def test_plugin_compute_request(expected_compute_input, expected_compute_output, compute_resources):
     operator = BlueprintOperator()
-    assert operator.compute(expected_compute_input) == expected_compute_output
+    assert operator.compute(resources=compute_resources,
+                            params=expected_compute_input) == expected_compute_output
