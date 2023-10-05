@@ -7,4 +7,4 @@ dependencies:
   - pytest=7.4.2
   - python=3.11.5
   - pip:
-      - git+https://climate-action:${GIT_PROJECT_TOKEN}@gitlab.gistools.geog.uni-heidelberg.de/climate-action/climatoology.git@main
+      - git+ssh://git@gitlab.gistools.geog.uni-heidelberg.de:2022/climate-action/climatoology.git@v2.3

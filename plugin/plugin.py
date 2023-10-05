@@ -1,13 +1,21 @@
+import asyncio
+import logging
 import os
+import sys
 from pathlib import Path
 from typing import List
 
 from climatoology.app.plugin import PlatformPlugin
 from climatoology.base.operator import Operator, Info, Artifact, Concern, ArtifactModality, ComputationResources
-from climatoology.broker.message_broker import RabbitMQ
+from climatoology.broker.message_broker import AsyncRabbitMQ
+
 from climatoology.store.object_store import MinioStorage
 from pydantic import BaseModel
 from semver import Version
+
+log = logging.getLogger(__name__)
+log.addHandler(logging.StreamHandler(sys.stdout))
+log.setLevel(logging.INFO)
 
 
 class BlueprintComputeInput(BaseModel):
@@ -25,6 +33,8 @@ class BlueprintOperator(Operator[BlueprintComputeInput]):
                     methodology='This Operator uses no methodology because it does nothing.')
 
     def compute(self, resources: ComputationResources, params: BlueprintComputeInput) -> List[Artifact]:
+        log.info(f'Handling compute request: {params} in context: {resources}')
+
         out_path = Path(resources.computation_dir, 'blueprint.txt')
 
         with open(out_path, 'w') as out_file:
@@ -39,27 +49,35 @@ class BlueprintOperator(Operator[BlueprintComputeInput]):
         return [first_artifact]
 
 
-def start_plugin() -> None:
+async def start_plugin() -> None:
     """ Function to start the plugin within the architecture.
 
     Please adjust the class reference to the class you created above. Apart from that **DO NOT TOUCH**.
 
     :return:
     """
+    operator = BlueprintOperator()
+    log.info(f'Configuring plugin: {operator.info().name}')
+
     storage = MinioStorage(host=os.environ.get('MINIO_HOST'),
                            port=int(os.environ.get('MINIO_PORT')),
                            access_key=os.environ.get('MINIO_ACCESS_KEY'),
                            secret_key=os.environ.get('MINIO_SECRET_KEY'),
                            bucket=os.environ.get('MINIO_BUCKET'),
                            secure=os.environ.get('MINIO_SECURE') == 'True')
-    broker = RabbitMQ(host=os.environ.get('RABBITMQ_HOST'),
-                      port=int(os.environ.get('RABBITMQ_PORT')))
+    broker = AsyncRabbitMQ(host=os.environ.get('RABBITMQ_HOST'),
+                           port=int(os.environ.get('RABBITMQ_PORT')),
+                           user=os.environ.get('RABBITMQ_USER'),
+                           password=os.environ.get('RABBITMQ_PASSWORD'))
+    await broker.async_init()
+    log.info(f'Configuring async broker: {os.environ.get("RABBITMQ_HOST")}')
 
-    plugin = PlatformPlugin(operator=BlueprintOperator(),
+    plugin = PlatformPlugin(operator=operator,
                             storage=storage,
                             broker=broker)
-    plugin.run()
+    log.info(f'Running plugin: {operator.info().name}')
+    await plugin.run()
 
 
 if __name__ == '__main__':
-    start_plugin()
+    asyncio.run(start_plugin())
