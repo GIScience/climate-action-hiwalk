@@ -1,5 +1,6 @@
 .env
 .idea/
 __pycache__/
-
 .pytest_cache/
+
+GIT_PROJECT_TOKEN
