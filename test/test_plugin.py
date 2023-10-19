@@ -5,22 +5,44 @@ import pytest
 from climatoology.base.operator import Info, Artifact, Concern, ArtifactModality
 from semver import Version
 
-from plugin.plugin import BlueprintOperator, BlueprintComputeInput
+from plugin.operator import BlueprintOperator
+from plugin.input import BlueprintComputeInput
 
 
 @pytest.fixture
 def expected_info_output() -> Info:
+    # noinspection PyTypeChecker
     return Info(name='BlueprintPlugin',
                 icon=Path('resources/icon.jpeg'),
                 version=Version(0, 0, 1),
                 concerns=[Concern.CLIMATE_ACTION__GHG_EMISSION],
                 purpose='This Plugin serves no purpose besides being a blueprint for real plugins.',
-                methodology='This Plugin uses no methodology because it does nothing.')
+                methodology='This Plugin uses no methodology because it does nothing.',
+                sources=Path('resources/example.bib'))
 
 
 @pytest.fixture
 def expected_compute_input() -> BlueprintComputeInput:
-    return BlueprintComputeInput(blueprint_string="blueprint")
+    # noinspection PyTypeChecker
+    return BlueprintComputeInput(blueprint_bool=True,
+                                 blueprint_aoi={
+                                     "type": "Feature",
+                                     "properties": None,
+                                     "geometry": {
+                                         "type": "MultiPolygon",
+                                         "coordinates": [
+                                             [
+                                                 [
+                                                     [12.3, 48.22],
+                                                     [12.3, 48.34],
+                                                     [12.48, 48.34],
+                                                     [12.48, 48.22],
+                                                     [12.3, 48.22]
+                                                 ]
+                                             ]
+                                         ]
+                                     }
+                                 })
 
 
 @pytest.fixture

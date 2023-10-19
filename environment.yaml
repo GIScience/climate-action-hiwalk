@@ -2,9 +2,11 @@ name: ca-plugin-blueprint
 channels:
   - conda-forge
 dependencies:
+  - geojson-pydantic=1.0.1
   - pip=23.2.1
   - pydantic=2.3.0
   - pytest=7.4.2
   - python=3.11.5
+  - shapely=2.0.2
   - pip:
       - git+ssh://git@gitlab.gistools.geog.uni-heidelberg.de:2022/climate-action/climatoology.git@v2.3

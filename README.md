@@ -20,7 +20,7 @@ Yet we highly encourage you to create smaller intermediate MRs for review.
 
 We use [mamba](https://mamba.readthedocs.io/en/latest/) (i.e. conda) as an environment management system.
 Make sure you have it installed.
-Apart from python, pytest, pydantic and pip, there is only one fixed dependency for you, which is the [climatoology](https://gitlab.gistools.geog.uni-heidelberg.de/climate-action/climatoology) package that holds all the infrastructure functionality.
+Apart from some base dependencies, there is only one fixed dependency for you, which is the [climatoology](https://gitlab.gistools.geog.uni-heidelberg.de/climate-action/climatoology) package that holds all the infrastructure functionality.
 
 The CA team will provide you with an access token. Head over to the [environment.yaml](environment.yaml) and replace 
  
@@ -31,7 +31,16 @@ Run `mamba env create -f environment.yaml`. You are now ready to code within you
 
 ## Start Coding
 
-### Tests
+We have seperated the code into multiple files by their functionality.
+Three files are relevant for you:
+
+1. The [operator.py](plugin/operator.py) that defines your operator logic,
+2. the [input.py](plugin/input.py) that defines the user inputs required to run your plugin and
+3. [test_plugin.py](test/test_plugin.py) where you define the unit tests for your plugin.
+
+We will go through these files step by step.
+
+### Tests in [test_plugin.py](test/test_plugin.py)
 
 We highly encourage [test driven development](https://en.wikipedia.org/wiki/Test-driven_development).
 In fact, we require two predefined tests to successfully run on your plugin.
@@ -75,14 +84,16 @@ We have to replace names at multiple level.
 Let's start with refactoring the name of the `BlueprintComputeInput` and the `BlueprintOperator` classes in [plugin/plugin.py](plugin/plugin.py).
 Replace these classnames with reasonable names related to your idea.
 
-### Info Function
+### Operator in [operator.py](plugin/operator.py)
+
+#### Info Function
 
 Now lets make the tests succeed.
 For the info function this is very simple.
 Just copy the test artifact declaration over to the plugin file.
 Done.
 
-### Compute Function
+#### Compute Function
 
 Now comes the main coding part.
 This function is where you can explode your genius and create ohsome results.
@@ -98,6 +109,8 @@ You therefore have to save all your (potential) results on disk and then pass th
 The plugin will then read the file and send it to the file store, but you don't have to worry about that.
 Yet, your file should be written under a specific path in the system. The input parameter `resources` provides this path via the `resources.computation_dir` attribute.
 Write all your output to that directory.
+
+### Input parameters in [input.py](plugin/input.py)
 
 Keep in mind to update the input parameter class and the tests while you are coding away.
 
