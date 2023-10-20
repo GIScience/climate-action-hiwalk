@@ -34,8 +34,8 @@ Run `mamba env create -f environment.yaml`. You are now ready to code within you
 We have seperated the code into multiple files by their functionality.
 Three files are relevant for you:
 
-1. The [operator.py](plugin/operator.py) that defines your operator logic,
-2. the [input.py](plugin/input.py) that defines the user inputs required to run your plugin and
+1. The [operator_worker.py](plugin_blueprint/operator_worker.py) that defines your operator logic,
+2. the [input.py](plugin_blueprint/input.py) that defines the user inputs required to run your plugin and
 3. [test_plugin.py](test/test_plugin.py) where you define the unit tests for your plugin.
 
 We will go through these files step by step.
@@ -55,7 +55,7 @@ You will need a clear _definition and description_ of your plugin as well as an 
 You can of course adapt this later, but you should have a rough idea from the start.
 
 Ensure all tests are passing on the unmodified repository.
-Then open [test/test_plugin.py](test/test_plugin.py).
+Then open [test_plugin.py](test/test_plugin.py).
 Adapt the content of the three `pytest.fixture` functions to meet your expectations:
 
  1. The `expected_info_output` fixture is quite easy to write:
@@ -81,10 +81,10 @@ But let's create some code first.
 ### Names
 
 We have to replace names at multiple level.
-Let's start with refactoring the name of the `BlueprintComputeInput` and the `BlueprintOperator` classes in [plugin/plugin.py](plugin/plugin.py).
+Let's start with refactoring the name of the `BlueprintComputeInput` and the `BlueprintOperator` classes in [plugin.py](plugin_blueprint/plugin.py).
 Replace these classnames with reasonable names related to your idea.
 
-### Operator in [operator.py](plugin/operator.py)
+### Operator in [operator_worker.py](plugin_blueprint/operator_worker.py)
 
 #### Info Function
 
@@ -110,7 +110,7 @@ The plugin will then read the file and send it to the file store, but you don't 
 Yet, your file should be written under a specific path in the system. The input parameter `resources` provides this path via the `resources.computation_dir` attribute.
 Write all your output to that directory.
 
-### Input parameters in [input.py](plugin/input.py)
+### Input parameters in [input.py](plugin_blueprint/input.py)
 
 Keep in mind to update the input parameter class and the tests while you are coding away.
 

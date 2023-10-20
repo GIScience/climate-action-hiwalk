@@ -5,8 +5,8 @@ import pytest
 from climatoology.base.operator import Info, Artifact, Concern, ArtifactModality
 from semver import Version
 
-from plugin.operator import BlueprintOperator
-from plugin.input import BlueprintComputeInput
+from plugin_blueprint.operator_worker import BlueprintOperator
+from plugin_blueprint.input import BlueprintComputeInput
 
 
 @pytest.fixture

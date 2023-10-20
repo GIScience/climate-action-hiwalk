@@ -7,7 +7,7 @@ from climatoology.app.plugin import PlatformPlugin
 from climatoology.broker.message_broker import AsyncRabbitMQ
 from climatoology.store.object_store import MinioStorage
 
-from plugin.operator import BlueprintOperator
+from plugin_blueprint.operator_worker import BlueprintOperator
 
 log = logging.getLogger(__name__)
 log.addHandler(logging.StreamHandler(sys.stdout))

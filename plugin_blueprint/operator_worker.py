@@ -1,3 +1,6 @@
+# You may ask yourself why this file has such a strange name.
+# Well ... python imports: https://discuss.python.org/t/warning-when-importing-a-local-module-with-the-same-name-as-a-2nd-or-3rd-party-module/27799
+
 import datetime
 import logging
 import os
@@ -11,7 +14,7 @@ from climatoology.base.operator import Operator, Info, Concern, ComputationResou
 from climatoology.utility.api import LulcUtilityUtility, LULCWorkUnit
 from semver import Version
 
-from plugin.input import BlueprintComputeInput
+from plugin_blueprint.input import BlueprintComputeInput
 
 log = logging.getLogger(__name__)
 log.addHandler(logging.StreamHandler(sys.stdout))

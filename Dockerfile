@@ -19,11 +19,11 @@ FROM python:3.11.5-bookworm as runtime
 WORKDIR /ca-plugin-blueprint
 COPY --from=build /venv /ca-plugin-blueprint/venv
 
-COPY plugin plugin
+COPY plugin_blueprint plugin_blueprint
 COPY resources resources
 
-ENV PYTHONPATH "${PYTHONPATH}:/ca-plugin-blueprint/plugin"
+ENV PYTHONPATH "${PYTHONPATH}:/ca-plugin-blueprint/plugin_blueprint"
 
 SHELL ["/bin/bash", "-c"]
 ENTRYPOINT source /ca-plugin-blueprint/venv/bin/activate && \
-           python plugin/plugin.py
+           python plugin_blueprint/plugin.py
