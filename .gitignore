@@ -3,4 +3,4 @@
 __pycache__/
 .pytest_cache/
 
-GIT_PROJECT_TOKEN
+CI_JOB_TOKEN

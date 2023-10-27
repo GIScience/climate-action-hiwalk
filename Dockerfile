@@ -1,9 +1,9 @@
 FROM condaforge/mambaforge:23.1.0-4 AS build
 
-COPY environment.yaml environment.yaml
+COPY environment_deploy.yaml environment.yaml
 
-RUN --mount=type=secret,id=GIT_PROJECT_TOKEN \
-    export GIT_PROJECT_TOKEN=$(cat /run/secrets/GIT_PROJECT_TOKEN) && \
+RUN --mount=type=secret,id=CI_JOB_TOKEN \
+    export CI_JOB_TOKEN=$(cat /run/secrets/CI_JOB_TOKEN) && \
     mamba env create -f environment.yaml && \
     mamba install -c conda-forge conda-pack && \
     conda-pack -f --ignore-missing-files -n ca-plugin-blueprint -o /tmp/env.tar && \

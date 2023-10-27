@@ -29,6 +29,8 @@ The CA team will provide you with an access token. Head over to the [environment
 
 Run `mamba env create -f environment.yaml`. You are now ready to code within your mamba environment.
 
+> There are two separate environment files defined. The `environment_deploy.yaml` should mirror the `environment.yaml` and is used only by the CI/CD pipeline.
+
 ## Start Coding
 
 We have seperated the code into multiple files by their functionality.
@@ -125,19 +127,20 @@ But don't worry. Its documentation is just as extensive as this one.
 
 After your plugin is ready for production, the CA team will create a Docker image and deploy your code to the infrastructure.
 
-## Docker (for devs)
-
-To deploy this plugin run
-
-```shell
-DOCKER_BUILDKIT=1 docker build --secret id=GIT_PROJECT_TOKEN . --tag heigit/{plugin-name}:devel
-docker image push heigit/{plugin-name}:devel
-```
+## Docker (for admins and interested devs)
 
 If the infrastructure is reachable you can copy [.env_template](.env_template) to `.env` and then run 
 
 ```shell
+DOCKER_BUILDKIT=1 docker build --secret id=CI_JOB_TOKEN . --tag heigit/{plugin-name}:devel
 docker run --env-file .env --network=host heigit/{plugin-name}:devel
 ```
 
-Don't forget to add the plugin to the [infrastructure](https://gitlab.gistools.geog.uni-heidelberg.de/climate-action/infrastructure) and deploy it.
+To deploy this plugin to the central docker repository run
+
+```shell
+DOCKER_BUILDKIT=1 docker build --secret id=CI_JOB_TOKEN . --tag heigit/{plugin-name}:devel
+docker image push heigit/{plugin-name}:devel
+```
+
+Don't forget to add the plugin to the [infrastructure](https://gitlab.gistools.geog.uni-heidelberg.de/climate-action/infrastructure) and deploy it, once ready.

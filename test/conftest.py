@@ -5,9 +5,6 @@ import pytest
 import rasterio
 from climatoology.base.operator import ComputationScope
 from climatoology.utility.api import LulcUtilityUtility
-from dotenv import load_dotenv
-
-load_dotenv()
 
 
 @pytest.fixture

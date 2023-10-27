@@ -1,5 +1,7 @@
+import os
 from pathlib import Path
 from typing import List
+from unittest import mock
 
 import pytest
 from climatoology.base.operator import Info, Artifact, Concern, ArtifactModality
@@ -61,11 +63,13 @@ def expected_compute_output(compute_resources) -> List[Artifact]:
             raster_artifact]
 
 
+@mock.patch.dict(os.environ, {'LULC_HOST': '0.0.0.0', 'LULC_PORT': '8080', 'LULC_ROOT_URL': '/api'}, clear=True)
 def test_plugin_info_request(expected_info_output):
     operator = BlueprintOperator()
     assert operator.info() == expected_info_output
 
 
+@mock.patch.dict(os.environ, {'LULC_HOST': '0.0.0.0', 'LULC_PORT': '8080', 'LULC_ROOT_URL': '/api'}, clear=True)
 def test_plugin_compute_request(expected_compute_input, expected_compute_output, compute_resources, lulc_utility):
     operator = BlueprintOperator()
     assert operator.compute(resources=compute_resources,
