@@ -4,11 +4,12 @@ from typing import List
 from unittest import mock
 
 import pytest
-from climatoology.base.operator import Info, Artifact, Concern, ArtifactModality
+from climatoology.base.artifact import ArtifactModality
+from climatoology.base.operator import Info, Artifact, Concern
 from semver import Version
 
-from plugin_blueprint.operator_worker import BlueprintOperator
 from plugin_blueprint.input import BlueprintComputeInput
+from plugin_blueprint.operator_worker import BlueprintOperator
 
 
 @pytest.fixture
@@ -49,17 +50,62 @@ def expected_compute_input() -> BlueprintComputeInput:
 
 @pytest.fixture
 def expected_compute_output(compute_resources) -> List[Artifact]:
-    text_artifact = Artifact(name="Input Parameters",
-                             modality=ArtifactModality.TEXT,
-                             file_path=Path(compute_resources.computation_dir / 'blueprint.txt'),
-                             summary='The input parameters.',
-                             description='Raw return of the input parameter')
+    markdown_artifact = Artifact(name="A Text",
+                                 modality=ArtifactModality.MARKDOWN,
+                                 file_path=Path(compute_resources.computation_dir / 'blueprint_markdown.md'),
+                                 summary='A JSON-block of the input parameters',
+                                 description=' ')
+    table_artifact = Artifact(name="Character Count",
+                              modality=ArtifactModality.TABLE,
+                              file_path=Path(compute_resources.computation_dir / 'blueprint_table.csv'),
+                              summary='The table lists the number of occurrences for each character in the input '
+                                      'parameters.',
+                              description='A table with two columns.')
+    image_artifact = Artifact(name="Image",
+                              modality=ArtifactModality.IMAGE,
+                              file_path=Path(compute_resources.computation_dir / 'blueprint_image.png'),
+                              summary='A nice image.',
+                              description='The image is under CC0 license taken from [pexels](https://www.pexels.com/'
+                                          'photo/person-holding-a-green-plant-1072824/).')
+    scatter_chart_artifact = Artifact(name="The Points",
+                                      modality=ArtifactModality.CHART,
+                                      file_path=Path(
+                                          compute_resources.computation_dir / 'blueprint_scatter_chart.json'),
+                                      summary='A simple scatter plot.',
+                                      description='Beautiful points.')
+    line_chart_artifact = Artifact(name="The Line",
+                                   modality=ArtifactModality.CHART,
+                                   file_path=Path(compute_resources.computation_dir / 'blueprint_line_chart.json'),
+                                   summary='A simple line of negative incline.',
+                                   description='A beautiful line.')
+    bar_chart_artifact = Artifact(name="The Bars",
+                                  modality=ArtifactModality.CHART,
+                                  file_path=Path(compute_resources.computation_dir / 'blueprint_bar_chart.json'),
+                                  summary='A simple bar chart.',
+                                  description='Beautiful bars.')
+    pie_chart_artifact = Artifact(name="The Pie",
+                                  modality=ArtifactModality.CHART,
+                                  file_path=Path(compute_resources.computation_dir / 'blueprint_pie_chart.json'),
+                                  summary='A simple pie.',
+                                  description='A beautiful pie.')
+    vector_artifact = Artifact(name="Vectorised LULC Classification",
+                               modality=ArtifactModality.MAP_LAYER_GEOJSON,
+                               file_path=Path(compute_resources.computation_dir / 'blueprint_vector.geojson'),
+                               summary='A land-use and land-cover classification of a user defined area.',
+                               description='The classification is created using a deep learning model.')
     raster_artifact = Artifact(name="LULC Classification",
-                               modality=ArtifactModality.MAP_LAYER,
-                               file_path=Path(compute_resources.computation_dir / 'raster.tiff'),
-                               summary='The raw map data.',
-                               description='A GeoTIFF.')
-    return [text_artifact,
+                               modality=ArtifactModality.MAP_LAYER_GEOTIFF,
+                               file_path=Path(compute_resources.computation_dir / 'blueprint_raster.tiff'),
+                               summary='A land-use and land-cover classification of a user defined area.',
+                               description='The classification is created using a deep learning model.')
+    return [markdown_artifact,
+            table_artifact,
+            image_artifact,
+            scatter_chart_artifact,
+            line_chart_artifact,
+            bar_chart_artifact,
+            pie_chart_artifact,
+            vector_artifact,
             raster_artifact]
 
 
