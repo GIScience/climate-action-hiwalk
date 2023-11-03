@@ -193,7 +193,6 @@ Thereby you can check if your input was received in the correct manner.
         line_chart = create_chart_artifact(data=line_chart_data,
                                            title='The Line',
                                            caption='A simple line of negative incline.',
-                                           description='A beautiful line.',
                                            resources=resources,
                                            filename='blueprint_line_chart')
 
@@ -204,7 +203,6 @@ Thereby you can check if your input was received in the correct manner.
         bar_chart = create_chart_artifact(data=bar_chart_data,
                                           title='The Bars',
                                           caption='A simple bar chart.',
-                                          description='Beautiful bars.',
                                           resources=resources,
                                           filename='blueprint_bar_chart')
         y = [abs(int(val)) for val in y]
@@ -215,7 +213,6 @@ Thereby you can check if your input was received in the correct manner.
         pie_chart = create_chart_artifact(data=pie_chart_data,
                                           title='The Pie',
                                           caption='A simple pie.',
-                                          description='A beautiful pie.',
                                           resources=resources,
                                           filename='blueprint_pie_chart')
 

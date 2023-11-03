@@ -53,8 +53,7 @@ def expected_compute_output(compute_resources) -> List[Artifact]:
     markdown_artifact = Artifact(name="A Text",
                                  modality=ArtifactModality.MARKDOWN,
                                  file_path=Path(compute_resources.computation_dir / 'blueprint_markdown.md'),
-                                 summary='A JSON-block of the input parameters',
-                                 description=' ')
+                                 summary='A JSON-block of the input parameters')
     table_artifact = Artifact(name="Character Count",
                               modality=ArtifactModality.TABLE,
                               file_path=Path(compute_resources.computation_dir / 'blueprint_table.csv'),
@@ -76,18 +75,15 @@ def expected_compute_output(compute_resources) -> List[Artifact]:
     line_chart_artifact = Artifact(name="The Line",
                                    modality=ArtifactModality.CHART,
                                    file_path=Path(compute_resources.computation_dir / 'blueprint_line_chart.json'),
-                                   summary='A simple line of negative incline.',
-                                   description='A beautiful line.')
+                                   summary='A simple line of negative incline.')
     bar_chart_artifact = Artifact(name="The Bars",
                                   modality=ArtifactModality.CHART,
                                   file_path=Path(compute_resources.computation_dir / 'blueprint_bar_chart.json'),
-                                  summary='A simple bar chart.',
-                                  description='Beautiful bars.')
+                                  summary='A simple bar chart.')
     pie_chart_artifact = Artifact(name="The Pie",
                                   modality=ArtifactModality.CHART,
                                   file_path=Path(compute_resources.computation_dir / 'blueprint_pie_chart.json'),
-                                  summary='A simple pie.',
-                                  description='A beautiful pie.')
+                                  summary='A simple pie.')
     vector_artifact = Artifact(name="Vectorised LULC Classification",
                                modality=ArtifactModality.MAP_LAYER_GEOJSON,
                                file_path=Path(compute_resources.computation_dir / 'blueprint_vector.geojson'),
