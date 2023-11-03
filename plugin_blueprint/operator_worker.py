@@ -40,7 +40,7 @@ class BlueprintOperator(Operator[BlueprintComputeInput]):
                                                  root_url=os.environ.get('LULC_ROOT_URL'))
 
     def info(self) -> Info:
-        return Info(name='BlueprintPlugin',
+        return Info(name='Blueprint Plugin',
                     icon=Path('resources/icon.jpeg'),
                     version=Version(0, 0, 1),
                     concerns=[Concern.CLIMATE_ACTION__GHG_EMISSION],
@@ -208,9 +208,8 @@ Thereby you can check if your input was received in the correct manner.
                                           resources=resources,
                                           filename='blueprint_bar_chart')
         y = [abs(int(val)) for val in y]
-        sum_y = sum(y)
         pie_chart_data = Chart2dData(x=x,
-                                     y=[val / sum_y for val in y],
+                                     y=y,
                                      color=[Color(random.choices(range(256), k=3)) for _ in x],
                                      chart_type=ChartType.PIE)
         pie_chart = create_chart_artifact(data=pie_chart_data,

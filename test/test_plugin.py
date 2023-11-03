@@ -15,7 +15,7 @@ from plugin_blueprint.operator_worker import BlueprintOperator
 @pytest.fixture
 def expected_info_output() -> Info:
     # noinspection PyTypeChecker
-    return Info(name='BlueprintPlugin',
+    return Info(name='Blueprint Plugin',
                 icon=Path('resources/icon.jpeg'),
                 version=Version(0, 0, 1),
                 concerns=[Concern.CLIMATE_ACTION__GHG_EMISSION],
