@@ -10,11 +10,11 @@ A new plugin should be thoroughly discussed with the CA team. But don't be hesit
 
 ### Git
 
-The CA team will fork **this** repository for you and you will get full access to the fork. You can then `git clone` the fork and work on it as in any other git project.
+The CA team will fork **this** repository for you and you will get full access to the fork (see below for admins). You can then `git clone` the fork and work on it as in any other git project.
 
 Create a new branch by running `git checkout -b <my_new_plugin_name>`.
 After you have finished your implementation, you can create a merge request to the `main` branch that can be reviewed by the CA team.
-Yet we highly encourage you to create smaller intermediate MRs for review.
+Yet, we highly encourage you to create smaller intermediate MRs for review!
 
 ### Python Environment
 
@@ -144,3 +144,17 @@ docker image push heigit/{plugin-name}:devel
 ```
 
 Don't forget to add the plugin to the [infrastructure](https://gitlab.gistools.geog.uni-heidelberg.de/climate-action/infrastructure) and deploy it, once ready.
+
+## Forking this repository (for admins)
+
+To enable a plugin contribution [fork](https://docs.gitlab.com/ee/user/project/repository/forking_workflow.html) this repository.
+The following changes are necessary in the new fork:
+
+1. [Unlink the fork](https://docs.gitlab.com/ee/user/project/repository/forking_workflow.html#unlink-a-fork) to make it an independent repository
+2. In the Merge-Request settings set
+   1. Fast-forward merge
+   2. Delete source branch by default
+   3. Require squashing
+   4. Pipelines must be successful
+3. Assign the appointed person as maintainer
+4. Create an issue for the appointed maintainer stating `Please choose an appropriate repository icon and name`
