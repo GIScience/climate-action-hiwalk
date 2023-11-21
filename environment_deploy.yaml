@@ -9,4 +9,4 @@ dependencies:
   - python=3.11.5
   - shapely=2.0.2
   - pip:
-      - git+https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.gistools.geog.uni-heidelberg.de/climate-action/climatoology.git@v2.6.2
+      - git+https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.gistools.geog.uni-heidelberg.de/climate-action/climatoology.git@v2.6.3
