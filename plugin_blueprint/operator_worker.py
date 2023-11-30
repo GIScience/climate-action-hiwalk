@@ -1,11 +1,10 @@
 # You may ask yourself why this file has such a strange name.
 # Well ... python imports: https://discuss.python.org/t/warning-when-importing-a-local-module-with-the-same-name-as-a-2nd-or-3rd-party-module/27799
 
-import datetime
 import logging
 import os
 import random
-import sys
+from datetime import datetime
 from pathlib import Path
 from typing import List
 
@@ -24,8 +23,6 @@ from semver import Version
 from plugin_blueprint.input import BlueprintComputeInput
 
 log = logging.getLogger(__name__)
-log.addHandler(logging.StreamHandler(sys.stdout))
-log.setLevel(logging.INFO)
 
 
 class BlueprintOperator(Operator[BlueprintComputeInput]):
@@ -38,18 +35,22 @@ class BlueprintOperator(Operator[BlueprintComputeInput]):
         self.lulc_generator = LulcUtilityUtility(host=os.environ.get('LULC_HOST'),
                                                  port=int(os.environ.get('LULC_PORT')),
                                                  root_url=os.environ.get('LULC_ROOT_URL'))
+        log.debug(f"Initialised opreator with lulc_generator {os.environ.get('LULC_HOST')}")
 
     def info(self) -> Info:
-        return Info(name='Blueprint Plugin',
+        info = Info(name='Blueprint Plugin',
                     icon=Path('resources/icon.jpeg'),
                     version=Version(0, 0, 1),
                     concerns=[Concern.CLIMATE_ACTION__GHG_EMISSION],
                     purpose='This Plugin serves no purpose besides being a blueprint for real plugins.',
                     methodology='This Plugin uses no methodology because it does nothing.',
                     sources=Path('resources/example.bib'))
+        log.info(f'Return info {info.model_dump()}')
+
+        return info
 
     def compute(self, resources: ComputationResources, params: BlueprintComputeInput) -> List[Artifact]:
-        log.info(f'Handling compute request: {params} in context: {resources}')
+        log.info(f'Handling compute request: {params.model_dump()} in context: {resources}')
 
         # The code is split into several functions from here.
         # Each one describes the functionality of a specific artifact type or utility.
@@ -83,13 +84,15 @@ class BlueprintOperator(Operator[BlueprintComputeInput]):
         raster_artifact = self.raster_artifact_creator_and_lulc_utility_usage(params.get_geom(),
                                                                               params.blueprint_date,
                                                                               resources)
+        artifacts = [markdown_artifact,
+                     table_artifact,
+                     image_artifact,
+                     *chart_artifacts,
+                     vector_artifact,
+                     raster_artifact]
+        log.debug(f"Returning {len(artifacts)} artifacts.")
 
-        return [markdown_artifact,
-                table_artifact,
-                image_artifact,
-                *chart_artifacts,
-                vector_artifact,
-                raster_artifact]
+        return artifacts
 
     @staticmethod
     def markdown_artifact_creator(params: BlueprintComputeInput, resources: ComputationResources) -> Artifact:
@@ -101,7 +104,7 @@ class BlueprintOperator(Operator[BlueprintComputeInput]):
         :param resources: The plugin computation resources.
         :return: A Markdown artifact.
         """
-
+        log.debug("Creating dummy markdown artifact.")
         text = f"""# Input Parameters
  
 The Blueprint Plugin was run with the following parameters:
@@ -129,6 +132,7 @@ Thereby you can check if your input was received in the correct manner.
         :param resources: The plugin computation resources
         :return: A table artifact.
         """
+        log.debug("Creating dummy table artifact.")
         param_str = params.model_dump_json()
         data = [{'character': e, 'count': param_str.count(e)} for e in set(param_str)]
 
@@ -151,6 +155,7 @@ Thereby you can check if your input was received in the correct manner.
         :param resources: The plugin computation resources.
         :return: An image artifact.
         """
+        log.debug("Creating dummy image artifact.")
         with Image.open("resources/cc0_image.jpg") as icon:
             image_artifact = create_image_artifact(image=icon,
                                                    title='Image',
@@ -174,6 +179,7 @@ Thereby you can check if your input was received in the correct manner.
         :param resources: The plugin computation resources.
         :return: Four graph artifacts.
         """
+        log.debug("Creating dummy chart artifacts.")
         x = list(range(0, 100, 10))
         y = [val * -abs(incline) + val * random.random() for val in x]
 
@@ -231,6 +237,7 @@ Thereby you can check if your input was received in the correct manner.
         :param resources: The plugin computation resources.
         :return: A vector artifact.
         """
+        log.debug("Creating dummy vector artifact.")
         # Note that the raster artifact creation example funciton is slightly simpler if you want to get a quick
         # overview first.
 
@@ -272,8 +279,8 @@ Thereby you can check if your input was received in the correct manner.
         :param resources: The plugin computation resources.
         :return: A raster artifact.
         """
+        log.debug("Creating dummy raster artifact.")
         # Note also the comments in the vector artifact creation example function
-
         aoi = LULCWorkUnit(area_coords=aoi.bounds,
                            end_date=target_date.isoformat())
 

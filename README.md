@@ -31,6 +31,12 @@ Run `mamba env create -f environment.yaml`. You are now ready to code within you
 
 > There are two separate environment files defined. The `environment_deploy.yaml` should mirror the `environment.yaml` and is used only by the CI/CD pipeline.
 
+### Logging
+
+Using the environment variable `LOG_Level` you can adjust the amount of log messages produced by the plugin.
+Please make sure to use logging throughout your plugin.
+This will make debugging easier at a later stage.
+
 ## Start Coding
 
 We have seperated the code into multiple files by their functionality.

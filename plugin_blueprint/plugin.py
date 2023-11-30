@@ -1,17 +1,17 @@
 import asyncio
-import logging
+import logging.config
 import os
-import sys
 
+import yaml
 from climatoology.app.plugin import PlatformPlugin
 from climatoology.broker.message_broker import AsyncRabbitMQ
 from climatoology.store.object_store import MinioStorage
 
 from plugin_blueprint.operator_worker import BlueprintOperator
 
+log_level = os.getenv('LOG_LEVEL', 'INFO')
+log_config = f'conf/logging.yaml'
 log = logging.getLogger(__name__)
-log.addHandler(logging.StreamHandler(sys.stdout))
-log.setLevel(logging.INFO)
 
 
 async def start_plugin() -> None:
@@ -35,14 +35,20 @@ async def start_plugin() -> None:
                            user=os.environ.get('RABBITMQ_USER'),
                            password=os.environ.get('RABBITMQ_PASSWORD'))
     await broker.async_init()
-    log.info(f'Configuring async broker: {os.environ.get("RABBITMQ_HOST")}')
+    log.debug(f'Configured broker: {os.environ.get("RABBITMQ_HOST")} and storage: {os.environ.get("MINIO_HOST")}')
 
     plugin = PlatformPlugin(operator=operator,
                             storage=storage,
                             broker=broker)
     log.info(f'Running plugin: {operator.info().name}')
+
     await plugin.run()
 
 
 if __name__ == '__main__':
+    logging.basicConfig(level=log_level.upper())
+    with open(log_config) as file:
+        logging.config.dictConfig(yaml.safe_load(file))
+    log.info('Starting Plugin')
+
     asyncio.run(start_plugin())
