@@ -1,8 +1,6 @@
-FROM docker.io/condaforge/mambaforge:23.1.0-4 AS build
+FROM condaforge/mambaforge:23.1.0-4 AS build
 
 COPY environment_deploy.yaml environment.yaml
-
-RUN echo $(cat /kaniko/CI_JOB_TOKEN)
 
 RUN export CI_JOB_TOKEN=$(cat /kaniko/CI_JOB_TOKEN) && \
     mamba env create -f environment.yaml && \
