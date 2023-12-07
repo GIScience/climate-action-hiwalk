@@ -20,6 +20,7 @@ COPY --from=build /venv /ca-plugin-blueprint/venv
 
 COPY plugin_blueprint plugin_blueprint
 COPY resources resources
+COPY conf conf
 
 ENV PYTHONPATH "${PYTHONPATH}:/ca-plugin-blueprint/plugin_blueprint"
 
