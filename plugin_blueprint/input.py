@@ -1,10 +1,9 @@
 import datetime
-from enum import Enum
-from typing import Optional, List, Dict
-
 import geojson_pydantic
 import shapely
-from pydantic import BaseModel, Field
+from enum import Enum
+from pydantic import BaseModel, Field, condate
+from typing import Optional, List, Dict
 
 
 class Option(Enum):
@@ -50,12 +49,11 @@ class BlueprintComputeInput(BaseModel):
                                             default='John Doe')
 
     # In case you need a date-range, we suggest you simply use two date fields, one for the start, one for the end date
-    blueprint_date: Optional[datetime.date] = Field(title='Date Input',
-                                                    description='An optional date parameter.',
-                                                    examples=[datetime.date(2020, 1, 1)],
-                                                    default=datetime.date(2020, 1, 1),
-                                                    gt=datetime.date(2005, 1, 1),
-                                                    lt=datetime.date.today())
+    blueprint_date: Optional[condate(gt=datetime.date(2005, 1, 1),
+                                     lt=datetime.date.today())] = Field(title='Date Input',
+                                                                        description='An optional date parameter.',
+                                                                        examples=[datetime.date(2020, 1, 1)],
+                                                                        default=datetime.date(2020, 1, 1))
 
     # Here are two examples for custom input types
     blueprint_select: Optional[Option] = Field(title='Selection Input',
