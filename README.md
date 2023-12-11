@@ -21,15 +21,17 @@ Yet, we highly encourage you to create smaller intermediate MRs for review!
 We use [mamba](https://mamba.readthedocs.io/en/latest/) (i.e. conda) as an environment management system.
 Make sure you have it installed.
 Apart from some base dependencies, there is only one fixed dependency for you, which is the [climatoology](https://gitlab.gistools.geog.uni-heidelberg.de/climate-action/climatoology) package that holds all the infrastructure functionality.
+Make sure you have read-access to the climatoology repository (i.e. you can clone it).
 
-The CA team will provide you with an access token. Head over to the [environment.yaml](environment.yaml) and replace 
- 
- - the environment name `ca-plugin-blueprint` with your plugin name. While we are at it, please also replace all occurences of that name in the [Dockerfile](Dockerfile).
- - put the provided git token in a file called `GIT_PROJECT_TOKEN`. Then run `export GIT_PROJECT_TOKEN=$(cat GIT_PROJECT_TOKEN)` to set the token as en environment variable
+Head over to the [environment.yaml](environment.yaml) and replace the environment name `ca-plugin-blueprint` with your plugin name.
+Run `mamba env create -f environment.yaml`.
+You are now ready to code within your mamba environment.
 
-Run `mamba env create -f environment.yaml`. You are now ready to code within your mamba environment.
+When managing your dependencies, you should keep _environment.yaml_ up to date.
+We suggest you add dependencies manually to the file, but you can also run `mamba env expoert > envornment.yaml` to store the full recursive set of dependencies.
 
-> There are two separate environment files defined. The `environment_deploy.yaml` should mirror the `environment.yaml` and is used only by the CI/CD pipeline.
+> There are two separate environment files defined.
+> The `environment_deploy.yaml` should always mirror the `environment.yaml` and is used only by the CI/CD pipeline.
 
 ### Logging
 
@@ -89,8 +91,15 @@ But let's create some code first.
 ### Names
 
 We have to replace names at multiple level.
-Let's start with refactoring the name of the `BlueprintComputeInput` and the `BlueprintOperator` classes in [plugin.py](plugin_blueprint/plugin.py).
-Replace these classnames with reasonable names related to your idea.
+
+Let's start with refactoring the name of the package ([plugin_blueprint/](plugin_blueprint/)).
+If you don't want to get creative you can simply mimic the repository name.
+This directory is also copied to the Docker container we use for deployment.
+Therefore, you have to change the name also in the [Dockerfile](Dockerfile) and the [Dockerfile.Kaniko](Dockerfile.Kaniko). 
+
+Next there are two classes that should be name-related to your plugin:
+The `BlueprintComputeInput` and the `BlueprintOperator` in [plugin.py](plugin_blueprint/plugin.py).
+Refactor-rename these classnames with reasonable names related to your idea.
 
 ### Operator in [operator_worker.py](plugin_blueprint/operator_worker.py)
 
@@ -141,6 +150,8 @@ If the infrastructure is reachable you can copy [.env_template](.env_template) t
 DOCKER_BUILDKIT=1 docker build --secret id=CI_JOB_TOKEN . --tag heigit/{plugin-name}:devel
 docker run --env-file .env --network=host heigit/{plugin-name}:devel
 ```
+
+Make sure the cone-token is copied to the text-file named `CI_JOB_TOKEN` that is mounted to the container build process as secret.
 
 To deploy this plugin to the central docker repository run
 

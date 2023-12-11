@@ -17,7 +17,7 @@ unit_tests:
     - mamba env create -f environment_deploy.yaml -v
     - mamba init bash
     - source ~/.bashrc
-    - conda run -n ca-plugin-blueprint pytest --ignore=$CONDA_PKGS_DIRS .
+    - conda run -n ca-plugin pytest --ignore=$CONDA_PKGS_DIRS .
 
 docker_build_deploy:
   stage: deploy

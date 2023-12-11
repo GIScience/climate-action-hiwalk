@@ -1,4 +1,4 @@
-name: ca-plugin-blueprint
+name: ca-plugin
 channels:
   - conda-forge
 dependencies:

@@ -6,7 +6,7 @@ RUN --mount=type=secret,id=CI_JOB_TOKEN \
     export CI_JOB_TOKEN=$(cat /run/secrets/CI_JOB_TOKEN) && \
     mamba env create -f environment.yaml && \
     mamba install -c conda-forge conda-pack && \
-    conda-pack -f --ignore-missing-files -n ca-plugin-blueprint -o /tmp/env.tar && \
+    conda-pack -f --ignore-missing-files -n ca-plugin -o /tmp/env.tar && \
     mkdir /venv && \
     cd /venv && \
     tar xf /tmp/env.tar && \
@@ -16,15 +16,15 @@ RUN --mount=type=secret,id=CI_JOB_TOKEN \
 
 FROM python:3.11.5-bookworm as runtime
 
-WORKDIR /ca-plugin-blueprint
-COPY --from=build /venv /ca-plugin-blueprint/venv
+WORKDIR /ca-plugin
+COPY --from=build /venv /ca-plugin/venv
 
 COPY plugin_blueprint plugin_blueprint
 COPY resources resources
 COPY conf conf
 
-ENV PYTHONPATH "${PYTHONPATH}:/ca-plugin-blueprint/plugin_blueprint"
+ENV PYTHONPATH "${PYTHONPATH}:/ca-plugin/plugin_blueprint"
 
 SHELL ["/bin/bash", "-c"]
-ENTRYPOINT source /ca-plugin-blueprint/venv/bin/activate && \
+ENTRYPOINT source /ca-plugin/venv/bin/activate && \
            python plugin_blueprint/plugin.py
