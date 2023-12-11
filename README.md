@@ -84,9 +84,12 @@ Define it in the test and add the required file to the repository.
 
 That's it, the tests should fail, and you can start coding towards making them succeed.
 
-Unfortunately, if you use external services, they need to be mocked.
-The CA team can help you implement [mocks](https://docs.python.org/3/library/unittest.mock.html).
-But let's create some code first.
+If you use external services, they should be mocked.
+This will, among other benefits, reduce the resource consumption for testing.
+You can have a look at [conftest.py](test/conftest.py) for some examples how we mocked external APIs but don't get overwhelmed.
+The CA team can help you implement these setups, when the need arises.
+
+But let's create some code first:
 
 ### Names
 

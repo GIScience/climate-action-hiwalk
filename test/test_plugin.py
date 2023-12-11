@@ -1,13 +1,13 @@
-import os
-from pathlib import Path
-from typing import List
 from unittest import mock
 
+import os
 import pytest
+from pathlib import Path
+from semver import Version
+from typing import List
+
 from climatoology.base.artifact import ArtifactModality
 from climatoology.base.operator import Info, Artifact, Concern
-from semver import Version
-
 from plugin_blueprint.input import BlueprintComputeInput
 from plugin_blueprint.operator_worker import BlueprintOperator
 
@@ -84,11 +84,23 @@ def expected_compute_output(compute_resources) -> List[Artifact]:
                                   modality=ArtifactModality.CHART,
                                   file_path=Path(compute_resources.computation_dir / 'blueprint_pie_chart.json'),
                                   summary='A simple pie.')
-    vector_artifact = Artifact(name="Vectorised LULC Classification",
-                               modality=ArtifactModality.MAP_LAYER_GEOJSON,
-                               file_path=Path(compute_resources.computation_dir / 'blueprint_vector.geojson'),
-                               summary='A land-use and land-cover classification of a user defined area.',
-                               description='The classification is created using a deep learning model.')
+    point_artifact = Artifact(name="Points",
+                              modality=ArtifactModality.MAP_LAYER_GEOJSON,
+                              file_path=Path(compute_resources.computation_dir / 'blueprint_points.geojson'),
+                              summary='Schools in the area of interest including a dummy school in the center.',
+                              description='The schools are taken from OSM at the date given in the input form.')
+    line_artifact = Artifact(name="Lines",
+                             modality=ArtifactModality.MAP_LAYER_GEOJSON,
+                             file_path=Path(compute_resources.computation_dir / 'blueprint_lines.geojson'),
+                             summary='Buffers around schools in the area of interest including a dummy school in the '
+                                     'center.',
+                             description='The schools are taken from OSM at the date given in the input form.')
+    polygon_artifact = Artifact(name="Polygons",
+                                modality=ArtifactModality.MAP_LAYER_GEOJSON,
+                                file_path=Path(compute_resources.computation_dir / 'blueprint_polygons.geojson'),
+                                summary='Schools in the area of interest including a dummy school in the center, '
+                                        'buffered by ca. 100m.',
+                                description='The schools are taken from OSM at the date given in the input form.')
     raster_artifact = Artifact(name="LULC Classification",
                                modality=ArtifactModality.MAP_LAYER_GEOTIFF,
                                file_path=Path(compute_resources.computation_dir / 'blueprint_raster.tiff'),
@@ -101,18 +113,20 @@ def expected_compute_output(compute_resources) -> List[Artifact]:
             line_chart_artifact,
             bar_chart_artifact,
             pie_chart_artifact,
-            vector_artifact,
+            point_artifact,
+            line_artifact,
+            polygon_artifact,
             raster_artifact]
 
 
-@mock.patch.dict(os.environ, {'LULC_HOST': '0.0.0.0', 'LULC_PORT': '8080', 'LULC_ROOT_URL': '/api'}, clear=True)
+@mock.patch.dict(os.environ, {'LULC_HOST': 'localhost', 'LULC_PORT': '80', 'LULC_ROOT_URL': '/api/lulc/'}, clear=True)
 def test_plugin_info_request(expected_info_output):
     operator = BlueprintOperator()
     assert operator.info() == expected_info_output
 
 
-@mock.patch.dict(os.environ, {'LULC_HOST': '0.0.0.0', 'LULC_PORT': '8080', 'LULC_ROOT_URL': '/api'}, clear=True)
-def test_plugin_compute_request(expected_compute_input, expected_compute_output, compute_resources, lulc_utility):
+@mock.patch.dict(os.environ, {'LULC_HOST': 'localhost', 'LULC_PORT': '80', 'LULC_ROOT_URL': '/api/lulc/'}, clear=True)
+def test_plugin_compute_request(expected_compute_input, expected_compute_output, compute_resources, web_apis):
     operator = BlueprintOperator()
     assert operator.compute(resources=compute_resources,
                             params=expected_compute_input) == expected_compute_output

@@ -1,10 +1,8 @@
-import uuid
-from unittest.mock import MagicMock
-
 import pytest
-import rasterio
+import responses
+import uuid
+
 from climatoology.base.computation import ComputationScope
-from climatoology.utility.api import LulcUtilityUtility
 
 
 @pytest.fixture
@@ -14,6 +12,12 @@ def compute_resources():
 
 
 @pytest.fixture
-def lulc_utility():
-    LulcUtilityUtility.compute_raster = MagicMock()
-    LulcUtilityUtility.compute_raster.return_value.__enter__.return_value = rasterio.open(fp='resources/test_segmentation.tiff')
+def web_apis():
+    with (responses.RequestsMock() as rsps,
+          open('resources/test_segmentation.tiff', 'rb') as raster,
+          open('resources/ohsome.geojson', 'rb') as vector):
+        rsps.post('http://localhost:80/api/lulc/segment/',
+                  body=raster.read())
+        rsps.post('https://api.ohsome.org/v1/elements/centroid',
+                  body=vector.read())
+        yield rsps
