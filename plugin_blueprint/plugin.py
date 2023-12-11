@@ -7,7 +7,7 @@ from climatoology.app.plugin import PlatformPlugin
 from climatoology.broker.message_broker import AsyncRabbitMQ
 from climatoology.store.object_store import MinioStorage
 
-from plugin_blueprint.operator_worker import BlueprintOperator
+from plugin_blueprint.operator_worker import OperatorBlueprint
 
 log_level = os.getenv('LOG_LEVEL', 'INFO')
 log_config = f'conf/logging.yaml'
@@ -21,7 +21,7 @@ async def start_plugin() -> None:
 
     :return:
     """
-    operator = BlueprintOperator()
+    operator = OperatorBlueprint()
     log.info(f'Configuring plugin: {operator.info().name}')
 
     storage = MinioStorage(host=os.environ.get('MINIO_HOST'),

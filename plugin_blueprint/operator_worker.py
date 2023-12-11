@@ -20,12 +20,12 @@ from climatoology.base.artifact import create_markdown_artifact, create_table_ar
     create_chart_artifact, Chart2dData, ChartType, create_geotiff_artifact, create_geojson_artifact
 from climatoology.base.operator import Operator, Info, Concern, ComputationResources, Artifact
 from climatoology.utility.api import LulcUtilityUtility, LULCWorkUnit
-from plugin_blueprint.input import BlueprintComputeInput
+from plugin_blueprint.input import ComputeInputBlueprint
 
 log = logging.getLogger(__name__)
 
 
-class BlueprintOperator(Operator[BlueprintComputeInput]):
+class OperatorBlueprint(Operator[ComputeInputBlueprint]):
     # This is your working-class hero.
     # See all the details below.
 
@@ -42,7 +42,7 @@ class BlueprintOperator(Operator[BlueprintComputeInput]):
         log.debug(f"Initialised operator with lulc_generator {os.environ.get('LULC_HOST')} and ohsome client")
 
     def info(self) -> Info:
-        info = Info(name='Blueprint Plugin',
+        info = Info(name='Plugin Blueprint',
                     icon=Path('resources/icon.jpeg'),
                     version=Version(0, 0, 1),
                     concerns=[Concern.CLIMATE_ACTION__GHG_EMISSION],
@@ -53,7 +53,7 @@ class BlueprintOperator(Operator[BlueprintComputeInput]):
 
         return info
 
-    def compute(self, resources: ComputationResources, params: BlueprintComputeInput) -> List[Artifact]:
+    def compute(self, resources: ComputationResources, params: ComputeInputBlueprint) -> List[Artifact]:
         log.info(f'Handling compute request: {params.model_dump()} in context: {resources}')
 
         # The code is split into several functions from here.
@@ -62,16 +62,16 @@ class BlueprintOperator(Operator[BlueprintComputeInput]):
 
         # ## Artifact types ##
         # This function creates an example Markdown artifact
-        markdown_artifact = BlueprintOperator.markdown_artifact_creator(params, resources)
+        markdown_artifact = OperatorBlueprint.markdown_artifact_creator(params, resources)
 
         # This function creates an example table artifact
-        table_artifact = BlueprintOperator.table_artifact_creator(params, resources)
+        table_artifact = OperatorBlueprint.table_artifact_creator(params, resources)
 
         # This function creates an example image artifact
-        image_artifact = BlueprintOperator.image_artifact_creator(resources)
+        image_artifact = OperatorBlueprint.image_artifact_creator(resources)
 
         # This function creates example chart artifacts
-        chart_artifacts = BlueprintOperator.chart_artifact_creator(params.blueprint_float, resources)
+        chart_artifacts = OperatorBlueprint.chart_artifact_creator(params.float_blueprint, resources)
 
         # Further we have the geographic output types of raster and vector data.
         # We kill two birds with one stone and use the land-use and land-cover utility to demonstrate them.
@@ -81,13 +81,13 @@ class BlueprintOperator(Operator[BlueprintComputeInput]):
         # ### Ohsome ###
         # This function provides an example for the ohsome usage to create a vector artifact.
         vector_artifacts = self.vector_artifact_creator_and_ohsome_usage(params.get_geom(),
-                                                                         params.blueprint_date,
+                                                                         params.date_blueprint,
                                                                          resources)
 
         # ### LULC ###
         # This function provides an example for the LULC utility usage to create a raster artifact.
         raster_artifact = self.raster_artifact_creator_and_lulc_utility_usage(params.get_geom(),
-                                                                              params.blueprint_date,
+                                                                              params.date_blueprint,
                                                                               resources)
         artifacts = [markdown_artifact,
                      table_artifact,
@@ -100,7 +100,7 @@ class BlueprintOperator(Operator[BlueprintComputeInput]):
         return artifacts
 
     @staticmethod
-    def markdown_artifact_creator(params: BlueprintComputeInput, resources: ComputationResources) -> Artifact:
+    def markdown_artifact_creator(params: ComputeInputBlueprint, resources: ComputationResources) -> Artifact:
         """This method creates a simple Markdown artifact.
 
         It transforms the input parameters to a Markdown json block.
@@ -112,7 +112,7 @@ class BlueprintOperator(Operator[BlueprintComputeInput]):
         log.debug("Creating dummy markdown artifact.")
         text = f"""# Input Parameters
  
-The Blueprint Plugin was run with the following parameters:
+The Plugin Blueprint was run with the following parameters:
 
 ```json
 {params.model_dump_json(indent=4)}
@@ -125,10 +125,10 @@ Thereby you can check if your input was received in the correct manner.
                                         name='A Text',
                                         tl_dr="A JSON-block of the input parameters",
                                         resources=resources,
-                                        filename="blueprint_markdown")
+                                        filename="markdown_blueprint")
 
     @classmethod
-    def table_artifact_creator(cls, params: BlueprintComputeInput, resources: ComputationResources) -> Artifact:
+    def table_artifact_creator(cls, params: ComputeInputBlueprint, resources: ComputationResources) -> Artifact:
         """This method creates a simple table artifact.
 
         It counts the number of occurrences of each character in the input parameters.
@@ -151,7 +151,7 @@ Thereby you can check if your input was received in the correct manner.
                                              "input parameters.",
                                      description='A table with two columns.',
                                      resources=resources,
-                                     filename='blueprint_table')
+                                     filename='table_blueprint')
 
     @classmethod
     def image_artifact_creator(cls, resources: ComputationResources) -> Artifact:
@@ -169,7 +169,7 @@ Thereby you can check if your input was received in the correct manner.
                                                                '(https://www.pexels.com/photo/person-holding-a-green-'
                                                                'plant-1072824/).',
                                                    resources=resources,
-                                                   filename='blueprint_image')
+                                                   filename='image_blueprint')
         return image_artifact
 
     @classmethod
@@ -196,7 +196,7 @@ Thereby you can check if your input was received in the correct manner.
                                               caption='A simple scatter plot.',
                                               description='Beautiful points.',
                                               resources=resources,
-                                              filename='blueprint_scatter_chart')
+                                              filename='scatter_chart_blueprint')
 
         line_chart_data = Chart2dData(x=x,
                                       y=y,
@@ -205,7 +205,7 @@ Thereby you can check if your input was received in the correct manner.
                                            title='The Line',
                                            caption='A simple line of negative incline.',
                                            resources=resources,
-                                           filename='blueprint_line_chart')
+                                           filename='line_chart_blueprint')
 
         bar_chart_data = Chart2dData(x=[str(val) for val in x],
                                      y=y,
@@ -215,7 +215,7 @@ Thereby you can check if your input was received in the correct manner.
                                           title='The Bars',
                                           caption='A simple bar chart.',
                                           resources=resources,
-                                          filename='blueprint_bar_chart')
+                                          filename='bar_chart_blueprint')
         y = [abs(int(val)) for val in y]
         pie_chart_data = Chart2dData(x=x,
                                      y=y,
@@ -225,7 +225,7 @@ Thereby you can check if your input was received in the correct manner.
                                           title='The Pie',
                                           caption='A simple pie.',
                                           resources=resources,
-                                          filename='blueprint_pie_chart')
+                                          filename='pie_chart_blueprint')
 
         return scatter_chart, line_chart, bar_chart, pie_chart
 
@@ -264,7 +264,7 @@ Thereby you can check if your input was received in the correct manner.
                                                              'input form.',
                                                  color=points.color.to_list(),
                                                  resources=resources,
-                                                 filename='blueprint_points')
+                                                 filename='points_blueprint')
 
         polygons = points.to_crs('ESRI:54012')
         polygons.geometry = polygons.buffer(100)
@@ -278,7 +278,7 @@ Thereby you can check if your input was received in the correct manner.
                                                                'the input form.',
                                                    color=polygons.color.to_list(),
                                                    resources=resources,
-                                                   filename='blueprint_polygons')
+                                                   filename='polygons_blueprint')
         lines = polygons
         lines.geometry = lines.boundary
 
@@ -290,7 +290,7 @@ Thereby you can check if your input was received in the correct manner.
                                                             'input form.',
                                                 color=lines.color.to_list(),
                                                 resources=resources,
-                                                filename='blueprint_lines')
+                                                filename='lines_blueprint')
 
         return point_artifact, line_artifact, polygon_artifact
 
@@ -324,6 +324,6 @@ Thereby you can check if your input was received in the correct manner.
                                                        'area.',
                                                description='The classification is created using a deep learning model.',
                                                resources=resources,
-                                               filename='blueprint_raster')
+                                               filename='raster_blueprint')
 
         return artifact

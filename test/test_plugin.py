@@ -8,14 +8,14 @@ from typing import List
 
 from climatoology.base.artifact import ArtifactModality
 from climatoology.base.operator import Info, Artifact, Concern
-from plugin_blueprint.input import BlueprintComputeInput
-from plugin_blueprint.operator_worker import BlueprintOperator
+from plugin_blueprint.input import ComputeInputBlueprint
+from plugin_blueprint.operator_worker import OperatorBlueprint
 
 
 @pytest.fixture
 def expected_info_output() -> Info:
     # noinspection PyTypeChecker
-    return Info(name='Blueprint Plugin',
+    return Info(name='Plugin Blueprint',
                 icon=Path('resources/icon.jpeg'),
                 version=Version(0, 0, 1),
                 concerns=[Concern.CLIMATE_ACTION__GHG_EMISSION],
@@ -25,10 +25,10 @@ def expected_info_output() -> Info:
 
 
 @pytest.fixture
-def expected_compute_input() -> BlueprintComputeInput:
+def expected_compute_input() -> ComputeInputBlueprint:
     # noinspection PyTypeChecker
-    return BlueprintComputeInput(blueprint_bool=True,
-                                 blueprint_aoi={
+    return ComputeInputBlueprint(bool_blueprint=True,
+                                 aoi_blueprint={
                                      "type": "Feature",
                                      "properties": None,
                                      "geometry": {
@@ -52,58 +52,58 @@ def expected_compute_input() -> BlueprintComputeInput:
 def expected_compute_output(compute_resources) -> List[Artifact]:
     markdown_artifact = Artifact(name="A Text",
                                  modality=ArtifactModality.MARKDOWN,
-                                 file_path=Path(compute_resources.computation_dir / 'blueprint_markdown.md'),
+                                 file_path=Path(compute_resources.computation_dir / 'markdown_blueprint.md'),
                                  summary='A JSON-block of the input parameters')
     table_artifact = Artifact(name="Character Count",
                               modality=ArtifactModality.TABLE,
-                              file_path=Path(compute_resources.computation_dir / 'blueprint_table.csv'),
+                              file_path=Path(compute_resources.computation_dir / 'table_blueprint.csv'),
                               summary='The table lists the number of occurrences for each character in the input '
                                       'parameters.',
                               description='A table with two columns.')
     image_artifact = Artifact(name="Image",
                               modality=ArtifactModality.IMAGE,
-                              file_path=Path(compute_resources.computation_dir / 'blueprint_image.png'),
+                              file_path=Path(compute_resources.computation_dir / 'image_blueprint.png'),
                               summary='A nice image.',
                               description='The image is under CC0 license taken from [pexels](https://www.pexels.com/'
                                           'photo/person-holding-a-green-plant-1072824/).')
     scatter_chart_artifact = Artifact(name="The Points",
                                       modality=ArtifactModality.CHART,
                                       file_path=Path(
-                                          compute_resources.computation_dir / 'blueprint_scatter_chart.json'),
+                                          compute_resources.computation_dir / 'scatter_chart_blueprint.json'),
                                       summary='A simple scatter plot.',
                                       description='Beautiful points.')
     line_chart_artifact = Artifact(name="The Line",
                                    modality=ArtifactModality.CHART,
-                                   file_path=Path(compute_resources.computation_dir / 'blueprint_line_chart.json'),
+                                   file_path=Path(compute_resources.computation_dir / 'line_chart_blueprint.json'),
                                    summary='A simple line of negative incline.')
     bar_chart_artifact = Artifact(name="The Bars",
                                   modality=ArtifactModality.CHART,
-                                  file_path=Path(compute_resources.computation_dir / 'blueprint_bar_chart.json'),
+                                  file_path=Path(compute_resources.computation_dir / 'bar_chart_blueprint.json'),
                                   summary='A simple bar chart.')
     pie_chart_artifact = Artifact(name="The Pie",
                                   modality=ArtifactModality.CHART,
-                                  file_path=Path(compute_resources.computation_dir / 'blueprint_pie_chart.json'),
+                                  file_path=Path(compute_resources.computation_dir / 'pie_chart_blueprint.json'),
                                   summary='A simple pie.')
     point_artifact = Artifact(name="Points",
                               modality=ArtifactModality.MAP_LAYER_GEOJSON,
-                              file_path=Path(compute_resources.computation_dir / 'blueprint_points.geojson'),
+                              file_path=Path(compute_resources.computation_dir / 'points_blueprint.geojson'),
                               summary='Schools in the area of interest including a dummy school in the center.',
                               description='The schools are taken from OSM at the date given in the input form.')
     line_artifact = Artifact(name="Lines",
                              modality=ArtifactModality.MAP_LAYER_GEOJSON,
-                             file_path=Path(compute_resources.computation_dir / 'blueprint_lines.geojson'),
+                             file_path=Path(compute_resources.computation_dir / 'lines_blueprint.geojson'),
                              summary='Buffers around schools in the area of interest including a dummy school in the '
                                      'center.',
                              description='The schools are taken from OSM at the date given in the input form.')
     polygon_artifact = Artifact(name="Polygons",
                                 modality=ArtifactModality.MAP_LAYER_GEOJSON,
-                                file_path=Path(compute_resources.computation_dir / 'blueprint_polygons.geojson'),
+                                file_path=Path(compute_resources.computation_dir / 'polygons_blueprint.geojson'),
                                 summary='Schools in the area of interest including a dummy school in the center, '
                                         'buffered by ca. 100m.',
                                 description='The schools are taken from OSM at the date given in the input form.')
     raster_artifact = Artifact(name="LULC Classification",
                                modality=ArtifactModality.MAP_LAYER_GEOTIFF,
-                               file_path=Path(compute_resources.computation_dir / 'blueprint_raster.tiff'),
+                               file_path=Path(compute_resources.computation_dir / 'raster_blueprint.tiff'),
                                summary='A land-use and land-cover classification of a user defined area.',
                                description='The classification is created using a deep learning model.')
     return [markdown_artifact,
@@ -121,12 +121,12 @@ def expected_compute_output(compute_resources) -> List[Artifact]:
 
 @mock.patch.dict(os.environ, {'LULC_HOST': 'localhost', 'LULC_PORT': '80', 'LULC_ROOT_URL': '/api/lulc/'}, clear=True)
 def test_plugin_info_request(expected_info_output):
-    operator = BlueprintOperator()
+    operator = OperatorBlueprint()
     assert operator.info() == expected_info_output
 
 
 @mock.patch.dict(os.environ, {'LULC_HOST': 'localhost', 'LULC_PORT': '80', 'LULC_ROOT_URL': '/api/lulc/'}, clear=True)
 def test_plugin_compute_request(expected_compute_input, expected_compute_output, compute_resources, web_apis):
-    operator = BlueprintOperator()
+    operator = OperatorBlueprint()
     assert operator.compute(resources=compute_resources,
                             params=expected_compute_input) == expected_compute_output

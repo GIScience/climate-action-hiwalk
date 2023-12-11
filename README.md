@@ -101,7 +101,7 @@ This directory is also copied to the Docker container we use for deployment.
 Therefore, you have to change the name also in the [Dockerfile](Dockerfile) and the [Dockerfile.Kaniko](Dockerfile.Kaniko). 
 
 Next there are two classes that should be name-related to your plugin:
-The `BlueprintComputeInput` and the `BlueprintOperator` in [plugin.py](plugin_blueprint/plugin.py).
+The `ComputeInputBlueprint` and the `OperatorBlueprint` in [plugin.py](plugin_blueprint/plugin.py).
 Refactor-rename these classnames with reasonable names related to your idea.
 
 ### Operator in [operator_worker.py](plugin_blueprint/operator_worker.py)
