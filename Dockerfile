@@ -16,15 +16,17 @@ RUN --mount=type=secret,id=CI_JOB_TOKEN \
 
 FROM python:3.11.5-bookworm as runtime
 
+ENV PACKAGE_NAME='plugin_blueprint'
+
 WORKDIR /ca-plugin
 COPY --from=build /venv /ca-plugin/venv
 
-COPY plugin_blueprint plugin_blueprint
+COPY $PACKAGE_NAME $PACKAGE_NAME
 COPY resources resources
 COPY conf conf
 
-ENV PYTHONPATH "${PYTHONPATH}:/ca-plugin/plugin_blueprint"
+ENV PYTHONPATH "${PYTHONPATH}:/ca-plugin/${PACKAGE_NAME}"
 
 SHELL ["/bin/bash", "-c"]
 ENTRYPOINT source /ca-plugin/venv/bin/activate && \
-           python plugin_blueprint/plugin.py
+           python ${PACKAGE_NAME}/plugin.py
