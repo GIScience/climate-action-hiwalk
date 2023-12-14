@@ -10,7 +10,7 @@ from climatoology.store.object_store import MinioStorage
 from plugin_blueprint.operator_worker import OperatorBlueprint
 
 log_level = os.getenv('LOG_LEVEL', 'INFO')
-log_config = f'conf/logging.yaml'
+log_config = 'conf/logging.yaml'
 log = logging.getLogger(__name__)
 
 

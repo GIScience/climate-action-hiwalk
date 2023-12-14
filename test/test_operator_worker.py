@@ -16,7 +16,7 @@ def test_get_md_text(expected_compute_input):
 
 The Plugin Blueprint was run with the following parameters.
 You can check if your input was received in the correct manner.
-Be aware that if you did not specify a value, some of the optional parameters may use defaults. 
+Be aware that if you did not specify a value, some of the optional parameters may use defaults.
 
 ```json
 {
@@ -137,17 +137,17 @@ def test_vector_creator(expected_compute_input, ohsome_api):
                                          Color('red')],
                                'geometry': [shapely.Point(8.697234, 49.3940144),
                                             shapely.Point(12.39, 48.279999999999994)]},
-                         crs="EPSG:4326"),
+                         crs='EPSG:4326'),
         gpd.GeoDataFrame(data={'color': [Color('blue'),
                                          Color('red')],
                                'geometry': [line_blue,
                                             line_red]},
-                         crs="EPSG:4326"),
+                         crs='EPSG:4326'),
         gpd.GeoDataFrame(data={'color': [Color('blue'),
                                          Color('red')],
                                'geometry': [shapely.Polygon(line_blue),
                                             shapely.Polygon(line_red)]},
-                         crs="EPSG:4326")
+                         crs='EPSG:4326')
     )
     bp = OperatorBlueprint()
     received = bp.vector_creator(expected_compute_input.get_geom(), expected_compute_input.date_blueprint)

@@ -26,7 +26,7 @@ class ComputeInputBlueprint(BaseModel):
     # In case you need custom data types (e.g. a list of numbers), please contact the CA team.
 
     bool_blueprint: bool = Field(title='Boolean Input',
-                                 description="A required boolean parameter.",
+                                 description='A required boolean parameter.',
                                  examples=[True])
 
     int_blueprint: Optional[int] = Field(title='Integer Input',
@@ -82,11 +82,11 @@ class ComputeInputBlueprint(BaseModel):
               description='A required area of interest parameter.',
               validate_default=True,
               examples=[{
-                  "type": "Feature",
-                  "properties": {},
-                  "geometry": {
-                      "type": "MultiPolygon",
-                      "coordinates": [
+                  'type': 'Feature',
+                  'properties': {},
+                  'geometry': {
+                      'type': 'MultiPolygon',
+                      'coordinates': [
                           [
                               [
                                   [12.3, 48.22],

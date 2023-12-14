@@ -28,11 +28,11 @@ def expected_compute_input() -> ComputeInputBlueprint:
     # noinspection PyTypeChecker
     return ComputeInputBlueprint(bool_blueprint=True,
                                  aoi_blueprint={
-                                     "type": "Feature",
-                                     "properties": None,
-                                     "geometry": {
-                                         "type": "MultiPolygon",
-                                         "coordinates": [
+                                     'type': 'Feature',
+                                     'properties': None,
+                                     'geometry': {
+                                         'type': 'MultiPolygon',
+                                         'coordinates': [
                                              [
                                                  [
                                                      [12.3, 48.22],
@@ -49,58 +49,58 @@ def expected_compute_input() -> ComputeInputBlueprint:
 
 @pytest.fixture
 def expected_compute_output(compute_resources) -> List[Artifact]:
-    markdown_artifact = Artifact(name="A Text",
+    markdown_artifact = Artifact(name='A Text',
                                  modality=ArtifactModality.MARKDOWN,
                                  file_path=Path(compute_resources.computation_dir / 'markdown_blueprint.md'),
                                  summary='A JSON-block of the input parameters')
-    table_artifact = Artifact(name="Character Count",
+    table_artifact = Artifact(name='Character Count',
                               modality=ArtifactModality.TABLE,
                               file_path=Path(compute_resources.computation_dir / 'table_blueprint.csv'),
                               summary='The table lists the number of occurrences for each character in the input '
                                       'parameters.',
                               description='A table with two columns.')
-    image_artifact = Artifact(name="Image",
+    image_artifact = Artifact(name='Image',
                               modality=ArtifactModality.IMAGE,
                               file_path=Path(compute_resources.computation_dir / 'image_blueprint.png'),
                               summary='A nice image.',
                               description='The image is under CC0 license taken from [pexels](https://www.pexels.com/'
                                           'photo/person-holding-a-green-plant-1072824/).')
-    scatter_chart_artifact = Artifact(name="The Points",
+    scatter_chart_artifact = Artifact(name='The Points',
                                       modality=ArtifactModality.CHART,
                                       file_path=Path(
                                           compute_resources.computation_dir / 'scatter_chart_blueprint.json'),
                                       summary='A simple scatter plot.',
                                       description='Beautiful points.')
-    line_chart_artifact = Artifact(name="The Line",
+    line_chart_artifact = Artifact(name='The Line',
                                    modality=ArtifactModality.CHART,
                                    file_path=Path(compute_resources.computation_dir / 'line_chart_blueprint.json'),
                                    summary='A simple line of negative incline.')
-    bar_chart_artifact = Artifact(name="The Bars",
+    bar_chart_artifact = Artifact(name='The Bars',
                                   modality=ArtifactModality.CHART,
                                   file_path=Path(compute_resources.computation_dir / 'bar_chart_blueprint.json'),
                                   summary='A simple bar chart.')
-    pie_chart_artifact = Artifact(name="The Pie",
+    pie_chart_artifact = Artifact(name='The Pie',
                                   modality=ArtifactModality.CHART,
                                   file_path=Path(compute_resources.computation_dir / 'pie_chart_blueprint.json'),
                                   summary='A simple pie.')
-    point_artifact = Artifact(name="Points",
+    point_artifact = Artifact(name='Points',
                               modality=ArtifactModality.MAP_LAYER_GEOJSON,
                               file_path=Path(compute_resources.computation_dir / 'points_blueprint.geojson'),
                               summary='Schools in the area of interest including a dummy school in the center.',
                               description='The schools are taken from OSM at the date given in the input form.')
-    line_artifact = Artifact(name="Lines",
+    line_artifact = Artifact(name='Lines',
                              modality=ArtifactModality.MAP_LAYER_GEOJSON,
                              file_path=Path(compute_resources.computation_dir / 'lines_blueprint.geojson'),
                              summary='Buffers around schools in the area of interest including a dummy school in the '
                                      'center.',
                              description='The schools are taken from OSM at the date given in the input form.')
-    polygon_artifact = Artifact(name="Polygons",
+    polygon_artifact = Artifact(name='Polygons',
                                 modality=ArtifactModality.MAP_LAYER_GEOJSON,
                                 file_path=Path(compute_resources.computation_dir / 'polygons_blueprint.geojson'),
                                 summary='Schools in the area of interest including a dummy school in the center, '
                                         'buffered by ca. 100m.',
                                 description='The schools are taken from OSM at the date given in the input form.')
-    raster_artifact = Artifact(name="LULC Classification",
+    raster_artifact = Artifact(name='LULC Classification',
                                modality=ArtifactModality.MAP_LAYER_GEOTIFF,
                                file_path=Path(compute_resources.computation_dir / 'raster_blueprint.tiff'),
                                summary='A land-use and land-cover classification of a user defined area.',
