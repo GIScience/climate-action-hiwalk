@@ -5,7 +5,6 @@ import geopandas as gpd
 import logging
 import os
 import pandas as pd
-import random
 import shapely
 from PIL import Image
 from datetime import datetime
@@ -103,23 +102,12 @@ class OperatorBlueprint(Operator[ComputeInputBlueprint]):
     def markdown_artifact_creator(params: ComputeInputBlueprint, resources: ComputationResources) -> Artifact:
         """This method creates a simple Markdown artifact.
 
-        It transforms the input parameters to a Markdown json block.
-
         :param params: The input parameters.
         :param resources: The plugin computation resources.
         :return: A Markdown artifact.
         """
         log.debug("Creating dummy markdown artifact.")
-        text = f"""# Input Parameters
- 
-The Plugin Blueprint was run with the following parameters:
-
-```json
-{params.model_dump_json(indent=4)}
-```
-
-Thereby you can check if your input was received in the correct manner.
-"""
+        text = OperatorBlueprint.get_md_text(params)
 
         return create_markdown_artifact(text=text,
                                         name='A Text',
@@ -127,23 +115,15 @@ Thereby you can check if your input was received in the correct manner.
                                         resources=resources,
                                         filename="markdown_blueprint")
 
-    @classmethod
-    def table_artifact_creator(cls, params: ComputeInputBlueprint, resources: ComputationResources) -> Artifact:
+    @staticmethod
+    def table_artifact_creator(params: ComputeInputBlueprint, resources: ComputationResources) -> Artifact:
         """This method creates a simple table artifact.
-
-        It counts the number of occurrences of each character in the input parameters.
 
         :param params: The input parameters.
         :param resources: The plugin computation resources
         :return: A table artifact.
         """
-        log.debug("Creating dummy table artifact.")
-        param_str = params.model_dump_json()
-        data = [{'character': e, 'count': param_str.count(e)} for e in set(param_str)]
-
-        table = DataFrame.from_records(data, index='character')
-        table = table.sort_values(by=['count'],
-                                  ascending=False)
+        table = OperatorBlueprint.create_table(params.string_blueprint)
 
         return create_table_artifact(data=table,
                                      title="Character Count",
@@ -153,16 +133,16 @@ Thereby you can check if your input was received in the correct manner.
                                      resources=resources,
                                      filename='table_blueprint')
 
-    @classmethod
-    def image_artifact_creator(cls, resources: ComputationResources) -> Artifact:
-        """This method creates a simple image artifact pointing to the icon of the plugin.
+    @staticmethod
+    def image_artifact_creator(resources: ComputationResources) -> Artifact:
+        """This method creates a simple image artifact.
 
         :param resources: The plugin computation resources.
         :return: An image artifact.
         """
         log.debug("Creating dummy image artifact.")
-        with Image.open("resources/cc0_image.jpg") as icon:
-            image_artifact = create_image_artifact(image=icon,
+        with Image.open("resources/cc0_image.jpg") as image:
+            image_artifact = create_image_artifact(image=image,
                                                    title='Image',
                                                    caption='A nice image.',
                                                    description='The image is under CC0 license taken from [pexels]'
@@ -172,25 +152,17 @@ Thereby you can check if your input was received in the correct manner.
                                                    filename='image_blueprint')
         return image_artifact
 
-    @classmethod
-    def chart_artifact_creator(cls,
-                               incline: float,
+    @staticmethod
+    def chart_artifact_creator(incline: float,
                                resources: ComputationResources) -> Tuple[Artifact, Artifact, Artifact, Artifact]:
-        """This method creates a four simple chart artifacts.
-
-        The charts will be a scatter plot, a line chart, a bar chart and a pie chart.
+        """This method creates four simple chart artifacts.
 
         :param incline: Some linear incline of the data to make it more interactive.
         :param resources: The plugin computation resources.
         :return: Four graph artifacts.
         """
-        log.debug("Creating dummy chart artifacts.")
-        x = list(range(0, 100, 10))
-        y = [val * -abs(incline) + val * random.random() for val in x]
+        scatter_chart_data, line_chart_data, bar_chart_data, pie_chart_data = OperatorBlueprint.chart_creator(incline)
 
-        scatter_chart_data = Chart2dData(x=x,
-                                         y=y,
-                                         chart_type=ChartType.SCATTER)
         scatter_chart = create_chart_artifact(data=scatter_chart_data,
                                               title='The Points',
                                               caption='A simple scatter plot.',
@@ -198,29 +170,18 @@ Thereby you can check if your input was received in the correct manner.
                                               resources=resources,
                                               filename='scatter_chart_blueprint')
 
-        line_chart_data = Chart2dData(x=x,
-                                      y=y,
-                                      chart_type=ChartType.LINE)
         line_chart = create_chart_artifact(data=line_chart_data,
                                            title='The Line',
                                            caption='A simple line of negative incline.',
                                            resources=resources,
                                            filename='line_chart_blueprint')
 
-        bar_chart_data = Chart2dData(x=[str(val) for val in x],
-                                     y=y,
-                                     color=[Color(random.choices(range(256), k=3)) for _ in x],
-                                     chart_type=ChartType.BAR)
         bar_chart = create_chart_artifact(data=bar_chart_data,
                                           title='The Bars',
                                           caption='A simple bar chart.',
                                           resources=resources,
                                           filename='bar_chart_blueprint')
-        y = [abs(int(val)) for val in y]
-        pie_chart_data = Chart2dData(x=x,
-                                     y=y,
-                                     color=[Color(random.choices(range(256), k=3)) for _ in x],
-                                     chart_type=ChartType.PIE)
+
         pie_chart = create_chart_artifact(data=pie_chart_data,
                                           title='The Pie',
                                           caption='A simple pie.',
@@ -236,25 +197,12 @@ Thereby you can check if your input was received in the correct manner.
             -> Tuple[Artifact, Artifact, Artifact]:
         """Ohsome example usage for vector artifact creation.
 
-        First schools are requested as points from OSM. Then these points, a buffer and the buffer outline are
-        written as point, polygon and line artifacts.
-
         :param aoi: The area of interest
         :param target_date: The date for which the OSM data will be requested
         :param resources: The plugin computation resources.
         :return: Three vector artifacts.
         """
-        log.debug("Creating dummy vector artifact.")
-
-        ohsome_response = self.ohsome.elements.centroid.post(bpolys=aoi,
-                                                             time=target_date,
-                                                             filter='amenity=school')
-        elements = ohsome_response.as_dataframe()
-        elements['color'] = Color('blue')
-
-        # We add a default element in case the output is empty
-        waldo = gpd.GeoDataFrame({'color': [Color('red')], 'geometry': [aoi.centroid]}, crs='EPSG:4326')
-        points = pd.concat([elements, waldo])
+        points, lines, polygons = self.vector_creator(aoi, target_date)
 
         point_artifact = create_geojson_artifact(features=points.geometry,
                                                  layer_name='Points',
@@ -266,9 +214,15 @@ Thereby you can check if your input was received in the correct manner.
                                                  resources=resources,
                                                  filename='points_blueprint')
 
-        polygons = points.to_crs('ESRI:54012')
-        polygons.geometry = polygons.buffer(100)
-        polygons = polygons.to_crs(4326)
+        line_artifact = create_geojson_artifact(features=lines.geometry,
+                                                layer_name='Lines',
+                                                caption='Buffers around schools in the area of interest including '
+                                                        'a dummy school in the center.',
+                                                description='The schools are taken from OSM at the date given in the '
+                                                            'input form.',
+                                                color=lines.color.to_list(),
+                                                resources=resources,
+                                                filename='lines_blueprint')
 
         polygon_artifact = create_geojson_artifact(features=polygons.geometry,
                                                    layer_name='Polygons',
@@ -279,18 +233,6 @@ Thereby you can check if your input was received in the correct manner.
                                                    color=polygons.color.to_list(),
                                                    resources=resources,
                                                    filename='polygons_blueprint')
-        lines = polygons
-        lines.geometry = lines.boundary
-
-        line_artifact = create_geojson_artifact(features=lines.geometry,
-                                                layer_name='Lines',
-                                                caption='Buffers around schools in the area of interest including '
-                                                        'a dummy school in the center.',
-                                                description='The schools are taken from OSM at the date given in the '
-                                                            'input form.',
-                                                color=lines.color.to_list(),
-                                                resources=resources,
-                                                filename='lines_blueprint')
 
         return point_artifact, line_artifact, polygon_artifact
 
@@ -327,3 +269,101 @@ Thereby you can check if your input was received in the correct manner.
                                                filename='raster_blueprint')
 
         return artifact
+
+    @staticmethod
+    def get_md_text(params: ComputeInputBlueprint) -> str:
+        """Transform the input parameters to Markdown text with json blocks."""
+        return f"""# Input Parameters
+
+The Plugin Blueprint was run with the following parameters.
+You can check if your input was received in the correct manner.
+Be aware that if you did not specify a value, some of the optional parameters may use defaults. 
+
+```json
+{params.model_dump_json(indent=4, exclude={'aoi_blueprint'})}
+```
+
+In addition the following area of interest was sent:
+
+```json
+{params.aoi_blueprint.model_dump_json(indent=4)}
+```
+"""
+
+    @staticmethod
+    def create_table(text: str) -> pd.DataFrame:
+        """Counts the number of occurrences of each character in a string."""
+        log.debug("Creating dummy table artifact.")
+        data = [{'character': e, 'count': text.lower().count(e)} for e in set(text.lower())]
+        table = DataFrame.from_records(data, index='character')
+        table = table.sort_values(by=['count', 'character'],
+                                  ascending=[False, True])
+        return table
+
+    @staticmethod
+    def chart_creator(incline: float) -> Tuple[Chart2dData, Chart2dData, Chart2dData, Chart2dData]:
+        """Creates a scatter plot, a line chart, a bar chart and a pie chart."""
+        log.debug("Creating dummy chart artifacts.")
+
+        x = list(range(0, 100, 10))
+        y = [val * -abs(incline) for val in x]
+
+        scatter_chart_data = Chart2dData(x=x,
+                                         y=y,
+                                         chart_type=ChartType.SCATTER)
+
+        line_chart_data = Chart2dData(x=x,
+                                      y=y,
+                                      chart_type=ChartType.LINE)
+
+        bar_chart_data = Chart2dData(x=[str(val) for val in x],
+                                     y=y,
+                                     chart_type=ChartType.BAR)
+
+        y = [abs(int(val)) for val in y]
+        pie_chart_data = Chart2dData(x=x,
+                                     y=y,
+                                     color=[Color('#a6cee3'),
+                                            Color('#1f78b4'),
+                                            Color('#b2df8a'),
+                                            Color('#33a02c'),
+                                            Color('#fb9a99'),
+                                            Color('#e31a1c'),
+                                            Color('#fdbf6f'),
+                                            Color('#ff7f00'),
+                                            Color('#cab2d6'),
+                                            Color('#6a3d9a')],
+                                     chart_type=ChartType.PIE)
+
+        return scatter_chart_data, line_chart_data, bar_chart_data, pie_chart_data
+
+    def vector_creator(self,
+                       aoi: shapely.MultiPolygon,
+                       target_date: datetime.date) -> Tuple[gpd.GeoDataFrame, gpd.GeoDataFrame, gpd.GeoDataFrame]:
+        """ Schools from OSM.
+
+        First schools are requested as points from OSM. Then these points, a buffer and the buffer outline are
+        returned as point, line and polygon GeoDataFrame."""
+        log.debug("Creating dummy vector artifact.")
+        ohsome_response = self.ohsome.elements.centroid.post(bpolys=aoi,
+                                                             time=target_date,
+                                                             filter='amenity=school')
+        elements = ohsome_response.as_dataframe()
+        elements['color'] = Color('blue')
+
+        # We add a default element in case the output is empty
+        waldo = gpd.GeoDataFrame({'color': [Color('red')], 'geometry': [aoi.centroid]}, crs='EPSG:4326')
+
+        points = gpd.GeoDataFrame(pd.concat([elements, waldo]))
+        points = points.reset_index(drop=True)[['color', 'geometry']]
+
+        polygons = points.to_crs('ESRI:54012')
+        polygons.geometry = polygons.buffer(100,
+                                            resolution=2,
+                                            cap_style=3)
+        polygons = polygons.to_crs(4326)
+
+        lines = polygons.copy()
+        lines.geometry = lines.boundary
+
+        return points, lines, polygons

@@ -65,8 +65,8 @@ You will need a clear _definition and description_ of your plugin as well as an 
 You can of course adapt this later, but you should have a rough idea from the start.
 
 Ensure all tests are passing on the unmodified repository.
-Then open [test_plugin.py](test/test_plugin.py).
-Adapt the content of the three `pytest.fixture` functions to meet your expectations:
+Then open [conftest.py](test/conftest.py).
+Adapt the content of the following three `pytest.fixture` functions to meet your expectations:
 
  1. The `expected_info_output` fixture is quite easy to write:
 simply declare an `Info` element.
@@ -84,9 +84,19 @@ Define it in the test and add the required file to the repository.
 
 That's it, the tests should fail, and you can start coding towards making them succeed.
 
+You will notice that not only the tests in [`test_plugin.py`](test/test_plugin.py) failed, but also in [`test_operator_worker.py`](test/test_operator_worker.py).
+Testing the plugin only asserts the functionality within the architecture.
+It does not assert the intended functionality of the operator.
+The Blueprint creates an example output for each supported output type.
+Each of the data creation methods is also thoroughly tested.
+We expect you do the same for your code.
+Yet, the provided tests will only be of limited use for you.
+We therefore suggest you replace them along with the current operator code (see below).
+Start simple by coding a single operator method and a single operator test.
+
 If you use external services, they should be mocked.
 This will, among other benefits, reduce the resource consumption for testing.
-You can have a look at [conftest.py](test/conftest.py) for some examples how we mocked external APIs but don't get overwhelmed.
+You can have a look at the other fixtures in [conftest.py](test/conftest.py) for some examples how we mocked external APIs but don't get overwhelmed.
 The CA team can help you implement these setups, when the need arises.
 
 But let's create some code first:
