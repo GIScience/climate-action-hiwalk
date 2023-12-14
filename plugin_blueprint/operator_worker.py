@@ -94,7 +94,7 @@ class OperatorBlueprint(Operator[ComputeInputBlueprint]):
                      *chart_artifacts,
                      *vector_artifacts,
                      raster_artifact]
-        log.debug(f"Returning {len(artifacts)} artifacts.")
+        log.debug(f'Returning {len(artifacts)} artifacts.')
 
         return artifacts
 
@@ -106,14 +106,14 @@ class OperatorBlueprint(Operator[ComputeInputBlueprint]):
         :param resources: The plugin computation resources.
         :return: A Markdown artifact.
         """
-        log.debug("Creating dummy markdown artifact.")
+        log.debug('Creating dummy markdown artifact.')
         text = OperatorBlueprint.get_md_text(params)
 
         return create_markdown_artifact(text=text,
                                         name='A Text',
-                                        tl_dr="A JSON-block of the input parameters",
+                                        tl_dr='A JSON-block of the input parameters',
                                         resources=resources,
-                                        filename="markdown_blueprint")
+                                        filename='markdown_blueprint')
 
     @staticmethod
     def table_artifact_creator(params: ComputeInputBlueprint, resources: ComputationResources) -> Artifact:
@@ -126,9 +126,9 @@ class OperatorBlueprint(Operator[ComputeInputBlueprint]):
         table = OperatorBlueprint.create_table(params.string_blueprint)
 
         return create_table_artifact(data=table,
-                                     title="Character Count",
-                                     caption="The table lists the number of occurrences for each character in the "
-                                             "input parameters.",
+                                     title='Character Count',
+                                     caption='The table lists the number of occurrences for each character in the '
+                                             'input parameters.',
                                      description='A table with two columns.',
                                      resources=resources,
                                      filename='table_blueprint')
@@ -140,8 +140,8 @@ class OperatorBlueprint(Operator[ComputeInputBlueprint]):
         :param resources: The plugin computation resources.
         :return: An image artifact.
         """
-        log.debug("Creating dummy image artifact.")
-        with Image.open("resources/cc0_image.jpg") as image:
+        log.debug('Creating dummy image artifact.')
+        with Image.open('resources/cc0_image.jpg') as image:
             image_artifact = create_image_artifact(image=image,
                                                    title='Image',
                                                    caption='A nice image.',
@@ -250,7 +250,7 @@ class OperatorBlueprint(Operator[ComputeInputBlueprint]):
         :param resources: The plugin computation resources.
         :return: A raster artifact.
         """
-        log.debug("Creating dummy raster artifact.")
+        log.debug('Creating dummy raster artifact.')
         # Be aware that there are more parameters to the LULCWorkUnit which affect the configuration of the service.
         # These can be handed to the user for adaption via the input parameters.
         aoi = LULCWorkUnit(area_coords=aoi.bounds,
@@ -277,7 +277,7 @@ class OperatorBlueprint(Operator[ComputeInputBlueprint]):
 
 The Plugin Blueprint was run with the following parameters.
 You can check if your input was received in the correct manner.
-Be aware that if you did not specify a value, some of the optional parameters may use defaults. 
+Be aware that if you did not specify a value, some of the optional parameters may use defaults.
 
 ```json
 {params.model_dump_json(indent=4, exclude={'aoi_blueprint'})}
@@ -293,7 +293,7 @@ In addition the following area of interest was sent:
     @staticmethod
     def create_table(text: str) -> pd.DataFrame:
         """Counts the number of occurrences of each character in a string."""
-        log.debug("Creating dummy table artifact.")
+        log.debug('Creating dummy table artifact.')
         data = [{'character': e, 'count': text.lower().count(e)} for e in set(text.lower())]
         table = DataFrame.from_records(data, index='character')
         table = table.sort_values(by=['count', 'character'],
@@ -303,7 +303,7 @@ In addition the following area of interest was sent:
     @staticmethod
     def chart_creator(incline: float) -> Tuple[Chart2dData, Chart2dData, Chart2dData, Chart2dData]:
         """Creates a scatter plot, a line chart, a bar chart and a pie chart."""
-        log.debug("Creating dummy chart artifacts.")
+        log.debug('Creating dummy chart artifacts.')
 
         x = list(range(0, 100, 10))
         y = [val * -abs(incline) for val in x]
@@ -344,7 +344,7 @@ In addition the following area of interest was sent:
 
         First schools are requested as points from OSM. Then these points, a buffer and the buffer outline are
         returned as point, line and polygon GeoDataFrame."""
-        log.debug("Creating dummy vector artifact.")
+        log.debug('Creating dummy vector artifact.')
         ohsome_response = self.ohsome.elements.centroid.post(bpolys=aoi,
                                                              time=target_date,
                                                              filter='amenity=school')

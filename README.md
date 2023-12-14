@@ -39,6 +39,13 @@ Using the environment variable `LOG_Level` you can adjust the amount of log mess
 Please make sure to use logging throughout your plugin.
 This will make debugging easier at a later stage.
 
+### Linting
+
+It is important that the code created by the different plugin developers adheres to a certain standard.
+A linter can help to assert such standards.
+Please activate it by running `pre-commit install`.
+It will now be automatically run before each commit and warn you about any violations.
+
 ## Start Coding
 
 We have seperated the code into multiple files by their functionality.
@@ -80,7 +87,7 @@ It is better to update it, once you have made the first changes to the actual wo
 
  3. The `expected_compute_output` will probably grow over time.
 But you should define a first output result you would like to create through your plugin.
-Define it in the test and add the required file to the repository. 
+Define it in the test and add the required file to the repository.
 
 That's it, the tests should fail, and you can start coding towards making them succeed.
 
@@ -108,7 +115,7 @@ We have to replace names at multiple level.
 Let's start with refactoring the name of the package ([plugin_blueprint/](plugin_blueprint/)).
 If you don't want to get creative you can simply mimic the repository name.
 This directory is also copied to the Docker container we use for deployment.
-Therefore, you have to change the name also in the [Dockerfile](Dockerfile) and the [Dockerfile.Kaniko](Dockerfile.Kaniko). 
+Therefore, you have to change the name also in the [Dockerfile](Dockerfile) and the [Dockerfile.Kaniko](Dockerfile.Kaniko).
 
 Next there are two classes that should be name-related to your plugin:
 The `ComputeInputBlueprint` and the `OperatorBlueprint` in [plugin.py](plugin_blueprint/plugin.py).
@@ -157,7 +164,7 @@ After your plugin is ready for production, the CA team will create a Docker imag
 
 ## Docker (for admins and interested devs)
 
-If the infrastructure is reachable you can copy [.env_template](.env_template) to `.env` and then run 
+If the infrastructure is reachable you can copy [.env_template](.env_template) to `.env` and then run
 
 ```shell
 DOCKER_BUILDKIT=1 docker build --secret id=CI_JOB_TOKEN . --tag heigit/{plugin-name}:devel
