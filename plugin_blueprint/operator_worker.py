@@ -3,7 +3,6 @@
 
 import geopandas as gpd
 import logging
-import os
 import pandas as pd
 import shapely
 from PIL import Image
@@ -28,17 +27,20 @@ class OperatorBlueprint(Operator[ComputeInputBlueprint]):
     # This is your working-class hero.
     # See all the details below.
 
-    def __init__(self):
+    def __init__(self,
+                 lulc_utility_host: str,
+                 lulc_utility_port: int,
+                 lulc_utility_root_url: str):
         # Create a base connection for the LULC classification utility.
         # Remove it, if you don't plan on using that utility.
-        self.lulc_generator = LulcUtilityUtility(host=os.environ.get('LULC_HOST'),
-                                                 port=int(os.environ.get('LULC_PORT')),
-                                                 root_url=os.environ.get('LULC_ROOT_URL'))
+        self.lulc_generator = LulcUtilityUtility(host=lulc_utility_host,
+                                                 port=lulc_utility_port,
+                                                 root_url=lulc_utility_root_url)
 
         # Here is an example for another Utility you can use
         self.ohsome = OhsomeClient(user_agent='CA Plugin Blueprint')
 
-        log.debug(f"Initialised operator with lulc_generator {os.environ.get('LULC_HOST')} and ohsome client")
+        log.debug(f'Initialised operator with lulc_generator {lulc_utility_host} and ohsome client')
 
     def info(self) -> Info:
         info = Info(name='Plugin Blueprint',

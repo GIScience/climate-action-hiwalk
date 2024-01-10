@@ -1,7 +1,4 @@
-from unittest import mock
-
 import geopandas as gpd
-import os
 import pandas as pd
 import shapely
 from geopandas import testing
@@ -120,8 +117,7 @@ def test_chart_creator():
     assert received == expected
 
 
-@mock.patch.dict(os.environ, {'LULC_HOST': 'localhost', 'LULC_PORT': '80', 'LULC_ROOT_URL': '/api/lulc/'}, clear=True)
-def test_vector_creator(expected_compute_input, ohsome_api):
+def test_vector_creator(settings, expected_compute_input, ohsome_api):
     line_blue = shapely.LineString([[8.698543628011903, 49.39500732240416],
                                     [8.698421796496781, 49.3930214907138],
                                     [8.695924392376607, 49.3930214907138],
@@ -149,7 +145,9 @@ def test_vector_creator(expected_compute_input, ohsome_api):
                                             shapely.Polygon(line_red)]},
                          crs='EPSG:4326')
     )
-    bp = OperatorBlueprint()
+    bp = OperatorBlueprint(settings.lulc_host,
+                           settings.lulc_port,
+                           settings.lulc_root_url)
     received = bp.vector_creator(expected_compute_input.get_geom(), expected_compute_input.date_blueprint)
     for expected_gdf, received_gdf in zip(expected, received):
         testing.assert_geodataframe_equal(received_gdf,
