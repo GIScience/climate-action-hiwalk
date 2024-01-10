@@ -28,16 +28,15 @@ Run `mamba env create -f environment.yaml`.
 You are now ready to code within your mamba environment.
 
 When managing your dependencies, you should keep _environment.yaml_ up to date.
-We suggest you add dependencies manually to the file, but you can also run `mamba env expoert > envornment.yaml` to store the full recursive set of dependencies.
+We suggest you add dependencies manually to the file, but you can also run `mamba env export > enviornment.yaml` to store the full recursive set of dependencies.
 
 > There are two separate environment files defined.
-> The `environment_deploy.yaml` should always mirror the `environment.yaml` and is used only by the CI/CD pipeline.
+> The `environment_deploy.yaml` should always mirror the `environment.yaml` (except for the env-name and the climatoology dependency source declaration) and is used only by the CI/CD pipeline.
 
-### Logging
+### Testing
 
-Using the environment variable `LOG_Level` you can adjust the amount of log messages produced by the plugin.
-Please make sure to use logging throughout your plugin.
-This will make debugging easier at a later stage.
+We use [pytest](pytest.org) as testing engine.
+Ensure all tests are passing on the unmodified repository by running `pytest`.
 
 ### Linting
 
@@ -46,7 +45,30 @@ A linter can help to assert such standards.
 Please activate it by running `pre-commit install`.
 It will now be automatically run before each commit and warn you about any violations.
 
+### Logging
+
+Using the environment variable `LOG_Level` you can adjust the amount of log messages produced by the plugin.
+Please make sure to use logging throughout your plugin.
+This will make debugging easier at a later stage.
+
 ## Start Coding
+
+### Names
+
+We have to replace names at multiple level.
+
+Let's start with refactoring the name of the package ([plugin_blueprint/](plugin_blueprint/)).
+If you don't want to get creative you can simply mimic the repository name.
+This directory is also copied to the Docker container we use for deployment.
+Therefore, you have to change the name also in the [Dockerfile](Dockerfile) and the [Dockerfile.Kaniko](Dockerfile.Kaniko).
+
+Next there are two classes that should be name-related to your plugin:
+The `ComputeInputBlueprint` and the `OperatorBlueprint` in [plugin.py](plugin_blueprint/plugin.py).
+Refactor-rename these classnames with reasonable names related to your idea.
+
+**Make these changes your first merge request** and add your CA-team contact as reveiwer.
+
+### Functionality
 
 We have seperated the code into multiple files by their functionality.
 Three files are relevant for you:
@@ -57,7 +79,7 @@ Three files are relevant for you:
 
 We will go through these files step by step.
 
-### Tests in [test_plugin.py](test/test_plugin.py)
+#### Tests in [test_plugin.py](test/test_plugin.py)
 
 We highly encourage [test driven development](https://en.wikipedia.org/wiki/Test-driven_development).
 In fact, we require two predefined tests to successfully run on your plugin.
@@ -71,7 +93,6 @@ Therefore, before you start coding, please take some time to sketch the outline 
 You will need a clear _definition and description_ of your plugin as well as an idea of the required _input_ and the produced _output_.
 You can of course adapt this later, but you should have a rough idea from the start.
 
-Ensure all tests are passing on the unmodified repository.
 Then open [conftest.py](test/conftest.py).
 Adapt the content of the following three `pytest.fixture` functions to meet your expectations:
 
@@ -108,31 +129,18 @@ The CA team can help you implement these setups, when the need arises.
 
 But let's create some code first:
 
-### Names
+#### Operator in [operator_worker.py](plugin_blueprint/operator_worker.py)
 
-We have to replace names at multiple level.
-
-Let's start with refactoring the name of the package ([plugin_blueprint/](plugin_blueprint/)).
-If you don't want to get creative you can simply mimic the repository name.
-This directory is also copied to the Docker container we use for deployment.
-Therefore, you have to change the name also in the [Dockerfile](Dockerfile) and the [Dockerfile.Kaniko](Dockerfile.Kaniko).
-
-Next there are two classes that should be name-related to your plugin:
-The `ComputeInputBlueprint` and the `OperatorBlueprint` in [plugin.py](plugin_blueprint/plugin.py).
-Refactor-rename these classnames with reasonable names related to your idea.
-
-### Operator in [operator_worker.py](plugin_blueprint/operator_worker.py)
-
-#### Info Function
+##### Info Function
 
 Now lets make the tests succeed.
 For the info function this is very simple.
 Just copy the test artifact declaration over to the plugin file.
 Done.
 
-#### Compute Function
+##### Compute Function
 
-Now comes the main coding part.
+Now, *finally*, comes the main coding part.
 This function is where you can explode your genius and create ohsome results.
 You are free to create additional classes or methods as needed or write a single script just as you would in jupyter.
 
@@ -141,13 +149,8 @@ In addition, you can use the provided utilities of the CA team.
 A list of utilities can be found in the [climatoology](https://gitlab.gistools.geog.uni-heidelberg.de/climate-action/climatoology) repository, but we also provide examples for their usage in this repository.
 
 The only requirement is to return a (potentially empty) list of Artifacts i.e. results.
-Note that artifacts have a `file_path` attribute which takes a path to a file.
-You therefore have to save all your (potential) results on disk and then pass that filename to the Artifact.
-The plugin will then read the file and send it to the file store, but you don't have to worry about that.
-Yet, your file should be written under a specific path in the system. The input parameter `resources` provides this path via the `resources.computation_dir` attribute.
-Write all your output to that directory.
 
-### Input parameters in [input.py](plugin_blueprint/input.py)
+#### Input parameters in [input.py](plugin_blueprint/input.py)
 
 Keep in mind to update the input parameter class and the tests while you are coding away.
 
