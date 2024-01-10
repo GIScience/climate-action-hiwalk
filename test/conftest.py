@@ -9,6 +9,7 @@ from climatoology.base.artifact import ArtifactModality
 from climatoology.base.computation import ComputationScope
 from climatoology.base.operator import Info, Artifact, Concern
 from plugin_blueprint.input import ComputeInputBlueprint
+from plugin_blueprint.plugin import Settings
 
 
 @pytest.fixture
@@ -123,6 +124,22 @@ def expected_compute_output(compute_resources) -> List[Artifact]:
 def compute_resources():
     with ComputationScope(uuid.uuid4()) as resources:
         yield resources
+
+
+@pytest.fixture
+def settings():
+    return Settings(minio_host='localhost',
+                    minio_port=80,
+                    minio_access_key='access_key',
+                    minio_secret_key='secret_key',
+                    minio_bucket='bucket',
+                    rabbitmq_host='localhost',
+                    rabbitmq_port=80,
+                    rabbitmq_user='user',
+                    rabbitmq_password='password',
+                    lulc_host='localhost',
+                    lulc_port=80,
+                    lulc_root_url='/api/lulc/')
 
 
 @pytest.fixture
