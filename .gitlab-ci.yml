@@ -1,26 +1,24 @@
 unit_tests:
   stage: test
   image:
-    name: condaforge/mambaforge:23.1.0-4
+    name: python:3.11.5
   variables:
-    CONDA_PKGS_DIRS: "$CI_PROJECT_DIR/.conda-pkgs-cache/"
-    PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
     PRE_COMMIT_HOME: "$CI_PROJECT_DIR/.cache/pre-commit"
   cache:
     key: test-cache
     paths:
       - $PRE_COMMIT_HOME
-      - $CONDA_PKGS_DIRS/*.conda
-      - $CONDA_PKGS_DIRS/*.tar.bz2
-      - $CONDA_PKGS_DIRS/urls*
-      - $CONDA_PKGS_DIRS/cache
-      - $PIP_CACHE_DIR
+      - .venv
+  before_script:
+    - git config --global url."https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.gistools.geog.uni-heidelberg.de".insteadOf "ssh://git@gitlab.gistools.geog.uni-heidelberg.de:2022" && \
+    - pip install poetry
+    - poetry config virtualenvs.in-project true
+    - poetry install
+    - source `poetry env info --path`/bin/activate
   script:
-    - mamba env create -f environment_deploy.yaml -v
-    - mamba init bash
-    - source ~/.bashrc
-    - conda run -n ca-plugin pre-commit run --all-files
-    - conda run -n ca-plugin pytest --ignore=$CONDA_PKGS_DIRS .
+    - poetry run pre-commit run --all-files
+    - poetry run pytest
+
 
 docker_build_deploy:
   stage: deploy
