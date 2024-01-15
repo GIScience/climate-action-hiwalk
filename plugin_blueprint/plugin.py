@@ -20,7 +20,7 @@ class Settings(BaseSettings):
     minio_access_key: str
     minio_secret_key: str
     minio_bucket: str
-    minio_secure: bool = True
+    minio_secure: bool = False
 
     rabbitmq_host: str
     rabbitmq_port: int

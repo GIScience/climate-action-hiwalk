@@ -18,31 +18,32 @@ Yet, we highly encourage you to create smaller intermediate MRs for review!
 
 ### Python Environment
 
-We use [mamba](https://mamba.readthedocs.io/en/latest/) (i.e. conda) as an environment management system.
+We use [poetry](https://python-poetry.org) as an environment management system.
 Make sure you have it installed.
 Apart from some base dependencies, there is only one fixed dependency for you, which is the [climatoology](https://gitlab.gistools.geog.uni-heidelberg.de/climate-action/climatoology) package that holds all the infrastructure functionality.
 Make sure you have read-access to the climatoology repository (i.e. you can clone it).
 
-Head over to the [environment.yaml](environment.yaml) and replace the environment name `ca-plugin-blueprint` with your plugin name.
-Run `mamba env create -f environment.yaml`.
-You are now ready to code within your mamba environment.
+Head over to the [pyproject.toml](pyproject.toml) and replace the name description and author attributes with your plugins information.
+If you don't want to get creative you can simply mimic the repository name for you project name.
 
-When managing your dependencies, you should keep _environment.yaml_ up to date.
-We suggest you add dependencies manually to the file, but you can also run `mamba env export > enviornment.yaml` to store the full recursive set of dependencies.
+Now run
 
-> There are two separate environment files defined.
-> The `environment_deploy.yaml` should always mirror the `environment.yaml` (except for the env-name and the climatoology dependency source declaration) and is used only by the CI/CD pipeline.
+```shell
+poetry install --no-root
+```
+
+and you are ready to code within your poetry environment.
 
 ### Testing
 
 We use [pytest](pytest.org) as testing engine.
-Ensure all tests are passing on the unmodified repository by running `pytest`.
+Ensure all tests are passing on the unmodified repository by running `poetry run pytest`.
 
 ### Linting
 
 It is important that the code created by the different plugin developers adheres to a certain standard.
 A linter can help to assert such standards.
-Please activate it by running `pre-commit install`.
+Please activate it by running `poetry run pre-commit install`.
 It will now be automatically run before each commit and warn you about any violations.
 
 ### Logging
@@ -57,8 +58,8 @@ This will make debugging easier at a later stage.
 
 We have to replace names at multiple level.
 
-Let's start with refactoring the name of the package ([plugin_blueprint/](plugin_blueprint/)).
-If you don't want to get creative you can simply mimic the repository name.
+Let's start with refactoring the name of the package ([plugin_blueprint/](plugin_blueprint)).
+Rename it to the project name you have defined above in your `pyproject.toml`.
 This directory is also copied to the Docker container we use for deployment.
 Therefore, you have to change the name also in the [Dockerfile](Dockerfile) and the [Dockerfile.Kaniko](Dockerfile.Kaniko).
 
@@ -66,7 +67,7 @@ Next there are two classes that should be name-related to your plugin:
 The `ComputeInputBlueprint` and the `OperatorBlueprint` in [plugin.py](plugin_blueprint/plugin.py).
 Refactor-rename these classnames with reasonable names related to your idea.
 
-**Make these changes your first merge request** and add your CA-team contact as reveiwer.
+**Make these changes your first merge request** and add your CA-team contact as reviewer.
 
 ### Functionality
 
@@ -160,10 +161,12 @@ If you are satisfied with the results and the tests pass, you have succeeded!
 Please create a merge request to `main` and ask the CA team for a review.
 
 Unfortunately, seeing your plugin in production takes a bit more setup.
-You will have to set up the [infrastructure](https://gitlab.gistools.geog.uni-heidelberg.de/climate-action/infrastructure) and set a range of environment variables.
-But don't worry. Its documentation is just as extensive as this one.
-
 After your plugin is ready for production, the CA team will create a Docker image and deploy your code to the infrastructure.
+
+If you want to run it locally before that, you will have to set up the [infrastructure](https://gitlab.gistools.geog.uni-heidelberg.de/climate-action/infrastructure) and set a range of environment variables.
+Then you could run `poetry run python {plugin-name}/plugin.py`
+But we suggest you create trust in your code through unit tests and strive for a first minimal demo as quick as possible.
+After that you will be able to see your plugin live on our website.
 
 ## Docker (for admins and interested devs)
 
