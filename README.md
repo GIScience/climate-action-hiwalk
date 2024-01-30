@@ -136,7 +136,7 @@ But let's create some code first:
 
 Now lets make the tests succeed.
 For the info function this is very simple.
-Just copy the test artifact declaration over to the plugin file.
+Just copy the test info declaration over to the plugin file.
 Done.
 
 ##### Compute Function

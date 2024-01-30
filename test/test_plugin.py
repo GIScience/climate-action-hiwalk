@@ -1,7 +1,7 @@
 from plugin_blueprint.operator_worker import OperatorBlueprint
 
 
-def test_plugin_info_request(settings, expected_info_output):
+def test_plugin_info_request(settings, expected_info_output, lulc_utility):
     operator = OperatorBlueprint(settings.lulc_host,
                                  settings.lulc_port,
                                  settings.lulc_root_url)
