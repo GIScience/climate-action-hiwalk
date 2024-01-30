@@ -2,12 +2,12 @@
 name = "plugin-blueprint"
 version = "0.0.1"
 description = "This is a blueprint for Climate Action plugins. It servers as a basis for new plugins but also is fully functional plugin itself that exhibits the full potential of the plugin architecture."
-authors = ["Moritz Schott <moritz.schott@heigit.org>", "Maceij Adamiak <maciej.adamiak@heigit.org>"]
+authors = ["Moritz Schott <moritz.schott@heigit.org>", "Maciej Adamiak <maciej.adamiak@heigit.org>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "~3.11.5"
-climatoology = {git = "ssh://git@gitlab.gistools.geog.uni-heidelberg.de:2022/climate-action/climatoology.git", rev = "v2.6.4"}
+climatoology = {git = "ssh://git@gitlab.gistools.geog.uni-heidelberg.de:2022/climate-action/climatoology.git", rev = "3.0.1"}
 pydantic = "^2.5.3"
 pydantic-settings = "^2.1.0"
 geojson-pydantic = "^1.0.1"

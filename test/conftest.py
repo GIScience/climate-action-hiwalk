@@ -1,13 +1,14 @@
-import pytest
-import responses
 import uuid
 from pathlib import Path
-from semver import Version
 from typing import List
 
+import pytest
+import responses
 from climatoology.base.artifact import ArtifactModality
 from climatoology.base.computation import ComputationScope
-from climatoology.base.operator import Info, Artifact, Concern
+from climatoology.base.operator import Info, _Artifact, Concern, PluginAuthor
+from semver import Version
+
 from plugin_blueprint.input import ComputeInputBlueprint
 from plugin_blueprint.plugin import Settings
 
@@ -17,6 +18,12 @@ def expected_info_output() -> Info:
     # noinspection PyTypeChecker
     return Info(name='Plugin Blueprint',
                 icon=Path('resources/icon.jpeg'),
+                authors=[PluginAuthor(name='Moritz Schott',
+                                      affiliation='HeiGIT gGmbH',
+                                      website='https://heigit.org/heigit-team/'),
+                         PluginAuthor(name='Maciej Adamiak',
+                                      affiliation='Consultant at HeiGIT gGmbH',
+                                      website='https://heigit.org/heigit-team/')],
                 version=Version(0, 0, 1),
                 concerns=[Concern.CLIMATE_ACTION__GHG_EMISSION],
                 purpose='This Plugin serves no purpose besides being a blueprint for real plugins.',
@@ -49,63 +56,63 @@ def expected_compute_input() -> ComputeInputBlueprint:
 
 
 @pytest.fixture
-def expected_compute_output(compute_resources) -> List[Artifact]:
-    markdown_artifact = Artifact(name='A Text',
-                                 modality=ArtifactModality.MARKDOWN,
-                                 file_path=Path(compute_resources.computation_dir / 'markdown_blueprint.md'),
-                                 summary='A JSON-block of the input parameters')
-    table_artifact = Artifact(name='Character Count',
-                              modality=ArtifactModality.TABLE,
-                              file_path=Path(compute_resources.computation_dir / 'table_blueprint.csv'),
-                              summary='The table lists the number of occurrences for each character in the input '
-                                      'parameters.',
-                              description='A table with two columns.')
-    image_artifact = Artifact(name='Image',
-                              modality=ArtifactModality.IMAGE,
-                              file_path=Path(compute_resources.computation_dir / 'image_blueprint.png'),
-                              summary='A nice image.',
-                              description='The image is under CC0 license taken from [pexels](https://www.pexels.com/'
-                                          'photo/person-holding-a-green-plant-1072824/).')
-    scatter_chart_artifact = Artifact(name='The Points',
-                                      modality=ArtifactModality.CHART,
-                                      file_path=Path(
-                                          compute_resources.computation_dir / 'scatter_chart_blueprint.json'),
-                                      summary='A simple scatter plot.',
-                                      description='Beautiful points.')
-    line_chart_artifact = Artifact(name='The Line',
+def expected_compute_output(compute_resources) -> List[_Artifact]:
+    markdown_artifact = _Artifact(name='A Text',
+                                  modality=ArtifactModality.MARKDOWN,
+                                  file_path=Path(compute_resources.computation_dir / 'markdown_blueprint.md'),
+                                  summary='A JSON-block of the input parameters')
+    table_artifact = _Artifact(name='Character Count',
+                               modality=ArtifactModality.TABLE,
+                               file_path=Path(compute_resources.computation_dir / 'table_blueprint.csv'),
+                               summary='The table lists the number of occurrences for each character in the input '
+                                       'parameters.',
+                               description='A table with two columns.')
+    image_artifact = _Artifact(name='Image',
+                               modality=ArtifactModality.IMAGE,
+                               file_path=Path(compute_resources.computation_dir / 'image_blueprint.png'),
+                               summary='A nice image.',
+                               description='The image is under CC0 license taken from [pexels](https://www.pexels.com/'
+                                           'photo/person-holding-a-green-plant-1072824/).')
+    scatter_chart_artifact = _Artifact(name='The Points',
+                                       modality=ArtifactModality.CHART,
+                                       file_path=Path(
+                                           compute_resources.computation_dir / 'scatter_chart_blueprint.json'),
+                                       summary='A simple scatter plot.',
+                                       description='Beautiful points.')
+    line_chart_artifact = _Artifact(name='The Line',
+                                    modality=ArtifactModality.CHART,
+                                    file_path=Path(compute_resources.computation_dir / 'line_chart_blueprint.json'),
+                                    summary='A simple line of negative incline.')
+    bar_chart_artifact = _Artifact(name='The Bars',
                                    modality=ArtifactModality.CHART,
-                                   file_path=Path(compute_resources.computation_dir / 'line_chart_blueprint.json'),
-                                   summary='A simple line of negative incline.')
-    bar_chart_artifact = Artifact(name='The Bars',
-                                  modality=ArtifactModality.CHART,
-                                  file_path=Path(compute_resources.computation_dir / 'bar_chart_blueprint.json'),
-                                  summary='A simple bar chart.')
-    pie_chart_artifact = Artifact(name='The Pie',
-                                  modality=ArtifactModality.CHART,
-                                  file_path=Path(compute_resources.computation_dir / 'pie_chart_blueprint.json'),
-                                  summary='A simple pie.')
-    point_artifact = Artifact(name='Points',
+                                   file_path=Path(compute_resources.computation_dir / 'bar_chart_blueprint.json'),
+                                   summary='A simple bar chart.')
+    pie_chart_artifact = _Artifact(name='The Pie',
+                                   modality=ArtifactModality.CHART,
+                                   file_path=Path(compute_resources.computation_dir / 'pie_chart_blueprint.json'),
+                                   summary='A simple pie.')
+    point_artifact = _Artifact(name='Points',
+                               modality=ArtifactModality.MAP_LAYER_GEOJSON,
+                               file_path=Path(compute_resources.computation_dir / 'points_blueprint.geojson'),
+                               summary='Schools in the area of interest including a dummy school in the center.',
+                               description='The schools are taken from OSM at the date given in the input form.')
+    line_artifact = _Artifact(name='Lines',
                               modality=ArtifactModality.MAP_LAYER_GEOJSON,
-                              file_path=Path(compute_resources.computation_dir / 'points_blueprint.geojson'),
-                              summary='Schools in the area of interest including a dummy school in the center.',
+                              file_path=Path(compute_resources.computation_dir / 'lines_blueprint.geojson'),
+                              summary='Buffers around schools in the area of interest including a dummy school in the '
+                                      'center.',
                               description='The schools are taken from OSM at the date given in the input form.')
-    line_artifact = Artifact(name='Lines',
-                             modality=ArtifactModality.MAP_LAYER_GEOJSON,
-                             file_path=Path(compute_resources.computation_dir / 'lines_blueprint.geojson'),
-                             summary='Buffers around schools in the area of interest including a dummy school in the '
-                                     'center.',
-                             description='The schools are taken from OSM at the date given in the input form.')
-    polygon_artifact = Artifact(name='Polygons',
-                                modality=ArtifactModality.MAP_LAYER_GEOJSON,
-                                file_path=Path(compute_resources.computation_dir / 'polygons_blueprint.geojson'),
-                                summary='Schools in the area of interest including a dummy school in the center, '
-                                        'buffered by ca. 100m.',
-                                description='The schools are taken from OSM at the date given in the input form.')
-    raster_artifact = Artifact(name='LULC Classification',
-                               modality=ArtifactModality.MAP_LAYER_GEOTIFF,
-                               file_path=Path(compute_resources.computation_dir / 'raster_blueprint.tiff'),
-                               summary='A land-use and land-cover classification of a user defined area.',
-                               description='The classification is created using a deep learning model.')
+    polygon_artifact = _Artifact(name='Polygons',
+                                 modality=ArtifactModality.MAP_LAYER_GEOJSON,
+                                 file_path=Path(compute_resources.computation_dir / 'polygons_blueprint.geojson'),
+                                 summary='Schools in the area of interest including a dummy school in the center, '
+                                         'buffered by ca. 100m.',
+                                 description='The schools are taken from OSM at the date given in the input form.')
+    raster_artifact = _Artifact(name='LULC Classification',
+                                modality=ArtifactModality.MAP_LAYER_GEOTIFF,
+                                file_path=Path(compute_resources.computation_dir / 'raster_blueprint.tiff'),
+                                summary='A land-use and land-cover classification of a user defined area.',
+                                description='The classification is created using a deep learning model.')
     return [markdown_artifact,
             table_artifact,
             image_artifact,
@@ -147,6 +154,8 @@ def web_apis():
     with (responses.RequestsMock() as rsps,
           open('resources/test_segmentation.tiff', 'rb') as raster,
           open('resources/ohsome.geojson', 'rb') as vector):
+        rsps.get('http://localhost:80/api/lulc/health/',
+                 json={'status': 'ok'})
         rsps.post('http://localhost:80/api/lulc/segment/',
                   body=raster.read())
         rsps.post('https://api.ohsome.org/v1/elements/centroid',
@@ -158,6 +167,16 @@ def web_apis():
 def ohsome_api():
     with (responses.RequestsMock() as rsps,
           open('resources/ohsome.geojson', 'rb') as vector):
+        rsps.get('http://localhost:80/api/lulc/health/',
+                 json={'status': 'ok'})
         rsps.post('https://api.ohsome.org/v1/elements/centroid',
                   body=vector.read())
+        yield rsps
+
+
+@pytest.fixture
+def lulc_utility():
+    with (responses.RequestsMock() as rsps):
+        rsps.get('http://localhost:80/api/lulc/health/',
+                 json={'status': 'ok'})
         yield rsps

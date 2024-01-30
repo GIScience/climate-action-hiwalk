@@ -1,23 +1,24 @@
 # You may ask yourself why this file has such a strange name.
 # Well ... python imports: https://discuss.python.org/t/warning-when-importing-a-local-module-with-the-same-name-as-a-2nd-or-3rd-party-module/27799
 
-import geopandas as gpd
 import logging
+from datetime import datetime
+from pathlib import Path
+from typing import List, Tuple
+
+import geopandas as gpd
 import pandas as pd
 import shapely
 from PIL import Image
-from datetime import datetime
+from climatoology.base.artifact import create_markdown_artifact, create_table_artifact, create_image_artifact, \
+    create_chart_artifact, Chart2dData, ChartType, create_geotiff_artifact, create_geojson_artifact, RasterInfo
+from climatoology.base.operator import Operator, Info, Concern, ComputationResources, _Artifact, PluginAuthor
+from climatoology.utility.api import LulcWorkUnit, LulcUtility
 from ohsome import OhsomeClient
 from pandas import DataFrame
-from pathlib import Path
 from pydantic_extra_types.color import Color
 from semver import Version
-from typing import List, Tuple
 
-from climatoology.base.artifact import create_markdown_artifact, create_table_artifact, create_image_artifact, \
-    create_chart_artifact, Chart2dData, ChartType, create_geotiff_artifact, create_geojson_artifact
-from climatoology.base.operator import Operator, Info, Concern, ComputationResources, Artifact
-from climatoology.utility.api import LulcUtilityUtility, LULCWorkUnit
 from plugin_blueprint.input import ComputeInputBlueprint
 
 log = logging.getLogger(__name__)
@@ -33,9 +34,9 @@ class OperatorBlueprint(Operator[ComputeInputBlueprint]):
                  lulc_utility_root_url: str):
         # Create a base connection for the LULC classification utility.
         # Remove it, if you don't plan on using that utility.
-        self.lulc_generator = LulcUtilityUtility(host=lulc_utility_host,
-                                                 port=lulc_utility_port,
-                                                 root_url=lulc_utility_root_url)
+        self.lulc_generator = LulcUtility(host=lulc_utility_host,
+                                          port=lulc_utility_port,
+                                          path=lulc_utility_root_url)
 
         # Here is an example for another Utility you can use
         self.ohsome = OhsomeClient(user_agent='CA Plugin Blueprint')
@@ -45,6 +46,12 @@ class OperatorBlueprint(Operator[ComputeInputBlueprint]):
     def info(self) -> Info:
         info = Info(name='Plugin Blueprint',
                     icon=Path('resources/icon.jpeg'),
+                    authors=[PluginAuthor(name='Moritz Schott',
+                                          affiliation='HeiGIT gGmbH',
+                                          website='https://heigit.org/heigit-team/'),
+                             PluginAuthor(name='Maciej Adamiak',
+                                          affiliation='Consultant at HeiGIT gGmbH',
+                                          website='https://heigit.org/heigit-team/')],
                     version=Version(0, 0, 1),
                     concerns=[Concern.CLIMATE_ACTION__GHG_EMISSION],
                     purpose='This Plugin serves no purpose besides being a blueprint for real plugins.',
@@ -54,14 +61,14 @@ class OperatorBlueprint(Operator[ComputeInputBlueprint]):
 
         return info
 
-    def compute(self, resources: ComputationResources, params: ComputeInputBlueprint) -> List[Artifact]:
+    def compute(self, resources: ComputationResources, params: ComputeInputBlueprint) -> List[_Artifact]:
         log.info(f'Handling compute request: {params.model_dump()} in context: {resources}')
 
         # The code is split into several functions from here.
         # Each one describes the functionality of a specific artifact type or utility.
         # Feel free to copy, adapt and delete them at will.
 
-        # ## Artifact types ##
+        # ## _Artifact types ##
         # This function creates an example Markdown artifact
         markdown_artifact = OperatorBlueprint.markdown_artifact_creator(params, resources)
 
@@ -101,7 +108,7 @@ class OperatorBlueprint(Operator[ComputeInputBlueprint]):
         return artifacts
 
     @staticmethod
-    def markdown_artifact_creator(params: ComputeInputBlueprint, resources: ComputationResources) -> Artifact:
+    def markdown_artifact_creator(params: ComputeInputBlueprint, resources: ComputationResources) -> _Artifact:
         """This method creates a simple Markdown artifact.
 
         :param params: The input parameters.
@@ -118,7 +125,7 @@ class OperatorBlueprint(Operator[ComputeInputBlueprint]):
                                         filename='markdown_blueprint')
 
     @staticmethod
-    def table_artifact_creator(params: ComputeInputBlueprint, resources: ComputationResources) -> Artifact:
+    def table_artifact_creator(params: ComputeInputBlueprint, resources: ComputationResources) -> _Artifact:
         """This method creates a simple table artifact.
 
         :param params: The input parameters.
@@ -136,7 +143,7 @@ class OperatorBlueprint(Operator[ComputeInputBlueprint]):
                                      filename='table_blueprint')
 
     @staticmethod
-    def image_artifact_creator(resources: ComputationResources) -> Artifact:
+    def image_artifact_creator(resources: ComputationResources) -> _Artifact:
         """This method creates a simple image artifact.
 
         :param resources: The plugin computation resources.
@@ -156,7 +163,7 @@ class OperatorBlueprint(Operator[ComputeInputBlueprint]):
 
     @staticmethod
     def chart_artifact_creator(incline: float,
-                               resources: ComputationResources) -> Tuple[Artifact, Artifact, Artifact, Artifact]:
+                               resources: ComputationResources) -> Tuple[_Artifact, _Artifact, _Artifact, _Artifact]:
         """This method creates four simple chart artifacts.
 
         :param incline: Some linear incline of the data to make it more interactive.
@@ -196,7 +203,7 @@ class OperatorBlueprint(Operator[ComputeInputBlueprint]):
                                                  aoi: shapely.MultiPolygon,
                                                  target_date: datetime.date,
                                                  resources: ComputationResources) \
-            -> Tuple[Artifact, Artifact, Artifact]:
+            -> Tuple[_Artifact, _Artifact, _Artifact]:
         """Ohsome example usage for vector artifact creation.
 
         :param aoi: The area of interest
@@ -241,7 +248,7 @@ class OperatorBlueprint(Operator[ComputeInputBlueprint]):
     def raster_artifact_creator_and_lulc_utility_usage(self,
                                                        aoi: shapely.MultiPolygon,
                                                        target_date: datetime.date,
-                                                       resources: ComputationResources) -> Artifact:
+                                                       resources: ComputationResources) -> _Artifact:
         """LULC Utility example usage for raster artifact creation.
 
         This is a very simplified example of usage for the LULC utility.
@@ -255,14 +262,16 @@ class OperatorBlueprint(Operator[ComputeInputBlueprint]):
         log.debug('Creating dummy raster artifact.')
         # Be aware that there are more parameters to the LULCWorkUnit which affect the configuration of the service.
         # These can be handed to the user for adaption via the input parameters.
-        aoi = LULCWorkUnit(area_coords=aoi.bounds,
+        aoi = LulcWorkUnit(area_coords=aoi.bounds,
                            end_date=target_date.isoformat())
 
         with self.lulc_generator.compute_raster([aoi]) as lulc_classification:
-            artifact = create_geotiff_artifact(data=lulc_classification.read(),
-                                               crs=lulc_classification.crs,
-                                               transformation=lulc_classification.transform,
-                                               colormap=lulc_classification.colormap(1),
+            raster_info = RasterInfo(data=lulc_classification.read(),
+                                     crs=lulc_classification.crs,
+                                     transformation=lulc_classification.transform,
+                                     colormap=lulc_classification.colormap(1))
+
+            artifact = create_geotiff_artifact(raster_info=raster_info,
                                                layer_name='LULC Classification',
                                                caption='A land-use and land-cover classification of a user defined '
                                                        'area.',
