@@ -52,7 +52,7 @@ class OperatorBlueprint(Operator[ComputeInputBlueprint]):
                              PluginAuthor(name='Maciej Adamiak',
                                           affiliation='Consultant at HeiGIT gGmbH',
                                           website='https://heigit.org/heigit-team/')],
-                    version=Version(0, 0, 1),
+                    version=str(Version(0, 0, 1)),
                     concerns=[Concern.CLIMATE_ACTION__GHG_EMISSION],
                     purpose='This Plugin serves no purpose besides being a blueprint for real plugins.',
                     methodology='This Plugin uses no methodology because it does nothing.',
