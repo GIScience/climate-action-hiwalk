@@ -147,7 +147,7 @@ def test_vector_creator(settings, expected_compute_input, ohsome_api):
     )
     bp = OperatorBlueprint(settings.lulc_host,
                            settings.lulc_port,
-                           settings.lulc_root_url)
+                           settings.lulc_path)
     received = bp.vector_creator(expected_compute_input.get_geom(), expected_compute_input.date_blueprint)
     for expected_gdf, received_gdf in zip(expected, received):
         testing.assert_geodataframe_equal(received_gdf,

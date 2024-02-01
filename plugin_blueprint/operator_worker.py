@@ -31,12 +31,12 @@ class OperatorBlueprint(Operator[ComputeInputBlueprint]):
     def __init__(self,
                  lulc_utility_host: str,
                  lulc_utility_port: int,
-                 lulc_utility_root_url: str):
+                 lulc_utility_path: str):
         # Create a base connection for the LULC classification utility.
         # Remove it, if you don't plan on using that utility.
         self.lulc_generator = LulcUtility(host=lulc_utility_host,
                                           port=lulc_utility_port,
-                                          path=lulc_utility_root_url)
+                                          path=lulc_utility_path)
 
         # Here is an example for another Utility you can use
         self.ohsome = OhsomeClient(user_agent='CA Plugin Blueprint')
