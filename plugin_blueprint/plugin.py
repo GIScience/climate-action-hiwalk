@@ -29,7 +29,7 @@ class Settings(BaseSettings):
 
     lulc_host: str
     lulc_port: int
-    lulc_root_url: str
+    lulc_path: str
 
     model_config = SettingsConfigDict(env_file='.env')
 
@@ -43,7 +43,7 @@ async def start_plugin(settings: Settings) -> None:
     """
     operator = OperatorBlueprint(settings.lulc_host,
                                  settings.lulc_port,
-                                 settings.lulc_root_url)
+                                 settings.lulc_path)
     log.info(f'Configuring plugin: {operator.info().name}')
 
     storage = MinioStorage(host=settings.minio_host,
