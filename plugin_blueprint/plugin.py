@@ -1,11 +1,12 @@
 import asyncio
 import logging.config
-import yaml
-from pydantic_settings import BaseSettings, SettingsConfigDict
 
+import yaml
 from climatoology.app.plugin import PlatformPlugin
 from climatoology.broker.message_broker import AsyncRabbitMQ
 from climatoology.store.object_store import MinioStorage
+from pydantic_settings import BaseSettings, SettingsConfigDict
+
 from plugin_blueprint.operator_worker import OperatorBlueprint
 
 log_config = 'conf/logging.yaml'
@@ -35,33 +36,41 @@ class Settings(BaseSettings):
 
 
 async def start_plugin(settings: Settings) -> None:
-    """ Function to start the plugin within the architecture.
+    """Function to start the plugin within the architecture.
 
     Please adjust the class reference to the class you created above. Apart from that **DO NOT TOUCH**.
 
     :return:
     """
-    operator = OperatorBlueprint(settings.lulc_host,
-                                 settings.lulc_port,
-                                 settings.lulc_path)
+    operator = OperatorBlueprint(
+        settings.lulc_host,
+        settings.lulc_port,
+        settings.lulc_path,
+    )
     log.info(f'Configuring plugin: {operator.info().name}')
 
-    storage = MinioStorage(host=settings.minio_host,
-                           port=settings.minio_port,
-                           access_key=settings.minio_access_key,
-                           secret_key=settings.minio_secret_key,
-                           bucket=settings.minio_bucket,
-                           secure=settings.minio_secure)
-    broker = AsyncRabbitMQ(host=settings.rabbitmq_host,
-                           port=settings.rabbitmq_port,
-                           user=settings.rabbitmq_user,
-                           password=settings.rabbitmq_password)
+    storage = MinioStorage(
+        host=settings.minio_host,
+        port=settings.minio_port,
+        access_key=settings.minio_access_key,
+        secret_key=settings.minio_secret_key,
+        bucket=settings.minio_bucket,
+        secure=settings.minio_secure,
+    )
+    broker = AsyncRabbitMQ(
+        host=settings.rabbitmq_host,
+        port=settings.rabbitmq_port,
+        user=settings.rabbitmq_user,
+        password=settings.rabbitmq_password,
+    )
     await broker.async_init()
     log.debug(f'Configured broker: {settings.rabbitmq_host} and storage: {settings.minio_host}')
 
-    plugin = PlatformPlugin(operator=operator,
-                            storage=storage,
-                            broker=broker)
+    plugin = PlatformPlugin(
+        operator=operator,
+        storage=storage,
+        broker=broker,
+    )
     log.info(f'Running plugin: {operator.info().name}')
 
     await plugin.run()

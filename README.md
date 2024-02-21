@@ -39,12 +39,14 @@ and you are ready to code within your poetry environment.
 We use [pytest](pytest.org) as testing engine.
 Ensure all tests are passing on the unmodified repository by running `poetry run pytest`.
 
-### Linting
+### Linting and formatting
 
 It is important that the code created by the different plugin developers adheres to a certain standard.
-A linter can help to assert such standards.
-Please activate it by running `poetry run pre-commit install`.
-It will now be automatically run before each commit and warn you about any violations.
+We use [ruff](https://docs.astral.sh/ruff/) for linting and formatting the code as part of our pre-commit hooks.
+Please activate pre-commit by running `poetry run pre-commit install`.
+It will now run automatically before each commit and apply fixes for a variety of lint errors to your code.
+Note that we have increased the maximum number of characters per line to be 120 to make better use of large modern displays.
+If you want to keep short lines explicitly seperate (e.g. in the definition of functions or list) please use ["magic trailing commas"](https://docs.astral.sh/ruff/settings/#format_skip-magic-trailing-comma).
 
 ### Logging
 
