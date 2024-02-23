@@ -15,7 +15,7 @@ class Option(Enum):
     OPT2 = 'Option 2'
 
 
-class ComputeInputBlueprint(BaseModel):
+class ComputeInputWalkability(BaseModel):
     # This class defines all the input parameters of your plugin.
     # It uses pydantic to announce the parameters and validate them from the user realm (i.e. the front-end).
     # These parameters will later be available in the computation method.

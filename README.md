@@ -1,4 +1,4 @@
-# Plugin Blueprint
+# <img src="doc/icon.png" width="5%"> Walkability
 
 This repository is a blueprint for operator creators. Operators are science2production facilitators that will make it easy for you to bring your ideas and research results to the Climate Action (CA) platform. Operators are the main workers inside plugins. You will create a plugin but all you need to do is code the operator functionality, the plugin wrapper is already set to go. The terms Operator and Plugin are therefore mostly synonymous for you. For more information on the architecture, please contact the [CA team](https://heigit.org/).
 
@@ -60,13 +60,13 @@ This will make debugging easier at a later stage.
 
 We have to replace names at multiple level.
 
-Let's start with refactoring the name of the package ([plugin_blueprint/](plugin_blueprint)).
+Let's start with refactoring the name of the package ([plugin_blueprint/](walkability)).
 Rename it to the project name you have defined above in your `pyproject.toml`.
 This directory is also copied to the Docker container we use for deployment.
 Therefore, you have to change the name also in the [Dockerfile](Dockerfile) and the [Dockerfile.Kaniko](Dockerfile.Kaniko).
 
 Next there are two classes that should be name-related to your plugin:
-The `ComputeInputBlueprint` and the `OperatorBlueprint` in [plugin.py](plugin_blueprint/plugin.py).
+The `ComputeInputBlueprint` and the `OperatorBlueprint` in [plugin.py](walkability/plugin.py).
 Refactor-rename these classnames with reasonable names related to your idea.
 
 **Make these changes your first merge request** and add your CA-team contact as reviewer.
@@ -76,8 +76,8 @@ Refactor-rename these classnames with reasonable names related to your idea.
 We have seperated the code into multiple files by their functionality.
 Three files are relevant for you:
 
-1. The [operator_worker.py](plugin_blueprint/operator_worker.py) that defines your operator logic,
-2. the [input.py](plugin_blueprint/input.py) that defines the user inputs required to run your plugin and
+1. The [operator_worker.py](walkability/operator_worker.py) that defines your operator logic,
+2. the [input.py](walkability/input.py) that defines the user inputs required to run your plugin and
 3. [test_plugin.py](test/test_plugin.py) where you define the unit tests for your plugin.
 
 We will go through these files step by step.
@@ -132,7 +132,7 @@ The CA team can help you implement these setups, when the need arises.
 
 But let's create some code first:
 
-#### Operator in [operator_worker.py](plugin_blueprint/operator_worker.py)
+#### Operator in [operator_worker.py](walkability/operator_worker.py)
 
 ##### Info Function
 
@@ -153,7 +153,7 @@ A list of utilities can be found in the [climatoology](https://gitlab.gistools.g
 
 The only requirement is to return a (potentially empty) list of Artifacts i.e. results.
 
-#### Input parameters in [input.py](plugin_blueprint/input.py)
+#### Input parameters in [input.py](walkability/input.py)
 
 Keep in mind to update the input parameter class and the tests while you are coding away.
 

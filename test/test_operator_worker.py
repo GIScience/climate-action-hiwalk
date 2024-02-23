@@ -5,7 +5,7 @@ from climatoology.base.artifact import Chart2dData, ChartType
 from geopandas import testing
 from pydantic_extra_types.color import Color
 
-from plugin_blueprint.operator_worker import OperatorBlueprint
+from walkability.operator_worker import OperatorWalkability
 
 
 def test_get_md_text(expected_compute_input):
@@ -67,7 +67,7 @@ In addition the following area of interest was sent:
 }
 ```
 """
-    received = OperatorBlueprint.get_md_text(expected_compute_input)
+    received = OperatorWalkability.get_md_text(expected_compute_input)
     assert received == expected
 
 
@@ -82,7 +82,7 @@ def test_create_table(expected_compute_input):
         {'character': 'n', 'count': 1},
     ]
     expected = pd.DataFrame.from_records(data, index='character')
-    received = OperatorBlueprint.create_table(expected_compute_input.string_blueprint)
+    received = OperatorWalkability.create_table(expected_compute_input.string_blueprint)
 
     pd.testing.assert_frame_equal(received, expected)
 
@@ -136,7 +136,7 @@ def test_chart_creator():
             ],
         ),
     )
-    received = OperatorBlueprint.chart_creator(1)
+    received = OperatorWalkability.chart_creator(1)
     assert received == expected
 
 
@@ -179,7 +179,7 @@ def test_vector_creator(settings, expected_compute_input, ohsome_api):
             crs='EPSG:4326',
         ),
     )
-    bp = OperatorBlueprint(
+    bp = OperatorWalkability(
         settings.lulc_host,
         settings.lulc_port,
         settings.lulc_path,

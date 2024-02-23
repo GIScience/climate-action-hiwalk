@@ -7,7 +7,7 @@ from climatoology.broker.message_broker import AsyncRabbitMQ
 from climatoology.store.object_store import MinioStorage
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-from plugin_blueprint.operator_worker import OperatorBlueprint
+from walkability.operator_worker import OperatorWalkability
 
 log_config = 'conf/logging.yaml'
 log = logging.getLogger(__name__)
@@ -42,7 +42,7 @@ async def start_plugin(settings: Settings) -> None:
 
     :return:
     """
-    operator = OperatorBlueprint(
+    operator = OperatorWalkability(
         settings.lulc_host,
         settings.lulc_port,
         settings.lulc_path,

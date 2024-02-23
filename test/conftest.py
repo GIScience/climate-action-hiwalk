@@ -9,8 +9,8 @@ from climatoology.base.computation import ComputationScope
 from climatoology.base.operator import Concern, Info, PluginAuthor, _Artifact
 from semver import Version
 
-from plugin_blueprint.input import ComputeInputBlueprint
-from plugin_blueprint.plugin import Settings
+from walkability.input import ComputeInputWalkability
+from walkability.plugin import Settings
 
 
 @pytest.fixture
@@ -40,9 +40,9 @@ def expected_info_output() -> Info:
 
 
 @pytest.fixture
-def expected_compute_input() -> ComputeInputBlueprint:
+def expected_compute_input() -> ComputeInputWalkability:
     # noinspection PyTypeChecker
-    return ComputeInputBlueprint(
+    return ComputeInputWalkability(
         bool_blueprint=True,
         aoi_blueprint={
             'type': 'Feature',
