@@ -1,6 +1,6 @@
 FROM python:3.11.5-bookworm
 
-ENV PACKAGE_NAME='plugin_blueprint'
+ENV PACKAGE_NAME='walkability'
 
 RUN pip install --no-cache-dir poetry==1.7.1
 

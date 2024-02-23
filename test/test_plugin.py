@@ -1,8 +1,8 @@
-from plugin_blueprint.operator_worker import OperatorBlueprint
+from walkability.operator_worker import OperatorWalkability
 
 
 def test_plugin_info_request(settings, expected_info_output, lulc_utility):
-    operator = OperatorBlueprint(
+    operator = OperatorWalkability(
         settings.lulc_host,
         settings.lulc_port,
         settings.lulc_path,
@@ -11,7 +11,7 @@ def test_plugin_info_request(settings, expected_info_output, lulc_utility):
 
 
 def test_plugin_compute_request(settings, expected_compute_input, expected_compute_output, compute_resources, web_apis):
-    operator = OperatorBlueprint(
+    operator = OperatorWalkability(
         settings.lulc_host,
         settings.lulc_port,
         settings.lulc_path,

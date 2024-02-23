@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "plugin-blueprint"
+name = "walkability"
 version = "0.0.1"
 description = "This is a blueprint for Climate Action plugins. It servers as a basis for new plugins but also is fully functional plugin itself that exhibits the full potential of the plugin architecture."
 authors = ["Moritz Schott <moritz.schott@heigit.org>", "Maciej Adamiak <maciej.adamiak@heigit.org>"]

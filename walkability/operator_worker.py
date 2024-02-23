@@ -28,12 +28,12 @@ from PIL import Image
 from pydantic_extra_types.color import Color
 from semver import Version
 
-from plugin_blueprint.input import ComputeInputBlueprint
+from walkability.input import ComputeInputWalkability
 
 log = logging.getLogger(__name__)
 
 
-class OperatorBlueprint(Operator[ComputeInputBlueprint]):
+class OperatorWalkability(Operator[ComputeInputWalkability]):
     # This is your working-class hero.
     # See all the details below.
 
@@ -82,7 +82,7 @@ class OperatorBlueprint(Operator[ComputeInputBlueprint]):
 
         return info
 
-    def compute(self, resources: ComputationResources, params: ComputeInputBlueprint) -> List[_Artifact]:
+    def compute(self, resources: ComputationResources, params: ComputeInputWalkability) -> List[_Artifact]:
         log.info(f'Handling compute request: {params.model_dump()} in context: {resources}')
 
         # The code is split into several functions from here.
@@ -91,16 +91,16 @@ class OperatorBlueprint(Operator[ComputeInputBlueprint]):
 
         # ## _Artifact types ##
         # This function creates an example Markdown artifact
-        markdown_artifact = OperatorBlueprint.markdown_artifact_creator(params, resources)
+        markdown_artifact = OperatorWalkability.markdown_artifact_creator(params, resources)
 
         # This function creates an example table artifact
-        table_artifact = OperatorBlueprint.table_artifact_creator(params, resources)
+        table_artifact = OperatorWalkability.table_artifact_creator(params, resources)
 
         # This function creates an example image artifact
-        image_artifact = OperatorBlueprint.image_artifact_creator(resources)
+        image_artifact = OperatorWalkability.image_artifact_creator(resources)
 
         # This function creates example chart artifacts
-        chart_artifacts = OperatorBlueprint.chart_artifact_creator(params.float_blueprint, resources)
+        chart_artifacts = OperatorWalkability.chart_artifact_creator(params.float_blueprint, resources)
 
         # Further we have the geographic output types of raster and vector data.
         # We kill two birds with one stone and use the land-use and land-cover utility to demonstrate them.
@@ -135,7 +135,7 @@ class OperatorBlueprint(Operator[ComputeInputBlueprint]):
         return artifacts
 
     @staticmethod
-    def markdown_artifact_creator(params: ComputeInputBlueprint, resources: ComputationResources) -> _Artifact:
+    def markdown_artifact_creator(params: ComputeInputWalkability, resources: ComputationResources) -> _Artifact:
         """This method creates a simple Markdown artifact.
 
         :param params: The input parameters.
@@ -143,7 +143,7 @@ class OperatorBlueprint(Operator[ComputeInputBlueprint]):
         :return: A Markdown artifact.
         """
         log.debug('Creating dummy markdown artifact.')
-        text = OperatorBlueprint.get_md_text(params)
+        text = OperatorWalkability.get_md_text(params)
 
         return create_markdown_artifact(
             text=text,
@@ -154,14 +154,14 @@ class OperatorBlueprint(Operator[ComputeInputBlueprint]):
         )
 
     @staticmethod
-    def table_artifact_creator(params: ComputeInputBlueprint, resources: ComputationResources) -> _Artifact:
+    def table_artifact_creator(params: ComputeInputWalkability, resources: ComputationResources) -> _Artifact:
         """This method creates a simple table artifact.
 
         :param params: The input parameters.
         :param resources: The plugin computation resources
         :return: A table artifact.
         """
-        table = OperatorBlueprint.create_table(params.string_blueprint)
+        table = OperatorWalkability.create_table(params.string_blueprint)
 
         return create_table_artifact(
             data=table,
@@ -203,7 +203,7 @@ class OperatorBlueprint(Operator[ComputeInputBlueprint]):
         :param resources: The plugin computation resources.
         :return: Four graph artifacts.
         """
-        scatter_chart_data, line_chart_data, bar_chart_data, pie_chart_data = OperatorBlueprint.chart_creator(incline)
+        scatter_chart_data, line_chart_data, bar_chart_data, pie_chart_data = OperatorWalkability.chart_creator(incline)
 
         scatter_chart = create_chart_artifact(
             data=scatter_chart_data,
@@ -328,7 +328,7 @@ class OperatorBlueprint(Operator[ComputeInputBlueprint]):
         return artifact
 
     @staticmethod
-    def get_md_text(params: ComputeInputBlueprint) -> str:
+    def get_md_text(params: ComputeInputWalkability) -> str:
         """Transform the input parameters to Markdown text with json blocks."""
         return f"""# Input Parameters
 
