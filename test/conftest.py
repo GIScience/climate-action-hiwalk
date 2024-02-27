@@ -10,40 +10,13 @@ from climatoology.base.operator import Concern, Info, PluginAuthor, _Artifact
 from semver import Version
 
 from walkability.input import ComputeInputWalkability
-from walkability.plugin import Settings
-
-
-@pytest.fixture
-def expected_info_output() -> Info:
-    # noinspection PyTypeChecker
-    return Info(
-        name='Plugin Blueprint',
-        icon=Path('resources/icon.jpeg'),
-        authors=[
-            PluginAuthor(
-                name='Moritz Schott',
-                affiliation='HeiGIT gGmbH',
-                website='https://heigit.org/heigit-team/',
-            ),
-            PluginAuthor(
-                name='Maciej Adamiak',
-                affiliation='Consultant at HeiGIT gGmbH',
-                website='https://heigit.org/heigit-team/',
-            ),
-        ],
-        version=Version(0, 0, 1),
-        concerns=[Concern.CLIMATE_ACTION__GHG_EMISSION],
-        purpose='This Plugin serves no purpose besides being a blueprint for real plugins.',
-        methodology='This Plugin uses no methodology because it does nothing.',
-        sources=Path('resources/example.bib'),
-    )
+from walkability.operator_worker import OperatorWalkability
 
 
 @pytest.fixture
 def expected_compute_input() -> ComputeInputWalkability:
     # noinspection PyTypeChecker
     return ComputeInputWalkability(
-        bool_blueprint=True,
         aoi_blueprint={
             'type': 'Feature',
             'properties': None,
@@ -66,93 +39,38 @@ def expected_compute_input() -> ComputeInputWalkability:
 
 
 @pytest.fixture
+def expected_info_output() -> Info:
+    # noinspection PyTypeChecker
+    return Info(
+        name='Walkability',
+        icon=Path('resources/info/icon.jpeg'),
+        authors=[
+            PluginAuthor(
+                name='Moritz Schott',
+                affiliation='HeiGIT gGmbH',
+                website='https://heigit.org/heigit-team/',
+            )
+        ],
+        version=Version(0, 0, 1),
+        concerns=[Concern.CLIMATE_ACTION__GHG_EMISSION],
+        purpose=Path('resources/info/purpose.md').read_text(),
+        methodology=Path('resources/info/methodology.md').read_text(),
+        sources=Path('resources/info/sources.bib'),
+    )
+
+
+@pytest.fixture
 def expected_compute_output(compute_resources) -> List[_Artifact]:
-    markdown_artifact = _Artifact(
-        name='A Text',
-        modality=ArtifactModality.MARKDOWN,
-        file_path=Path(compute_resources.computation_dir / 'markdown_blueprint.md'),
-        summary='A JSON-block of the input parameters',
-    )
-    table_artifact = _Artifact(
-        name='Character Count',
-        modality=ArtifactModality.TABLE,
-        file_path=Path(compute_resources.computation_dir / 'table_blueprint.csv'),
-        summary='The table lists the number of occurrences for each character in the input parameters.',
-        description='A table with two columns.',
-    )
-    image_artifact = _Artifact(
-        name='Image',
-        modality=ArtifactModality.IMAGE,
-        file_path=Path(compute_resources.computation_dir / 'image_blueprint.png'),
-        summary='A nice image.',
-        description='The image is under CC0 license taken from [pexels](https://www.pexels.com/'
-        'photo/person-holding-a-green-plant-1072824/).',
-    )
-    scatter_chart_artifact = _Artifact(
-        name='The Points',
-        modality=ArtifactModality.CHART,
-        file_path=Path(compute_resources.computation_dir / 'scatter_chart_blueprint.json'),
-        summary='A simple scatter plot.',
-        description='Beautiful points.',
-    )
-    line_chart_artifact = _Artifact(
-        name='The Line',
-        modality=ArtifactModality.CHART,
-        file_path=Path(compute_resources.computation_dir / 'line_chart_blueprint.json'),
-        summary='A simple line of negative incline.',
-    )
-    bar_chart_artifact = _Artifact(
-        name='The Bars',
-        modality=ArtifactModality.CHART,
-        file_path=Path(compute_resources.computation_dir / 'bar_chart_blueprint.json'),
-        summary='A simple bar chart.',
-    )
-    pie_chart_artifact = _Artifact(
-        name='The Pie',
-        modality=ArtifactModality.CHART,
-        file_path=Path(compute_resources.computation_dir / 'pie_chart_blueprint.json'),
-        summary='A simple pie.',
-    )
-    point_artifact = _Artifact(
-        name='Points',
+    sidewalks_artifact = _Artifact(
+        name='Sidewalks',
         modality=ArtifactModality.MAP_LAYER_GEOJSON,
-        file_path=Path(compute_resources.computation_dir / 'points_blueprint.geojson'),
-        summary='Schools in the area of interest including a dummy school in the center.',
-        description='The schools are taken from OSM at the date given in the input form.',
-    )
-    line_artifact = _Artifact(
-        name='Lines',
-        modality=ArtifactModality.MAP_LAYER_GEOJSON,
-        file_path=Path(compute_resources.computation_dir / 'lines_blueprint.geojson'),
-        summary='Buffers around schools in the area of interest including a dummy school in the center.',
-        description='The schools are taken from OSM at the date given in the input form.',
-    )
-    polygon_artifact = _Artifact(
-        name='Polygons',
-        modality=ArtifactModality.MAP_LAYER_GEOJSON,
-        file_path=Path(compute_resources.computation_dir / 'polygons_blueprint.geojson'),
-        summary='Schools in the area of interest including a dummy school in the center, buffered by ca. 100m.',
-        description='The schools are taken from OSM at the date given in the input form.',
-    )
-    raster_artifact = _Artifact(
-        name='LULC Classification',
-        modality=ArtifactModality.MAP_LAYER_GEOTIFF,
-        file_path=Path(compute_resources.computation_dir / 'raster_blueprint.tiff'),
-        summary='A land-use and land-cover classification of a user defined area.',
-        description='The classification is created using a deep learning model.',
+        file_path=Path(compute_resources.computation_dir / 'sidewalks.geojson'),
+        summary='The layer highlights roads that have sidewalks or are explicitly dedicated to pedestrians.',
+        description='The layer features all roads that are neither highways/motorways nor specifically exclude '
+        'pedestrians, such as cycle ways.',
     )
     return [
-        markdown_artifact,
-        table_artifact,
-        image_artifact,
-        scatter_chart_artifact,
-        line_chart_artifact,
-        bar_chart_artifact,
-        pie_chart_artifact,
-        point_artifact,
-        line_artifact,
-        polygon_artifact,
-        raster_artifact,
+        sidewalks_artifact,
     ]
 
 
@@ -164,46 +82,12 @@ def compute_resources():
 
 
 @pytest.fixture
-def settings():
-    return Settings(
-        minio_host='localhost',
-        minio_port=80,
-        minio_access_key='access_key',
-        minio_secret_key='secret_key',
-        minio_bucket='bucket',
-        rabbitmq_host='localhost',
-        rabbitmq_port=80,
-        rabbitmq_user='user',
-        rabbitmq_password='password',
-        lulc_host='localhost',
-        lulc_port=80,
-        lulc_path='/api/lulc/',
-    )
-
-
-@pytest.fixture
-def web_apis():
-    with (
-        responses.RequestsMock() as rsps,
-        open('resources/test_segmentation.tiff', 'rb') as raster,
-        open('resources/ohsome.geojson', 'rb') as vector,
-    ):
-        rsps.get('http://localhost:80/api/lulc/health', json={'status': 'ok'})
-        rsps.post('http://localhost:80/api/lulc/segment/', body=raster.read())
-        rsps.post('https://api.ohsome.org/v1/elements/centroid', body=vector.read())
-        yield rsps
-
-
-@pytest.fixture
 def ohsome_api():
-    with responses.RequestsMock() as rsps, open('resources/ohsome.geojson', 'rb') as vector:
-        rsps.get('http://localhost:80/api/lulc/health', json={'status': 'ok'})
-        rsps.post('https://api.ohsome.org/v1/elements/centroid', body=vector.read())
+    with responses.RequestsMock() as rsps, open('resources/test/ohsome.geojson', 'rb') as vector:
+        rsps.post('https://api.ohsome.org/v1/elements/geometry', body=vector.read())
         yield rsps
 
 
 @pytest.fixture
-def lulc_utility():
-    with responses.RequestsMock() as rsps:
-        rsps.get('http://localhost:80/api/lulc/health', json={'status': 'ok'})
-        yield rsps
+def operator():
+    return OperatorWalkability()
