@@ -28,25 +28,11 @@ class Settings(BaseSettings):
     rabbitmq_user: str
     rabbitmq_password: str
 
-    lulc_host: str
-    lulc_port: int
-    lulc_path: str
-
     model_config = SettingsConfigDict(env_file='.env')
 
 
 async def start_plugin(settings: Settings) -> None:
-    """Function to start the plugin within the architecture.
-
-    Please adjust the class reference to the class you created above. Apart from that **DO NOT TOUCH**.
-
-    :return:
-    """
-    operator = OperatorWalkability(
-        settings.lulc_host,
-        settings.lulc_port,
-        settings.lulc_path,
-    )
+    operator = OperatorWalkability()
     log.info(f'Configuring plugin: {operator.info().name}')
 
     storage = MinioStorage(
@@ -82,6 +68,6 @@ if __name__ == '__main__':
     logging.basicConfig(level=settings.log_level.upper())
     with open(log_config) as file:
         logging.config.dictConfig(yaml.safe_load(file))
-    log.info('Starting Plugin')
 
+    log.info('Starting Plugin')
     asyncio.run(start_plugin(settings))
