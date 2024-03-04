@@ -3,21 +3,22 @@ from pathlib import Path
 from typing import List
 
 import geopandas as gpd
+import pandas as pd
 import shapely
 from climatoology.base.operator import ComputationResources, Concern, Info, Operator, PluginAuthor, _Artifact
 from ohsome import OhsomeClient
-from pydantic_extra_types.color import Color
 from semver import Version
 
-from walkability.artifact import build_sidewalk_artifact
+from walkability.artifact import build_paths_artifact
 from walkability.input import ComputeInputWalkability
+from walkability.utils import construct_filter, fetch_osm_data, boost_route_members, get_color
 
 log = logging.getLogger(__name__)
 
 
 class OperatorWalkability(Operator[ComputeInputWalkability]):
     def __init__(self):
-        self.ohsome = OhsomeClient(user_agent='CA Plugin Blueprint')
+        self.ohsome = OhsomeClient(user_agent='CA Plugin Walkability')
         log.debug('Initialised walkability operator with ohsome client')
 
     def info(self) -> Info:
@@ -33,7 +34,7 @@ class OperatorWalkability(Operator[ComputeInputWalkability]):
                 )
             ],
             version=Version(0, 0, 1),
-            concerns=[Concern.CLIMATE_ACTION__GHG_EMISSION],
+            concerns=[Concern.MOBILITY_PEDESTRIAN],
             purpose=Path('resources/info/purpose.md').read_text(),
             methodology=Path('resources/info/methodology.md').read_text(),
             sources=Path('resources/info/sources.bib'),
@@ -45,13 +46,26 @@ class OperatorWalkability(Operator[ComputeInputWalkability]):
     def compute(self, resources: ComputationResources, params: ComputeInputWalkability) -> List[_Artifact]:
         log.info(f'Handling compute request: {params.model_dump()} in context: {resources}')
 
-        sidewalks = self.get_sidewalks(params.get_geom())
-        return [build_sidewalk_artifact(sidewalks, resources)]
+        paths = self.get_paths(params.get_geom())
+        paths_artifact = build_paths_artifact(paths, resources)
+        return [paths_artifact]
 
-    def get_sidewalks(self, aoi: shapely.MultiPolygon) -> gpd.GeoDataFrame:
-        log.debug('Requesting sidewalks')
-        ohsome_response = self.ohsome.elements.geometry.post(bpolys=aoi, filter='highway=path')
-        elements = ohsome_response.as_dataframe(explode_tags='highway')
-        elements = elements.reset_index(drop=True)
-        elements['color'] = Color('blue')
-        return elements
+    def get_paths(self, aoi: shapely.MultiPolygon) -> gpd.GeoDataFrame:
+        log.debug('Requesting paths')
+
+        lines_list = []
+        polygon_list = []
+        for rating, osm_filter in construct_filter().items():
+            lines_list.append(fetch_osm_data(aoi, f'geometry:line and ({osm_filter})', rating, self.ohsome))
+            polygon_list.append(fetch_osm_data(aoi, f'geometry:polygon and ({osm_filter})', rating, self.ohsome))
+
+        paths_line = pd.concat(lines_list, ignore_index=True)
+        paths_polygon = pd.concat(polygon_list, ignore_index=True)
+
+        paths_line['category'] = boost_route_members(aoi, paths_line[['geometry', 'category']], self.ohsome)
+
+        paths = pd.concat([paths_line, paths_polygon], ignore_index=True)
+
+        paths['color'] = get_color(paths.category)
+
+        return paths[['category', 'color', 'geometry']]
