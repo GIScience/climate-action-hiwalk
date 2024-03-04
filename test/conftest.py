@@ -1,18 +1,17 @@
 import uuid
 from pathlib import Path
-from typing import List, Any, Callable, Tuple
-from urllib.parse import parse_qsl
+from typing import List
 
 import pytest
 import responses
 from climatoology.base.artifact import ArtifactModality
 from climatoology.base.computation import ComputationScope
 from climatoology.base.operator import Concern, Info, PluginAuthor, _Artifact
-from requests import PreparedRequest
 from semver import Version
 
 from walkability.input import ComputeInputWalkability
 from walkability.operator_worker import OperatorWalkability
+from walkability.utils import filter_start_matcher
 
 
 @pytest.fixture
@@ -76,9 +75,24 @@ def expected_compute_output(compute_resources) -> List[_Artifact]:
         description='The layer excludes paths that are not walkable by definition such as motorways or cycle ways. '
         'The data source is OpenStreetMap.',
     )
-    return [
-        paths_artifact,
-    ]
+    chart_artifact_bergheim = _Artifact(
+        name='Bergheim - 9',
+        modality=ArtifactModality.CHART,
+        file_path=Path(compute_resources.computation_dir / 'aggregation_0.json'),
+        summary='The distribution of paths categories for this administrative area. '
+        'The total length of paths in this area is 1.0',
+        description=None,
+    )
+    chart_artifact_suedstadt = _Artifact(
+        name='S??dstadt - 9',
+        modality=ArtifactModality.CHART,
+        file_path=Path(compute_resources.computation_dir / 'aggregation_1.json'),
+        summary='The distribution of paths categories for this administrative area. '
+        'The total length of paths in this area is 1.0',
+        description=None,
+    )
+
+    return [paths_artifact, chart_artifact_bergheim, chart_artifact_suedstadt]
 
 
 # The following fixtures can be ignored on plugin setup
@@ -125,19 +139,3 @@ def ohsome_api(responses_mock):
         match=[filter_start_matcher('route in (foot,hiking)')],
     )
     return responses_mock
-
-
-def filter_start_matcher(filter_start: str) -> Callable[..., Any]:
-    def match(request: PreparedRequest) -> Tuple[bool, str]:
-        request_body = request.body
-        qsl_body = dict(parse_qsl(request_body, keep_blank_values=False)) if request_body else {}
-
-        if request_body is None:
-            return False, 'The given request has no body'
-        elif qsl_body.get('filter') is None:
-            return False, 'Filter parameter not set'
-        else:
-            valid = qsl_body.get('filter', '').startswith(filter_start)
-            return (True, '') if valid else (False, f'The filter parameter does not start with {filter_start}')
-
-    return match

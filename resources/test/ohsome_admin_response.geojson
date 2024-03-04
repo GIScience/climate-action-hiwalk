@@ -1,0 +1,83 @@
+{
+  "attribution" : {
+    "url" : "https://ohsome.org/copyrights",
+    "text" : "© OpenStreetMap contributors"
+  },
+  "apiVersion" : "1.10.2",
+  "type" : "FeatureCollection",
+  "features" : [{
+    "type" : "Feature",
+    "geometry" : {
+      "type" : "Polygon",
+      "coordinates" : [
+        [
+          [
+            12.300,
+            48.220
+          ],
+          [
+            12.300,
+            48.221
+          ],
+          [
+            12.301,
+            48.221
+          ],
+          [
+            12.301,
+            48.220
+          ],
+          [
+            12.300,
+            48.220
+          ]
+        ]
+      ]
+    },
+    "properties" : {
+      "@osmId" : "relation/3283776",
+      "@snapshotTimestamp" : "2017-01-01T00:00:00Z",
+      "admin_level" : "9",
+      "boundary" : "administrative",
+      "name" : "Südstadt",
+      "type" : "boundary"
+    }
+  }, {
+    "type" : "Feature",
+    "geometry" : {
+      "type" : "Polygon",
+      "coordinates" : [
+        [
+          [
+            12.300,
+            48.220
+          ],
+          [
+            12.300,
+            48.221
+          ],
+          [
+            12.301,
+            48.221
+          ],
+          [
+            12.301,
+            48.220
+          ],
+          [
+            12.300,
+            48.220
+          ]
+        ]
+      ]
+    },
+    "properties" : {
+      "@osmId" : "relation/3283777",
+      "@snapshotTimestamp" : "2017-01-01T00:00:00Z",
+      "admin_level" : "9",
+      "boundary" : "administrative",
+      "name" : "Bergheim",
+      "type" : "boundary"
+    }
+  }]
+}

@@ -1,17 +1,18 @@
 import logging
 from pathlib import Path
-from typing import List
+from typing import List, Dict
 
 import geopandas as gpd
 import pandas as pd
 import shapely
+from climatoology.base.artifact import Chart2dData, ChartType
 from climatoology.base.operator import ComputationResources, Concern, Info, Operator, PluginAuthor, _Artifact
 from ohsome import OhsomeClient
 from semver import Version
 
-from walkability.artifact import build_paths_artifact
+from walkability.artifact import build_paths_artifact, build_areal_summary_artifacts
 from walkability.input import ComputeInputWalkability
-from walkability.utils import construct_filter, fetch_osm_data, boost_route_members, get_color
+from walkability.utils import construct_filter, fetch_osm_data, boost_route_members, get_color, Rating
 
 log = logging.getLogger(__name__)
 
@@ -48,7 +49,11 @@ class OperatorWalkability(Operator[ComputeInputWalkability]):
 
         paths = self.get_paths(params.get_geom())
         paths_artifact = build_paths_artifact(paths, resources)
-        return [paths_artifact]
+
+        areal_summaries = self.summarise_by_area(paths, params.get_geom())
+        chart_artifacts = build_areal_summary_artifacts(areal_summaries, resources)
+
+        return [paths_artifact] + chart_artifacts
 
     def get_paths(self, aoi: shapely.MultiPolygon) -> gpd.GeoDataFrame:
         log.debug('Requesting paths')
@@ -69,3 +74,47 @@ class OperatorWalkability(Operator[ComputeInputWalkability]):
         paths['color'] = get_color(paths.category)
 
         return paths[['category', 'color', 'geometry']]
+
+    def summarise_by_area(self, paths: gpd.GeoDataFrame, aoi: shapely.MultiPolygon) -> Dict[str, Chart2dData]:
+        stats = paths.copy()
+        stats = stats.loc[stats.geometry.geom_type.isin(('MultiLineString', 'LineString'))]
+
+        minimum_keys = ['admin_level', 'name']
+        boundaries = self.ohsome.elements.geometry.post(
+            properties='tags',
+            bpolys=aoi,
+            filter='geometry:polygon and boundary=administrative and admin_level in (6,7,8,9,10,11,12)',
+            clipGeometry=True,
+        ).as_dataframe(explode_tags=minimum_keys)
+        boundaries = boundaries[boundaries.is_valid]
+        boundaries = boundaries.reset_index(drop=True)
+
+        # this is a hack due to https://github.com/GIScience/ohsome-py/issues/149
+        reference_df = pd.DataFrame(columns=minimum_keys)
+        missing_columns = reference_df[reference_df.columns.difference(boundaries.columns)]
+        boundaries = pd.concat([boundaries, missing_columns], axis=1)
+
+        stats = stats.overlay(boundaries, how='identity')
+        stats = stats.to_crs(stats.geometry.estimate_utm_crs())
+
+        stats['length'] = stats.length
+        stats['category'] = stats.category.apply(lambda cat: cat.value)
+
+        stats = stats.groupby(['name', 'admin_level', 'category']).aggregate({'length': 'sum'})
+        stats = stats.reset_index()
+        stats = stats.groupby(['name', 'admin_level'])
+
+        data = {}
+        for name, group in stats:
+            group = group.sort_values(by=['category'], ascending=False)
+            group.category = group.category.apply(lambda cat: Rating(cat))
+            colors = get_color(group.category).tolist()
+            # ASCII encoding error will be fixed by: https://gitlab.gistools.geog.uni-heidelberg.de/climate-action/climatoology/-/issues/46
+            data[f'{name[0].encode(encoding="ascii", errors="replace").decode()} - {name[1]}'] = Chart2dData(
+                x=group.category.apply(lambda cat: cat.name).tolist(),
+                y=group.length.tolist(),
+                color=colors,
+                chart_type=ChartType.PIE,
+            )
+
+        return data

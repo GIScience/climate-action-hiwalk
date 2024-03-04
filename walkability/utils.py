@@ -1,5 +1,6 @@
 from enum import Enum
-from typing import Dict, Union
+from typing import Dict, Union, Callable, Any, Tuple
+from urllib.parse import parse_qsl
 
 import geopandas as gpd
 import matplotlib
@@ -9,6 +10,7 @@ from matplotlib.colors import to_hex
 from ohsome import OhsomeClient
 from pydantic import BaseModel
 from pydantic_extra_types.color import Color
+from requests import PreparedRequest
 from shapely import LineString
 
 
@@ -154,3 +156,19 @@ def fix_geometry_collection(geom: shapely.Geometry) -> Union[shapely.LineString,
 def get_color(categories: pd.Series) -> pd.Series:
     cmap = matplotlib.colormaps.get_cmap('RdYlGn')
     return categories.apply(lambda c: Color(to_hex(cmap(c.value))))
+
+
+def filter_start_matcher(filter_start: str) -> Callable[..., Any]:
+    def match(request: PreparedRequest) -> Tuple[bool, str]:
+        request_body = request.body
+        qsl_body = dict(parse_qsl(request_body, keep_blank_values=False)) if request_body else {}
+
+        if request_body is None:
+            return False, 'The given request has no body'
+        elif qsl_body.get('filter') is None:
+            return False, 'Filter parameter not set'
+        else:
+            valid = qsl_body.get('filter', '').startswith(filter_start)
+            return (True, '') if valid else (False, f'The filter parameter does not start with {filter_start}')
+
+    return match
