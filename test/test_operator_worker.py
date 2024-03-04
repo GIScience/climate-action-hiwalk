@@ -3,15 +3,22 @@ import shapely
 from geopandas import testing
 from pydantic_extra_types.color import Color
 
+from walkability.utils import Rating
 
-def test_sidewalk_classifier(operator, expected_compute_input, ohsome_api):
-    sidewalk_geom = shapely.LineString([[8.7, 49.4], [8.7, 49.5], [8.8, 49.4]])
+
+def test_get_paths(operator, expected_compute_input, ohsome_api):
+    line_geom = shapely.LineString([(12.3, 48.22), (12.3, 48.2205), (12.3005, 48.22)])
+    polygon_geom = shapely.Polygon(((12.3, 48.22), (12.3, 48.2205), (12.3005, 48.22), (12.3, 48.22)))
 
     expected_gdf = gpd.GeoDataFrame(
-        data={'highway': ['path'], '@other_tags': [{}], 'color': [Color('blue')], 'geometry': [sidewalk_geom]},
+        data={
+            'category': 2 * [Rating.EXCLUSIVE, Rating.EXPLICIT, Rating.PROBABLE, Rating.INACCESSIBLE],
+            'color': 2 * [Color('#006837'), Color('#84ca66'), Color('#feffbe'), Color('#a50026')],
+            'geometry': 4 * [line_geom] + 4 * [polygon_geom],
+        },
         crs='EPSG:4326',
     )
-    computed_gdf = operator.get_sidewalks(expected_compute_input.get_geom())
+    computed_gdf = operator.get_paths(expected_compute_input.get_geom())
 
     testing.assert_geodataframe_equal(
         computed_gdf,
