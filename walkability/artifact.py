@@ -27,14 +27,14 @@ def build_areal_summary_artifacts(
     regional_aggregates: Dict[str, Chart2dData], resources: ComputationResources
 ) -> List[_Artifact]:
     chart_artifacts = []
-    for counter, data_tuple in enumerate(regional_aggregates.items()):
+    for region, data in regional_aggregates.items():
         chart_artifact = create_chart_artifact(
-            data=data_tuple[1],
-            title=data_tuple[0],
+            data=data,
+            title=region,
             caption='The distribution of paths categories for this administrative area. '
-            f'The total length of paths in this area is {sum(data_tuple[1].y)}',  # the value is wrong, this will be solved by https://gitlab.gistools.geog.uni-heidelberg.de/climate-action/climatoology/-/issues/73
+            f'The total length of paths in this area is {sum(data.y)}',
             resources=resources,
-            filename=f'aggregation_{str(counter)}',  # requirement for counter will be removed by https://gitlab.gistools.geog.uni-heidelberg.de/climate-action/climatoology/-/issues/72
+            filename=f'aggregation_{region}',
         )
         chart_artifacts.append(chart_artifact)
     return chart_artifacts

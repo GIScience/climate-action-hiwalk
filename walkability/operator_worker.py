@@ -50,7 +50,7 @@ class OperatorWalkability(Operator[ComputeInputWalkability]):
         paths = self.get_paths(params.get_geom())
         paths_artifact = build_paths_artifact(paths, resources)
 
-        areal_summaries = self.summarise_by_area(paths, params.get_geom())
+        areal_summaries = self.summarise_by_area(paths, params.get_geom(), params.admin_level)
         chart_artifacts = build_areal_summary_artifacts(areal_summaries, resources)
 
         return [paths_artifact] + chart_artifacts
@@ -75,7 +75,9 @@ class OperatorWalkability(Operator[ComputeInputWalkability]):
 
         return paths[['category', 'color', 'geometry']]
 
-    def summarise_by_area(self, paths: gpd.GeoDataFrame, aoi: shapely.MultiPolygon) -> Dict[str, Chart2dData]:
+    def summarise_by_area(
+        self, paths: gpd.GeoDataFrame, aoi: shapely.MultiPolygon, admin_level: int
+    ) -> Dict[str, Chart2dData]:
         stats = paths.copy()
         stats = stats.loc[stats.geometry.geom_type.isin(('MultiLineString', 'LineString'))]
 
@@ -83,7 +85,7 @@ class OperatorWalkability(Operator[ComputeInputWalkability]):
         boundaries = self.ohsome.elements.geometry.post(
             properties='tags',
             bpolys=aoi,
-            filter='geometry:polygon and boundary=administrative and admin_level in (6,7,8,9,10,11,12)',
+            filter=f'geometry:polygon and boundary=administrative and admin_level={admin_level}',
             clipGeometry=True,
         ).as_dataframe(explode_tags=minimum_keys)
         boundaries = boundaries[boundaries.is_valid]
@@ -100,9 +102,9 @@ class OperatorWalkability(Operator[ComputeInputWalkability]):
         stats['length'] = stats.length
         stats['category'] = stats.category.apply(lambda cat: cat.value)
 
-        stats = stats.groupby(['name', 'admin_level', 'category']).aggregate({'length': 'sum'})
+        stats = stats.groupby(['name', 'category']).aggregate({'length': 'sum'})
         stats = stats.reset_index()
-        stats = stats.groupby(['name', 'admin_level'])
+        stats = stats.groupby('name')
 
         data = {}
         for name, group in stats:
@@ -110,7 +112,7 @@ class OperatorWalkability(Operator[ComputeInputWalkability]):
             group.category = group.category.apply(lambda cat: Rating(cat))
             colors = get_color(group.category).tolist()
             # ASCII encoding error will be fixed by: https://gitlab.gistools.geog.uni-heidelberg.de/climate-action/climatoology/-/issues/46
-            data[f'{name[0].encode(encoding="ascii", errors="replace").decode()} - {name[1]}'] = Chart2dData(
+            data[name.encode(encoding='ascii', errors='replace').decode()] = Chart2dData(
                 x=group.category.apply(lambda cat: cat.name).tolist(),
                 y=group.length.tolist(),
                 color=colors,

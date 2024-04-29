@@ -39,8 +39,8 @@ def test_aggregate(operator, expected_compute_input, responses_mock):
         match=[filter_start_matcher('geometry:polygon and boundary')],
     )
     expected_charts = {
-        'Bergheim - 9': Chart2dData(x=['EXCLUSIVE'], y=[1.0], color=[Color('#006837')], chart_type=ChartType.PIE),
-        'S??dstadt - 9': Chart2dData(x=['EXCLUSIVE'], y=[1.0], color=[Color('#006837')], chart_type=ChartType.PIE),
+        'Bergheim': Chart2dData(x=['EXCLUSIVE'], y=[1.0], color=[Color('#006837')], chart_type=ChartType.PIE),
+        'S??dstadt': Chart2dData(x=['EXCLUSIVE'], y=[1.0], color=[Color('#006837')], chart_type=ChartType.PIE),
     }
 
     line_geom = shapely.LineString([(12.3, 48.22), (12.3, 48.2205), (12.3005, 48.22)])
@@ -54,6 +54,6 @@ def test_aggregate(operator, expected_compute_input, responses_mock):
         },
         crs='EPSG:4326',
     )
-    computed_charts = operator.summarise_by_area(input_paths, expected_compute_input.get_geom())
+    computed_charts = operator.summarise_by_area(input_paths, expected_compute_input.get_geom(), 9)
 
     assert computed_charts == expected_charts

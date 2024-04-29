@@ -76,17 +76,17 @@ def expected_compute_output(compute_resources) -> List[_Artifact]:
         'The data source is OpenStreetMap.',
     )
     chart_artifact_bergheim = _Artifact(
-        name='Bergheim - 9',
+        name='Bergheim',
         modality=ArtifactModality.CHART,
-        file_path=Path(compute_resources.computation_dir / 'aggregation_0.json'),
+        file_path=Path(compute_resources.computation_dir / 'aggregation_Bergheim.json'),
         summary='The distribution of paths categories for this administrative area. '
         'The total length of paths in this area is 1.0',
         description=None,
     )
     chart_artifact_suedstadt = _Artifact(
-        name='S??dstadt - 9',
+        name='S??dstadt',
         modality=ArtifactModality.CHART,
-        file_path=Path(compute_resources.computation_dir / 'aggregation_1.json'),
+        file_path=Path(compute_resources.computation_dir / 'aggregation_S??dstadt.json'),
         summary='The distribution of paths categories for this administrative area. '
         'The total length of paths in this area is 1.0',
         description=None,
