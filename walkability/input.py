@@ -31,6 +31,16 @@ class ComputeInputWalkability(BaseModel):
             }
         ],
     )
+    admin_level: Optional[int] = Field(
+        title='Administrative level',
+        description='The administrative level the results should be aggregated to. See the '
+        '[OSM wiki documentation](https://wiki.openstreetmap.org/wiki/Tag:boundary=administrative) for '
+        'available values.',
+        ge=6,
+        le=12,
+        examples=[9],
+        default=9,
+    )
 
     def get_geom(self) -> shapely.MultiPolygon:
         """Convert the input geojson geometry to a shapely geometry.
