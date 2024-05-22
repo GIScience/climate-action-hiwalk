@@ -4,9 +4,10 @@ from typing import List
 
 import pytest
 import responses
-from climatoology.base.artifact import ArtifactModality
+from climatoology.base.artifact import ArtifactModality, AttachmentType, Legend
 from climatoology.base.computation import ComputationScope
 from climatoology.base.operator import Concern, Info, PluginAuthor, _Artifact
+from pydantic_extra_types.color import Color
 from semver import Version
 
 from walkability.input import ComputeInputWalkability
@@ -74,21 +75,33 @@ def expected_compute_output(compute_resources) -> List[_Artifact]:
         'd) paths that are not walkable but could be (e.g. a residential road without sidewalk).',
         description='The layer excludes paths that are not walkable by definition such as motorways or cycle ways. '
         'The data source is OpenStreetMap.',
+        attachments={
+            AttachmentType.LEGEND: Legend(
+                legend_data={
+                    'Exclusive': Color('#006837'),
+                    'Explicit': Color('#84ca66'),
+                    'Inaccessible': Color('#a50026'),
+                    'Probable': Color('#feffbe'),
+                }
+            )
+        },
     )
     chart_artifact_bergheim = _Artifact(
         name='Bergheim',
         modality=ArtifactModality.CHART,
+        primary=False,
         file_path=Path(compute_resources.computation_dir / 'aggregation_Bergheim.json'),
         summary='The distribution of paths categories for this administrative area. '
-        'The total length of paths in this area is 1.0',
+        'The total length of paths in this area is 0.48km',
         description=None,
     )
     chart_artifact_suedstadt = _Artifact(
-        name='S??dstadt',
+        name='Südstadt',
         modality=ArtifactModality.CHART,
-        file_path=Path(compute_resources.computation_dir / 'aggregation_S??dstadt.json'),
+        primary=False,
+        file_path=Path(compute_resources.computation_dir / 'aggregation_Südstadt.json'),
         summary='The distribution of paths categories for this administrative area. '
-        'The total length of paths in this area is 1.0',
+        'The total length of paths in this area is 0.48km',
         description=None,
     )
 
@@ -116,9 +129,9 @@ def operator():
 @pytest.fixture
 def ohsome_api(responses_mock):
     with (
-        open('resources/test/ohsome_line_response.geojson', 'rb') as line_file,
-        open('resources/test/ohsome_polygon_response.geojson', 'rb') as polygon_file,
-        open('resources/test/ohsome_route_response.geojson', 'rb') as route_file,
+        open('resources/test/ohsome_line_response.geojson', 'r') as line_file,
+        open('resources/test/ohsome_polygon_response.geojson', 'r') as polygon_file,
+        open('resources/test/ohsome_route_response.geojson', 'r') as route_file,
     ):
         line_body = line_file.read()
         polygon_body = polygon_file.read()

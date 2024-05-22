@@ -17,6 +17,7 @@ def build_paths_artifact(sidewalks: gpd.GeoDataFrame, resources: ComputationReso
         'd) paths that are not walkable but could be (e.g. a residential road without sidewalk).',
         description='The layer excludes paths that are not walkable by definition such as motorways or cycle ways. '
         'The data source is OpenStreetMap.',
+        label=sidewalks.category.apply(lambda r: r.name.title()).to_list(),
         color=sidewalks.color.to_list(),
         resources=resources,
         filename='walkable',
@@ -32,9 +33,10 @@ def build_areal_summary_artifacts(
             data=data,
             title=region,
             caption='The distribution of paths categories for this administrative area. '
-            f'The total length of paths in this area is {sum(data.y)}',
+            f'The total length of paths in this area is {sum(data.y)}km',
             resources=resources,
             filename=f'aggregation_{region}',
+            primary=False,
         )
         chart_artifacts.append(chart_artifact)
     return chart_artifacts
