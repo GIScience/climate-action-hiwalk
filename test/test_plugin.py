@@ -12,7 +12,7 @@ def test_plugin_compute_request(
     compute_resources,
     ohsome_api,
 ):
-    with open('resources/test/ohsome_admin_response.geojson', 'rb') as admin_file:
+    with open('resources/test/ohsome_admin_response.geojson', 'r') as admin_file:
         admin_body = admin_file.read()
     ohsome_api.post(
         'https://api.ohsome.org/v1/elements/geometry',

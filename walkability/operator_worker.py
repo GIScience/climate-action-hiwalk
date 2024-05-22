@@ -76,7 +76,7 @@ class OperatorWalkability(Operator[ComputeInputWalkability]):
         return paths[['category', 'color', 'geometry']]
 
     def summarise_by_area(
-        self, paths: gpd.GeoDataFrame, aoi: shapely.MultiPolygon, admin_level: int
+        self, paths: gpd.GeoDataFrame, aoi: shapely.MultiPolygon, admin_level: int, length_resolution_m: int = 1000
     ) -> Dict[str, Chart2dData]:
         stats = paths.copy()
         stats = stats.loc[stats.geometry.geom_type.isin(('MultiLineString', 'LineString'))]
@@ -99,10 +99,11 @@ class OperatorWalkability(Operator[ComputeInputWalkability]):
         stats = stats.overlay(boundaries, how='identity')
         stats = stats.to_crs(stats.geometry.estimate_utm_crs())
 
-        stats['length'] = stats.length
+        stats['length'] = stats.length / length_resolution_m
         stats['category'] = stats.category.apply(lambda cat: cat.value)
 
         stats = stats.groupby(['name', 'category']).aggregate({'length': 'sum'})
+        stats['length'] = round(stats['length'], 2)
         stats = stats.reset_index()
         stats = stats.groupby('name')
 
@@ -111,8 +112,7 @@ class OperatorWalkability(Operator[ComputeInputWalkability]):
             group = group.sort_values(by=['category'], ascending=False)
             group.category = group.category.apply(lambda cat: Rating(cat))
             colors = get_color(group.category).tolist()
-            # ASCII encoding error will be fixed by: https://gitlab.gistools.geog.uni-heidelberg.de/climate-action/climatoology/-/issues/46
-            data[name.encode(encoding='ascii', errors='replace').decode()] = Chart2dData(
+            data[name] = Chart2dData(
                 x=group.category.apply(lambda cat: cat.name).tolist(),
                 y=group.length.tolist(),
                 color=colors,

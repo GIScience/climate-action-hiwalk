@@ -31,7 +31,7 @@ def test_get_paths(operator, expected_compute_input, ohsome_api):
 
 
 def test_aggregate(operator, expected_compute_input, responses_mock):
-    with open('resources/test/ohsome_admin_response.geojson', 'rb') as admin_file:
+    with open('resources/test/ohsome_admin_response.geojson', 'r') as admin_file:
         admin_body = admin_file.read()
     responses_mock.post(
         'https://api.ohsome.org/v1/elements/geometry',
@@ -39,8 +39,8 @@ def test_aggregate(operator, expected_compute_input, responses_mock):
         match=[filter_start_matcher('geometry:polygon and boundary')],
     )
     expected_charts = {
-        'Bergheim': Chart2dData(x=['EXCLUSIVE'], y=[1.0], color=[Color('#006837')], chart_type=ChartType.PIE),
-        'S??dstadt': Chart2dData(x=['EXCLUSIVE'], y=[1.0], color=[Color('#006837')], chart_type=ChartType.PIE),
+        'Bergheim': Chart2dData(x=['EXCLUSIVE'], y=[0.12], color=[Color('#006837')], chart_type=ChartType.PIE),
+        'Südstadt': Chart2dData(x=['EXCLUSIVE'], y=[0.12], color=[Color('#006837')], chart_type=ChartType.PIE),
     }
 
     line_geom = shapely.LineString([(12.3, 48.22), (12.3, 48.2205), (12.3005, 48.22)])
