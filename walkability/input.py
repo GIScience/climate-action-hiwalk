@@ -1,19 +1,33 @@
-from typing import Dict, Optional
+import uuid
+from typing import Optional
 
 import geojson_pydantic
 import shapely
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
+
+
+class AoiProperties(BaseModel):
+    name: str = Field(
+        title='Name',
+        description='The name of the area of interest i.e. a human readable description.',
+        examples=['Heidelberg'],
+    )
+    id: str = Field(
+        title='ID',
+        description='A unique identifier of the area of interest.',
+        examples=[uuid.uuid4()],
+    )
 
 
 class ComputeInputWalkability(BaseModel):
-    aoi_blueprint: geojson_pydantic.Feature[geojson_pydantic.MultiPolygon, Optional[Dict]] = Field(
+    aoi: geojson_pydantic.Feature[geojson_pydantic.MultiPolygon, AoiProperties] = Field(
         title='Area of Interest Input',
         description='A required area of interest parameter.',
         validate_default=True,
         examples=[
             {
                 'type': 'Feature',
-                'properties': {},
+                'properties': {'name': 'Heidelberg', 'id': 'Q12345'},
                 'geometry': {
                     'type': 'MultiPolygon',
                     'coordinates': [
@@ -42,9 +56,21 @@ class ComputeInputWalkability(BaseModel):
         default=9,
     )
 
-    def get_geom(self) -> shapely.MultiPolygon:
+    @field_validator('aoi')
+    def assert_aoi_properties_not_null(cls, aoi: geojson_pydantic.Feature) -> geojson_pydantic.Feature:
+        assert aoi.properties, 'AOI properties are required.'
+        return aoi
+
+    def get_aoi_geom(self) -> shapely.MultiPolygon:
         """Convert the input geojson geometry to a shapely geometry.
 
         :return: A shapely.MultiPolygon representing the area of interest defined by the user.
         """
-        return shapely.geometry.shape(self.aoi_blueprint.geometry)
+        return shapely.geometry.shape(self.aoi.geometry)
+
+    def get_aoi_properties(self) -> AoiProperties:
+        """Return the properties of the aoi.
+
+        :return:
+        """
+        return self.aoi.properties

@@ -84,7 +84,9 @@ def test_get_osm_data(expected_compute_input, responses_mock):
         geometry=[shapely.LineString([(12.3, 48.22), (12.3, 48.2205), (12.3005, 48.22)])],
         crs=4326,
     )
-    computed_osm_data = fetch_osm_data(expected_compute_input.get_geom(), 'dummy=yes', Rating.EXCLUSIVE, OhsomeClient())
+    computed_osm_data = fetch_osm_data(
+        expected_compute_input.get_aoi_geom(), 'dummy=yes', Rating.EXCLUSIVE, OhsomeClient()
+    )
     geopandas.testing.assert_geodataframe_equal(computed_osm_data, expected_osm_data)
 
 
@@ -106,7 +108,7 @@ def test_boost_route_members(expected_compute_input, responses_mock):
         ],
         crs=4326,
     )
-    computed_output = boost_route_members(expected_compute_input.get_geom(), paths_input, OhsomeClient())
+    computed_output = boost_route_members(expected_compute_input.get_aoi_geom(), paths_input, OhsomeClient())
     pd.testing.assert_series_equal(computed_output, expected_output)
 
 
@@ -126,7 +128,7 @@ def test_boost_route_members_overlapping_routes(expected_compute_input, response
         ],
         crs=4326,
     )
-    computed_output = boost_route_members(expected_compute_input.get_geom(), paths_input, OhsomeClient())
+    computed_output = boost_route_members(expected_compute_input.get_aoi_geom(), paths_input, OhsomeClient())
     pd.testing.assert_series_equal(computed_output, expected_output)
 
 
