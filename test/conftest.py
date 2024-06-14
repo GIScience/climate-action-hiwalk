@@ -19,9 +19,9 @@ from walkability.utils import filter_start_matcher
 def expected_compute_input() -> ComputeInputWalkability:
     # noinspection PyTypeChecker
     return ComputeInputWalkability(
-        aoi_blueprint={
+        aoi={
             'type': 'Feature',
-            'properties': None,
+            'properties': {'name': 'Heidelberg', 'id': 'Q12345'},
             'geometry': {
                 'type': 'MultiPolygon',
                 'coordinates': [

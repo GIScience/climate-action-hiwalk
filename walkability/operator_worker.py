@@ -47,10 +47,10 @@ class OperatorWalkability(Operator[ComputeInputWalkability]):
     def compute(self, resources: ComputationResources, params: ComputeInputWalkability) -> List[_Artifact]:
         log.info(f'Handling compute request: {params.model_dump()} in context: {resources}')
 
-        paths = self.get_paths(params.get_geom())
+        paths = self.get_paths(params.get_aoi_geom())
         paths_artifact = build_paths_artifact(paths, resources)
 
-        areal_summaries = self.summarise_by_area(paths, params.get_geom(), params.admin_level)
+        areal_summaries = self.summarise_by_area(paths, params.get_aoi_geom(), params.admin_level)
         chart_artifacts = build_areal_summary_artifacts(areal_summaries, resources)
 
         return [paths_artifact] + chart_artifacts

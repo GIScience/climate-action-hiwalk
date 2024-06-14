@@ -19,7 +19,7 @@ def test_get_paths(operator, expected_compute_input, ohsome_api):
         },
         crs='EPSG:4326',
     )
-    computed_gdf = operator.get_paths(expected_compute_input.get_geom())
+    computed_gdf = operator.get_paths(expected_compute_input.get_aoi_geom())
 
     testing.assert_geodataframe_equal(
         computed_gdf,
@@ -54,6 +54,6 @@ def test_aggregate(operator, expected_compute_input, responses_mock):
         },
         crs='EPSG:4326',
     )
-    computed_charts = operator.summarise_by_area(input_paths, expected_compute_input.get_geom(), 9)
+    computed_charts = operator.summarise_by_area(input_paths, expected_compute_input.get_aoi_geom(), 9)
 
     assert computed_charts == expected_charts
