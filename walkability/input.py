@@ -56,6 +56,7 @@ class ComputeInputWalkability(BaseModel):
         default=9,
     )
 
+    @classmethod
     @field_validator('aoi')
     def assert_aoi_properties_not_null(cls, aoi: geojson_pydantic.Feature) -> geojson_pydantic.Feature:
         assert aoi.properties, 'AOI properties are required.'

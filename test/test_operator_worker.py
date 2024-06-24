@@ -13,9 +13,23 @@ def test_get_paths(operator, expected_compute_input, ohsome_api):
 
     expected_gdf = gpd.GeoDataFrame(
         data={
-            'category': 2 * [Rating.EXCLUSIVE, Rating.EXPLICIT, Rating.PROBABLE, Rating.INACCESSIBLE],
-            'color': 2 * [Color('#006837'), Color('#84ca66'), Color('#feffbe'), Color('#a50026')],
-            'geometry': 4 * [line_geom] + 4 * [polygon_geom],
+            'category': 2
+            * [
+                Rating.EXCLUSIVE,
+                Rating.EXPLICIT,
+                Rating.PROBABLE_YES,
+                Rating.PROBABLE_NO,
+                Rating.INACCESSIBLE,
+            ],
+            'color': 2
+            * [
+                Color('#006837'),
+                Color('#84ca66'),
+                Color('#feffbe'),
+                Color('#f98e52'),
+                Color('#a50026'),
+            ],
+            'geometry': 5 * [line_geom] + 5 * [polygon_geom],
         },
         crs='EPSG:4326',
     )
@@ -39,8 +53,18 @@ def test_aggregate(operator, expected_compute_input, responses_mock):
         match=[filter_start_matcher('geometry:polygon and boundary')],
     )
     expected_charts = {
-        'Bergheim': Chart2dData(x=['EXCLUSIVE'], y=[0.12], color=[Color('#006837')], chart_type=ChartType.PIE),
-        'Südstadt': Chart2dData(x=['EXCLUSIVE'], y=[0.12], color=[Color('#006837')], chart_type=ChartType.PIE),
+        'Bergheim': Chart2dData(
+            x=['EXCLUSIVE'],
+            y=[0.12],
+            color=[Color('#006837')],
+            chart_type=ChartType.PIE,
+        ),
+        'Südstadt': Chart2dData(
+            x=['EXCLUSIVE'],
+            y=[0.12],
+            color=[Color('#006837')],
+            chart_type=ChartType.PIE,
+        ),
     }
 
     line_geom = shapely.LineString([(12.3, 48.22), (12.3, 48.2205), (12.3005, 48.22)])

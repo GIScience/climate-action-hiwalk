@@ -6,13 +6,26 @@ import geopandas as gpd
 import pandas as pd
 import shapely
 from climatoology.base.artifact import Chart2dData, ChartType
-from climatoology.base.operator import ComputationResources, Concern, Info, Operator, PluginAuthor, _Artifact
+from climatoology.base.operator import (
+    ComputationResources,
+    Concern,
+    Info,
+    Operator,
+    PluginAuthor,
+    _Artifact,
+)
 from ohsome import OhsomeClient
 from semver import Version
 
 from walkability.artifact import build_paths_artifact, build_areal_summary_artifacts
 from walkability.input import ComputeInputWalkability
-from walkability.utils import construct_filter, fetch_osm_data, boost_route_members, get_color, Rating
+from walkability.utils import (
+    construct_filters,
+    fetch_osm_data,
+    boost_route_members,
+    get_color,
+    Rating,
+)
 
 log = logging.getLogger(__name__)
 
@@ -60,7 +73,7 @@ class OperatorWalkability(Operator[ComputeInputWalkability]):
 
         lines_list = []
         polygon_list = []
-        for rating, osm_filter in construct_filter().items():
+        for rating, osm_filter in construct_filters().items():
             lines_list.append(fetch_osm_data(aoi, f'geometry:line and ({osm_filter})', rating, self.ohsome))
             polygon_list.append(fetch_osm_data(aoi, f'geometry:polygon and ({osm_filter})', rating, self.ohsome))
 
@@ -76,7 +89,11 @@ class OperatorWalkability(Operator[ComputeInputWalkability]):
         return paths[['category', 'color', 'geometry']]
 
     def summarise_by_area(
-        self, paths: gpd.GeoDataFrame, aoi: shapely.MultiPolygon, admin_level: int, length_resolution_m: int = 1000
+        self,
+        paths: gpd.GeoDataFrame,
+        aoi: shapely.MultiPolygon,
+        admin_level: int,
+        length_resolution_m: int = 1000,
     ) -> Dict[str, Chart2dData]:
         stats = paths.copy()
         stats = stats.loc[stats.geometry.geom_type.isin(('MultiLineString', 'LineString'))]
