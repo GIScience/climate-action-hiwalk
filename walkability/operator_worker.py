@@ -45,7 +45,17 @@ class OperatorWalkability(Operator[ComputeInputWalkability]):
                     name='Moritz Schott',
                     affiliation='HeiGIT gGmbH',
                     website='https://heigit.org/heigit-team/',
-                )
+                ),
+                PluginAuthor(
+                    name='Matthias Schaub',
+                    affiliation='HeiGIT gGmbH',
+                    website='https://heigit.org/heigit-team/',
+                ),
+                PluginAuthor(
+                    name='Levi Szamek',
+                    affiliation='HeiGIT gGmbH',
+                    website='https://heigit.org/heigit-team/',
+                ),
             ],
             version=Version(0, 0, 1),
             concerns=[Concern.MOBILITY_PEDESTRIAN],
