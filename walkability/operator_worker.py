@@ -60,15 +60,15 @@ class OperatorWalkability(Operator[ComputeInputWalkability]):
     def compute(self, resources: ComputationResources, params: ComputeInputWalkability) -> List[_Artifact]:
         log.info(f'Handling compute request: {params.model_dump()} in context: {resources}')
 
-        paths = self.get_paths(params.get_aoi_geom())
-        paths_artifact = build_paths_artifact(paths, resources)
+        line_paths, polygon_paths = self.get_paths(params.get_aoi_geom())
+        paths_artifact = build_paths_artifact(line_paths, polygon_paths, resources)
 
-        areal_summaries = self.summarise_by_area(paths, params.get_aoi_geom(), params.admin_level)
+        areal_summaries = self.summarise_by_area(line_paths, params.get_aoi_geom(), params.admin_level)
         chart_artifacts = build_areal_summary_artifacts(areal_summaries, resources)
 
         return [paths_artifact] + chart_artifacts
 
-    def get_paths(self, aoi: shapely.MultiPolygon) -> gpd.GeoDataFrame:
+    def get_paths(self, aoi: shapely.MultiPolygon) -> (gpd.GeoDataFrame, gpd.GeoDataFrame):
         log.debug('Requesting paths')
 
         lines_list = []
@@ -82,11 +82,7 @@ class OperatorWalkability(Operator[ComputeInputWalkability]):
 
         paths_line['category'] = boost_route_members(aoi, paths_line[['geometry', 'category']], self.ohsome)
 
-        paths = pd.concat([paths_line, paths_polygon], ignore_index=True)
-
-        paths['color'] = get_color(paths.category)
-
-        return paths[['category', 'color', 'geometry']]
+        return paths_line[['category', 'geometry']], paths_polygon[['category', 'geometry']]
 
     def summarise_by_area(
         self,
