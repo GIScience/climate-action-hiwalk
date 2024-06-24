@@ -80,8 +80,9 @@ def expected_compute_output(compute_resources) -> List[_Artifact]:
                 legend_data={
                     'Exclusive': Color('#006837'),
                     'Explicit': Color('#84ca66'),
+                    'Probable_Yes': Color('#feffbe'),
+                    'Probable_No': Color('#f98e52'),
                     'Inaccessible': Color('#a50026'),
-                    'Probable': Color('#feffbe'),
                 }
             )
         },

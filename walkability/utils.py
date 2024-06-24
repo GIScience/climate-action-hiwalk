@@ -246,9 +246,14 @@ def fix_geometry_collection(
         return LineString()
 
 
-def get_color(categories: pd.Series) -> pd.Series:
-    cmap = matplotlib.colormaps.get_cmap('RdYlGn')
+def get_color(categories: pd.Series, cmap_name: str = 'RdYlGn') -> pd.Series:
+    cmap = matplotlib.colormaps.get_cmap(cmap_name)
     return categories.apply(lambda c: Color(to_hex(cmap(c.value))))
+
+
+def get_single_color(rating: Rating, cmap_name: str = 'RdYlGn') -> Color:
+    cmap = matplotlib.colormaps.get_cmap(cmap_name)
+    return Color(to_hex(cmap(rating.value)))
 
 
 def filter_start_matcher(filter_start: str) -> Callable[..., Any]:

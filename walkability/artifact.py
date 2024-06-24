@@ -1,6 +1,7 @@
 from typing import List, Dict
 
 import geopandas as gpd
+import pandas as pd
 from climatoology.base.artifact import (
     _Artifact,
     create_geojson_artifact,
@@ -9,8 +10,18 @@ from climatoology.base.artifact import (
 )
 from climatoology.base.computation import ComputationResources
 
+from walkability.utils import get_color, Rating, get_single_color
 
-def build_paths_artifact(sidewalks: gpd.GeoDataFrame, resources: ComputationResources) -> _Artifact:
+
+def build_paths_artifact(
+    paths_line: gpd.GeoDataFrame,
+    paths_polygon: gpd.GeoDataFrame,
+    resources: ComputationResources,
+    cmap_name: str = 'RdYlGn',
+) -> _Artifact:
+    sidewalks = pd.concat([paths_line, paths_polygon], ignore_index=True)
+
+    sidewalks['color'] = get_color(sidewalks.category, cmap_name)
     return create_geojson_artifact(
         features=sidewalks.geometry,
         layer_name='Walkable',
@@ -24,6 +35,7 @@ def build_paths_artifact(sidewalks: gpd.GeoDataFrame, resources: ComputationReso
         'The data source is OpenStreetMap.',
         label=sidewalks.category.apply(lambda r: r.name.title()).to_list(),
         color=sidewalks.color.to_list(),
+        legend_data={rating.name.title(): get_single_color(rating) for rating in Rating},
         resources=resources,
         filename='walkable',
     )
