@@ -1,5 +1,3 @@
-import pytest
-
 from walkability.utils import filter_start_matcher
 
 
@@ -21,6 +19,4 @@ def test_plugin_compute_request(
         body=admin_body,
         match=[filter_start_matcher('geometry:polygon and boundary')],
     )
-    pytest.approx(
-        operator.compute(resources=compute_resources, params=expected_compute_input) == expected_compute_output
-    )
+    assert operator.compute(resources=compute_resources, params=expected_compute_input) == expected_compute_output

@@ -103,7 +103,7 @@ def expected_compute_output(compute_resources) -> List[_Artifact]:
         primary=False,
         file_path=Path(compute_resources.computation_dir / 'aggregation_Bergheim.json'),
         summary='The distribution of paths categories for this administrative area. '
-        'The total length of paths in this area is 0.48km',
+        'The total length of paths in this area is 0.6km',
         description=None,
     )
     chart_artifact_suedstadt = _Artifact(
@@ -112,7 +112,7 @@ def expected_compute_output(compute_resources) -> List[_Artifact]:
         primary=False,
         file_path=Path(compute_resources.computation_dir / 'aggregation_Südstadt.json'),
         summary='The distribution of paths categories for this administrative area. '
-        'The total length of paths in this area is 0.48km',
+        'The total length of paths in this area is 0.6km',
         description=None,
     )
 
