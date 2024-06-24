@@ -16,10 +16,41 @@ and the pre-commit hooks:
 poetry run pre-commit install
 ```
 
+## Tests
+
+To run all tests:
+```shell
+poetry run pytest
+```
+
+Some tests are [ApprovalTests](https://github.com/approvals/approvaltests.Python).
+Approval tests capture the output (snapshot) of a piece of code and compare it
+with a previously approved version of the output.
+
+Once the output has been *approved* then as long as the output stays the same
+the test will pass. A test fails if the *received* output is not identical to
+the approved version. In that case, the difference of the received and the
+approved output is reported to the tester. The representation of the report can
+take many forms: The default is a print out of the difference to the console. You can also choose to use a diff-tool instead:
+
+```bash
+# Meld
+pytest \
+    --approvaltests-add-reporter="meld"
+# PyCharm
+pytest \
+    --approvaltests-add-reporter="pycharm-community" \
+    --approvaltests-add-reporter-args="diff"
+# Nvim
+pytest \
+    -s  \
+    --approvaltests-add-reporter="nvim" \
+    --approvaltests-add-reporter-args="-d"
+```
 
 ## Docker (for admins and interested devs)
 
-If the [infrastructure]() is reachable you can copy [.env_template](.env_template) to `.env` and then run
+If the [infrastructure](https://gitlab.gistools.geog.uni-heidelberg.de/climate-action/infrastructure) is reachable you can copy [.env_template](.env_template) to `.env` and then run
 
 ```shell
 DOCKER_BUILDKIT=1 docker build --secret id=CI_JOB_TOKEN . --tag heigit/ca-walkability:devel

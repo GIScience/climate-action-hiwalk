@@ -1,0 +1,85 @@
+(
+    (
+    highway in (primary,primary_link,secondary,secondary_link,tertiary,tertiary_link,unclassified,residential,service,track,road,cycleway,platform) or
+    route=ferry
+    ) and
+    (
+        sidewalk=no or
+        sidewalk:both=no or
+        (sidewalk:left=no and sidewalk:right=no) or
+        sidewalk=none or
+        sidewalk:both=none or
+        (sidewalk:left=none and sidewalk:right=none)
+    )
+    ) and not
+    (
+        (
+    footway in (separate,no) or
+    sidewalk=separate or
+    sidewalk:left=separate or
+    sidewalk:right=separate or
+    sidewalk:both=separate or
+    access in (no,private,permit,military,delivery,customers) or
+    foot in (no,private,use_sidepath,discouraged,destination)
+    ) or
+        (
+    highway in (pedestrian,steps,corridor) or
+    (
+        highway=footway and
+        (
+    (
+        foot in (designated,official) or
+        foot!=*
+    ) or
+    (
+        footway in (access_aisle,alley,residential,link,path) or
+        footway!=*
+    )
+    )
+    ) or
+    (
+        highway=path and
+        (
+    (
+        foot in (designated,official) or
+        foot!=*
+    ) or
+    (
+        footway in (access_aisle,alley,residential,link,path) or
+        footway!=*
+    )
+    )
+    )
+    ) or
+        (
+    railway=platform or
+    highway=living_street or
+    (
+        highway=footway and
+        (
+    foot in (yes,permissive,designated,official) or
+    footway in (sidewalk,crossing,traffic_island,yes)
+    )
+    ) or
+    (
+        highway=path and
+        (
+    foot in (yes,permissive,designated,official) or
+    footway in (sidewalk,crossing,traffic_island,yes)
+    )
+    ) or
+    (
+        (
+    highway in (primary,primary_link,secondary,secondary_link,tertiary,tertiary_link,unclassified,residential,service,track,road,cycleway,platform) or
+    route=ferry
+    ) and
+        (
+            sidewalk in (both,left,right,yes,lane) or
+            sidewalk:left=yes or
+            sidewalk:right=yes or
+            sidewalk:both=yes or
+            (foot in (yes,permissive,designated,official))
+        )
+    )
+    )
+    )

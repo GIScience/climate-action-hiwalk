@@ -17,31 +17,58 @@ from shapely import LineString
 class FilterGroups(BaseModel):
     exclusive: str
     explicit: str
-    probable: str
+    probable_yes: str
+    probable_no: str
     inaccessible: str
 
 
 class Rating(Enum):
     EXCLUSIVE = 1.0
     EXPLICIT = 0.75
-    PROBABLE = 0.5
+    PROBABLE_YES = 0.5
+    PROBABLE_NO = 0.25
     INACCESSIBLE = 0.0
 
 
-def construct_filter() -> Dict[Rating, str]:
-    potential = 'highway in (primary,secondary,tertiary,unclassified,residential,service,track,road)'
-    # For documentation:
-    # ignored_primary = 'highway in (motorway,trunk,motorway_link,trunk_link,primary_link,secondary_link,tertiary_link,bus_guideway,escape,raceway,busway,brideleway,via_ferrata,cicleway'
-    # ignored_secondary = 'sidewalk=no'
-    excluded = (
-        'footway in (separate,no) or '
-        'sidewalk=separate or '
-        'sidewalk:left=separate or '
-        'sidewalk:right=separate or '
-        'access in (no,private,permit,military,delivery,customers) or '
-        'foot in (no,private,use_sidepath,discouraged)'
+def construct_filters() -> Dict[Rating, str]:
+    # TODO: Remove whitespace before sending to ohsome API
+    # Potential: potentially walkable features (to be restricted by AND queries)
+    potential_highway_values = (
+        'primary',
+        'primary_link',
+        'secondary',
+        'secondary_link',
+        'tertiary',
+        'tertiary_link',
+        'unclassified',
+        'residential',
+        'service',
+        'track',
+        'road',
+        'cycleway',
+        'platform',
     )
+    potential = f"""
+    highway in ({','.join(potential_highway_values)}) or
+    route=ferry
+    """
+    # For documentation:
+    # ignored_primary = 'highway in (motorway,trunk,motorway_link,trunk_link,
+    # primary_link,secondary_link,tertiary_link,bus_guideway,escape,raceway,busway,
+    # brideleway,via_ferrata,cicleway'
+    # ignored_secondary = 'sidewalk=no'
+    ignore = """
+    footway in (separate,no) or
+    sidewalk=separate or
+    sidewalk:left=separate or
+    sidewalk:right=separate or
+    sidewalk:both=separate or
+    access in (no,private,permit,military,delivery,customers) or
+    foot in (no,private,use_sidepath,discouraged,destination)
+    """
 
+    # Exclusive: Only for pedestrians
+    # secondary tags
     exclusive_secondary = """
     (
         foot in (designated,official) or
@@ -53,60 +80,117 @@ def construct_filter() -> Dict[Rating, str]:
     )
     """
 
-    exclusive = f"""
+    _exclusive = f"""
     highway in (pedestrian,steps,corridor) or
     (
         highway=footway and
-        (
-            {exclusive_secondary}
-        )
+        ({exclusive_secondary})
     ) or
     (
         highway=path and
-        (
-            {exclusive_secondary}
-        )
+        ({exclusive_secondary})
     )
     """
 
-    explict_foot = 'foot in (yes,permissive)'
-    explicit_secondary = f'{explict_foot} or footway in (sidewalk,crossing,traffic_island)'
+    exclusive = f"""
+    ({_exclusive}) and not
+    ({ignore})
+    """
+
+    # Explicit: For pedestrians but not only (E.g. shared with bicycle)
+    explicit_foot = 'foot in (yes,permissive,designated,official)'
+    # secondary tags
+    explicit_secondary = f"""
+    {explicit_foot} or
+    footway in (sidewalk,crossing,traffic_island,yes)
+    """
+
+    _explicit = f"""
+    railway=platform or
+    highway=living_street or
+    (
+        highway=footway and
+        ({explicit_secondary})
+    ) or
+    (
+        highway=path and
+        ({explicit_secondary})
+    ) or
+    (
+        ({potential}) and
+        (
+            sidewalk in (both,left,right,yes,lane) or
+            sidewalk:left=yes or
+            sidewalk:right=yes or
+            sidewalk:both=yes or
+            ({explicit_foot})
+        )
+    )
+    """
     explicit = f"""
+    ({_explicit}) and not
     (
-        highway=living_street or
-        (
-            highway=footway and
-            (
-                {explicit_secondary}
-            )
-        ) or
-        (
-            highway=path and
-            (
-                {explicit_secondary}
-            )
-        ) or
-        (
-            {potential} and
-            (
-                sidewalk in (both,left,right) or
-                {explict_foot}
-            )
-        )
-    ) and not
-    (
-        {excluded}
+        ({ignore}) or
+        ({_exclusive})
     )
     """
 
-    probable = f'highway in (track,service) and not ({excluded})'
+    _inaccessible = f"""
+    ({potential}) and
+    (
+        sidewalk=no or
+        sidewalk:both=no or
+        (sidewalk:left=no and sidewalk:right=no) or
+        sidewalk=none or
+        sidewalk:both=none or
+        (sidewalk:left=none and sidewalk:right=none)
+    )
+    """
+    inaccessible = f"""
+    ({_inaccessible}) and not
+    (
+        ({ignore}) or
+        ({_exclusive}) or
+        ({_explicit})
+    )
+    """
 
-    inaccessible = f'{potential} and not ({explicit}) and not ({probable}) and not ({excluded})'
+    # Probable_yes: (E.g. forest tracks)
+    _probable_yes = """
+    highway in (track,service,path) or
+    man_made=pier
+    """
+    probable_yes = f"""
+    ({_probable_yes}) and not
+    (
+        ({ignore}) or
+        ({_exclusive}) or
+        ({_explicit}) or
+        ({_inaccessible})
+    )
+    """
 
+    probable_no = f"""
+    ({potential}) and not
+    (
+        ({ignore}) or
+        ({_exclusive}) or
+        ({_explicit}) or
+        ({_inaccessible}) or
+        ({_probable_yes})
+    )
+    """
+    # Remove empty lines for better readability
+    exclusive = ''.join([s for s in exclusive.strip().splitlines(keepends=True) if s.strip()])
+    explicit = ''.join([s for s in explicit.strip().splitlines(keepends=True) if s.strip()])
+    probable_yes = ''.join([s for s in probable_yes.strip().splitlines(keepends=True) if s.strip()])
+    probable_no = ''.join([s for s in probable_no.strip().splitlines(keepends=True) if s.strip()])
+    inaccessible = ''.join([s for s in inaccessible.strip().splitlines(keepends=True) if s.strip()])
     return {
         Rating.EXCLUSIVE: exclusive,
         Rating.EXPLICIT: explicit,
-        Rating.PROBABLE: probable,
+        Rating.PROBABLE_YES: probable_yes,
+        Rating.PROBABLE_NO: probable_no,
         Rating.INACCESSIBLE: inaccessible,
     }
 
@@ -128,7 +212,14 @@ def boost_route_members(aoi: shapely.MultiPolygon, paths_line: gpd.GeoDataFrame,
     trails.geometry = trails.geometry.apply(lambda geom: fix_geometry_collection(geom))
 
     paths_line = paths_line.copy()
-    paths_line = gpd.sjoin(paths_line, trails, lsuffix='path', rsuffix='trail', how='left', predicate='within')
+    paths_line = gpd.sjoin(
+        paths_line,
+        trails,
+        lsuffix='path',
+        rsuffix='trail',
+        how='left',
+        predicate='within',
+    )
     paths_line = paths_line[~paths_line.index.duplicated(keep='first')]
     paths_line.loc[paths_line.category_trail.isnull(), 'category_trail'] = Rating.INACCESSIBLE
 
@@ -138,7 +229,9 @@ def boost_route_members(aoi: shapely.MultiPolygon, paths_line: gpd.GeoDataFrame,
     )
 
 
-def fix_geometry_collection(geom: shapely.Geometry) -> Union[shapely.LineString, shapely.MultiLineString]:
+def fix_geometry_collection(
+    geom: shapely.Geometry,
+) -> Union[shapely.LineString, shapely.MultiLineString]:
     # Hack due to https://github.com/GIScience/oshdb/issues/463
     if geom.geom_type == 'GeometryCollection':
         inner_geoms = []

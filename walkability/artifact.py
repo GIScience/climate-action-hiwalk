@@ -1,7 +1,12 @@
 from typing import List, Dict
 
 import geopandas as gpd
-from climatoology.base.artifact import _Artifact, create_geojson_artifact, create_chart_artifact, Chart2dData
+from climatoology.base.artifact import (
+    _Artifact,
+    create_geojson_artifact,
+    create_chart_artifact,
+    Chart2dData,
+)
 from climatoology.base.computation import ComputationResources
 
 

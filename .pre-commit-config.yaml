@@ -6,6 +6,7 @@ repos:
       - id: check-added-large-files
       - id: detect-private-key
       - id: trailing-whitespace
+        exclude: ^test/.*\.approved.txt$
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.1.15
     hooks:
