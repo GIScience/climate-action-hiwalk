@@ -2,26 +2,33 @@ from typing import List, Dict
 
 import geopandas as gpd
 import pandas as pd
+import shapely
 from climatoology.base.artifact import (
     _Artifact,
     create_geojson_artifact,
     create_chart_artifact,
     Chart2dData,
+    ContinuousLegendData,
 )
 from climatoology.base.computation import ComputationResources
 
-from walkability.utils import get_color, Rating, get_single_color
+from walkability.input import PathRating
+from walkability.utils import get_color, get_single_color
 
 
 def build_paths_artifact(
     paths_line: gpd.GeoDataFrame,
     paths_polygon: gpd.GeoDataFrame,
+    ratings: PathRating,
+    clip_aoi: shapely.MultiPolygon,
     resources: ComputationResources,
     cmap_name: str = 'RdYlGn',
 ) -> _Artifact:
+    paths_line = paths_line.clip(clip_aoi, keep_geom_type=True)
+    paths_polygon = paths_polygon.clip(clip_aoi, keep_geom_type=True)
     sidewalks = pd.concat([paths_line, paths_polygon], ignore_index=True)
 
-    sidewalks['color'] = get_color(sidewalks.category, cmap_name)
+    sidewalks['color'] = get_color(sidewalks.rating, cmap_name)
     return create_geojson_artifact(
         features=sidewalks.geometry,
         layer_name='Walkable',
@@ -33,11 +40,39 @@ def build_paths_artifact(
         'd) paths that are not walkable but could be (e.g. a residential road without sidewalk).',
         description='The layer excludes paths that are not walkable by definition such as motorways or cycle ways. '
         'The data source is OpenStreetMap.',
-        label=sidewalks.category.apply(lambda r: r.name.title()).to_list(),
+        label=sidewalks.category.apply(lambda r: r.name).to_list(),
         color=sidewalks.color.to_list(),
-        legend_data={rating.name.title(): get_single_color(rating) for rating in Rating},
+        legend_data={rating[0]: get_single_color(rating[1]) for rating in ratings},
         resources=resources,
         filename='walkable',
+    )
+
+
+def build_connectivity_artifact(
+    connectivity: gpd.GeoDataFrame,
+    clip_aoi: shapely.MultiPolygon,
+    resources: ComputationResources,
+    cmap_name: str = 'RdYlGn',
+) -> _Artifact:
+    connectivity = connectivity.clip(clip_aoi, keep_geom_type=True)
+    color = get_color(connectivity.connectivity, cmap_name).to_list()
+    legend = ContinuousLegendData(
+        cmap_name=cmap_name, ticks={'Low Connectivity': 0, 'Medium Connectivity': 0.5, 'High Connectivity': 1}
+    )
+
+    return create_geojson_artifact(
+        features=connectivity.geometry,
+        layer_name='Connectivity',
+        primary=False,
+        filename='connectivity',
+        caption='Map of connectivity scores.',
+        description='Each path is evaluated based on the reachability of other paths within the area of interest. '
+        'Reachability or connectivity is defined as the share of locations that can be reached by foot in '
+        'reference to an optimum where all locations are directly connected "as the crow flies".',
+        label=connectivity.connectivity.to_list(),
+        color=color,
+        legend_data=legend,
+        resources=resources,
     )
 
 

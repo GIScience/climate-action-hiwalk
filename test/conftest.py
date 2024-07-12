@@ -4,7 +4,7 @@ from typing import List
 
 import pytest
 import responses
-from climatoology.base.artifact import ArtifactModality, AttachmentType, Legend
+from climatoology.base.artifact import ArtifactModality, AttachmentType, Legend, ContinuousLegendData
 from climatoology.base.computation import ComputationScope
 from climatoology.base.operator import Concern, Info, PluginAuthor, _Artifact
 from pydantic_extra_types.color import Color
@@ -88,12 +88,30 @@ def expected_compute_output(compute_resources) -> List[_Artifact]:
         attachments={
             AttachmentType.LEGEND: Legend(
                 legend_data={
-                    'Exclusive': Color('#006837'),
-                    'Explicit': Color('#84ca66'),
-                    'Probable_Yes': Color('#feffbe'),
-                    'Probable_No': Color('#f98e52'),
-                    'Inaccessible': Color('#a50026'),
+                    'exclusive': Color('#006837'),
+                    'explicit': Color('#66bd63'),
+                    'probable_yes': Color('#d9ef8b'),
+                    'potential_but_unknown': Color('#feffbe'),
+                    'inaccessible': Color('#a50026'),
                 }
+            )
+        },
+    )
+    connectivity = _Artifact(
+        name='Connectivity',
+        modality=ArtifactModality.MAP_LAYER_GEOJSON,
+        primary=False,
+        file_path=Path(compute_resources.computation_dir / 'connectivity.geojson'),
+        summary='Map of connectivity scores.',
+        description='Each path is evaluated based on the reachability of other paths within the area of interest. '
+        'Reachability or connectivity is defined as the share of locations that can be reached by foot in '
+        'reference to an optimum where all locations are directly connected "as the crow flies".',
+        attachments={
+            AttachmentType.LEGEND: Legend(
+                legend_data=ContinuousLegendData(
+                    cmap_name='RdYlGn',
+                    ticks={'Low Connectivity': 0, 'Medium Connectivity': 0.5, 'High Connectivity': 1},
+                )
             )
         },
     )
@@ -116,7 +134,7 @@ def expected_compute_output(compute_resources) -> List[_Artifact]:
         description=None,
     )
 
-    return [paths_artifact, chart_artifact_bergheim, chart_artifact_suedstadt]
+    return [paths_artifact, connectivity, chart_artifact_bergheim, chart_artifact_suedstadt]
 
 
 # The following fixtures can be ignored on plugin setup

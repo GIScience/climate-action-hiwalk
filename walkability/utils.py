@@ -1,36 +1,32 @@
+import logging
 from enum import Enum
 from typing import Dict, Union, Callable, Any, Tuple
 from urllib.parse import parse_qsl
 
 import geopandas as gpd
 import matplotlib
+import momepy
+import networkx as nx
 import pandas as pd
 import shapely
 from matplotlib.colors import to_hex
 from ohsome import OhsomeClient
-from pydantic import BaseModel
 from pydantic_extra_types.color import Color
 from requests import PreparedRequest
-from shapely import LineString
+from shapely import LineString, MultiLineString
+
+log = logging.getLogger(__name__)
 
 
-class FilterGroups(BaseModel):
-    exclusive: str
-    explicit: str
-    probable_yes: str
-    probable_no: str
-    inaccessible: str
+class PathCategory(Enum):
+    EXCLUSIVE = 'exclusive'
+    EXPLICIT = 'explicit'
+    PROBABLE_YES = 'probable_yes'
+    POTENTIAL_BUT_UNKNOWN = 'potential_but_unknown'
+    INACCESSIBLE = 'inaccessible'
 
 
-class Rating(Enum):
-    EXCLUSIVE = 1.0
-    EXPLICIT = 0.75
-    PROBABLE_YES = 0.5
-    PROBABLE_NO = 0.25
-    INACCESSIBLE = 0.0
-
-
-def construct_filters() -> Dict[Rating, str]:
+def construct_filters() -> Dict[PathCategory, str]:
     # TODO: Remove whitespace before sending to ohsome API
     # Potential: potentially walkable features (to be restricted by AND queries)
     potential_highway_values = (
@@ -170,7 +166,7 @@ def construct_filters() -> Dict[Rating, str]:
     )
     """
 
-    probable_no = f"""
+    potential_but_unknown = f"""
     ({potential}) and not
     (
         ({ignore}) or
@@ -184,31 +180,32 @@ def construct_filters() -> Dict[Rating, str]:
     exclusive = ''.join([s for s in exclusive.strip().splitlines(keepends=True) if s.strip()])
     explicit = ''.join([s for s in explicit.strip().splitlines(keepends=True) if s.strip()])
     probable_yes = ''.join([s for s in probable_yes.strip().splitlines(keepends=True) if s.strip()])
-    probable_no = ''.join([s for s in probable_no.strip().splitlines(keepends=True) if s.strip()])
+    potential_but_unknown = ''.join([s for s in potential_but_unknown.strip().splitlines(keepends=True) if s.strip()])
     inaccessible = ''.join([s for s in inaccessible.strip().splitlines(keepends=True) if s.strip()])
     return {
-        Rating.EXCLUSIVE: exclusive,
-        Rating.EXPLICIT: explicit,
-        Rating.PROBABLE_YES: probable_yes,
-        Rating.PROBABLE_NO: probable_no,
-        Rating.INACCESSIBLE: inaccessible,
+        PathCategory.EXCLUSIVE: exclusive,
+        PathCategory.EXPLICIT: explicit,
+        PathCategory.PROBABLE_YES: probable_yes,
+        PathCategory.POTENTIAL_BUT_UNKNOWN: potential_but_unknown,
+        PathCategory.INACCESSIBLE: inaccessible,
     }
 
 
-def fetch_osm_data(
-    aoi: shapely.MultiPolygon, osm_filter: str, rating: Rating, ohsome: OhsomeClient
-) -> gpd.GeoDataFrame:
+def fetch_osm_data(aoi: shapely.MultiPolygon, osm_filter: str, ohsome: OhsomeClient) -> gpd.GeoDataFrame:
     elements = ohsome.elements.geometry.post(
         bpolys=aoi, clipGeometry=True, properties=None, filter=osm_filter
     ).as_dataframe()
     elements = elements.reset_index(drop=True)
-    elements['category'] = rating
-    return elements[['category', 'geometry']]
+    return elements[['geometry']]
 
 
-def boost_route_members(aoi: shapely.MultiPolygon, paths_line: gpd.GeoDataFrame, ohsome: OhsomeClient) -> pd.Series:
-    trails = fetch_osm_data(aoi, 'route in (foot,hiking)', Rating.EXPLICIT, ohsome)
-
+def boost_route_members(
+    aoi: shapely.MultiPolygon,
+    paths_line: gpd.GeoDataFrame,
+    ohsome: OhsomeClient,
+    boost_to: PathCategory = PathCategory.EXPLICIT,
+) -> pd.Series:
+    trails = fetch_osm_data(aoi, 'route in (foot,hiking)', ohsome)
     trails.geometry = trails.geometry.apply(lambda geom: fix_geometry_collection(geom))
 
     paths_line = paths_line.copy()
@@ -221,10 +218,12 @@ def boost_route_members(aoi: shapely.MultiPolygon, paths_line: gpd.GeoDataFrame,
         predicate='within',
     )
     paths_line = paths_line[~paths_line.index.duplicated(keep='first')]
-    paths_line.loc[paths_line.category_trail.isnull(), 'category_trail'] = Rating.INACCESSIBLE
 
     return paths_line.apply(
-        lambda row: row.category_path if row.category_path.value >= row.category_trail.value else row.category_trail,
+        lambda row: boost_to
+        if not pd.isna(row.index_trail)
+        and row.category in (PathCategory.POTENTIAL_BUT_UNKNOWN, PathCategory.PROBABLE_YES)
+        else row.category,
         axis=1,
     )
 
@@ -246,14 +245,14 @@ def fix_geometry_collection(
         return LineString()
 
 
-def get_color(categories: pd.Series, cmap_name: str = 'RdYlGn') -> pd.Series:
+def get_color(values: pd.Series, cmap_name: str = 'RdYlGn') -> pd.Series:
     cmap = matplotlib.colormaps.get_cmap(cmap_name)
-    return categories.apply(lambda c: Color(to_hex(cmap(c.value))))
+    return values.apply(lambda v: Color(to_hex(cmap(v))))
 
 
-def get_single_color(rating: Rating, cmap_name: str = 'RdYlGn') -> Color:
+def get_single_color(rating: float, cmap_name: str = 'RdYlGn') -> Color:
     cmap = matplotlib.colormaps.get_cmap(cmap_name)
-    return Color(to_hex(cmap(rating.value)))
+    return Color(to_hex(cmap(rating)))
 
 
 def filter_start_matcher(filter_start: str) -> Callable[..., Any]:
@@ -270,3 +269,16 @@ def filter_start_matcher(filter_start: str) -> Callable[..., Any]:
             return (True, '') if valid else (False, f'The filter parameter does not start with {filter_start}')
 
     return match
+
+
+def geodataframe_to_graph(df: gpd.GeoDataFrame) -> nx.Graph:
+    log.debug('Splitting paths at intersections')
+    # PERF: `unary_union` might lead to performance issues ...
+    # ... since it creates a single geometry
+    # `unary_union`: self-intersection geometries
+    # NOTE: All properties of the geodataframe are lost
+    geom: MultiLineString = df.unary_union
+    df_ = gpd.GeoDataFrame(data={'geometry': [geom]}, crs=df.crs).explode(index_parts=True)
+
+    log.debug('Convert geodataframe to network graph')
+    return momepy.gdf_to_nx(df_, multigraph=True, directed=False, length='length')
