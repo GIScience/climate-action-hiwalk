@@ -56,9 +56,8 @@ def construct_filters() -> Dict[PathCategory, str]:
     ignore = """
     footway in (separate,no) or
     sidewalk=separate or
-    sidewalk:left=separate or
-    sidewalk:right=separate or
     sidewalk:both=separate or
+    ((sidewalk:right=separate) and (sidewalk:left=separate)) or
     access in (no,private,permit,military,delivery,customers) or
     foot in (no,private,use_sidepath,discouraged,destination)
     """
@@ -123,6 +122,7 @@ def construct_filters() -> Dict[PathCategory, str]:
         )
     )
     """
+
     explicit = f"""
     ({_explicit}) and not
     (

@@ -46,10 +46,11 @@ def id_filter() -> str:
     # way/98453212 is part of exclusive
     # way/25263180 is part of ignored
     # way/148612595 is part of explicit
+    # way/184725322 is part of explicit but only has one side, other is separate
     # way/25149880 is part of probable_yes
     # way/156202491 is part of potential_but_unknown
     # way/400711541 is part of inaccessible
-    return 'id:(way/98453212,way/25263180,way/148612595,way/25149880,way/156202491,way/400711541)'
+    return 'id:(way/98453212,way/25263180,way/148612595,way/25149880,way/156202491,way/400711541,way/184725322)'
 
 
 def test_construct_filter_verify_exlusive():
@@ -78,7 +79,7 @@ def test_construct_filter_validate_explicit(request_ohsome, id_filter):
     ohsome_filter = f'({ohsome_filter}) and ({id_filter})'
     elements = request_ohsome(filter=ohsome_filter).as_dataframe(multi_index=False)
 
-    assert set(elements['@osmId']) == {'way/148612595'}
+    assert set(elements['@osmId']) == {'way/148612595', 'way/184725322'}
 
 
 def test_construct_filter_verify_probable_yes():

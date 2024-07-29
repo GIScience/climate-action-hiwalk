@@ -2,6 +2,7 @@
 .idea/
 __pycache__/
 .pytest_cache/
+.vscode/
 
 CI_JOB_TOKEN
 
