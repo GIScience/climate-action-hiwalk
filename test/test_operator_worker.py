@@ -1,3 +1,6 @@
+from itertools import product
+from typing import Tuple, List
+
 import geopandas as gpd
 import pytest
 import shapely
@@ -7,7 +10,13 @@ from geopandas.testing import assert_geodataframe_equal
 from pydantic_extra_types.color import Color
 from pyproj import CRS
 
-from walkability.utils import PathCategory, filter_start_matcher
+from walkability.utils import (
+    PathCategory,
+    filter_start_matcher,
+    PavementQuality,
+    read_pavement_quality_rankings,
+    get_sidewalk_key_combinations,
+)
 
 
 def test_get_paths(operator, expected_compute_input, ohsome_api):
@@ -31,6 +40,7 @@ def test_get_paths(operator, expected_compute_input, ohsome_api):
                 0.0,
             ],
             'geometry': 5 * [line_geom],
+            '@other_tags': 5 * [{}],
         },
         crs='EPSG:4326',
     )
@@ -51,6 +61,7 @@ def test_get_paths(operator, expected_compute_input, ohsome_api):
                 0.0,
             ],
             'geometry': 5 * [polygon_geom],
+            '@other_tags': 5 * [{}],
         },
         crs='EPSG:4326',
     )
@@ -374,3 +385,89 @@ def test_aggregate(operator, expected_compute_input, responses_mock):
     )
 
     assert computed_charts == expected_charts
+
+
+def get_key_value_combinations() -> List[Tuple[str, Tuple[str, PavementQuality]]]:
+    rankings = read_pavement_quality_rankings()
+    combinations = get_sidewalk_key_combinations()
+
+    smoothness = combinations['smoothness'] + ['smoothness']
+    surface = combinations['surface'] + ['surface']
+    tracktype = ['tracktype']
+
+    pairs = [
+        *product(smoothness, rankings['smoothness'].items()),
+        *product(smoothness, [('invalid', PavementQuality.UNKNOWN)]),
+        *product(surface, rankings['surface'].items()),
+        *product(surface, [('invalid', PavementQuality.UNKNOWN)]),
+        *product(tracktype, rankings['tracktype'].items()),
+        *product(tracktype, [('invalid', PavementQuality.UNKNOWN)]),
+        ('other', ('invalid', PavementQuality.UNKNOWN)),
+    ]
+    return pairs
+
+
+key_value_combinations = get_key_value_combinations()
+
+
+@pytest.mark.parametrize('combination', key_value_combinations)
+def test_pavement_quality_return_values(operator, combination: Tuple[str, Tuple[str, PavementQuality]]):
+    key = combination[0]
+    value, quality = combination[1]
+
+    line_geom = shapely.LineString([(12.3, 48.22), (12.3, 48.2205), (12.3005, 48.22)])
+    line_paths = gpd.GeoDataFrame(
+        data={
+            'category': [PathCategory.EXCLUSIVE],
+            'geometry': [line_geom],
+            '@other_tags': [{key: value}],
+        },
+        crs='EPSG:4326',
+    )
+
+    result_line = operator.get_pavement_quality(line_paths)
+
+    assert result_line['quality'].to_list() == [quality]
+
+
+def get_key_combinations() -> List[Tuple[str, str, str, PavementQuality]]:
+    combinations = get_sidewalk_key_combinations()
+
+    ssm = combinations['smoothness']
+    ssu = combinations['surface']
+    sm = ['smoothness']
+    su = ['surface']
+    tr = ['tracktype']
+
+    pairs = []
+    for combi in product([*ssu, *sm, *su, *tr], ssm):
+        pairs.append((*combi, 'good', PavementQuality.GOOD))
+    for combi in product([*sm, *su, *tr], ssu):
+        pairs.append((*combi, 'asphalt', PavementQuality.POTENTIALLY_GOOD))
+    for combi in product([*su, *tr], sm):
+        pairs.append((*combi, 'good', PavementQuality.GOOD))
+    for combi in product(tr, su):
+        pairs.append((*combi, 'asphalt', PavementQuality.POTENTIALLY_GOOD))
+    return pairs
+
+
+key_combinations = get_key_combinations()
+
+
+@pytest.mark.parametrize('combination', key_combinations)
+def test_pavement_quality_hierarchy(operator, combination):
+    secondary_key, primary_key, primary_value, quality = combination
+
+    line_geom = shapely.LineString([(12.3, 48.22), (12.3, 48.2205), (12.3005, 48.22)])
+    line_paths = gpd.GeoDataFrame(
+        data={
+            'category': [PathCategory.EXCLUSIVE],
+            'geometry': [line_geom],
+            '@other_tags': [{primary_key: primary_value, secondary_key: 'wrong'}],
+        },
+        crs='EPSG:4326',
+    )
+
+    result_line = operator.get_pavement_quality(line_paths)
+
+    assert result_line['quality'].to_list() == [quality]

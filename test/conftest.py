@@ -115,6 +115,32 @@ def expected_compute_output(compute_resources) -> List[_Artifact]:
             )
         },
     )
+    pavement_quality_artifact = _Artifact(
+        name='Pavement Quality',
+        modality=ArtifactModality.MAP_LAYER_GEOJSON,
+        file_path=Path(compute_resources.computation_dir / 'pavement_quality.geojson'),
+        summary='The layer displays the pavement quality for the accessible paths of the walkable layer.',
+        description='Based on the values of the `smoothness`, `surface` and `tracktype` tags of OpenStreetMap (in order of importance). '
+        'If there is no specification for the pavement of non-exlusive footways, the quality of accompanying roads is adopted if available and labelled as *potential*. '
+        'Some surface types, such as gravel, are also labelled *potential* as they can exhibit a wide variation in their maintenance status (see table below).\n\n'
+        'Full list of tag-value-ranking combinations:\n\n'
+        '' + Path('./test/test_utils.test_pavement_quality_info_generator.approved.txt').read_text(encoding='utf-8'),
+        attachments={
+            AttachmentType.LEGEND: Legend(
+                legend_data={
+                    'excellent': Color('#006837'),
+                    'potentially_excellent': Color('#0c7f43'),
+                    'good': Color('#84ca66'),
+                    'potentially_good': Color('#a5d86a'),
+                    'mediocre': Color('#feffbe'),
+                    'potentially_mediocre': Color('#fff0a6'),
+                    'poor': Color('#e54e35'),
+                    'potentially_poor': Color('#d62f27'),
+                    'unknown': Color('#808080'),
+                }
+            )
+        },
+    )
     chart_artifact_bergheim = _Artifact(
         name='Bergheim',
         modality=ArtifactModality.CHART,
@@ -134,7 +160,7 @@ def expected_compute_output(compute_resources) -> List[_Artifact]:
         description=None,
     )
 
-    return [paths_artifact, connectivity, chart_artifact_bergheim, chart_artifact_suedstadt]
+    return [paths_artifact, connectivity, pavement_quality_artifact, chart_artifact_bergheim, chart_artifact_suedstadt]
 
 
 # The following fixtures can be ignored on plugin setup

@@ -21,7 +21,12 @@ from ohsome import OhsomeClient
 from pyproj import CRS
 from semver import Version
 
-from walkability.artifact import build_paths_artifact, build_areal_summary_artifacts, build_connectivity_artifact
+from walkability.artifact import (
+    build_paths_artifact,
+    build_pavement_quality_artifact,
+    build_areal_summary_artifacts,
+    build_connectivity_artifact,
+)
 from walkability.input import ComputeInputWalkability
 from walkability.utils import (
     construct_filters,
@@ -29,7 +34,11 @@ from walkability.utils import (
     boost_route_members,
     get_color,
     PathCategory,
+    PavementQuality,
     geodataframe_to_graph,
+    read_pavement_quality_rankings,
+    get_flat_key_combinations,
+    get_first_match,
 )
 
 log = logging.getLogger(__name__)
@@ -80,6 +89,9 @@ class OperatorWalkability(Operator[ComputeInputWalkability]):
             line_paths, polygon_paths, params.path_rating, params.get_aoi_geom(), resources
         )
 
+        line_pavement_quality = self.get_pavement_quality(line_paths)
+        pavement_quality_artifact = build_pavement_quality_artifact(line_pavement_quality, resources)
+
         connectivity = self.get_connectivity(line_paths, params.get_max_walking_distance(), params.get_utm_zone())
         connectivity_artifact = build_connectivity_artifact(connectivity, params.get_aoi_geom(), resources)
 
@@ -88,7 +100,7 @@ class OperatorWalkability(Operator[ComputeInputWalkability]):
         )
         chart_artifacts = build_areal_summary_artifacts(areal_summaries, resources)
 
-        return [paths_artifact, connectivity_artifact] + chart_artifacts
+        return [paths_artifact, connectivity_artifact, pavement_quality_artifact] + chart_artifacts
 
     def get_paths(
         self, aoi: shapely.MultiPolygon, rating_map: Dict[PathCategory, float]
@@ -166,6 +178,42 @@ class OperatorWalkability(Operator[ComputeInputWalkability]):
 
         result = momepy.nx_to_gdf(G, points=False)
         return result.to_crs(original_crs)[['connectivity', 'geometry']]
+
+    def get_pavement_quality(self, line_paths: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
+        log.debug('Evaluating pavement quality')
+
+        def evaluate_quality(
+            row: pd.Series, keys: List[str], evaluation_dict: Dict[str, Dict[str, PavementQuality]]
+        ) -> PavementQuality:
+            tags = row['@other_tags']
+
+            match_key, match_value = get_first_match(keys, tags)
+
+            match match_key:
+                case 'sidewalk:both:smoothness' | 'sidewalk:left:smoothness' | 'sidewalk:right:smoothness':
+                    match_key = 'smoothness'
+                case 'sidewalk:both:surface' | 'sidewalk:left:surface' | 'sidewalk:right:surface':
+                    match_key = 'surface'
+                case 'smoothness':
+                    if row.category != PathCategory.EXCLUSIVE:
+                        return PavementQuality.UNKNOWN
+                case 'surface':
+                    if row.category != PathCategory.EXCLUSIVE:
+                        return PavementQuality.UNKNOWN
+                case 'tracktype':
+                    pass
+                case _:
+                    return PavementQuality.UNKNOWN
+            return evaluation_dict.get(match_key, {}).get(match_value, PavementQuality.UNKNOWN)
+
+        rankings = read_pavement_quality_rankings()
+        keys = get_flat_key_combinations()
+
+        line_paths = line_paths[line_paths.category != PathCategory.INACCESSIBLE]
+
+        line_paths['quality'] = line_paths.apply(lambda row: evaluate_quality(row, keys, rankings), axis=1)
+
+        return line_paths[['quality', 'geometry']]
 
     def summarise_by_area(
         self,

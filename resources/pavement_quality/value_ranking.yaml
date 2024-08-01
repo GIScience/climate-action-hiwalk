@@ -1,0 +1,71 @@
+smoothness:
+  - ranking: good
+    value: good
+  - ranking: excellent
+    value: excellent
+  - ranking: mediocre
+    value: intermediate
+  - ranking: poor
+    value: bad
+  - ranking: poor
+    value: very_bad
+  - ranking: poor
+    value: horrible
+  - ranking: poor
+    value: very_horrible
+  - ranking: poor
+    value: impassable
+surface:
+  - ranking: potentially_good
+    value: asphalt
+  - ranking: potentially_poor
+    value: unpaved
+  - ranking: potentially_good
+    value: paved
+  - ranking: potentially_good
+    value: concrete
+  - ranking: potentially_mediocre
+    value: paving_stones
+  - ranking: poor
+    value: ground
+  - ranking: potentially_mediocre
+    value: gravel
+  - ranking: poor
+    value: dirt
+  - ranking: poor
+    value: grass
+  - ranking: potentially_poor
+    value: compacted
+  - ranking: poor
+    value: sand
+  - ranking: poor
+    value: sett
+  - ranking: potentially_mediocre
+    value: fine_gravel
+  - ranking: potentially_good
+    value: wood
+  - ranking: potentially_poor
+    value: concrete:plates
+  - ranking: mediocre
+    value: cobblestone
+  - ranking: poor
+    value: earth
+  - ranking: poor
+    value: pebblestone
+  - ranking: potentially_good
+    value: metal
+  - ranking: poor
+    value: grass_paver
+  - ranking: poor
+    value: artificial_turf
+tracktype:
+  - ranking: mediocre
+    value: grade3
+  - ranking: mediocre
+    value: grade2
+  - ranking: poor
+    value: grade4
+  - ranking: poor
+    value: grade5
+  - ranking: potentially_good
+    value: grade1

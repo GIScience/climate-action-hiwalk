@@ -4,6 +4,8 @@ __pycache__/
 .pytest_cache/
 .vscode/
 
+.vscode/*
+
 CI_JOB_TOKEN
 
 ohsome_log/
