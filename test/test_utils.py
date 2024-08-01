@@ -17,6 +17,7 @@ from walkability.utils import (
     boost_route_members,
     fix_geometry_collection,
     get_color,
+    generate_detailed_pavement_quality_mapping_info,
 )
 
 
@@ -136,11 +137,14 @@ def test_fetch_osm_data(expected_compute_input, responses_mock):
         )
 
     expected_osm_data = gpd.GeoDataFrame(
+        data={
+            '@other_tags': [{}],
+        },
         geometry=[shapely.LineString([(12.3, 48.22), (12.3, 48.2205), (12.3005, 48.22)])],
         crs=4326,
     )
     computed_osm_data = fetch_osm_data(expected_compute_input.get_aoi_geom(), 'dummy=yes', OhsomeClient())
-    geopandas.testing.assert_geodataframe_equal(computed_osm_data, expected_osm_data)
+    geopandas.testing.assert_geodataframe_equal(computed_osm_data, expected_osm_data, check_like=True)
 
 
 def test_boost_route_members(expected_compute_input, responses_mock):
@@ -228,3 +232,7 @@ def test_get_color():
     computed_output = get_color(expected_input)
 
     pd.testing.assert_series_equal(computed_output, expected_output)
+
+
+def test_pavement_quality_info_generator():
+    verify(generate_detailed_pavement_quality_mapping_info())

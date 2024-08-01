@@ -1,6 +1,6 @@
 import logging
 from enum import Enum
-from typing import Dict, Union, Callable, Any, Tuple
+from typing import Dict, Union, Callable, Any, Tuple, List, Optional
 from urllib.parse import parse_qsl
 
 import geopandas as gpd
@@ -9,7 +9,8 @@ import momepy
 import networkx as nx
 import pandas as pd
 import shapely
-from matplotlib.colors import to_hex
+import yaml
+from matplotlib.colors import to_hex, Normalize
 from ohsome import OhsomeClient
 from pydantic_extra_types.color import Color
 from requests import PreparedRequest
@@ -24,6 +25,31 @@ class PathCategory(Enum):
     PROBABLE_YES = 'probable_yes'
     POTENTIAL_BUT_UNKNOWN = 'potential_but_unknown'
     INACCESSIBLE = 'inaccessible'
+
+
+class PavementQuality(Enum):
+    EXCELLENT = 'excellent'
+    POTENTIALLY_EXCELLENT = 'potentially_excellent'
+    GOOD = 'good'
+    POTENTIALLY_GOOD = 'potentially_good'
+    MEDIOCRE = 'mediocre'
+    POTENTIALLY_MEDIOCRE = 'potentially_mediocre'
+    POOR = 'poor'
+    POTENTIALLY_POOR = 'potentially_poor'
+    UNKNOWN = 'unknown'
+
+
+PavementQualityRating = {
+    PavementQuality.EXCELLENT: 1.0,
+    PavementQuality.POTENTIALLY_EXCELLENT: 0.95,
+    PavementQuality.GOOD: 0.75,
+    PavementQuality.POTENTIALLY_GOOD: 0.70,
+    PavementQuality.MEDIOCRE: 0.5,
+    PavementQuality.POTENTIALLY_MEDIOCRE: 0.45,
+    PavementQuality.POOR: 0.15,
+    PavementQuality.POTENTIALLY_POOR: 0.10,
+    PavementQuality.UNKNOWN: -9999999,
+}
 
 
 def construct_filters() -> Dict[PathCategory, str]:
@@ -193,10 +219,10 @@ def construct_filters() -> Dict[PathCategory, str]:
 
 def fetch_osm_data(aoi: shapely.MultiPolygon, osm_filter: str, ohsome: OhsomeClient) -> gpd.GeoDataFrame:
     elements = ohsome.elements.geometry.post(
-        bpolys=aoi, clipGeometry=True, properties=None, filter=osm_filter
+        bpolys=aoi, clipGeometry=True, properties='tags', filter=osm_filter
     ).as_dataframe()
     elements = elements.reset_index(drop=True)
-    return elements[['geometry']]
+    return elements[['geometry', '@other_tags']]
 
 
 def boost_route_members(
@@ -246,12 +272,16 @@ def fix_geometry_collection(
 
 
 def get_color(values: pd.Series, cmap_name: str = 'RdYlGn') -> pd.Series:
-    cmap = matplotlib.colormaps.get_cmap(cmap_name)
+    norm = Normalize(0, 1)
+    cmap = matplotlib.cm.ScalarMappable(norm=norm, cmap=cmap_name).get_cmap()
+    cmap.set_under('#808080')
     return values.apply(lambda v: Color(to_hex(cmap(v))))
 
 
 def get_single_color(rating: float, cmap_name: str = 'RdYlGn') -> Color:
-    cmap = matplotlib.colormaps.get_cmap(cmap_name)
+    norm = Normalize(0, 1)
+    cmap = matplotlib.cm.ScalarMappable(norm=norm, cmap=cmap_name).get_cmap()
+    cmap.set_under('#808080')
     return Color(to_hex(cmap(rating)))
 
 
@@ -282,3 +312,54 @@ def geodataframe_to_graph(df: gpd.GeoDataFrame) -> nx.Graph:
 
     log.debug('Convert geodataframe to network graph')
     return momepy.gdf_to_nx(df_, multigraph=True, directed=False, length='length')
+
+
+def generate_detailed_pavement_quality_mapping_info() -> str:
+    rankings = read_pavement_quality_rankings()
+    text = ''
+    for key, value_map in rankings.items():
+        text += f' ### Key `{key}`: ### \n'
+        text += ' |Value|Ranking| \n'
+        text += ' |:----|:------| \n'
+        for value, ranking in value_map.items():
+            text += f' |{value} | {ranking.value.replace("_", " ").title()}| \n'
+    return text
+
+
+def read_pavement_quality_rankings() -> Dict[str, Dict[str, PavementQuality]]:
+    with open('./resources/pavement_quality/value_ranking.yaml') as f:
+        ranking_list = yaml.safe_load(f)
+
+    result = {}
+    for key, value_list in ranking_list.items():
+        rankings = {item['value']: PavementQuality(item['ranking']) for item in value_list}
+        result[key] = rankings
+    return result
+
+
+def get_sidewalk_key_combinations() -> Dict[str, List[str]]:
+    sidewalk_tag_combinations = {}
+    for tag in ['smoothness', 'surface']:
+        combi = []
+        for side in ['both', 'right', 'left']:
+            combi.append(f'sidewalk:{side}:{tag}')
+        sidewalk_tag_combinations[tag] = combi
+    return sidewalk_tag_combinations
+
+
+def get_flat_key_combinations() -> List[str]:
+    combinations = get_sidewalk_key_combinations()
+    explode_tags = combinations['smoothness'] + combinations['surface'] + ['smoothness', 'surface', 'tracktype']
+    return explode_tags
+
+
+def get_first_match(ordered_keys: List[str], tags: Dict[str, str]) -> Tuple[Optional[str], Optional[str]]:
+    match_key = None
+    match_value = None
+    for key in ordered_keys:
+        match_value = tags.get(key)
+        if match_value:
+            match_key = key
+            break
+
+    return match_key, match_value

@@ -13,7 +13,12 @@ from climatoology.base.artifact import (
 from climatoology.base.computation import ComputationResources
 
 from walkability.input import PathRating
-from walkability.utils import get_color, get_single_color
+from walkability.utils import (
+    get_color,
+    get_single_color,
+    PavementQualityRating,
+    generate_detailed_pavement_quality_mapping_info,
+)
 
 
 def build_paths_artifact(
@@ -73,6 +78,29 @@ def build_connectivity_artifact(
         color=color,
         legend_data=legend,
         resources=resources,
+    )
+
+
+def build_pavement_quality_artifact(
+    paths_line: gpd.GeoDataFrame,
+    resources: ComputationResources,
+    cmap_name: str = 'RdYlGn',
+) -> _Artifact:
+    paths_line['color'] = get_color(paths_line.quality.map(PavementQualityRating), cmap_name)
+    return create_geojson_artifact(
+        features=paths_line.geometry,
+        layer_name='Pavement Quality',
+        caption='The layer displays the pavement quality for the accessible paths of the walkable layer.',
+        description='Based on the values of the `smoothness`, `surface` and `tracktype` tags of OpenStreetMap (in order of importance). '
+        'If there is no specification for the pavement of non-exlusive footways, the quality of accompanying roads is adopted if available and labelled as *potential*. '
+        'Some surface types, such as gravel, are also labelled *potential* as they can exhibit a wide variation in their maintenance status (see table below).\n\n'
+        'Full list of tag-value-ranking combinations:\n\n'
+        '' + generate_detailed_pavement_quality_mapping_info(),
+        label=paths_line.quality.apply(lambda r: r.name).to_list(),
+        color=paths_line.color.to_list(),
+        legend_data={rating: get_single_color(PavementQualityRating[rating]) for rating in PavementQualityRating},
+        resources=resources,
+        filename='pavement_quality',
     )
 
 

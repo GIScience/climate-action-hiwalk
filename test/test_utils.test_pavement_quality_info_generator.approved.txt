@@ -1,0 +1,43 @@
+ ### Key `smoothness`: ### 
+ |Value|Ranking| 
+ |:----|:------| 
+ |good | Good| 
+ |excellent | Excellent| 
+ |intermediate | Mediocre| 
+ |bad | Poor| 
+ |very_bad | Poor| 
+ |horrible | Poor| 
+ |very_horrible | Poor| 
+ |impassable | Poor| 
+ ### Key `surface`: ### 
+ |Value|Ranking| 
+ |:----|:------| 
+ |asphalt | Potentially Good| 
+ |unpaved | Potentially Poor| 
+ |paved | Potentially Good| 
+ |concrete | Potentially Good| 
+ |paving_stones | Potentially Mediocre| 
+ |ground | Poor| 
+ |gravel | Potentially Mediocre| 
+ |dirt | Poor| 
+ |grass | Poor| 
+ |compacted | Potentially Poor| 
+ |sand | Poor| 
+ |sett | Poor| 
+ |fine_gravel | Potentially Mediocre| 
+ |wood | Potentially Good| 
+ |concrete:plates | Potentially Poor| 
+ |cobblestone | Mediocre| 
+ |earth | Poor| 
+ |pebblestone | Poor| 
+ |metal | Potentially Good| 
+ |grass_paver | Poor| 
+ |artificial_turf | Poor| 
+ ### Key `tracktype`: ### 
+ |Value|Ranking| 
+ |:----|:------| 
+ |grade3 | Mediocre| 
+ |grade2 | Mediocre| 
+ |grade4 | Poor| 
+ |grade5 | Poor| 
+ |grade1 | Potentially Good| 
