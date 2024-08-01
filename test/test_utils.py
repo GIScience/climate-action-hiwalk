@@ -9,6 +9,7 @@ from approvaltests.approvals import verify
 from ohsome import OhsomeClient
 from pydantic_extra_types.color import Color
 from shapely.testing import assert_geometries_equal
+from urllib3 import Retry
 
 from walkability.utils import (
     construct_filters,
@@ -36,9 +37,12 @@ def bpolys():
 @pytest.fixture(scope='module')
 def request_ohsome(bpolys):
     return partial(
-        OhsomeClient(user_agent='HeiGIT Climate Action Walkability Tester').elements.geometry.post,
+        OhsomeClient(
+            user_agent='HeiGIT Climate Action Walkability Tester', retry=Retry(total=1)
+        ).elements.geometry.post,
         bpolys=bpolys,
         time='2024-01-01',
+        timeout=60,
     )
 
 
