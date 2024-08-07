@@ -1,7 +1,6 @@
 import logging
-import math
 from pathlib import Path
-from typing import List, Dict
+from typing import List, Dict, Callable
 
 import geopandas as gpd
 import momepy
@@ -39,6 +38,7 @@ from walkability.utils import (
     read_pavement_quality_rankings,
     get_flat_key_combinations,
     get_first_match,
+    euclidian_distance,
 )
 
 log = logging.getLogger(__name__)
@@ -92,7 +92,12 @@ class OperatorWalkability(Operator[ComputeInputWalkability]):
         line_pavement_quality = self.get_pavement_quality(line_paths)
         pavement_quality_artifact = build_pavement_quality_artifact(line_pavement_quality, resources)
 
-        connectivity = self.get_connectivity(line_paths, params.get_max_walking_distance(), params.get_utm_zone())
+        connectivity = self.get_connectivity(
+            line_paths,
+            params.get_max_walking_distance(),
+            params.get_utm_zone(),
+            idw_function=params.get_distance_weighting_function(),
+        )
         connectivity_artifact = build_connectivity_artifact(connectivity, params.get_aoi_geom(), resources)
 
         areal_summaries = self.summarise_by_area(
@@ -137,7 +142,12 @@ class OperatorWalkability(Operator[ComputeInputWalkability]):
         return paths_line, paths_polygon
 
     def get_connectivity(
-        self, paths: gpd.GeoDataFrame, walkable_distance: float, projected_crs: CRS, threshold=0.5
+        self,
+        paths: gpd.GeoDataFrame,
+        walkable_distance: float,
+        projected_crs: CRS,
+        threshold: float = 0.5,
+        idw_function: Callable[[float], float] = lambda _: 1,
     ) -> gpd.GeoDataFrame:
         """Get connectivity.
 
@@ -157,16 +167,25 @@ class OperatorWalkability(Operator[ComputeInputWalkability]):
         for center in G.nodes:
 
             def within_max_distance(target):
-                return math.sqrt((target[0] - center[0]) ** 2 + (target[1] - center[1]) ** 2) <= walkable_distance
+                return euclidian_distance(center, target) <= walkable_distance
 
             subgraph = nx.subgraph_view(G, filter_node=within_max_distance)
+            weighting = {
+                target: idw_function(euclidian_distance(center, target))
+                for target in subgraph.nodes
+                if target != center
+            }
 
-            shortest_paths = nx.single_source_dijkstra_path(subgraph, center, cutoff=walkable_distance, weight='length')
+            shortest_paths = nx.single_source_dijkstra_path_length(
+                subgraph, center, cutoff=walkable_distance, weight='length'
+            )
+            shortest_paths = {key: weighting[key] for key, value in shortest_paths.items() if value > 0}
+
             node_attributes[center] = {
-                'connectivity': (len(shortest_paths) - 1) / (len(subgraph.nodes) - 1)
+                'connectivity': (sum(shortest_paths.values())) / (sum(weighting.values()))
                 if len(subgraph.nodes) > 1
                 else 1.0
-            }  # -1 to exclude route to self
+            }
         nx.set_node_attributes(G, node_attributes)
 
         edge_attributes = {}

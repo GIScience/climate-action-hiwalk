@@ -255,7 +255,7 @@ def test_connectivity_filter_out_probably_yes(operator):
     assert not connectivity.empty
 
 
-@pytest.mark.skip(reason='Topology is not preseverd for overlapping geometries with shared node.')
+@pytest.mark.skip(reason='Topology is not preserved for overlapping geometries with shared node.')
 def test_connectivity_overlapping_paths(operator):
     # WGS84 representation of two paths: one 1m one 2m
     geom = [
@@ -341,6 +341,38 @@ def test_connectivity_multipart(operator):
 
     connectivity = operator.get_connectivity(
         paths=paths, walkable_distance=1.5, projected_crs=CRS.from_user_input(32632)
+    )
+
+    assert_geodataframe_equal(connectivity, expected_connectivity, check_less_precise=True)
+
+
+def test_connectivity_decay(operator):
+    # WGS84 representation of two ca. 1m long adjacent orthogonal paths in UTM 31N
+    path_geoms = [
+        shapely.LineString([(9, 49), (9, 49.0000088)]),
+        shapely.LineString([(9, 49.0000088), (9.0000137, 49.0000088)]),
+    ]
+    expected_connectivity = gpd.GeoDataFrame(
+        data={
+            'connectivity': [1.0, 1.0],
+            'geometry': path_geoms,
+        },
+        crs='EPSG:4326',
+    )
+
+    paths = gpd.GeoDataFrame(
+        data={
+            'geometry': path_geoms,
+            'rating': [1.0, 0.75],
+        },
+        crs='EPSG:4326',
+    )
+
+    connectivity = operator.get_connectivity(
+        paths=paths,
+        walkable_distance=1.5,
+        projected_crs=CRS.from_user_input(32632),
+        idw_function=lambda distance: 1 if distance < 1.1 else 0,
     )
 
     assert_geodataframe_equal(connectivity, expected_connectivity, check_less_precise=True)
