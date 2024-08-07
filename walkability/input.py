@@ -1,6 +1,6 @@
 import uuid
 from enum import Enum
-from typing import Optional, Self, Dict
+from typing import Optional, Self, Dict, Callable
 
 import geojson_pydantic
 import geopandas as gpd
@@ -87,6 +87,12 @@ class PathRating(BaseModel):
         return self
 
 
+class IDW(Enum):
+    POLYNOMIAL = 'Polynomial decay related to retail and park amenities according to Frank et al 2021'
+    STEP_FUNCTION = 'Step function reflecting statistical findings on walking path distance according to Xia et al 2018'
+    NONE = 'No distance weighting'
+
+
 class ComputeInputWalkability(BaseModel):
     aoi: geojson_pydantic.Feature[geojson_pydantic.MultiPolygon, AoiProperties] = Field(
         title='Area of Interest Input',
@@ -143,6 +149,15 @@ class ComputeInputWalkability(BaseModel):
         examples=[9],
         default=9,
     )
+    idw_method: Optional[IDW] = Field(
+        title='Distance Weighting',
+        description='The function that should be used to model distance weighting. The approach is often called '
+        'Inverse Distance Weighting (IDW) or Distance Decay. Walking trips exhibit a certain distribution. Many '
+        'trips are rather short while long trips are relatively seldom. This attribute defines which '
+        'function will be used to weight close vs. distant trip targets.',
+        examples=[IDW.STEP_FUNCTION],
+        default=IDW.STEP_FUNCTION,
+    )
 
     @classmethod
     @field_validator('aoi')
@@ -184,3 +199,51 @@ class ComputeInputWalkability(BaseModel):
     def get_path_rating_mapping(self) -> Dict[PathCategory, float]:
         mapping = self.path_rating.model_dump()
         return {PathCategory(k): v for k, v in mapping.items()}
+
+    def get_distance_weighting_function(self) -> Callable[[float], float]:
+        match self.idw_method:
+            case IDW.STEP_FUNCTION:
+
+                def step_func(distance: float) -> float:
+                    if distance < 400:
+                        return 1
+                    elif distance < 800:
+                        return 0.6
+                    elif distance < 1200:
+                        return 0.25
+                    elif distance < 1800:
+                        return 0.08
+                    else:
+                        return 0
+
+                return step_func
+            case IDW.POLYNOMIAL:
+
+                def original_polynom(distance_km: float):
+                    return (
+                        335.9229 * distance_km**5
+                        - 1327.84 * distance_km**4
+                        + 1802.56 * distance_km**3
+                        - 935.68 * distance_km**2
+                        + 61.92 * distance_km
+                        + 100.1072
+                    )
+
+                def scaled_polynom(distance: float) -> float:
+                    if distance > 1500:
+                        return 0.0
+
+                    weight = original_polynom(distance / 1000.0)
+                    weight = weight / 100.0
+
+                    if weight > 1.0:
+                        return 1.0
+                    elif weight < 0.0:
+                        return 0.0
+                    else:
+                        return weight
+
+                return scaled_polynom
+
+            case IDW.NONE:
+                return lambda distance: 1

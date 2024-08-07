@@ -1,4 +1,5 @@
 import logging
+import math
 from enum import Enum
 from typing import Dict, Union, Callable, Any, Tuple, List, Optional
 from urllib.parse import parse_qsl
@@ -221,6 +222,10 @@ def fetch_osm_data(aoi: shapely.MultiPolygon, osm_filter: str, ohsome: OhsomeCli
     elements = ohsome.elements.geometry.post(
         bpolys=aoi, clipGeometry=True, properties='tags', filter=osm_filter
     ).as_dataframe()
+    if elements.empty:
+        return gpd.GeoDataFrame(
+            crs='epsg:4326', columns=['geometry', '@other_tags']
+        )  # TODO: remove once https://github.com/GIScience/ohsome-py/pull/165 is resolved
     elements = elements.reset_index(drop=True)
     return elements[['geometry', '@other_tags']]
 
@@ -363,3 +368,7 @@ def get_first_match(ordered_keys: List[str], tags: Dict[str, str]) -> Tuple[Opti
             break
 
     return match_key, match_value
+
+
+def euclidian_distance(point1: Tuple[float, float], point2: Tuple[float, float]) -> float:
+    return math.sqrt((point1[0] - point2[0]) ** 2 + (point1[1] - point2[1]) ** 2)
