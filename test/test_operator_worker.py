@@ -1,11 +1,10 @@
 from itertools import product
 from typing import Tuple, List
-
+from geopandas import testing
 import geopandas as gpd
 import pytest
 import shapely
 from climatoology.base.artifact import Chart2dData, ChartType
-from geopandas import testing
 from geopandas.testing import assert_geodataframe_equal
 from pydantic_extra_types.color import Color
 from pyproj import CRS
@@ -25,46 +24,23 @@ def test_get_paths(operator, expected_compute_input, ohsome_api):
 
     expected_lines = gpd.GeoDataFrame(
         data={
-            'category': [
-                PathCategory.EXCLUSIVE,
-                PathCategory.EXPLICIT,
-                PathCategory.PROBABLE_YES,
-                PathCategory.POTENTIAL_BUT_UNKNOWN,
-                PathCategory.INACCESSIBLE,
-            ],
-            'rating': [
-                1.0,
-                0.8,
-                0.6,
-                0.5,
-                0.0,
-            ],
-            'geometry': 5 * [line_geom],
-            '@other_tags': 5 * [{}],
+            'category': [PathCategory.DEDICATED_EXCLUSIVE],
+            'rating': [1.0],
+            'geometry': [line_geom],
+            '@other_tags': [{'highway': 'pedestrian'}],
         },
         crs='EPSG:4326',
     )
     expected_polygons = gpd.GeoDataFrame(
         data={
-            'category': [
-                PathCategory.EXCLUSIVE,
-                PathCategory.EXPLICIT,
-                PathCategory.PROBABLE_YES,
-                PathCategory.POTENTIAL_BUT_UNKNOWN,
-                PathCategory.INACCESSIBLE,
-            ],
-            'rating': [
-                1.0,
-                0.8,
-                0.6,
-                0.5,
-                0.0,
-            ],
-            'geometry': 5 * [polygon_geom],
-            '@other_tags': 5 * [{}],
+            'category': [PathCategory.DEDICATED_EXCLUSIVE],
+            'rating': [1.0],
+            'geometry': [polygon_geom],
+            '@other_tags': [{'highway': 'platform', 'area': 'yes'}],
         },
         crs='EPSG:4326',
     )
+
     computed_lines, computed_polygons = operator.get_paths(
         expected_compute_input.get_aoi_geom(), expected_compute_input.get_path_rating_mapping()
     )
@@ -388,13 +364,13 @@ def test_aggregate(operator, expected_compute_input, responses_mock):
     )
     expected_charts = {
         'Bergheim': Chart2dData(
-            x=['exclusive'],
+            x=['dedicated_exclusive'],
             y=[0.12],
             color=[Color('#006837')],
             chart_type=ChartType.PIE,
         ),
         'Südstadt': Chart2dData(
-            x=['exclusive'],
+            x=['dedicated_exclusive'],
             y=[0.12],
             color=[Color('#006837')],
             chart_type=ChartType.PIE,
@@ -406,7 +382,7 @@ def test_aggregate(operator, expected_compute_input, responses_mock):
 
     input_paths = gpd.GeoDataFrame(
         data={
-            'category': 2 * [PathCategory.EXCLUSIVE],
+            'category': 2 * [PathCategory.DEDICATED_EXCLUSIVE],
             'rating': 2 * [1.0],
             'geometry': [line_geom] + [polygon_geom],
         },
@@ -450,7 +426,7 @@ def test_pavement_quality_return_values(operator, combination: Tuple[str, Tuple[
     line_geom = shapely.LineString([(12.3, 48.22), (12.3, 48.2205), (12.3005, 48.22)])
     line_paths = gpd.GeoDataFrame(
         data={
-            'category': [PathCategory.EXCLUSIVE],
+            'category': [PathCategory.DEDICATED_EXCLUSIVE],
             'geometry': [line_geom],
             '@other_tags': [{key: value}],
         },
@@ -493,7 +469,7 @@ def test_pavement_quality_hierarchy(operator, combination):
     line_geom = shapely.LineString([(12.3, 48.22), (12.3, 48.2205), (12.3005, 48.22)])
     line_paths = gpd.GeoDataFrame(
         data={
-            'category': [PathCategory.EXCLUSIVE],
+            'category': [PathCategory.DEDICATED_EXCLUSIVE],
             'geometry': [line_geom],
             '@other_tags': [{primary_key: primary_value, secondary_key: 'wrong'}],
         },

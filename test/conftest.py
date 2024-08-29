@@ -62,6 +62,11 @@ def expected_info_output() -> Info:
                 affiliation='HeiGIT gGmbH',
                 website='https://heigit.org/heigit-team/',
             ),
+            PluginAuthor(
+                name='Jonas Kemmer',
+                affiliation='HeiGIT gGmbH',
+                website='https://heigit.org/heigit-team/',
+            ),
         ],
         version=Version(0, 0, 1),
         concerns=[Concern.MOBILITY_PEDESTRIAN],
@@ -77,22 +82,28 @@ def expected_compute_output(compute_resources) -> List[_Artifact]:
         name='Walkable',
         modality=ArtifactModality.MAP_LAYER_GEOJSON,
         file_path=Path(compute_resources.computation_dir / 'walkable.geojson'),
-        summary='The layer displays paths in four categories: '
-        'a) paths dedicated to pedestrians exclusively '
-        'b) paths that are explicitly meant for pedestrians but may be shared with other traffic (e.g. a '
-        'road with a sidewalk) '
-        'c) paths that probably are walkable but the true status is unknown (e.g. a dirt road) '
-        'd) paths that are not walkable but could be (e.g. a residential road without sidewalk).',
-        description='The layer excludes paths that are not walkable by definition such as motorways or cycle ways. '
+        summary='Categories of the pedestrian paths based on the share with other road users.',
+        description='Explanation of the different categories (from good to bad):\n'
+        '* Dedicated exclusive: dedicated footways without other traffic close by.\n'
+        '* Dedicated separated: dedicated footways with other traffic close by. This means for example sidewalks or segregated bike and footways (VZ 241, in Germany).\n'
+        '* Shared with bikes: Footways shared with bikes, typically either a common foot and bikeway (VZ 240, in Germany) or footways where bikes are allowed to ride on (zVZ 1022-10, in Germany).\n'
+        '* Shared with motorized traffic low speed: Streets without a sidewalk, with low speed limits, such as living streets or service ways.\n'
+        '* Shared with motorized traffic medium speed: Streets without a sidewalk, with medium speed limits up to 30 km/h.\n'
+        '* Shared with motorized traffic high speed: Streets without a sidewalk, with higher speed limits up to 50 km/h.\n'
+        '* Inaccessible: Paths where walking is forbidden (e.g. tunnels, private or military streets) or streets without a sidewalk and with speed limits higher than 50 km/h.\n'
+        '* Missing data: Paths that could not be fit in any of the above categories because of missing information.\n\n'
         'The data source is OpenStreetMap.',
         attachments={
             AttachmentType.LEGEND: Legend(
                 legend_data={
-                    'exclusive': Color('#006837'),
-                    'explicit': Color('#66bd63'),
-                    'probable_yes': Color('#d9ef8b'),
-                    'potential_but_unknown': Color('#feffbe'),
+                    'dedicated_exclusive': Color('#006837'),
+                    'dedicated_separated': Color('#66bd63'),
+                    'shared_with_bikes': Color('#a5d86a'),
+                    'shared_with_motorized_traffic_low_speed': Color('#feffbe'),
+                    'shared_with_motorized_traffic_medium_speed': Color('#fdad60'),
+                    'shared_with_motorized_traffic_high_speed': Color('#d62f27'),
                     'inaccessible': Color('#a50026'),
+                    'missing_data': Color('#808080'),
                 }
             )
         },
@@ -147,7 +158,7 @@ def expected_compute_output(compute_resources) -> List[_Artifact]:
         primary=False,
         file_path=Path(compute_resources.computation_dir / 'aggregation_Bergheim.json'),
         summary='The distribution of paths categories for this administrative area. '
-        'The total length of paths in this area is 0.6km',
+        'The total length of paths in this area is 0.12 km',
         description=None,
     )
     chart_artifact_suedstadt = _Artifact(
@@ -156,7 +167,7 @@ def expected_compute_output(compute_resources) -> List[_Artifact]:
         primary=False,
         file_path=Path(compute_resources.computation_dir / 'aggregation_Südstadt.json'),
         summary='The distribution of paths categories for this administrative area. '
-        'The total length of paths in this area is 0.6km',
+        'The total length of paths in this area is 0.12 km',
         description=None,
     )
 
@@ -184,26 +195,21 @@ def operator():
 @pytest.fixture
 def ohsome_api(responses_mock):
     with (
-        open('resources/test/ohsome_line_response.geojson', 'r') as line_file,
-        open('resources/test/ohsome_polygon_response.geojson', 'r') as polygon_file,
+        open('resources/test/ohsome_line_and_polygon_response.geojson', 'r') as line_and_polygon_file,
         open('resources/test/ohsome_route_response.geojson', 'r') as route_file,
     ):
-        line_body = line_file.read()
-        polygon_body = polygon_file.read()
+        line_and_polygon_body = line_and_polygon_file.read()
         route_body = route_file.read()
+
     responses_mock.post(
         'https://api.ohsome.org/v1/elements/geometry',
-        body=line_body,
-        match=[filter_start_matcher('geometry:line')],
+        body=line_and_polygon_body,
+        match=[filter_start_matcher('(geometry:line or geometry:polygon)')],
     )
-    responses_mock.post(
-        'https://api.ohsome.org/v1/elements/geometry',
-        body=polygon_body,
-        match=[filter_start_matcher('geometry:polygon')],
-    )
+
     responses_mock.post(
         'https://api.ohsome.org/v1/elements/geometry',
         body=route_body,
-        match=[filter_start_matcher('route in (foot,hiking)')],
+        match=[filter_start_matcher('route in (foot,hiking,bicycle)')],
     )
     return responses_mock

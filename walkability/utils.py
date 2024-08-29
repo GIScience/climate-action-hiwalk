@@ -16,16 +16,30 @@ from ohsome import OhsomeClient
 from pydantic_extra_types.color import Color
 from requests import PreparedRequest
 from shapely import LineString, MultiLineString
+from collections import OrderedDict
 
 log = logging.getLogger(__name__)
 
 
 class PathCategory(Enum):
-    EXCLUSIVE = 'exclusive'
-    EXPLICIT = 'explicit'
-    PROBABLE_YES = 'probable_yes'
-    POTENTIAL_BUT_UNKNOWN = 'potential_but_unknown'
+    # GOOD
+    # |
+    # v
+    # BAD
+    DEDICATED_EXCLUSIVE = 'dedicated_exclusive'
+    # Dedicated footway without other traffic close by
+    DEDICATED_SEPARATED = 'dedicated_separated'
+    # Separate footway with other traffic close by, (e.g. sidewalk or sign 241)
+    SHARED_WITH_BIKES = 'shared_with_bikes'
+    # sign 240 or 1022-10
+    SHARED_WITH_MOTORIZED_TRAFFIC_LOW_SPEED = 'shared_with_motorized_traffic_low_speed'
+    # living streets, parking lots, service ways
+    SHARED_WITH_MOTORIZED_TRAFFIC_MEDIUM_SPEED = 'shared_with_motorized_traffic_medium_speed'
+    # streets with no sidewalk with max speed limit 30 km/h
+    SHARED_WITH_MOTORIZED_TRAFFIC_HIGH_SPEED = 'shared_with_motorized_traffic_high_speed'
+    # streets with no sidewalk with max speed limit 50 km/h
     INACCESSIBLE = 'inaccessible'
+    MISSING_DATA = 'missing_data'
 
 
 class PavementQuality(Enum):
@@ -49,12 +63,11 @@ PavementQualityRating = {
     PavementQuality.POTENTIALLY_MEDIOCRE: 0.45,
     PavementQuality.POOR: 0.15,
     PavementQuality.POTENTIALLY_POOR: 0.10,
-    PavementQuality.UNKNOWN: -9999999,
+    PavementQuality.UNKNOWN: -9999,
 }
 
 
 def construct_filters() -> Dict[PathCategory, str]:
-    # TODO: Remove whitespace before sending to ohsome API
     # Potential: potentially walkable features (to be restricted by AND queries)
     potential_highway_values = (
         'primary',
@@ -63,159 +76,160 @@ def construct_filters() -> Dict[PathCategory, str]:
         'secondary_link',
         'tertiary',
         'tertiary_link',
-        'unclassified',
-        'residential',
-        'service',
-        'track',
         'road',
         'cycleway',
-        'platform',
+        'unclassified',
+        'residential',
+        'track',
     )
-    potential = f"""
-    highway in ({','.join(potential_highway_values)}) or
-    route=ferry
-    """
+    potential_highway_values_low_speed = (
+        'living_street',
+        'service',
+    )
+    potential_highway_values_all = potential_highway_values + potential_highway_values_low_speed
+
+    def _potential(d: Dict) -> bool:
+        return d.get('highway') in potential_highway_values_all or d.get('route') == 'ferry'
+
+    # Exclusive: Only for pedestrians
+    # TODO: Platforms exclusive or separated
+    def _exclusive(d: Dict) -> bool:
+        return (
+            d.get('highway') in ['steps', 'corridor', 'pedestrian', 'platform']
+            or d.get('railway') == 'platform'
+            or (
+                d.get('highway') == 'path'
+                and (
+                    d.get('foot') in ['yes', 'designated', 'official']
+                    or d.get('footway') in ['access_aisle', 'alley', 'residential', 'link', 'path']
+                    or d.get('bicycle') == 'no'
+                )
+                or (
+                    d.get('highway') == 'footway'
+                    and d.get('bicycle') != 'yes'
+                    and d.get('footway') not in ['sidewalk', 'crossing', 'traffic_island', 'yes']
+                )
+                and d.get('motor_vehicle') != 'yes'
+                and d.get('vehicle') != 'yes'
+            )
+        ) and d.get('bicycle') not in ['yes', 'designated']
+
+    # TODO: check permissive for bikes
+    def _shared_with_bikes(d: Dict) -> bool:
+        return d.get('bicycle') in ['yes', 'designated'] and (
+            d.get('segregated') != 'yes' or d.get('segregated') == 'no'
+        )
+
+    def exclusive(d: Dict) -> bool:
+        return _exclusive(d) and not _shared_with_bikes(d)
+
+    def _separated_foot(d: Dict) -> bool:
+        return d.get('foot') in ['yes', 'permissive', 'designated', 'official'] and d.get('maxspeed') is None
+
+    def _separated(d: Dict) -> bool:
+        return (
+            d.get('highway') == 'footway'
+            or (
+                d.get('highway') in ['path', 'cycleway']
+                and (
+                    _separated_foot(d)
+                    or d.get('footway') in ['sidewalk', 'crossing', 'traffic_island', 'yes']
+                    or d.get('segregated') == 'yes'
+                )
+            )
+        ) or (
+            (_potential(d))
+            and (
+                _separated_foot(d)
+                or d.get('sidewalk') in ['both', 'left', 'right', 'yes', 'lane']
+                or d.get('sidewalk:left') == 'yes'
+                or d.get('sidewalk:right') == 'yes'
+                or d.get('sidewalk:both') == 'yes'
+            )
+        )
+
+    def separated(d: Dict) -> bool:
+        return _separated(d) and not _shared_with_bikes(d)
+
+    def shared_with_bikes(d: Dict) -> bool:
+        return ((_exclusive(d) or _separated(d)) and _shared_with_bikes(d)) or (
+            d.get('highway') in ['path', 'track', 'pedestrian']
+            and d.get('motor_vehicle') != 'yes'
+            and d.get('vehicle') != 'yes'
+            and d.get('segregated') != 'yes'
+        )
+
+    def shared_with_low_speed(d: Dict) -> bool:
+        return d.get('highway') in potential_highway_values_low_speed
+
+    # TODO: ,5␣mph,10␣mph,15␣ mph,20␣mph
+    # TODO: Should 5 be in low_speed?
+    # TODO: exclude {_exclusive}
+    def shared_with_medium_speed(d: Dict) -> bool:
+        return d.get('maxspeed') in ['5', '10', '15', '20', '25', '30'] or d.get('zone:maxspeed') in ['DE:30', '30']
+
+    # TODO: and sidewalk... redundant?
+    def shared_with_high_speed(d: Dict) -> bool:
+        return (
+            _potential(d)
+            and (
+                d.get('sidewalk') == 'no'
+                or d.get('sidewalk:both') == 'no'
+                or (d.get('sidewalk:left') == 'no' and d.get('sidewalk:right') == 'no')
+                or d.get('sidewalk') == 'none'
+                or d.get('sidewalk:both') == 'none'
+                or (d.get('sidewalk:left') == 'none' and d.get('sidewalk:right') == 'none')
+            )
+            and not (
+                d.get('maxspeed') in ['60', '70', '80', '100']
+                or d.get('maxspeed:backward') in ['60', '70', '80', '100']
+                or d.get('maxspeed:forward') in ['60', '70', '80', '100']
+            )
+        )
+
     # For documentation:
     # ignored_primary = 'highway in (motorway,trunk,motorway_link,trunk_link,
     # primary_link,secondary_link,tertiary_link,bus_guideway,escape,raceway,busway,
     # brideleway,via_ferrata,cicleway'
     # ignored_secondary = 'sidewalk=no'
-    ignore = """
-    footway in (separate,no) or
-    sidewalk=separate or
-    sidewalk:both=separate or
-    ((sidewalk:right=separate) and (sidewalk:left=separate)) or
-    access in (no,private,permit,military,delivery,customers) or
-    foot in (no,private,use_sidepath,discouraged,destination)
-    """
-
-    # Exclusive: Only for pedestrians
-    # secondary tags
-    exclusive_secondary = """
-    (
-        foot in (designated,official) or
-        foot!=*
-    ) or
-    (
-        footway in (access_aisle,alley,residential,link,path) or
-        footway!=*
-    )
-    """
-
-    _exclusive = f"""
-    highway in (pedestrian,steps,corridor) or
-    (
-        highway=footway and
-        ({exclusive_secondary})
-    ) or
-    (
-        highway=path and
-        ({exclusive_secondary})
-    )
-    """
-
-    exclusive = f"""
-    ({_exclusive}) and not
-    ({ignore})
-    """
-
-    # Explicit: For pedestrians but not only (E.g. shared with bicycle)
-    explicit_foot = 'foot in (yes,permissive,designated,official)'
-    # secondary tags
-    explicit_secondary = f"""
-    {explicit_foot} or
-    footway in (sidewalk,crossing,traffic_island,yes)
-    """
-
-    _explicit = f"""
-    railway=platform or
-    highway=living_street or
-    (
-        highway=footway and
-        ({explicit_secondary})
-    ) or
-    (
-        highway=path and
-        ({explicit_secondary})
-    ) or
-    (
-        ({potential}) and
-        (
-            sidewalk in (both,left,right,yes,lane) or
-            sidewalk:left=yes or
-            sidewalk:right=yes or
-            sidewalk:both=yes or
-            ({explicit_foot})
+    def inaccessible(d: Dict) -> bool:
+        return (
+            d.get('highway')
+            not in [
+                *potential_highway_values_all,
+                'pedestrian',
+                'steps',
+                'corridor',
+                'platform',
+                'path',
+                'track',
+                'cycleway',
+                'footway',
+            ]
+            or d.get('footway') == 'no'
+            or d.get('access') in ['no', 'private', 'permit', 'military', 'delivery', 'customers']
+            or d.get('foot') in ['no', 'private', 'use_sidepath', 'discouraged', 'destination']
+            or d.get('maxspeed') in ['60', '70', '80', '100']
+            or d.get('maxspeed:backward') in ['60', '70', '80', '100']
+            or d.get('maxspeed:forward') in ['60', '70', '80', '100']
         )
-    )
-    """
 
-    explicit = f"""
-    ({_explicit}) and not
-    (
-        ({ignore}) or
-        ({_exclusive})
-    )
-    """
+    # TODO: exclude {_exclusive}
+    def missing_data(d: Dict) -> bool:
+        return True
 
-    _inaccessible = f"""
-    ({potential}) and
-    (
-        sidewalk=no or
-        sidewalk:both=no or
-        (sidewalk:left=no and sidewalk:right=no) or
-        sidewalk=none or
-        sidewalk:both=none or
-        (sidewalk:left=none and sidewalk:right=none)
+    return OrderedDict(
+        [
+            (PathCategory.INACCESSIBLE, inaccessible),
+            (PathCategory.DEDICATED_EXCLUSIVE, exclusive),
+            (PathCategory.DEDICATED_SEPARATED, separated),
+            (PathCategory.SHARED_WITH_BIKES, shared_with_bikes),
+            (PathCategory.SHARED_WITH_MOTORIZED_TRAFFIC_LOW_SPEED, shared_with_low_speed),
+            (PathCategory.SHARED_WITH_MOTORIZED_TRAFFIC_MEDIUM_SPEED, shared_with_medium_speed),
+            (PathCategory.SHARED_WITH_MOTORIZED_TRAFFIC_HIGH_SPEED, shared_with_high_speed),
+            (PathCategory.MISSING_DATA, missing_data),
+        ]
     )
-    """
-    inaccessible = f"""
-    ({_inaccessible}) and not
-    (
-        ({ignore}) or
-        ({_exclusive}) or
-        ({_explicit})
-    )
-    """
-
-    # Probable_yes: (E.g. forest tracks)
-    _probable_yes = """
-    highway in (track,service,path) or
-    man_made=pier
-    """
-    probable_yes = f"""
-    ({_probable_yes}) and not
-    (
-        ({ignore}) or
-        ({_exclusive}) or
-        ({_explicit}) or
-        ({_inaccessible})
-    )
-    """
-
-    potential_but_unknown = f"""
-    ({potential}) and not
-    (
-        ({ignore}) or
-        ({_exclusive}) or
-        ({_explicit}) or
-        ({_inaccessible}) or
-        ({_probable_yes})
-    )
-    """
-    # Remove empty lines for better readability
-    exclusive = ''.join([s for s in exclusive.strip().splitlines(keepends=True) if s.strip()])
-    explicit = ''.join([s for s in explicit.strip().splitlines(keepends=True) if s.strip()])
-    probable_yes = ''.join([s for s in probable_yes.strip().splitlines(keepends=True) if s.strip()])
-    potential_but_unknown = ''.join([s for s in potential_but_unknown.strip().splitlines(keepends=True) if s.strip()])
-    inaccessible = ''.join([s for s in inaccessible.strip().splitlines(keepends=True) if s.strip()])
-    return {
-        PathCategory.EXCLUSIVE: exclusive,
-        PathCategory.EXPLICIT: explicit,
-        PathCategory.PROBABLE_YES: probable_yes,
-        PathCategory.POTENTIAL_BUT_UNKNOWN: potential_but_unknown,
-        PathCategory.INACCESSIBLE: inaccessible,
-    }
 
 
 def fetch_osm_data(aoi: shapely.MultiPolygon, osm_filter: str, ohsome: OhsomeClient) -> gpd.GeoDataFrame:
@@ -227,16 +241,25 @@ def fetch_osm_data(aoi: shapely.MultiPolygon, osm_filter: str, ohsome: OhsomeCli
             crs='epsg:4326', columns=['geometry', '@other_tags']
         )  # TODO: remove once https://github.com/GIScience/ohsome-py/pull/165 is resolved
     elements = elements.reset_index(drop=True)
+    if elements.empty:
+        return elements
     return elements[['geometry', '@other_tags']]
+
+
+def apply_path_category_filters(row: gpd.GeoSeries, filters):
+    for category, filter_func in filters:
+        if filter_func(row['@other_tags']):
+            return category
+    return None
 
 
 def boost_route_members(
     aoi: shapely.MultiPolygon,
     paths_line: gpd.GeoDataFrame,
     ohsome: OhsomeClient,
-    boost_to: PathCategory = PathCategory.EXPLICIT,
+    boost_to: PathCategory = PathCategory.SHARED_WITH_BIKES,
 ) -> pd.Series:
-    trails = fetch_osm_data(aoi, 'route in (foot,hiking)', ohsome)
+    trails = fetch_osm_data(aoi, 'route in (foot,hiking,bicycle)', ohsome)
     trails.geometry = trails.geometry.apply(lambda geom: fix_geometry_collection(geom))
 
     paths_line = paths_line.copy()
@@ -252,8 +275,7 @@ def boost_route_members(
 
     return paths_line.apply(
         lambda row: boost_to
-        if not pd.isna(row.index_trail)
-        and row.category in (PathCategory.POTENTIAL_BUT_UNKNOWN, PathCategory.PROBABLE_YES)
+        if not pd.isna(row.index_trail) and row.category in (PathCategory.MISSING_DATA, PathCategory.SHARED_WITH_BIKES)
         else row.category,
         axis=1,
     )
@@ -348,7 +370,9 @@ def get_sidewalk_key_combinations() -> Dict[str, List[str]]:
         combi = []
         for side in ['both', 'right', 'left']:
             combi.append(f'sidewalk:{side}:{tag}')
+        combi.append(f'footway:{tag}')
         sidewalk_tag_combinations[tag] = combi
+
     return sidewalk_tag_combinations
 
 
