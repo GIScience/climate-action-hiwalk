@@ -36,53 +36,85 @@ WALKING_SPEED_MAP_STRING = {k.value: v for k, v in WALKING_SPEED_MAP.items()}
 
 
 class PathRating(BaseModel):
-    exclusive: float = Field(
-        title='Exclusive Path Rating',
-        description='Qualitative rating (between 0..1) of paths designated exclusively to pedestrians.',
+    dedicated_exclusive: float = Field(
+        title='Dedicated Exclusive Path Rating',
+        description='Qualitative rating (between 0..1) of paths designated exclusively to pedestrians with no other traffic nearby.',
         ge=0,
         le=1,
         examples=[1.0],
         default=1.0,
     )
-    explicit: float = Field(
-        title='Explicit Path Rating',
-        description='Qualitative (between 0..1) rating of paths explicitly denoted for pedestrian use.',
+    dedicated_separated: float = Field(
+        title='Dedicated Separated Path Rating',
+        description='Qualitative (between 0..1) rating of paths explicitly denoted for pedestrian use, such as sidewalks or footways segregated from bike lanes.',
         ge=0,
         le=1,
         examples=[0.8],
         default=0.8,
     )
-    probable_yes: float = Field(
-        title='Probable-Path Rating',
-        description='Qualitative rating (between 0..1) of paths that are probably walkable like forest tracks or '
-        'parking aisles.',
+    shared_with_bikes: float = Field(
+        title='Shared with Bikes Path Rating',
+        description='Qualitative (between 0..1) rating of paths shared with bikes.',
         ge=0,
         le=1,
-        examples=[0.6],
-        default=0.6,
+        examples=[0.7],
+        default=0.7,
     )
-    potential_but_unknown: float = Field(
-        title='Uncertain-Path Rating',
-        description='Qualitative rating (between 0..1) of paths that should be walkable but exhibit no information '
-        'thereon.',
+
+    shared_with_motorized_traffic_low_speed: float = Field(
+        title='Shared with motorized traffic low speed Path Rating',
+        description='Qualitative rating (between 0..1) of streets without a sidewalk, with low '
+        'speed limits, such as living streets or service ways.',
         ge=0,
         le=1,
         examples=[0.5],
         default=0.5,
     )
+    shared_with_motorized_traffic_medium_speed: float = Field(
+        title='Shared with motorized traffic medium speed Path Rating',
+        description='Qualitative rating (between 0..1) of streets without a sidewalk, '
+        'with medium speed limits up to 30 km/h',
+        ge=0,
+        le=1,
+        examples=[0.3],
+        default=0.3,
+    )
+    shared_with_motorized_traffic_high_speed: float = Field(
+        title='Shared with motorized traffic high speed Path Rating',
+        description='Qualitative rating (between 0..1) of streets without a sidewalk, '
+        'with higher speed limits up to 50 km/h',
+        ge=0,
+        le=1,
+        examples=[0.1],
+        default=0.1,
+    )
     inaccessible: float = Field(
-        title='Exclusive Path Rating',
-        description='Qualitative rating (between 0..1) of paths that are inaccessible to pedestrians.',
+        title='Inaccessible Path Rating',
+        description='Qualitative rating (between 0..1) of paths that are not walkable.',
         ge=0,
         le=1,
         examples=[0.0],
         default=0.0,
     )
+    missing_data: float = Field(
+        title='Missing Data Path Rating',
+        description='Qualitative (between 0..1) rating of paths that are in principle walkable but are missing data (default -9999, which is out of scale)',
+        ge=0,
+        le=1,
+        examples=[0.0],
+        default=-9999,
+    )
 
     @model_validator(mode='after')
     def check_order(self) -> Self:
         assert (
-            self.inaccessible <= self.potential_but_unknown <= self.probable_yes <= self.explicit <= self.exclusive
+            self.inaccessible
+            <= self.shared_with_motorized_traffic_high_speed
+            <= self.shared_with_motorized_traffic_medium_speed
+            <= self.shared_with_motorized_traffic_low_speed
+            <= self.shared_with_bikes
+            <= self.dedicated_separated
+            <= self.dedicated_exclusive
         ), 'Qualitative rating must respect semantic order of categories!'
         return self
 

@@ -37,13 +37,16 @@ def build_paths_artifact(
     return create_geojson_artifact(
         features=sidewalks.geometry,
         layer_name='Walkable',
-        caption='The layer displays paths in four categories: '
-        'a) paths dedicated to pedestrians exclusively '
-        'b) paths that are explicitly meant for pedestrians but may be shared with other traffic (e.g. a '
-        'road with a sidewalk) '
-        'c) paths that probably are walkable but the true status is unknown (e.g. a dirt road) '
-        'd) paths that are not walkable but could be (e.g. a residential road without sidewalk).',
-        description='The layer excludes paths that are not walkable by definition such as motorways or cycle ways. '
+        caption='Categories of the pedestrian paths based on the share with other road users.',
+        description='Explanation of the different categories (from good to bad):\n'
+        '* Dedicated exclusive: dedicated footways without other traffic close by.\n'
+        '* Dedicated separated: dedicated footways with other traffic close by. This means for example sidewalks or segregated bike and footways (VZ 241, in Germany).\n'
+        '* Shared with bikes: Footways shared with bikes, typically either a common foot and bikeway (VZ 240, in Germany) or footways where bikes are allowed to ride on (zVZ 1022-10, in Germany).\n'
+        '* Shared with motorized traffic low speed: Streets without a sidewalk, with low speed limits, such as living streets or service ways.\n'
+        '* Shared with motorized traffic medium speed: Streets without a sidewalk, with medium speed limits up to 30 km/h.\n'
+        '* Shared with motorized traffic high speed: Streets without a sidewalk, with higher speed limits up to 50 km/h.\n'
+        '* Inaccessible: Paths where walking is forbidden (e.g. tunnels, private or military streets) or streets without a sidewalk and with speed limits higher than 50 km/h.\n'
+        '* Missing data: Paths that could not be fit in any of the above categories because of missing information.\n\n'
         'The data source is OpenStreetMap.',
         label=sidewalks.category.apply(lambda r: r.name).to_list(),
         color=sidewalks.color.to_list(),
@@ -83,9 +86,11 @@ def build_connectivity_artifact(
 
 def build_pavement_quality_artifact(
     paths_line: gpd.GeoDataFrame,
+    clip_aoi: shapely.MultiPolygon,
     resources: ComputationResources,
     cmap_name: str = 'RdYlGn',
 ) -> _Artifact:
+    paths_line = paths_line.clip(clip_aoi, keep_geom_type=True)
     paths_line['color'] = get_color(paths_line.quality.map(PavementQualityRating), cmap_name)
     return create_geojson_artifact(
         features=paths_line.geometry,
@@ -113,7 +118,7 @@ def build_areal_summary_artifacts(
             data=data,
             title=region,
             caption='The distribution of paths categories for this administrative area. '
-            f'The total length of paths in this area is {sum(data.y)}km',
+            f'The total length of paths in this area is {sum(data.y)} km',
             resources=resources,
             filename=f'aggregation_{region}',
             primary=False,

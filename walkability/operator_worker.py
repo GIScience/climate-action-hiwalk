@@ -1,4 +1,5 @@
 import logging
+import time
 from pathlib import Path
 from typing import List, Dict, Callable
 
@@ -38,6 +39,7 @@ from walkability.utils import (
     read_pavement_quality_rankings,
     get_flat_key_combinations,
     get_first_match,
+    apply_path_category_filters,
     euclidian_distance,
 )
 
@@ -70,6 +72,11 @@ class OperatorWalkability(Operator[ComputeInputWalkability]):
                     affiliation='HeiGIT gGmbH',
                     website='https://heigit.org/heigit-team/',
                 ),
+                PluginAuthor(
+                    name='Jonas Kemmer',
+                    affiliation='HeiGIT gGmbH',
+                    website='https://heigit.org/heigit-team/',
+                ),
             ],
             version=Version(0, 0, 1),
             concerns=[Concern.MOBILITY_PEDESTRIAN],
@@ -90,7 +97,9 @@ class OperatorWalkability(Operator[ComputeInputWalkability]):
         )
 
         line_pavement_quality = self.get_pavement_quality(line_paths)
-        pavement_quality_artifact = build_pavement_quality_artifact(line_pavement_quality, resources)
+        pavement_quality_artifact = build_pavement_quality_artifact(
+            line_pavement_quality, params.get_aoi_geom(), resources
+        )
 
         connectivity = self.get_connectivity(
             line_paths,
@@ -112,23 +121,30 @@ class OperatorWalkability(Operator[ComputeInputWalkability]):
     ) -> (gpd.GeoDataFrame, gpd.GeoDataFrame):
         log.debug('Extracting paths')
 
-        def get_osm_data(aoi: shapely.MultiPolygon, geom_type: str, category: PathCategory) -> gpd.GeoDataFrame:
-            osm_data = fetch_osm_data(
-                aoi,
-                f'geometry:{geom_type} and ({osm_filter})',
-                self.ohsome,
-            )
-            osm_data['category'] = category
-            return osm_data
+        ohsome_filter = str(
+            '(geometry:line or geometry:polygon) and '
+            '(highway=* or route=ferry or railway=platform) and not '
+            '(footway=separate or sidewalk=separate or sidewalk:both=separate or '
+            '(sidewalk:right=separate and sidewalk:left=separate) or '
+            '(sidewalk:right=separate and sidewalk:left=no) or (sidewalk:right=no and sidewalk:left=separate))'
+        )
 
-        lines_list = []
-        polygons_list = []
-        for category, osm_filter in construct_filters().items():
-            lines_list.append(get_osm_data(aoi=aoi, geom_type='line', category=category))
-            polygons_list.append(get_osm_data(aoi=aoi, geom_type='polygon', category=category))
+        start_time = time.time()
+        osm_data = fetch_osm_data(
+            aoi,
+            ohsome_filter,
+            self.ohsome,
+        )
 
-        paths_line: gpd.GeoDataFrame = pd.concat(lines_list, ignore_index=True)
-        paths_polygon = pd.concat(polygons_list, ignore_index=True)
+        osm_data['category'] = osm_data.apply(apply_path_category_filters, axis=1, filters=construct_filters().items())
+        log.info(f'Extracted and categorised paths in {time.time() - start_time} seconds')
+
+        start_time = time.time()
+
+        paths_line: gpd.GeoDataFrame = osm_data[osm_data.geometry.type.isin(['LineString', 'MultiLineString'])]
+        paths_line = paths_line.reset_index(drop=True)
+        paths_polygon: gpd.GeoDataFrame = osm_data[osm_data.geometry.type.isin(['Polygon', 'MultiPolygon'])]
+        paths_polygon = paths_polygon.reset_index(drop=True)
 
         paths_line['category'] = boost_route_members(
             aoi=aoi,
@@ -138,6 +154,8 @@ class OperatorWalkability(Operator[ComputeInputWalkability]):
 
         paths_line['rating'] = paths_line.category.apply(lambda category: rating_map[category])
         paths_polygon['rating'] = paths_polygon.category.apply(lambda category: rating_map[category])
+
+        log.info(f'Applied rating to paths in {time.time() - start_time} seconds')
 
         return paths_line, paths_polygon
 
@@ -154,6 +172,7 @@ class OperatorWalkability(Operator[ComputeInputWalkability]):
         Walkable distance is in meter.
         Category threshold.
         """
+        start_time = time.time()
         paths = paths[paths['rating'] >= threshold]
         if paths.empty:
             return paths
@@ -196,10 +215,12 @@ class OperatorWalkability(Operator[ComputeInputWalkability]):
         nx.set_edge_attributes(G, edge_attributes)
 
         result = momepy.nx_to_gdf(G, points=False)
+        log.info(f'Calculated connectivity in {time.time() - start_time} seconds')
         return result.to_crs(original_crs)[['connectivity', 'geometry']]
 
     def get_pavement_quality(self, line_paths: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
         log.debug('Evaluating pavement quality')
+        start_time = time.time()
 
         def evaluate_quality(
             row: pd.Series, keys: List[str], evaluation_dict: Dict[str, Dict[str, PavementQuality]]
@@ -209,15 +230,30 @@ class OperatorWalkability(Operator[ComputeInputWalkability]):
             match_key, match_value = get_first_match(keys, tags)
 
             match match_key:
-                case 'sidewalk:both:smoothness' | 'sidewalk:left:smoothness' | 'sidewalk:right:smoothness':
+                case (
+                    'sidewalk:both:smoothness'
+                    | 'sidewalk:left:smoothness'
+                    | 'sidewalk:right:smoothness'
+                    | 'footway:smoothness'
+                ):
                     match_key = 'smoothness'
-                case 'sidewalk:both:surface' | 'sidewalk:left:surface' | 'sidewalk:right:surface':
+                case 'sidewalk:both:surface' | 'sidewalk:left:surface' | 'sidewalk:right:surface' | 'footway:surface':
                     match_key = 'surface'
                 case 'smoothness':
-                    if row.category != PathCategory.EXCLUSIVE:
+                    if row.category not in [
+                        PathCategory.DEDICATED_EXCLUSIVE,
+                        PathCategory.SHARED_WITH_MOTORIZED_TRAFFIC_LOW_SPEED,
+                        PathCategory.SHARED_WITH_MOTORIZED_TRAFFIC_MEDIUM_SPEED,
+                        PathCategory.SHARED_WITH_MOTORIZED_TRAFFIC_HIGH_SPEED,
+                    ] and tags.get('highway') not in ['path', 'footway', 'cycleway', 'track']:
                         return PavementQuality.UNKNOWN
                 case 'surface':
-                    if row.category != PathCategory.EXCLUSIVE:
+                    if row.category not in [
+                        PathCategory.DEDICATED_EXCLUSIVE,
+                        PathCategory.SHARED_WITH_MOTORIZED_TRAFFIC_LOW_SPEED,
+                        PathCategory.SHARED_WITH_MOTORIZED_TRAFFIC_MEDIUM_SPEED,
+                        PathCategory.SHARED_WITH_MOTORIZED_TRAFFIC_HIGH_SPEED,
+                    ] and tags.get('highway') not in ['path', 'footway', 'cycleway', 'track']:
                         return PavementQuality.UNKNOWN
                 case 'tracktype':
                     pass
@@ -228,9 +264,9 @@ class OperatorWalkability(Operator[ComputeInputWalkability]):
         rankings = read_pavement_quality_rankings()
         keys = get_flat_key_combinations()
 
-        line_paths = line_paths[line_paths.category != PathCategory.INACCESSIBLE]
-
         line_paths['quality'] = line_paths.apply(lambda row: evaluate_quality(row, keys, rankings), axis=1)
+
+        log.info(f'Calculated pavement quality in {time.time() - start_time} seconds')
 
         return line_paths[['quality', 'geometry']]
 
@@ -242,6 +278,7 @@ class OperatorWalkability(Operator[ComputeInputWalkability]):
         projected_crs: CRS,
         length_resolution_m: int = 1000,
     ) -> Dict[str, Chart2dData]:
+        start_time = time.time()
         stats = paths.copy()
         stats = stats.loc[stats.geometry.geom_type.isin(('MultiLineString', 'LineString'))]
 
@@ -276,5 +313,5 @@ class OperatorWalkability(Operator[ComputeInputWalkability]):
                 color=colors,
                 chart_type=ChartType.PIE,
             )
-
+        log.info(f'Summarized are in {time.time() - start_time} seconds')
         return data
