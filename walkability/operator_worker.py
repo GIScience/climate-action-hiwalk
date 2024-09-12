@@ -278,7 +278,6 @@ class OperatorWalkability(Operator[ComputeInputWalkability]):
         projected_crs: CRS,
         length_resolution_m: int = 1000,
     ) -> Dict[str, Chart2dData]:
-        start_time = time.time()
         stats = paths.copy()
         stats = stats.loc[stats.geometry.geom_type.isin(('MultiLineString', 'LineString'))]
 
@@ -291,6 +290,7 @@ class OperatorWalkability(Operator[ComputeInputWalkability]):
         ).as_dataframe(explode_tags=minimum_keys)
         boundaries = boundaries[boundaries.is_valid]
         boundaries = boundaries.reset_index(drop=True)
+        log.debug(f'Summarising paths into {boundaries.shape[0]} boundaries')
 
         stats = stats.overlay(boundaries, how='identity')
         stats = stats.to_crs(projected_crs)
@@ -313,5 +313,4 @@ class OperatorWalkability(Operator[ComputeInputWalkability]):
                 color=colors,
                 chart_type=ChartType.PIE,
             )
-        log.info(f'Summarized are in {time.time() - start_time} seconds')
         return data

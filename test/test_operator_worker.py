@@ -1,10 +1,11 @@
 from itertools import product
 from typing import Tuple, List
-from geopandas import testing
+
 import geopandas as gpd
 import pytest
 import shapely
 from climatoology.base.artifact import Chart2dData, ChartType
+from geopandas import testing
 from geopandas.testing import assert_geodataframe_equal
 from pydantic_extra_types.color import Color
 from pyproj import CRS
@@ -393,6 +394,64 @@ def test_aggregate(operator, expected_compute_input, responses_mock):
     )
 
     assert computed_charts == expected_charts
+
+
+def test_aggregate_no_boundaries(operator, expected_compute_input, responses_mock):
+    responses_mock.post(
+        'https://api.ohsome.org/v1/elements/geometry',
+        body="""{
+  "attribution" : {
+    "url" : "https://ohsome.org/copyrights",
+    "text" : "© OpenStreetMap contributors"
+  },
+  "apiVersion" : "1.10.4",
+  "type" : "FeatureCollection",
+  "features" : []
+}""",
+        match=[filter_start_matcher('geometry:polygon and boundary')],
+    )
+
+    line_geom = shapely.LineString([(12.3, 48.22), (12.3, 48.2205), (12.3005, 48.22)])
+
+    input_paths = gpd.GeoDataFrame(
+        data={
+            'category': [PathCategory.DEDICATED_EXCLUSIVE],
+            'rating': [1.0],
+            'geometry': [line_geom],
+        },
+        crs='EPSG:4326',
+    )
+    computed_charts = operator.summarise_by_area(
+        input_paths, expected_compute_input.get_aoi_geom(), 9, CRS.from_user_input(32632)
+    )
+
+    assert computed_charts == dict()
+
+
+def test_aggregate_boundaries_no_name(operator, expected_compute_input, responses_mock):
+    with open('resources/test/ohsome_admin_response_no_name.geojson', 'r') as admin_file:
+        admin_body = admin_file.read()
+    responses_mock.post(
+        'https://api.ohsome.org/v1/elements/geometry',
+        body=admin_body,
+        match=[filter_start_matcher('geometry:polygon and boundary')],
+    )
+
+    line_geom = shapely.LineString([(12.3, 48.22), (12.3, 48.2205), (12.3005, 48.22)])
+
+    input_paths = gpd.GeoDataFrame(
+        data={
+            'category': [PathCategory.DEDICATED_EXCLUSIVE],
+            'rating': [1.0],
+            'geometry': [line_geom],
+        },
+        crs='EPSG:4326',
+    )
+    computed_charts = operator.summarise_by_area(
+        input_paths, expected_compute_input.get_aoi_geom(), 9, CRS.from_user_input(32632)
+    )
+
+    assert computed_charts == dict()
 
 
 def get_key_value_combinations() -> List[Tuple[str, Tuple[str, PavementQuality]]]:

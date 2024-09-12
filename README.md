@@ -50,7 +50,7 @@ pytest \
 
 ## Docker (for admins and interested devs)
 
-If the [infrastructure](https://gitlab.gistools.geog.uni-heidelberg.de/climate-action/infrastructure) is reachable you can copy [.env_template](.env_template) to `.env` and then run
+If the [infrastructure](https://gitlab.heigit.org/climate-action/infrastructure) is reachable you can copy [.env_template](.env_template) to `.env` and then run
 
 ```shell
 DOCKER_BUILDKIT=1 docker build --secret id=CI_JOB_TOKEN . --tag heigit/ca-walkability:devel
