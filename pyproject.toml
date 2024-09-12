@@ -7,13 +7,13 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "~3.11.5"
-climatoology = {git = "ssh://git@gitlab.gistools.geog.uni-heidelberg.de:2022/climate-action/climatoology.git", rev = "5.0.0"}
+climatoology = {git = "ssh://git@gitlab.heigit.org:2022/climate-action/climatoology.git", rev = "5.1.0"}
 pydantic = "^2.5.3"
 pydantic-settings = "^2.1.0"
 geojson-pydantic = "^1.0.1"
 shapely = "^2.0.2"
 pyyaml = "^6.0.1"
-ohsome = "^0.3.0"
+ohsome = "^0.3.3"
 matplotlib = "^3.8.3"
 networkx = "^3.3"
 momepy = "^0.7.0"
