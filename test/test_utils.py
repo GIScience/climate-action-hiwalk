@@ -26,9 +26,10 @@ from walkability.utils import (
 
 
 validation_objects = {
-    PathCategory.DEDICATED_EXCLUSIVE: {'way/84908668', 'way/243233105'},
+    PathCategory.DEDICATED_EXCLUSIVE: {'way/84908668', 'way/243233105', 'way/27797959'},
     # https://www.openstreetmap.org/way/98453212 foot=designated
     # https://www.openstreetmap.org/way/84908668 highway=pedestrian
+    # https://www.openstreetmap.org/way/27797959 railway=platform
     PathCategory.DEDICATED_SEPARATED: {'way/98453212', 'way/184725322', 'way/118975501'},
     # https://www.openstreetmap.org/way/184725322 sidewalk:right=right and sidewalk:left=separate
     # https://www.openstreetmap.org/way/243233105 highway=footway,
@@ -67,6 +68,7 @@ def bpolys():
             shapely.box(8.687238, 49.410277, 8.690776, 49.411319),
             shapely.box(8.6284769976, 49.4267943445, 8.6344636881, 49.4296553394),
             shapely.box(8.693717586876431, 49.41201247400707, 8.70768102673378, 49.408582680835906),
+            shapely.box(8.671805, 49.402299, 8.677725, 49.404730),
         ],
         crs='EPSG:4326',
     )

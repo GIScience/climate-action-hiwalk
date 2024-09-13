@@ -190,22 +190,25 @@ def construct_filters() -> Dict[PathCategory, str]:
     # For documentation:
     # ignored_primary = 'highway in (motorway,trunk,motorway_link,trunk_link,
     # primary_link,secondary_link,tertiary_link,bus_guideway,escape,raceway,busway,
-    # brideleway,via_ferrata,cicleway'
+    # bridleway,via_ferrata,cycleway'
     # ignored_secondary = 'sidewalk=no'
     def inaccessible(d: Dict) -> bool:
         return (
-            d.get('highway')
-            not in [
-                *potential_highway_values_all,
-                'pedestrian',
-                'steps',
-                'corridor',
-                'platform',
-                'path',
-                'track',
-                'cycleway',
-                'footway',
-            ]
+            (
+                d.get('highway')
+                not in [
+                    *potential_highway_values_all,
+                    'pedestrian',
+                    'steps',
+                    'corridor',
+                    'platform',
+                    'path',
+                    'track',
+                    'cycleway',
+                    'footway',
+                ]
+                and d.get('railway') != 'platform'
+            )
             or d.get('footway') == 'no'
             or d.get('access') in ['no', 'private', 'permit', 'military', 'delivery', 'customers']
             or d.get('foot') in ['no', 'private', 'use_sidepath', 'discouraged', 'destination']
