@@ -44,9 +44,10 @@ validation_objects = {
     PathCategory.SHARED_WITH_MOTORIZED_TRAFFIC_MEDIUM_SPEED: {'way/28890081', 'way/109096915'},
     # https://www.openstreetmap.org/way/28890081 highway=residential and sidewalk=no and maxspeed=30
     # https://www.openstreetmap.org/way/109096915 highway=residential and sidewalk=no and maxspeed=20
-    PathCategory.SHARED_WITH_MOTORIZED_TRAFFIC_HIGH_SPEED: {'way/25340617', 'way/258562284'},
+    PathCategory.SHARED_WITH_MOTORIZED_TRAFFIC_HIGH_SPEED: {'way/25340617', 'way/258562284', 'way/152645928'},
     # https://www.openstreetmap.org/way/25340617 highway=residential and sidewalk=no and maxspeed=50
     # https://www.openstreetmap.org/way/258562284 highway=tertiary and sidewalk=no and maxspeed=50
+    # https://www.openstreetmap.org/way/152645928 highway=residential and sidewalk!=* and maxspeed!=*
     PathCategory.INACCESSIBLE: {'way/400711541', 'way/24635973', 'way/25238623'},
     # https://www.openstreetmap.org/way/400711541 sidewalk=no and maxspeed:backward=70
     # https://www.openstreetmap.org/way/24635973 foot=no
@@ -69,6 +70,7 @@ def bpolys():
             shapely.box(8.6284769976, 49.4267943445, 8.6344636881, 49.4296553394),
             shapely.box(8.693717586876431, 49.41201247400707, 8.70768102673378, 49.408582680835906),
             shapely.box(8.671805, 49.402299, 8.677725, 49.404730),
+            shapely.box(3.354680, 6.444900, 3.369928, 6.455165),
         ],
         crs='EPSG:4326',
     )

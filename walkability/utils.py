@@ -179,6 +179,9 @@ def construct_filters() -> Dict[PathCategory, str]:
                 or d.get('sidewalk') == 'none'
                 or d.get('sidewalk:both') == 'none'
                 or (d.get('sidewalk:left') == 'none' and d.get('sidewalk:right') == 'none')
+                or d.get('sidewalk') != '*'
+                or d.get('sidewalk:both') != '*'
+                or (d.get('sidewalk:left') != '*' and d.get('sidewalk:right') != '*')
             )
             and not (
                 d.get('maxspeed') in ['60', '70', '80', '100']
