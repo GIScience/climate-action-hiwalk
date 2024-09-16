@@ -241,7 +241,7 @@ class OperatorWalkability(Operator[ComputeInputWalkability]):
                     match_key = 'surface'
                 case 'smoothness':
                     if row.category not in [
-                        PathCategory.DEDICATED_EXCLUSIVE,
+                        PathCategory.DESIGNATED,
                         PathCategory.SHARED_WITH_MOTORIZED_TRAFFIC_LOW_SPEED,
                         PathCategory.SHARED_WITH_MOTORIZED_TRAFFIC_MEDIUM_SPEED,
                         PathCategory.SHARED_WITH_MOTORIZED_TRAFFIC_HIGH_SPEED,
@@ -249,7 +249,7 @@ class OperatorWalkability(Operator[ComputeInputWalkability]):
                         return PavementQuality.UNKNOWN
                 case 'surface':
                     if row.category not in [
-                        PathCategory.DEDICATED_EXCLUSIVE,
+                        PathCategory.DESIGNATED,
                         PathCategory.SHARED_WITH_MOTORIZED_TRAFFIC_LOW_SPEED,
                         PathCategory.SHARED_WITH_MOTORIZED_TRAFFIC_MEDIUM_SPEED,
                         PathCategory.SHARED_WITH_MOTORIZED_TRAFFIC_HIGH_SPEED,

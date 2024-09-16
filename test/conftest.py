@@ -96,12 +96,11 @@ def expected_compute_output(compute_resources) -> List[_Artifact]:
         attachments={
             AttachmentType.LEGEND: Legend(
                 legend_data={
-                    'dedicated_exclusive': Color('#006837'),
-                    'dedicated_separated': Color('#66bd63'),
-                    'shared_with_bikes': Color('#a5d86a'),
-                    'shared_with_motorized_traffic_low_speed': Color('#feffbe'),
-                    'shared_with_motorized_traffic_medium_speed': Color('#fdad60'),
-                    'shared_with_motorized_traffic_high_speed': Color('#d62f27'),
+                    'designated': Color('#006837'),
+                    'shared_with_bikes': Color('#66bd63'),
+                    'shared_with_motorized_traffic_low_speed': Color('#d9ef8b'),
+                    'shared_with_motorized_traffic_medium_speed': Color('#fee08b'),
+                    'shared_with_motorized_traffic_high_speed': Color('#f46d43'),
                     'inaccessible': Color('#a50026'),
                     'missing_data': Color('#808080'),
                 }
