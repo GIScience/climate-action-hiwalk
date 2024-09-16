@@ -218,6 +218,7 @@ def construct_filters() -> Dict[PathCategory, str]:
             or d.get('maxspeed') in ['60', '70', '80', '100']
             or d.get('maxspeed:backward') in ['60', '70', '80', '100']
             or d.get('maxspeed:forward') in ['60', '70', '80', '100']
+            or (d.get('highway') == 'service' and d.get('bus') in ['designated', 'yes'])
         )
 
     # TODO: exclude {_exclusive}

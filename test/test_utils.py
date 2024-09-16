@@ -48,10 +48,11 @@ validation_objects = {
     # https://www.openstreetmap.org/way/25340617 highway=residential and sidewalk=no and maxspeed=50
     # https://www.openstreetmap.org/way/258562284 highway=tertiary and sidewalk=no and maxspeed=50
     # https://www.openstreetmap.org/way/152645928 highway=residential and sidewalk!=* and maxspeed!=*
-    PathCategory.INACCESSIBLE: {'way/400711541', 'way/24635973', 'way/25238623'},
+    PathCategory.INACCESSIBLE: {'way/400711541', 'way/24635973', 'way/25238623', 'way/225895739'},
     # https://www.openstreetmap.org/way/400711541 sidewalk=no and maxspeed:backward=70
     # https://www.openstreetmap.org/way/24635973 foot=no
     # https://www.openstreetmap.org/way/25238623 access=private
+    # https://www.openstreetmap.org/way/225895739 service=yes and bus=yes
 }
 
 
@@ -69,6 +70,7 @@ def bpolys():
             shapely.box(8.687238, 49.410277, 8.690776, 49.411319),
             shapely.box(8.6284769976, 49.4267943445, 8.6344636881, 49.4296553394),
             shapely.box(8.693717586876431, 49.41201247400707, 8.70768102673378, 49.408582680835906),
+            shapely.box(8.690887, 49.406495, 8.694642, 49.409326),
             shapely.box(8.671805, 49.402299, 8.677725, 49.404730),
             shapely.box(3.354680, 6.444900, 3.369928, 6.455165),
         ],
