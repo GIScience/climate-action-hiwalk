@@ -26,13 +26,19 @@ from walkability.utils import (
 
 
 validation_objects = {
-    PathCategory.DEDICATED_EXCLUSIVE: {'way/84908668', 'way/243233105', 'way/27797959'},
+    PathCategory.DESIGNATED: {
+        'way/84908668',
+        'way/243233105',
+        'way/27797959',
+        'way/98453212',
+        'way/184725322',
+        'way/118975501',
+    },
     # https://www.openstreetmap.org/way/98453212 foot=designated
     # https://www.openstreetmap.org/way/84908668 highway=pedestrian
     # https://www.openstreetmap.org/way/27797959 railway=platform
-    PathCategory.DEDICATED_SEPARATED: {'way/98453212', 'way/184725322', 'way/118975501'},
     # https://www.openstreetmap.org/way/184725322 sidewalk:right=right and sidewalk:left=separate
-    # https://www.openstreetmap.org/way/243233105 highway=footway,
+    # https://www.openstreetmap.org/way/243233105 highway=footway
     # https://www.openstreetmap.org/way/118975501 foot=designated and bicycle=designated and segregated=yes
     PathCategory.SHARED_WITH_BIKES: {'way/25806383', 'way/148612595', 'way/715905259'},
     # https://www.openstreetmap.org/way/25806383 bicycle=designated & foot=designated
@@ -155,8 +161,7 @@ def test_boost_route_members(expected_compute_input, responses_mock):
 
     expected_output = pd.Series(
         data=[
-            PathCategory.DEDICATED_EXCLUSIVE,
-            PathCategory.DEDICATED_SEPARATED,
+            PathCategory.DESIGNATED,
             PathCategory.SHARED_WITH_BIKES,
             PathCategory.SHARED_WITH_MOTORIZED_TRAFFIC_LOW_SPEED,
             PathCategory.SHARED_WITH_MOTORIZED_TRAFFIC_MEDIUM_SPEED,
@@ -171,8 +176,7 @@ def test_boost_route_members(expected_compute_input, responses_mock):
     paths_input = gpd.GeoDataFrame(
         data={
             'category': [
-                PathCategory.DEDICATED_EXCLUSIVE,
-                PathCategory.DEDICATED_SEPARATED,
+                PathCategory.DESIGNATED,
                 PathCategory.SHARED_WITH_BIKES,
                 PathCategory.SHARED_WITH_MOTORIZED_TRAFFIC_LOW_SPEED,
                 PathCategory.SHARED_WITH_MOTORIZED_TRAFFIC_MEDIUM_SPEED,
@@ -184,7 +188,6 @@ def test_boost_route_members(expected_compute_input, responses_mock):
             ]
         },
         geometry=[
-            shapely.LineString([(12.3, 48.22), (12.3, 48.2205), (12.3005, 48.22)]),
             shapely.LineString([(12.3, 48.22), (12.3, 48.2205), (12.3005, 48.22)]),
             shapely.LineString([(12.3, 48.22), (12.3, 48.2205), (12.3005, 48.22)]),
             shapely.LineString([(12.3, 48.22), (12.3, 48.2205), (12.3005, 48.22)]),

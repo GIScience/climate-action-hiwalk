@@ -36,29 +36,21 @@ WALKING_SPEED_MAP_STRING = {k.value: v for k, v in WALKING_SPEED_MAP.items()}
 
 
 class PathRating(BaseModel):
-    dedicated_exclusive: float = Field(
-        title='Dedicated Exclusive Path Rating',
-        description='Qualitative rating (between 0..1) of paths designated exclusively to pedestrians with no other traffic nearby.',
+    designated: float = Field(
+        title='Designated Path Rating',
+        description='Qualitative (between 0..1) rating of paths designated for exclusive pedestrian use.',
         ge=0,
         le=1,
         examples=[1.0],
         default=1.0,
-    )
-    dedicated_separated: float = Field(
-        title='Dedicated Separated Path Rating',
-        description='Qualitative (between 0..1) rating of paths explicitly denoted for pedestrian use, such as sidewalks or footways segregated from bike lanes.',
-        ge=0,
-        le=1,
-        examples=[0.8],
-        default=0.8,
     )
     shared_with_bikes: float = Field(
         title='Shared with Bikes Path Rating',
         description='Qualitative (between 0..1) rating of paths shared with bikes.',
         ge=0,
         le=1,
-        examples=[0.7],
-        default=0.7,
+        examples=[0.8],
+        default=0.8,
     )
 
     shared_with_motorized_traffic_low_speed: float = Field(
@@ -67,8 +59,8 @@ class PathRating(BaseModel):
         'speed limits, such as living streets or service ways.',
         ge=0,
         le=1,
-        examples=[0.5],
-        default=0.5,
+        examples=[0.6],
+        default=0.6,
     )
     shared_with_motorized_traffic_medium_speed: float = Field(
         title='Shared with motorized traffic medium speed Path Rating',
@@ -76,8 +68,8 @@ class PathRating(BaseModel):
         'with medium speed limits up to 30 km/h',
         ge=0,
         le=1,
-        examples=[0.3],
-        default=0.3,
+        examples=[0.4],
+        default=0.4,
     )
     shared_with_motorized_traffic_high_speed: float = Field(
         title='Shared with motorized traffic high speed Path Rating',
@@ -85,8 +77,8 @@ class PathRating(BaseModel):
         'with higher speed limits up to 50 km/h',
         ge=0,
         le=1,
-        examples=[0.1],
-        default=0.1,
+        examples=[0.2],
+        default=0.2,
     )
     inaccessible: float = Field(
         title='Inaccessible Path Rating',
@@ -113,8 +105,7 @@ class PathRating(BaseModel):
             <= self.shared_with_motorized_traffic_medium_speed
             <= self.shared_with_motorized_traffic_low_speed
             <= self.shared_with_bikes
-            <= self.dedicated_separated
-            <= self.dedicated_exclusive
+            <= self.designated
         ), 'Qualitative rating must respect semantic order of categories!'
         return self
 

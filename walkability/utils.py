@@ -26,10 +26,8 @@ class PathCategory(Enum):
     # |
     # v
     # BAD
-    DEDICATED_EXCLUSIVE = 'dedicated_exclusive'
-    # Dedicated footway without other traffic close by
-    DEDICATED_SEPARATED = 'dedicated_separated'
-    # Separate footway with other traffic close by, (e.g. sidewalk or sign 241)
+    DESIGNATED = 'designated'
+    # Designated footway with or without other traffic close by, (e.g. dedicated footway, sidewalk or sign 241)
     SHARED_WITH_BIKES = 'shared_with_bikes'
     # sign 240 or 1022-10
     SHARED_WITH_MOTORIZED_TRAFFIC_LOW_SPEED = 'shared_with_motorized_traffic_low_speed'
@@ -120,9 +118,6 @@ def construct_filters() -> Dict[PathCategory, str]:
             d.get('segregated') != 'yes' or d.get('segregated') == 'no'
         )
 
-    def exclusive(d: Dict) -> bool:
-        return _exclusive(d) and not _shared_with_bikes(d)
-
     def _separated_foot(d: Dict) -> bool:
         return d.get('foot') in ['yes', 'permissive', 'designated', 'official'] and d.get('maxspeed') is None
 
@@ -148,8 +143,8 @@ def construct_filters() -> Dict[PathCategory, str]:
             )
         )
 
-    def separated(d: Dict) -> bool:
-        return _separated(d) and not _shared_with_bikes(d)
+    def designated(d: Dict) -> bool:
+        return (_exclusive(d) or _separated(d)) and not _shared_with_bikes(d)
 
     def shared_with_bikes(d: Dict) -> bool:
         return ((_exclusive(d) or _separated(d)) and _shared_with_bikes(d)) or (
@@ -228,8 +223,7 @@ def construct_filters() -> Dict[PathCategory, str]:
     return OrderedDict(
         [
             (PathCategory.INACCESSIBLE, inaccessible),
-            (PathCategory.DEDICATED_EXCLUSIVE, exclusive),
-            (PathCategory.DEDICATED_SEPARATED, separated),
+            (PathCategory.DESIGNATED, designated),
             (PathCategory.SHARED_WITH_BIKES, shared_with_bikes),
             (PathCategory.SHARED_WITH_MOTORIZED_TRAFFIC_LOW_SPEED, shared_with_low_speed),
             (PathCategory.SHARED_WITH_MOTORIZED_TRAFFIC_MEDIUM_SPEED, shared_with_medium_speed),

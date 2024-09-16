@@ -25,7 +25,7 @@ def test_get_paths(operator, expected_compute_input, ohsome_api):
 
     expected_lines = gpd.GeoDataFrame(
         data={
-            'category': [PathCategory.DEDICATED_EXCLUSIVE],
+            'category': [PathCategory.DESIGNATED],
             'rating': [1.0],
             'geometry': [line_geom],
             '@other_tags': [{'highway': 'pedestrian'}],
@@ -34,7 +34,7 @@ def test_get_paths(operator, expected_compute_input, ohsome_api):
     )
     expected_polygons = gpd.GeoDataFrame(
         data={
-            'category': [PathCategory.DEDICATED_EXCLUSIVE],
+            'category': [PathCategory.DESIGNATED],
             'rating': [1.0],
             'geometry': [polygon_geom],
             '@other_tags': [{'highway': 'platform', 'area': 'yes'}],
@@ -365,13 +365,13 @@ def test_aggregate(operator, expected_compute_input, responses_mock):
     )
     expected_charts = {
         'Bergheim': Chart2dData(
-            x=['dedicated_exclusive'],
+            x=['designated'],
             y=[0.12],
             color=[Color('#006837')],
             chart_type=ChartType.PIE,
         ),
         'Südstadt': Chart2dData(
-            x=['dedicated_exclusive'],
+            x=['designated'],
             y=[0.12],
             color=[Color('#006837')],
             chart_type=ChartType.PIE,
@@ -383,7 +383,7 @@ def test_aggregate(operator, expected_compute_input, responses_mock):
 
     input_paths = gpd.GeoDataFrame(
         data={
-            'category': 2 * [PathCategory.DEDICATED_EXCLUSIVE],
+            'category': 2 * [PathCategory.DESIGNATED],
             'rating': 2 * [1.0],
             'geometry': [line_geom] + [polygon_geom],
         },
@@ -415,7 +415,7 @@ def test_aggregate_no_boundaries(operator, expected_compute_input, responses_moc
 
     input_paths = gpd.GeoDataFrame(
         data={
-            'category': [PathCategory.DEDICATED_EXCLUSIVE],
+            'category': [PathCategory.DESIGNATED],
             'rating': [1.0],
             'geometry': [line_geom],
         },
@@ -441,7 +441,7 @@ def test_aggregate_boundaries_no_name(operator, expected_compute_input, response
 
     input_paths = gpd.GeoDataFrame(
         data={
-            'category': [PathCategory.DEDICATED_EXCLUSIVE],
+            'category': [PathCategory.DESIGNATED],
             'rating': [1.0],
             'geometry': [line_geom],
         },
@@ -485,7 +485,7 @@ def test_pavement_quality_return_values(operator, combination: Tuple[str, Tuple[
     line_geom = shapely.LineString([(12.3, 48.22), (12.3, 48.2205), (12.3005, 48.22)])
     line_paths = gpd.GeoDataFrame(
         data={
-            'category': [PathCategory.DEDICATED_EXCLUSIVE],
+            'category': [PathCategory.DESIGNATED],
             'geometry': [line_geom],
             '@other_tags': [{key: value}],
         },
@@ -528,7 +528,7 @@ def test_pavement_quality_hierarchy(operator, combination):
     line_geom = shapely.LineString([(12.3, 48.22), (12.3, 48.2205), (12.3005, 48.22)])
     line_paths = gpd.GeoDataFrame(
         data={
-            'category': [PathCategory.DEDICATED_EXCLUSIVE],
+            'category': [PathCategory.DESIGNATED],
             'geometry': [line_geom],
             '@other_tags': [{primary_key: primary_value, secondary_key: 'wrong'}],
         },
