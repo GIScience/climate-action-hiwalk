@@ -28,16 +28,17 @@ class PathCategory(Enum):
     # BAD
     DESIGNATED = 'designated'
     # Designated footway with or without other traffic close by, (e.g. dedicated footway, sidewalk or sign 241)
-    SHARED_WITH_BIKES = 'shared_with_bikes'
+    DESIGNATED_SHARED_WITH_BIKES = 'designated_shared_with_bikes'
     # sign 240 or 1022-10
-    SHARED_WITH_MOTORIZED_TRAFFIC_LOW_SPEED = 'shared_with_motorized_traffic_low_speed'
+    SHARED_WITH_MOTORIZED_TRAFFIC_LOW_SPEED = 'shared_with_motorized_traffic_low_speed_max_walking_pace'
     # living streets, parking lots, service ways
-    SHARED_WITH_MOTORIZED_TRAFFIC_MEDIUM_SPEED = 'shared_with_motorized_traffic_medium_speed'
+    SHARED_WITH_MOTORIZED_TRAFFIC_MEDIUM_SPEED = 'shared_with_motorized_traffic_medium_speed_max_30_kph'
     # streets with no sidewalk with max speed limit 30 km/h
-    SHARED_WITH_MOTORIZED_TRAFFIC_HIGH_SPEED = 'shared_with_motorized_traffic_high_speed'
+    SHARED_WITH_MOTORIZED_TRAFFIC_HIGH_SPEED = 'shared_with_motorized_traffic_high_speed_max_50_kph'
     # streets with no sidewalk with max speed limit 50 km/h
-    INACCESSIBLE = 'inaccessible'
-    MISSING_DATA = 'missing_data'
+    NOT_WALKABLE = 'not_walkable'
+    # category replacing missing data
+    UNKNOWN = 'unknown'
 
 
 class PavementQuality(Enum):
@@ -146,7 +147,7 @@ def construct_filters() -> Dict[PathCategory, str]:
     def designated(d: Dict) -> bool:
         return (_exclusive(d) or _separated(d)) and not _shared_with_bikes(d)
 
-    def shared_with_bikes(d: Dict) -> bool:
+    def designated_shared_with_bikes(d: Dict) -> bool:
         return ((_exclusive(d) or _separated(d)) and _shared_with_bikes(d)) or (
             d.get('highway') in ['path', 'track', 'pedestrian']
             and d.get('motor_vehicle') != 'yes'
@@ -222,13 +223,13 @@ def construct_filters() -> Dict[PathCategory, str]:
 
     return OrderedDict(
         [
-            (PathCategory.INACCESSIBLE, inaccessible),
+            (PathCategory.NOT_WALKABLE, inaccessible),
             (PathCategory.DESIGNATED, designated),
-            (PathCategory.SHARED_WITH_BIKES, shared_with_bikes),
+            (PathCategory.DESIGNATED_SHARED_WITH_BIKES, designated_shared_with_bikes),
             (PathCategory.SHARED_WITH_MOTORIZED_TRAFFIC_LOW_SPEED, shared_with_low_speed),
             (PathCategory.SHARED_WITH_MOTORIZED_TRAFFIC_MEDIUM_SPEED, shared_with_medium_speed),
             (PathCategory.SHARED_WITH_MOTORIZED_TRAFFIC_HIGH_SPEED, shared_with_high_speed),
-            (PathCategory.MISSING_DATA, missing_data),
+            (PathCategory.UNKNOWN, missing_data),
         ]
     )
 
@@ -258,7 +259,7 @@ def boost_route_members(
     aoi: shapely.MultiPolygon,
     paths_line: gpd.GeoDataFrame,
     ohsome: OhsomeClient,
-    boost_to: PathCategory = PathCategory.SHARED_WITH_BIKES,
+    boost_to: PathCategory = PathCategory.DESIGNATED_SHARED_WITH_BIKES,
 ) -> pd.Series:
     trails = fetch_osm_data(aoi, 'route in (foot,hiking,bicycle)', ohsome)
     trails.geometry = trails.geometry.apply(lambda geom: fix_geometry_collection(geom))
@@ -276,7 +277,8 @@ def boost_route_members(
 
     return paths_line.apply(
         lambda row: boost_to
-        if not pd.isna(row.index_trail) and row.category in (PathCategory.MISSING_DATA, PathCategory.SHARED_WITH_BIKES)
+        if not pd.isna(row.index_trail)
+        and row.category in (PathCategory.UNKNOWN, PathCategory.DESIGNATED_SHARED_WITH_BIKES)
         else row.category,
         axis=1,
     )
