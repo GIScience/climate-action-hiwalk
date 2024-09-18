@@ -44,8 +44,8 @@ class PathRating(BaseModel):
         examples=[1.0],
         default=1.0,
     )
-    shared_with_bikes: float = Field(
-        title='Shared with Bikes Path Rating',
+    designated_shared_with_bikes: float = Field(
+        title='Designated Shared with Bikes Path Rating',
         description='Qualitative (between 0..1) rating of paths shared with bikes.',
         ge=0,
         le=1,
@@ -53,7 +53,7 @@ class PathRating(BaseModel):
         default=0.8,
     )
 
-    shared_with_motorized_traffic_low_speed: float = Field(
+    shared_with_motorized_traffic_low_speed_max_walking_pace: float = Field(
         title='Shared with motorized traffic low speed Path Rating',
         description='Qualitative rating (between 0..1) of streets without a sidewalk, with low '
         'speed limits, such as living streets or service ways.',
@@ -62,7 +62,7 @@ class PathRating(BaseModel):
         examples=[0.6],
         default=0.6,
     )
-    shared_with_motorized_traffic_medium_speed: float = Field(
+    shared_with_motorized_traffic_medium_speed_max_30_kph: float = Field(
         title='Shared with motorized traffic medium speed Path Rating',
         description='Qualitative rating (between 0..1) of streets without a sidewalk, '
         'with medium speed limits up to 30 km/h',
@@ -71,7 +71,7 @@ class PathRating(BaseModel):
         examples=[0.4],
         default=0.4,
     )
-    shared_with_motorized_traffic_high_speed: float = Field(
+    shared_with_motorized_traffic_high_speed_max_50_kph: float = Field(
         title='Shared with motorized traffic high speed Path Rating',
         description='Qualitative rating (between 0..1) of streets without a sidewalk, '
         'with higher speed limits up to 50 km/h',
@@ -80,16 +80,16 @@ class PathRating(BaseModel):
         examples=[0.2],
         default=0.2,
     )
-    inaccessible: float = Field(
-        title='Inaccessible Path Rating',
+    not_walkable: float = Field(
+        title='Not Walkable Path Rating',
         description='Qualitative rating (between 0..1) of paths that are not walkable.',
         ge=0,
         le=1,
         examples=[0.0],
         default=0.0,
     )
-    missing_data: float = Field(
-        title='Missing Data Path Rating',
+    unknown: float = Field(
+        title='Unknown Path Rating',
         description='Qualitative (between 0..1) rating of paths that are in principle walkable but are missing data (default -9999, which is out of scale)',
         ge=0,
         le=1,
@@ -100,11 +100,11 @@ class PathRating(BaseModel):
     @model_validator(mode='after')
     def check_order(self) -> Self:
         assert (
-            self.inaccessible
-            <= self.shared_with_motorized_traffic_high_speed
-            <= self.shared_with_motorized_traffic_medium_speed
-            <= self.shared_with_motorized_traffic_low_speed
-            <= self.shared_with_bikes
+            self.not_walkable
+            <= self.shared_with_motorized_traffic_high_speed_max_50_kph
+            <= self.shared_with_motorized_traffic_medium_speed_max_30_kph
+            <= self.shared_with_motorized_traffic_low_speed_max_walking_pace
+            <= self.designated_shared_with_bikes
             <= self.designated
         ), 'Qualitative rating must respect semantic order of categories!'
         return self

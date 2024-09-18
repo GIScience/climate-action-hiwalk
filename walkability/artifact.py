@@ -41,12 +41,12 @@ def build_paths_artifact(
         description='Explanation of the different categories (from good to bad):\n'
         '* Dedicated exclusive: dedicated footways without other traffic close by.\n'
         '* Dedicated separated: dedicated footways with other traffic close by. This means for example sidewalks or segregated bike and footways (VZ 241, in Germany).\n'
-        '* Shared with bikes: Footways shared with bikes, typically either a common foot and bikeway (VZ 240, in Germany) or footways where bikes are allowed to ride on (zVZ 1022-10, in Germany).\n'
+        '* Designated shared with bikes: Footways shared with bikes, typically either a common foot and bikeway (VZ 240, in Germany) or footways where bikes are allowed to ride on (zVZ 1022-10, in Germany).\n'
         '* Shared with motorized traffic low speed: Streets without a sidewalk, with low speed limits, such as living streets or service ways.\n'
         '* Shared with motorized traffic medium speed: Streets without a sidewalk, with medium speed limits up to 30 km/h.\n'
         '* Shared with motorized traffic high speed: Streets without a sidewalk, with higher speed limits up to 50 km/h.\n'
-        '* Inaccessible: Paths where walking is forbidden (e.g. tunnels, private or military streets) or streets without a sidewalk and with speed limits higher than 50 km/h.\n'
-        '* Missing data: Paths that could not be fit in any of the above categories because of missing information.\n\n'
+        '* Not Walkable: Paths where walking is forbidden (e.g. tunnels, private or military streets) or streets without a sidewalk and with speed limits higher than 50 km/h.\n'
+        '* Unknown: Paths that could not be fit in any of the above categories because of missing information.\n\n'
         'The data source is OpenStreetMap.',
         label=sidewalks.category.apply(lambda r: r.name).to_list(),
         color=sidewalks.color.to_list(),

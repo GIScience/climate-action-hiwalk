@@ -40,7 +40,7 @@ validation_objects = {
     # https://www.openstreetmap.org/way/184725322 sidewalk:right=right and sidewalk:left=separate
     # https://www.openstreetmap.org/way/243233105 highway=footway
     # https://www.openstreetmap.org/way/118975501 foot=designated and bicycle=designated and segregated=yes
-    PathCategory.SHARED_WITH_BIKES: {'way/25806383', 'way/148612595', 'way/715905259'},
+    PathCategory.DESIGNATED_SHARED_WITH_BIKES: {'way/25806383', 'way/148612595', 'way/715905259'},
     # https://www.openstreetmap.org/way/25806383 bicycle=designated & foot=designated
     # https://www.openstreetmap.org/way/148612595/history/16 bicycle=yes & highway=residential
     # https://www.openstreetmap.org/way/715905259 highway=track
@@ -53,8 +53,7 @@ validation_objects = {
     PathCategory.SHARED_WITH_MOTORIZED_TRAFFIC_HIGH_SPEED: {'way/25340617', 'way/258562284', 'way/152645928'},
     # https://www.openstreetmap.org/way/25340617 highway=residential and sidewalk=no and maxspeed=50
     # https://www.openstreetmap.org/way/258562284 highway=tertiary and sidewalk=no and maxspeed=50
-    # https://www.openstreetmap.org/way/152645928 highway=residential and sidewalk!=* and maxspeed!=*
-    PathCategory.INACCESSIBLE: {'way/400711541', 'way/24635973', 'way/25238623', 'way/225895739'},
+    PathCategory.NOT_WALKABLE: {'way/400711541', 'way/24635973', 'way/25238623'},
     # https://www.openstreetmap.org/way/400711541 sidewalk=no and maxspeed:backward=70
     # https://www.openstreetmap.org/way/24635973 foot=no
     # https://www.openstreetmap.org/way/25238623 access=private
@@ -162,14 +161,14 @@ def test_boost_route_members(expected_compute_input, responses_mock):
     expected_output = pd.Series(
         data=[
             PathCategory.DESIGNATED,
-            PathCategory.SHARED_WITH_BIKES,
+            PathCategory.DESIGNATED_SHARED_WITH_BIKES,
             PathCategory.SHARED_WITH_MOTORIZED_TRAFFIC_LOW_SPEED,
             PathCategory.SHARED_WITH_MOTORIZED_TRAFFIC_MEDIUM_SPEED,
             PathCategory.SHARED_WITH_MOTORIZED_TRAFFIC_HIGH_SPEED,
-            PathCategory.INACCESSIBLE,
-            PathCategory.MISSING_DATA,
-            PathCategory.SHARED_WITH_BIKES,
-            PathCategory.SHARED_WITH_BIKES,
+            PathCategory.NOT_WALKABLE,
+            PathCategory.UNKNOWN,
+            PathCategory.DESIGNATED_SHARED_WITH_BIKES,
+            PathCategory.DESIGNATED_SHARED_WITH_BIKES,
         ]
     )
 
@@ -177,14 +176,14 @@ def test_boost_route_members(expected_compute_input, responses_mock):
         data={
             'category': [
                 PathCategory.DESIGNATED,
-                PathCategory.SHARED_WITH_BIKES,
+                PathCategory.DESIGNATED_SHARED_WITH_BIKES,
                 PathCategory.SHARED_WITH_MOTORIZED_TRAFFIC_LOW_SPEED,
                 PathCategory.SHARED_WITH_MOTORIZED_TRAFFIC_MEDIUM_SPEED,
                 PathCategory.SHARED_WITH_MOTORIZED_TRAFFIC_HIGH_SPEED,
-                PathCategory.INACCESSIBLE,
-                PathCategory.MISSING_DATA,
-                PathCategory.SHARED_WITH_BIKES,
-                PathCategory.MISSING_DATA,
+                PathCategory.NOT_WALKABLE,
+                PathCategory.UNKNOWN,
+                PathCategory.DESIGNATED_SHARED_WITH_BIKES,
+                PathCategory.UNKNOWN,
             ]
         },
         geometry=[
@@ -211,10 +210,10 @@ def test_boost_route_members_overlapping_routes(expected_compute_input, response
             body=vector.read(),
         )
 
-    expected_output = pd.Series(data=[PathCategory.SHARED_WITH_BIKES])
+    expected_output = pd.Series(data=[PathCategory.DESIGNATED_SHARED_WITH_BIKES])
 
     paths_input = gpd.GeoDataFrame(
-        data={'category': [PathCategory.MISSING_DATA]},
+        data={'category': [PathCategory.UNKNOWN]},
         geometry=[
             shapely.LineString([(0, 0), (1, 1)]),
         ],
