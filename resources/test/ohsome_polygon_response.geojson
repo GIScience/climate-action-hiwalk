@@ -30,6 +30,8 @@
     },
     "properties" : {
       "@osmId" : "way/171574582",
-      "@snapshotTimestamp" : "2017-01-01T00:00:00Z"
+      "@snapshotTimestamp" : "2017-01-01T00:00:00Z",
+      "highway": "platform",
+      "area": "yes"
     }}]
 }

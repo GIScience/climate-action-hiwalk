@@ -16,7 +16,6 @@ from ohsome import OhsomeClient
 from pydantic_extra_types.color import Color
 from requests import PreparedRequest
 from shapely import LineString, MultiLineString
-from collections import OrderedDict
 
 log = logging.getLogger(__name__)
 
@@ -66,33 +65,33 @@ PavementQualityRating = {
 }
 
 
-def construct_filters() -> Dict[PathCategory, str]:
-    # Potential: potentially walkable features (to be restricted by AND queries)
-    potential_highway_values = (
-        'primary',
-        'primary_link',
-        'secondary',
-        'secondary_link',
-        'tertiary',
-        'tertiary_link',
-        'road',
-        'cycleway',
-        'unclassified',
-        'residential',
-        'track',
-    )
-    potential_highway_values_low_speed = (
-        'living_street',
-        'service',
-    )
-    potential_highway_values_all = potential_highway_values + potential_highway_values_low_speed
+class PathCategoryFilters:
+    def __init__(self):
+        # Potential: potentially walkable features (to be restricted by AND queries)
+        self._potential_highway_values = (
+            'primary',
+            'primary_link',
+            'secondary',
+            'secondary_link',
+            'tertiary',
+            'tertiary_link',
+            'road',
+            'cycleway',
+            'unclassified',
+            'residential',
+            'track',
+        )
+        self._potential_highway_values_low_speed = (
+            'living_street',
+            'service',
+        )
+        self._potential_highway_values_all = self._potential_highway_values + self._potential_highway_values_low_speed
 
-    def _potential(d: Dict) -> bool:
-        return d.get('highway') in potential_highway_values_all or d.get('route') == 'ferry'
+    def _potential(self, d: Dict) -> bool:
+        return d.get('highway') in self._potential_highway_values_all or d.get('route') == 'ferry'
 
     # Exclusive: Only for pedestrians
-    # TODO: Platforms exclusive or separated
-    def _exclusive(d: Dict) -> bool:
+    def _exclusive(self, d: Dict) -> bool:
         return (
             d.get('highway') in ['steps', 'corridor', 'pedestrian', 'platform']
             or d.get('railway') == 'platform'
@@ -113,30 +112,29 @@ def construct_filters() -> Dict[PathCategory, str]:
             )
         ) and d.get('bicycle') not in ['yes', 'designated']
 
-    # TODO: check permissive for bikes
-    def _shared_with_bikes(d: Dict) -> bool:
+    def _shared_with_bikes(self, d: Dict) -> bool:
         return d.get('bicycle') in ['yes', 'designated'] and (
             d.get('segregated') != 'yes' or d.get('segregated') == 'no'
         )
 
-    def _separated_foot(d: Dict) -> bool:
+    def _separated_foot(self, d: Dict) -> bool:
         return d.get('foot') in ['yes', 'permissive', 'designated', 'official'] and d.get('maxspeed') is None
 
-    def _separated(d: Dict) -> bool:
+    def _separated(self, d: Dict) -> bool:
         return (
             d.get('highway') == 'footway'
             or (
                 d.get('highway') in ['path', 'cycleway']
                 and (
-                    _separated_foot(d)
+                    self._separated_foot(d)
                     or d.get('footway') in ['sidewalk', 'crossing', 'traffic_island', 'yes']
                     or d.get('segregated') == 'yes'
                 )
             )
         ) or (
-            (_potential(d))
+            (self._potential(d))
             and (
-                _separated_foot(d)
+                self._separated_foot(d)
                 or d.get('sidewalk') in ['both', 'left', 'right', 'yes', 'lane']
                 or d.get('sidewalk:left') == 'yes'
                 or d.get('sidewalk:right') == 'yes'
@@ -144,30 +142,26 @@ def construct_filters() -> Dict[PathCategory, str]:
             )
         )
 
-    def designated(d: Dict) -> bool:
-        return (_exclusive(d) or _separated(d)) and not _shared_with_bikes(d)
+    def designated(self, d: Dict) -> bool:
+        return (self._exclusive(d) or self._separated(d)) and not self._shared_with_bikes(d)
 
-    def designated_shared_with_bikes(d: Dict) -> bool:
-        return ((_exclusive(d) or _separated(d)) and _shared_with_bikes(d)) or (
+    def designated_shared_with_bikes(self, d: Dict) -> bool:
+        return ((self._exclusive(d) or self._separated(d)) and self._shared_with_bikes(d)) or (
             d.get('highway') in ['path', 'track', 'pedestrian']
             and d.get('motor_vehicle') != 'yes'
             and d.get('vehicle') != 'yes'
             and d.get('segregated') != 'yes'
         )
 
-    def shared_with_low_speed(d: Dict) -> bool:
-        return d.get('highway') in potential_highway_values_low_speed
+    def shared_with_low_speed(self, d: Dict) -> bool:
+        return d.get('highway') in self._potential_highway_values_low_speed
 
-    # TODO: ,5␣mph,10␣mph,15␣ mph,20␣mph
-    # TODO: Should 5 be in low_speed?
-    # TODO: exclude {_exclusive}
-    def shared_with_medium_speed(d: Dict) -> bool:
+    def shared_with_medium_speed(self, d: Dict) -> bool:
         return d.get('maxspeed') in ['5', '10', '15', '20', '25', '30'] or d.get('zone:maxspeed') in ['DE:30', '30']
 
-    # TODO: and sidewalk... redundant?
-    def shared_with_high_speed(d: Dict) -> bool:
+    def shared_with_high_speed(self, d: Dict) -> bool:
         return (
-            _potential(d)
+            self._potential(d)
             and (
                 d.get('sidewalk') == 'no'
                 or d.get('sidewalk:both') == 'no'
@@ -191,12 +185,12 @@ def construct_filters() -> Dict[PathCategory, str]:
     # primary_link,secondary_link,tertiary_link,bus_guideway,escape,raceway,busway,
     # bridleway,via_ferrata,cycleway'
     # ignored_secondary = 'sidewalk=no'
-    def inaccessible(d: Dict) -> bool:
+    def inaccessible(self, d: Dict) -> bool:
         return (
             (
                 d.get('highway')
                 not in [
-                    *potential_highway_values_all,
+                    *self._potential_highway_values_all,
                     'pedestrian',
                     'steps',
                     'corridor',
@@ -217,51 +211,41 @@ def construct_filters() -> Dict[PathCategory, str]:
             or (d.get('highway') == 'service' and d.get('bus') in ['designated', 'yes'])
         )
 
-    # TODO: exclude {_exclusive}
-    def missing_data(d: Dict) -> bool:
-        return True
-
-    return OrderedDict(
-        [
-            (PathCategory.NOT_WALKABLE, inaccessible),
-            (PathCategory.DESIGNATED, designated),
-            (PathCategory.DESIGNATED_SHARED_WITH_BIKES, designated_shared_with_bikes),
-            (PathCategory.SHARED_WITH_MOTORIZED_TRAFFIC_LOW_SPEED, shared_with_low_speed),
-            (PathCategory.SHARED_WITH_MOTORIZED_TRAFFIC_MEDIUM_SPEED, shared_with_medium_speed),
-            (PathCategory.SHARED_WITH_MOTORIZED_TRAFFIC_HIGH_SPEED, shared_with_high_speed),
-            (PathCategory.UNKNOWN, missing_data),
-        ]
-    )
-
 
 def fetch_osm_data(aoi: shapely.MultiPolygon, osm_filter: str, ohsome: OhsomeClient) -> gpd.GeoDataFrame:
     elements = ohsome.elements.geometry.post(
         bpolys=aoi, clipGeometry=True, properties='tags', filter=osm_filter
     ).as_dataframe()
-    if elements.empty:
-        return gpd.GeoDataFrame(
-            crs='epsg:4326', columns=['geometry', '@other_tags']
-        )  # TODO: remove once https://github.com/GIScience/ohsome-py/pull/165 is resolved
     elements = elements.reset_index(drop=True)
-    if elements.empty:
-        return elements
     return elements[['geometry', '@other_tags']]
 
 
-def apply_path_category_filters(row: gpd.GeoSeries, filters):
-    for category, filter_func in filters:
-        if filter_func(row['@other_tags']):
-            return category
-    return None
+def apply_path_category_filters(row: pd.Series) -> PathCategory:
+    filters = PathCategoryFilters()
+    match row['@other_tags']:
+        case x if filters.inaccessible(x):
+            return PathCategory.NOT_WALKABLE
+        case x if filters.designated(x):
+            return PathCategory.DESIGNATED
+        case x if filters.designated_shared_with_bikes(x):
+            return PathCategory.DESIGNATED_SHARED_WITH_BIKES
+        case x if filters.shared_with_low_speed(x):
+            return PathCategory.SHARED_WITH_MOTORIZED_TRAFFIC_LOW_SPEED
+        case x if filters.shared_with_medium_speed(x):
+            return PathCategory.SHARED_WITH_MOTORIZED_TRAFFIC_MEDIUM_SPEED
+        case x if filters.shared_with_high_speed(x):
+            return PathCategory.SHARED_WITH_MOTORIZED_TRAFFIC_HIGH_SPEED
+        case _:
+            return PathCategory.UNKNOWN
 
 
 def boost_route_members(
     aoi: shapely.MultiPolygon,
     paths_line: gpd.GeoDataFrame,
     ohsome: OhsomeClient,
-    boost_to: PathCategory = PathCategory.DESIGNATED_SHARED_WITH_BIKES,
+    boost_to: PathCategory = PathCategory.DESIGNATED,
 ) -> pd.Series:
-    trails = fetch_osm_data(aoi, 'route in (foot,hiking,bicycle)', ohsome)
+    trails = fetch_osm_data(aoi, 'route in (foot,hiking)', ohsome)
     trails.geometry = trails.geometry.apply(lambda geom: fix_geometry_collection(geom))
 
     paths_line = paths_line.copy()
@@ -277,8 +261,7 @@ def boost_route_members(
 
     return paths_line.apply(
         lambda row: boost_to
-        if not pd.isna(row.index_trail)
-        and row.category in (PathCategory.UNKNOWN, PathCategory.DESIGNATED_SHARED_WITH_BIKES)
+        if not pd.isna(row.index_trail) and row.category in (PathCategory.UNKNOWN, PathCategory.DESIGNATED)
         else row.category,
         axis=1,
     )
@@ -399,3 +382,13 @@ def get_first_match(ordered_keys: List[str], tags: Dict[str, str]) -> Tuple[Opti
 
 def euclidian_distance(point1: Tuple[float, float], point2: Tuple[float, float]) -> float:
     return math.sqrt((point1[0] - point2[0]) ** 2 + (point1[1] - point2[1]) ** 2)
+
+
+def ohsome_filter(geometry_type: str) -> str:
+    return str(
+        f'geometry:{geometry_type} and '
+        '(highway=* or route=ferry or railway=platform) and not '
+        '(footway=separate or sidewalk=separate or sidewalk:both=separate or '
+        '(sidewalk:right=separate and sidewalk:left=separate) or '
+        '(sidewalk:right=separate and sidewalk:left=no) or (sidewalk:right=no and sidewalk:left=separate))'
+    )

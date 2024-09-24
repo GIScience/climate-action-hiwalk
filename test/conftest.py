@@ -194,21 +194,29 @@ def operator():
 @pytest.fixture
 def ohsome_api(responses_mock):
     with (
-        open('resources/test/ohsome_line_and_polygon_response.geojson', 'r') as line_and_polygon_file,
+        open('resources/test/ohsome_line_response.geojson', 'r') as line_file,
+        open('resources/test/ohsome_polygon_response.geojson', 'r') as polygon_file,
         open('resources/test/ohsome_route_response.geojson', 'r') as route_file,
     ):
-        line_and_polygon_body = line_and_polygon_file.read()
+        line_body = line_file.read()
+        polygon_body = polygon_file.read()
         route_body = route_file.read()
 
     responses_mock.post(
         'https://api.ohsome.org/v1/elements/geometry',
-        body=line_and_polygon_body,
-        match=[filter_start_matcher('(geometry:line or geometry:polygon)')],
+        body=line_body,
+        match=[filter_start_matcher('geometry:line')],
+    )
+
+    responses_mock.post(
+        'https://api.ohsome.org/v1/elements/geometry',
+        body=polygon_body,
+        match=[filter_start_matcher('geometry:polygon')],
     )
 
     responses_mock.post(
         'https://api.ohsome.org/v1/elements/geometry',
         body=route_body,
-        match=[filter_start_matcher('route in (foot,hiking,bicycle)')],
+        match=[filter_start_matcher('route in (foot,hiking)')],
     )
     return responses_mock
