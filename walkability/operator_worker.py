@@ -1,5 +1,4 @@
 import logging
-import time
 from pathlib import Path
 from typing import List, Dict, Callable
 
@@ -29,7 +28,6 @@ from walkability.artifact import (
 )
 from walkability.input import ComputeInputWalkability
 from walkability.utils import (
-    construct_filters,
     fetch_osm_data,
     boost_route_members,
     get_color,
@@ -41,6 +39,7 @@ from walkability.utils import (
     get_first_match,
     apply_path_category_filters,
     euclidian_distance,
+    ohsome_filter,
 )
 
 log = logging.getLogger(__name__)
@@ -121,41 +120,15 @@ class OperatorWalkability(Operator[ComputeInputWalkability]):
     ) -> (gpd.GeoDataFrame, gpd.GeoDataFrame):
         log.debug('Extracting paths')
 
-        ohsome_filter = str(
-            '(geometry:line or geometry:polygon) and '
-            '(highway=* or route=ferry or railway=platform) and not '
-            '(footway=separate or sidewalk=separate or sidewalk:both=separate or '
-            '(sidewalk:right=separate and sidewalk:left=separate) or '
-            '(sidewalk:right=separate and sidewalk:left=no) or (sidewalk:right=no and sidewalk:left=separate))'
-        )
+        paths_line = fetch_osm_data(aoi, ohsome_filter('line'), self.ohsome)
+        paths_line['category'] = paths_line.apply(apply_path_category_filters, axis=1)
+        paths_line['category'] = boost_route_members(aoi=aoi, paths_line=paths_line, ohsome=self.ohsome)
 
-        start_time = time.time()
-        osm_data = fetch_osm_data(
-            aoi,
-            ohsome_filter,
-            self.ohsome,
-        )
-
-        osm_data['category'] = osm_data.apply(apply_path_category_filters, axis=1, filters=construct_filters().items())
-        log.info(f'Extracted and categorised paths in {time.time() - start_time} seconds')
-
-        start_time = time.time()
-
-        paths_line: gpd.GeoDataFrame = osm_data[osm_data.geometry.type.isin(['LineString', 'MultiLineString'])]
-        paths_line = paths_line.reset_index(drop=True)
-        paths_polygon: gpd.GeoDataFrame = osm_data[osm_data.geometry.type.isin(['Polygon', 'MultiPolygon'])]
-        paths_polygon = paths_polygon.reset_index(drop=True)
-
-        paths_line['category'] = boost_route_members(
-            aoi=aoi,
-            paths_line=paths_line,
-            ohsome=self.ohsome,
-        )
+        paths_polygon = fetch_osm_data(aoi, ohsome_filter('polygon'), self.ohsome)
+        paths_polygon['category'] = paths_polygon.apply(apply_path_category_filters, axis=1)
 
         paths_line['rating'] = paths_line.category.apply(lambda category: rating_map[category])
         paths_polygon['rating'] = paths_polygon.category.apply(lambda category: rating_map[category])
-
-        log.info(f'Applied rating to paths in {time.time() - start_time} seconds')
 
         return paths_line, paths_polygon
 
@@ -172,7 +145,7 @@ class OperatorWalkability(Operator[ComputeInputWalkability]):
         Walkable distance is in meter.
         Category threshold.
         """
-        start_time = time.time()
+
         paths = paths[paths['rating'] >= threshold]
         if paths.empty:
             return paths
@@ -215,12 +188,11 @@ class OperatorWalkability(Operator[ComputeInputWalkability]):
         nx.set_edge_attributes(G, edge_attributes)
 
         result = momepy.nx_to_gdf(G, points=False)
-        log.info(f'Calculated connectivity in {time.time() - start_time} seconds')
+
         return result.to_crs(original_crs)[['connectivity', 'geometry']]
 
     def get_pavement_quality(self, line_paths: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
         log.debug('Evaluating pavement quality')
-        start_time = time.time()
 
         def evaluate_quality(
             row: pd.Series, keys: List[str], evaluation_dict: Dict[str, Dict[str, PavementQuality]]
@@ -265,8 +237,6 @@ class OperatorWalkability(Operator[ComputeInputWalkability]):
         keys = get_flat_key_combinations()
 
         line_paths['quality'] = line_paths.apply(lambda row: evaluate_quality(row, keys, rankings), axis=1)
-
-        log.info(f'Calculated pavement quality in {time.time() - start_time} seconds')
 
         return line_paths[['quality', 'geometry']]
 
