@@ -98,9 +98,9 @@ def expected_compute_output(compute_resources) -> List[_Artifact]:
                 legend_data={
                     'designated': Color('#006837'),
                     'designated_shared_with_bikes': Color('#66bd63'),
-                    'shared_with_motorized_traffic_low_speed_max_walking_pace': Color('#d9ef8b'),
-                    'shared_with_motorized_traffic_medium_speed_max_30_kph': Color('#fee08b'),
-                    'shared_with_motorized_traffic_high_speed_max_50_kph': Color('#f46d43'),
+                    'shared_with_motorized_traffic_low_speed_(=walking_speed)': Color('#d9ef8b'),
+                    'shared_with_motorized_traffic_medium_speed_(<=30_km/h)': Color('#fee08b'),
+                    'shared_with_motorized_traffic_high_speed_(<=50_km/h)': Color('#f46d43'),
                     'not_walkable': Color('#a50026'),
                     'unknown': Color('#808080'),
                 }

@@ -17,6 +17,7 @@ from pydantic_extra_types.color import Color
 from requests import PreparedRequest
 from shapely import LineString, MultiLineString
 
+
 log = logging.getLogger(__name__)
 
 
@@ -29,11 +30,11 @@ class PathCategory(Enum):
     # Designated footway with or without other traffic close by, (e.g. dedicated footway, sidewalk or sign 241)
     DESIGNATED_SHARED_WITH_BIKES = 'designated_shared_with_bikes'
     # sign 240 or 1022-10
-    SHARED_WITH_MOTORIZED_TRAFFIC_LOW_SPEED = 'shared_with_motorized_traffic_low_speed_max_walking_pace'
+    SHARED_WITH_MOTORIZED_TRAFFIC_LOW_SPEED = 'shared_with_motorized_traffic_low_speed'
     # living streets, parking lots, service ways
-    SHARED_WITH_MOTORIZED_TRAFFIC_MEDIUM_SPEED = 'shared_with_motorized_traffic_medium_speed_max_30_kph'
+    SHARED_WITH_MOTORIZED_TRAFFIC_MEDIUM_SPEED = 'shared_with_motorized_traffic_medium_speed'
     # streets with no sidewalk with max speed limit 30 km/h
-    SHARED_WITH_MOTORIZED_TRAFFIC_HIGH_SPEED = 'shared_with_motorized_traffic_high_speed_max_50_kph'
+    SHARED_WITH_MOTORIZED_TRAFFIC_HIGH_SPEED = 'shared_with_motorized_traffic_high_speed'
     # streets with no sidewalk with max speed limit 50 km/h
     NOT_WALKABLE = 'not_walkable'
     # category replacing missing data
@@ -392,3 +393,10 @@ def ohsome_filter(geometry_type: str) -> str:
         '(sidewalk:right=separate and sidewalk:left=separate) or '
         '(sidewalk:right=separate and sidewalk:left=no) or (sidewalk:right=no and sidewalk:left=separate))'
     )
+
+
+pathratings_legend_fix = {
+    'shared_with_motorized_traffic_low_speed': 'shared_with_motorized_traffic_low_speed_(=walking_speed)',
+    'shared_with_motorized_traffic_medium_speed': 'shared_with_motorized_traffic_medium_speed_(<=30_km/h)',
+    'shared_with_motorized_traffic_high_speed': 'shared_with_motorized_traffic_high_speed_(<=50_km/h)',
+}
