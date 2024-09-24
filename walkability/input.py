@@ -53,7 +53,7 @@ class PathRating(BaseModel):
         default=0.8,
     )
 
-    shared_with_motorized_traffic_low_speed_max_walking_pace: float = Field(
+    shared_with_motorized_traffic_low_speed: float = Field(
         title='Shared with motorized traffic low speed Path Rating',
         description='Qualitative rating (between 0..1) of streets without a sidewalk, with low '
         'speed limits, such as living streets or service ways.',
@@ -62,7 +62,7 @@ class PathRating(BaseModel):
         examples=[0.6],
         default=0.6,
     )
-    shared_with_motorized_traffic_medium_speed_max_30_kph: float = Field(
+    shared_with_motorized_traffic_medium_speed: float = Field(
         title='Shared with motorized traffic medium speed Path Rating',
         description='Qualitative rating (between 0..1) of streets without a sidewalk, '
         'with medium speed limits up to 30 km/h',
@@ -71,7 +71,7 @@ class PathRating(BaseModel):
         examples=[0.4],
         default=0.4,
     )
-    shared_with_motorized_traffic_high_speed_max_50_kph: float = Field(
+    shared_with_motorized_traffic_high_speed: float = Field(
         title='Shared with motorized traffic high speed Path Rating',
         description='Qualitative rating (between 0..1) of streets without a sidewalk, '
         'with higher speed limits up to 50 km/h',
@@ -101,9 +101,9 @@ class PathRating(BaseModel):
     def check_order(self) -> Self:
         assert (
             self.not_walkable
-            <= self.shared_with_motorized_traffic_high_speed_max_50_kph
-            <= self.shared_with_motorized_traffic_medium_speed_max_30_kph
-            <= self.shared_with_motorized_traffic_low_speed_max_walking_pace
+            <= self.shared_with_motorized_traffic_high_speed
+            <= self.shared_with_motorized_traffic_medium_speed
+            <= self.shared_with_motorized_traffic_low_speed
             <= self.designated_shared_with_bikes
             <= self.designated
         ), 'Qualitative rating must respect semantic order of categories!'

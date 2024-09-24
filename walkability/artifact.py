@@ -18,6 +18,7 @@ from walkability.utils import (
     get_single_color,
     PavementQualityRating,
     generate_detailed_pavement_quality_mapping_info,
+    pathratings_legend_fix,
 )
 
 
@@ -50,7 +51,9 @@ def build_paths_artifact(
         'The data source is OpenStreetMap.',
         label=sidewalks.category.apply(lambda r: r.name).to_list(),
         color=sidewalks.color.to_list(),
-        legend_data={rating[0]: get_single_color(rating[1]) for rating in ratings},
+        legend_data={
+            pathratings_legend_fix.get(rating[0], rating[0]): get_single_color(rating[1]) for rating in ratings
+        },
         resources=resources,
         filename='walkable',
     )
