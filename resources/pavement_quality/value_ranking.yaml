@@ -46,11 +46,11 @@ surface:
     value: wood
   - ranking: potentially_poor
     value: concrete:plates
-  - ranking: mediocre
+  - ranking: potentially_mediocre
     value: cobblestone
   - ranking: poor
     value: earth
-  - ranking: poor
+  - ranking: potentially_mediocre
     value: pebblestone
   - ranking: potentially_good
     value: metal

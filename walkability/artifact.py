@@ -1,4 +1,5 @@
 from typing import List, Dict
+from pathlib import Path
 
 import geopandas as gpd
 import pandas as pd
@@ -38,18 +39,9 @@ def build_paths_artifact(
     sidewalks['color'] = sidewalks.category.apply(get_qualitative_color, cmap_name=cmap_name, class_name=PathCategory)
     return create_geojson_artifact(
         features=sidewalks.geometry,
-        layer_name='Walkable',
-        caption='Categories of the pedestrian paths based on the share with other road users.',
-        description='Explanation of the different categories (from good to bad):\n'
-        '* Dedicated exclusive: dedicated footways without other traffic close by.\n'
-        '* Dedicated separated: dedicated footways with other traffic close by. This means for example sidewalks or segregated bike and footways (VZ 241, in Germany).\n'
-        '* Designated shared with bikes: Footways shared with bikes, typically either a common foot and bikeway (VZ 240, in Germany) or footways where bikes are allowed to ride on (zVZ 1022-10, in Germany).\n'
-        '* Shared with motorized traffic low speed: Streets without a sidewalk, with low speed limits, such as living streets or service ways.\n'
-        '* Shared with motorized traffic medium speed: Streets without a sidewalk, with medium speed limits up to 30 km/h.\n'
-        '* Shared with motorized traffic high speed: Streets without a sidewalk, with higher speed limits up to 50 km/h.\n'
-        '* Not Walkable: Paths where walking is forbidden (e.g. tunnels, private or military streets) or streets without a sidewalk and with speed limits higher than 50 km/h.\n'
-        '* Unknown: Paths that could not be fit in any of the above categories because of missing information.\n\n'
-        'The data source is OpenStreetMap.',
+        layer_name='Walkable Path Categories',
+        caption=Path('resources/info/path_categories/caption.md').read_text(),
+        description=Path('resources/info/path_categories/description.md').read_text(),
         label=sidewalks.category.apply(lambda r: r.name).to_list(),
         color=sidewalks.color.to_list(),
         legend_data={
@@ -80,7 +72,7 @@ def build_connectivity_artifact(
         layer_name='Connectivity',
         primary=False,
         filename='connectivity',
-        caption='Map of connectivity scores.',
+        caption=Path('resources/info/connectivity/caption.md').read_text(),
         description='Each path is evaluated based on the reachability of other paths within the area of interest. '
         'Reachability or connectivity is defined as the share of locations that can be reached by foot in '
         'reference to an optimum where all locations are directly connected "as the crow flies".',
@@ -103,13 +95,10 @@ def build_pavement_quality_artifact(
     )
     return create_geojson_artifact(
         features=paths_line.geometry,
-        layer_name='Pavement Quality',
-        caption='The layer displays the pavement quality for the accessible paths of the walkable layer.',
-        description='Based on the values of the `smoothness`, `surface` and `tracktype` tags of OpenStreetMap (in order of importance). '
-        'If there is no specification for the pavement of non-exlusive footways, the quality of accompanying roads is adopted if available and labelled as *potential*. '
-        'Some surface types, such as gravel, are also labelled *potential* as they can exhibit a wide variation in their maintenance status (see table below).\n\n'
-        'Full list of tag-value-ranking combinations:\n\n'
-        '' + generate_detailed_pavement_quality_mapping_info(),
+        layer_name='Surface Quality',
+        caption=Path('resources/info/surface_quality/caption.md').read_text(),
+        description=Path('resources/info/surface_quality/description.md').read_text()
+        + generate_detailed_pavement_quality_mapping_info(),
         label=paths_line.quality.apply(lambda r: r.name).to_list(),
         color=paths_line.color.to_list(),
         legend_data={
@@ -130,9 +119,9 @@ def build_areal_summary_artifacts(
     for region, data in regional_aggregates.items():
         chart_artifact = create_chart_artifact(
             data=data,
-            title=region,
-            caption='The distribution of paths categories for this administrative area. '
-            f'The total length of paths in this area is {sum(data.y)} km',
+            title=f'Distribution of Path Categories in {region}',
+            caption=f'Fraction of the total length of paths for each category compared to the total path length '
+            f'of {sum(data.y)} km in this area.',
             resources=resources,
             filename=f'aggregation_{region}',
             primary=False,

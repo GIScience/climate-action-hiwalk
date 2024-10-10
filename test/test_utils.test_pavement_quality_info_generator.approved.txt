@@ -27,9 +27,9 @@
  |fine_gravel | Potentially Mediocre| 
  |wood | Potentially Good| 
  |concrete:plates | Potentially Poor| 
- |cobblestone | Mediocre| 
+ |cobblestone | Potentially Mediocre| 
  |earth | Poor| 
- |pebblestone | Poor| 
+ |pebblestone | Potentially Mediocre| 
  |metal | Potentially Good| 
  |grass_paver | Poor| 
  |artificial_turf | Poor| 
