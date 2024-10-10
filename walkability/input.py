@@ -90,7 +90,8 @@ class PathRating(BaseModel):
     )
     unknown: float = Field(
         title='Unknown Path Rating',
-        description='Qualitative (between 0..1) rating of paths that are in principle walkable but are missing data (default -9999, which is out of scale)',
+        description='Qualitative (between 0..1) rating of paths that are in principle walkable but '
+        'cannot be fit in one of the other categories (default -9999, which is out of scale)',
         ge=0,
         le=1,
         examples=[0.0],
