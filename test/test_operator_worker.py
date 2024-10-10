@@ -367,13 +367,13 @@ def test_aggregate(operator, expected_compute_input, responses_mock):
         'Bergheim': Chart2dData(
             x=['designated'],
             y=[0.12],
-            color=[Color('#006837')],
+            color=[Color('#313695')],
             chart_type=ChartType.PIE,
         ),
         'Südstadt': Chart2dData(
             x=['designated'],
             y=[0.12],
-            color=[Color('#006837')],
+            color=[Color('#313695')],
             chart_type=ChartType.PIE,
         ),
     }

@@ -285,16 +285,29 @@ def fix_geometry_collection(
         return LineString()
 
 
-def get_color(values: pd.Series, cmap_name: str = 'RdYlGn') -> pd.Series:
+def get_qualitative_color(category, cmap_name: str, class_name) -> pd.Series:
     norm = Normalize(0, 1)
     cmap = matplotlib.cm.ScalarMappable(norm=norm, cmap=cmap_name).get_cmap()
+    cmap.set_under('#808080')
+
+    category_norm = {name: idx / (len(class_name) - 1) for idx, name in enumerate(class_name)}
+
+    if category == class_name.UNKNOWN:
+        return Color(to_hex(cmap(-9999)))
+    else:
+        return Color(to_hex(cmap(category_norm[category])))
+
+
+def get_color(values: pd.Series, cmap_name: str = 'RdYlBu_r') -> pd.Series:
+    norm = Normalize(0, 1)
+    cmap = matplotlib.cm.ScalarMappable(norm=norm, cmap=cmap_name).get_cmap().reversed()
     cmap.set_under('#808080')
     return values.apply(lambda v: Color(to_hex(cmap(v))))
 
 
-def get_single_color(rating: float, cmap_name: str = 'RdYlGn') -> Color:
+def get_single_color(rating: float, cmap_name: str = 'seismic') -> Color:
     norm = Normalize(0, 1)
-    cmap = matplotlib.cm.ScalarMappable(norm=norm, cmap=cmap_name).get_cmap()
+    cmap = matplotlib.cm.ScalarMappable(norm=norm, cmap=cmap_name).get_cmap().reversed()
     cmap.set_under('#808080')
     return Color(to_hex(cmap(rating)))
 

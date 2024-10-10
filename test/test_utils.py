@@ -237,7 +237,7 @@ def test_fix_geometry_collection():
 
 
 def test_get_color():
-    expected_output = pd.Series([Color('#006837'), Color('#feffbe'), Color('#a50026')])
+    expected_output = pd.Series([Color('#313695'), Color('#feffc0'), Color('a50026')])
 
     expected_input = pd.Series([1.0, 0.5, 0.0])
     computed_output = get_color(expected_input)

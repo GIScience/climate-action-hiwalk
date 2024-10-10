@@ -96,12 +96,12 @@ def expected_compute_output(compute_resources) -> List[_Artifact]:
         attachments={
             AttachmentType.LEGEND: Legend(
                 legend_data={
-                    'designated': Color('#006837'),
-                    'designated_shared_with_bikes': Color('#66bd63'),
-                    'shared_with_motorized_traffic_low_speed_(=walking_speed)': Color('#d9ef8b'),
-                    'shared_with_motorized_traffic_medium_speed_(<=30_km/h)': Color('#fee08b'),
-                    'shared_with_motorized_traffic_high_speed_(<=50_km/h)': Color('#f46d43'),
-                    'not_walkable': Color('#a50026'),
+                    'designated': Color('#313695'),
+                    'designated_shared_with_bikes': Color('#6399c7'),
+                    'shared_with_motorized_traffic_low_speed_(=walking_speed)': Color('#bde2ee'),
+                    'shared_with_motorized_traffic_medium_speed_(<=30_km/h)': Color('#fffebe'),
+                    'shared_with_motorized_traffic_high_speed_(<=50_km/h)': Color('#fdbf71'),
+                    'not_walkable': Color('#ea5739'),
                     'unknown': Color('#808080'),
                 }
             )
@@ -119,8 +119,8 @@ def expected_compute_output(compute_resources) -> List[_Artifact]:
         attachments={
             AttachmentType.LEGEND: Legend(
                 legend_data=ContinuousLegendData(
-                    cmap_name='RdYlGn',
-                    ticks={'Low Connectivity': 0, 'Medium Connectivity': 0.5, 'High Connectivity': 1},
+                    cmap_name='seismic',
+                    ticks={'Low Connectivity': 1, 'Medium Connectivity': 0.5, 'High Connectivity': 0},
                 )
             )
         },
@@ -138,14 +138,14 @@ def expected_compute_output(compute_resources) -> List[_Artifact]:
         attachments={
             AttachmentType.LEGEND: Legend(
                 legend_data={
-                    'excellent': Color('#006837'),
-                    'potentially_excellent': Color('#0c7f43'),
-                    'good': Color('#84ca66'),
-                    'potentially_good': Color('#a5d86a'),
-                    'mediocre': Color('#feffbe'),
-                    'potentially_mediocre': Color('#fff0a6'),
-                    'poor': Color('#e54e35'),
-                    'potentially_poor': Color('#d62f27'),
+                    'excellent': Color('#313695'),
+                    'potentially_excellent': Color('#5183bb'),
+                    'good': Color('#90c3dd'),
+                    'potentially_good': Color('#d4edf4'),
+                    'mediocre': Color('#fffebe'),
+                    'potentially_mediocre': Color('#fed283'),
+                    'poor': Color('#f88c51'),
+                    'potentially_poor': Color('#dd3d2d'),
                     'unknown': Color('#808080'),
                 }
             )

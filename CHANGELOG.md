@@ -16,6 +16,7 @@ and this project mostly adheres to [Semantic Versioning](https://semver.org/spec
 - Move to approval tests.
 - Climatology updated (to 3.1.15).
 - Updated the yml file for Gitlab pipeline. (.gitlab-ci.yml)
+- Used more color-blind friendly colormaps, switched to "equidistant" colormap
 
 ### Added
 - Restricted ohsome test time, so that the plugin fails fast in case of ohsome issues.
