@@ -15,10 +15,11 @@ from climatoology.base.computation import ComputationResources
 from walkability.input import PathRating
 from walkability.utils import (
     get_color,
-    get_single_color,
-    PavementQualityRating,
     generate_detailed_pavement_quality_mapping_info,
     pathratings_legend_fix,
+    get_qualitative_color,
+    PavementQuality,
+    PathCategory,
 )
 
 
@@ -28,13 +29,13 @@ def build_paths_artifact(
     ratings: PathRating,
     clip_aoi: shapely.MultiPolygon,
     resources: ComputationResources,
-    cmap_name: str = 'RdYlGn',
+    cmap_name: str = 'RdYlBu_r',
 ) -> _Artifact:
     paths_line = paths_line.clip(clip_aoi, keep_geom_type=True)
     paths_polygon = paths_polygon.clip(clip_aoi, keep_geom_type=True)
     sidewalks = pd.concat([paths_line, paths_polygon], ignore_index=True)
 
-    sidewalks['color'] = get_color(sidewalks.rating, cmap_name)
+    sidewalks['color'] = sidewalks.category.apply(get_qualitative_color, cmap_name=cmap_name, class_name=PathCategory)
     return create_geojson_artifact(
         features=sidewalks.geometry,
         layer_name='Walkable',
@@ -52,7 +53,10 @@ def build_paths_artifact(
         label=sidewalks.category.apply(lambda r: r.name).to_list(),
         color=sidewalks.color.to_list(),
         legend_data={
-            pathratings_legend_fix.get(rating[0], rating[0]): get_single_color(rating[1]) for rating in ratings
+            pathratings_legend_fix.get(category.value, category.value): get_qualitative_color(
+                category, cmap_name, PathCategory
+            )
+            for category in PathCategory
         },
         resources=resources,
         filename='walkable',
@@ -63,12 +67,12 @@ def build_connectivity_artifact(
     connectivity: gpd.GeoDataFrame,
     clip_aoi: shapely.MultiPolygon,
     resources: ComputationResources,
-    cmap_name: str = 'RdYlGn',
+    cmap_name: str = 'seismic',
 ) -> _Artifact:
     connectivity = connectivity.clip(clip_aoi, keep_geom_type=True)
     color = get_color(connectivity.connectivity, cmap_name).to_list()
     legend = ContinuousLegendData(
-        cmap_name=cmap_name, ticks={'Low Connectivity': 0, 'Medium Connectivity': 0.5, 'High Connectivity': 1}
+        cmap_name=cmap_name, ticks={'Low Connectivity': 1, 'Medium Connectivity': 0.5, 'High Connectivity': 0}
     )
 
     return create_geojson_artifact(
@@ -91,10 +95,12 @@ def build_pavement_quality_artifact(
     paths_line: gpd.GeoDataFrame,
     clip_aoi: shapely.MultiPolygon,
     resources: ComputationResources,
-    cmap_name: str = 'RdYlGn',
+    cmap_name: str = 'RdYlBu_r',
 ) -> _Artifact:
     paths_line = paths_line.clip(clip_aoi, keep_geom_type=True)
-    paths_line['color'] = get_color(paths_line.quality.map(PavementQualityRating), cmap_name)
+    paths_line['color'] = paths_line.quality.apply(
+        get_qualitative_color, cmap_name=cmap_name, class_name=PavementQuality
+    )
     return create_geojson_artifact(
         features=paths_line.geometry,
         layer_name='Pavement Quality',
@@ -106,7 +112,12 @@ def build_pavement_quality_artifact(
         '' + generate_detailed_pavement_quality_mapping_info(),
         label=paths_line.quality.apply(lambda r: r.name).to_list(),
         color=paths_line.color.to_list(),
-        legend_data={rating: get_single_color(PavementQualityRating[rating]) for rating in PavementQualityRating},
+        legend_data={
+            pathratings_legend_fix.get(quality.value, quality.value): get_qualitative_color(
+                quality, cmap_name, PavementQuality
+            )
+            for quality in PavementQuality
+        },
         resources=resources,
         filename='pavement_quality',
     )
