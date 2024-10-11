@@ -73,9 +73,7 @@ def build_connectivity_artifact(
         primary=False,
         filename='connectivity',
         caption=Path('resources/info/connectivity/caption.md').read_text(),
-        description='Each path is evaluated based on the reachability of other paths within the area of interest. '
-        'Reachability or connectivity is defined as the share of locations that can be reached by foot in '
-        'reference to an optimum where all locations are directly connected "as the crow flies".',
+        description=Path('resources/info/connectivity/description.md').read_text(),
         label=connectivity.connectivity.to_list(),
         color=color,
         legend_data=legend,
