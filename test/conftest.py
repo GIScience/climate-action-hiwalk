@@ -104,9 +104,7 @@ def expected_compute_output(compute_resources) -> List[_Artifact]:
         primary=False,
         file_path=Path(compute_resources.computation_dir / 'connectivity.geojson'),
         summary=Path('resources/info/connectivity/caption.md').read_text(),
-        description='Each path is evaluated based on the reachability of other paths within the area of interest. '
-        'Reachability or connectivity is defined as the share of locations that can be reached by foot in '
-        'reference to an optimum where all locations are directly connected "as the crow flies".',
+        description=Path('resources/info/connectivity/description.md').read_text(),
         attachments={
             AttachmentType.LEGEND: Legend(
                 legend_data=ContinuousLegendData(
