@@ -7,32 +7,38 @@ and this project mostly adheres to [Semantic Versioning](https://semver.org/spec
 
 ## [Unreleased](https://gitlab.heigit.org/climate-action/plugins/walkability/-/compare/demo...main?from_project_id=840&straight=false)
 
+## [1.0.0](https://gitlab.heigit.org/climate-action/plugins/walkability/-/releases/1.0.0) - 2024-10-14
+
 ### Changed
-- Updated the naming of walkability categories. ([#115](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/115))
-- Combined walkability categories "Dedicated Exclusive" and "Dedicated Separated" into "Designated".([#122](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/122))
-- Changed the way filtering is done. First, the full dataset is requested from OHSOME, and then the dataframe is filtered.
-- Improve filtering for the walkability classes.
-- Updated docker registry URL and dependencies.
-- Move to approval tests.
-- Climatology updated (to 3.1.15).
-- Updated the yml file for Gitlab pipeline. (.gitlab-ci.yml)
+- Updated the naming of walkability categories ([#122](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/122)):
+  - "Designated exclusive", "Dedicated Separated" and "Dedicated shared with bikes" categories combined and renamed "Designated"
+  - Shared with motorized traffic categories now show speed limit range inside brackets
+  - Inaccessible category renamed to "Not walkable"
+  - Missing data category renamed to "Unknown"
 - Used more color-blind friendly colormaps, switched to "equidistant" colormap
 
+- Changed the way filtering is done. First, the full dataset is requested from OHSOME, and then the dataframe is filtered.
+- Updated docker registry URL and dependencies.
+- Climatoology updated (to 5.1.0).
+
+
 ### Added
-- Restricted ohsome test time, so that the plugin fails fast in case of ohsome issues.
 - Pavement quality indicator first draft added.
 - Added first draft and inverse distance weighing for connectivity indicator.
+
+- Restricted ohsome test time, so that the plugin fails fast in case of ohsome issues.
 
 ### Fixed
 - Defined service roads with bus=[designated, yes] as inaccessible. ([#121](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/121)])
 - Roads without sidewalk included in shared_with_high_speed. ([#125](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/125))
 - Railway platforms removed from inaccessible. ([#114](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/114))
-- Updated ohsome-py to assert that the required name attribute is available in the boundary request.
 - Changed explicit filter to not ignore sidewalks if there is a separate sidewalk on one side
+
 - Paths split into lines and polygons.
 - Used better naming for aggregation files to prevent collision.
+- Updated ohsome-py to assert that the required name attribute is available in the boundary request.
 
-## [Demo](https://gitlab.heigit.org/climate-action/plugins/walkability/-/releases) - 2024-03-04
+## [Demo](https://gitlab.heigit.org/climate-action/plugins/walkability/-/releases/demo) - 2024-03-04
 
 ### Added
 - Regional aggregation charts.
