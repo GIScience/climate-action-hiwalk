@@ -1,4 +1,4 @@
-**Surface quality of walkable paths**
+Surface quality of walkable paths:
 
 Surface quality refers to the quality of a path surface for walking by the most vulnerable, considering also the quality for wheelchairs, and wheeled walking frames. Smooth surfaces where people are less likely to trip over are considered to be of higher quality.
 

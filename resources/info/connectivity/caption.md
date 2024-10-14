@@ -1,4 +1,4 @@
-** Connectivity of path segments **
+Connectivity of path segments:
 
 The map shows how accessible the locations surrounding each path are. High connectivity for a given path means a high share of the surrounding paths can be reached in the maximum trip duration.
 
