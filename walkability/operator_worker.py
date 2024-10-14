@@ -77,7 +77,7 @@ class OperatorWalkability(Operator[ComputeInputWalkability]):
                     website='https://heigit.org/heigit-team/',
                 ),
             ],
-            version=Version(0, 0, 1),
+            version=Version(1, 0, 0),
             concerns=[Concern.MOBILITY_PEDESTRIAN],
             purpose=Path('resources/info/purpose.md').read_text(),
             methodology=Path('resources/info/methodology.md').read_text(),

@@ -92,7 +92,7 @@ def request_ohsome(bpolys):
         bpolys=bpolys,
         properties='tags',
         time='2024-01-01',
-        timeout=60,
+        timeout=120,
     )
 
 
