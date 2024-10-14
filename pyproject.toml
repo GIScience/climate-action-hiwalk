@@ -17,6 +17,8 @@ ohsome = "^0.3.3"
 matplotlib = "^3.8.3"
 networkx = "^3.3"
 momepy = "^0.7.0"
+geonetworkx = "^0.5.3"
+osmnx = "^1.9.4"
 
 
 [tool.poetry.group.test.dependencies]

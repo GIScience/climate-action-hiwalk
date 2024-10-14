@@ -1,6 +1,6 @@
 import logging
 from pathlib import Path
-from typing import List, Dict, Callable
+from typing import List, Dict, Callable, Tuple
 
 import geopandas as gpd
 import momepy
@@ -146,22 +146,28 @@ class OperatorWalkability(Operator[ComputeInputWalkability]):
         Category threshold.
         """
 
-        paths = paths[paths['rating'] >= threshold]
-        if paths.empty:
-            return paths
-
         original_crs = paths.crs
         log.debug(f'Reproject geodataframe from {original_crs} to {projected_crs.name}')
         paths = paths.to_crs(projected_crs)
 
         G = geodataframe_to_graph(paths)
         node_attributes = {}
+
+        def within_max_distance(target: Tuple[float, float]) -> bool:
+            return euclidian_distance(center, target) <= walkable_distance
+
+        def is_walkable(start_node: Tuple[float, float], end_node: Tuple[float, float], edge_id: int) -> bool:
+            edge_data = G.get_edge_data(start_node, end_node)
+            return edge_data.get(edge_id).get('rating') > threshold
+
+        log.debug('Evaluating connectivity for nodes')
         for center in G.nodes:
+            # premature optimisation, does it even help?
+            a = G.edges(nbunch=center, data='rating', default=0)
+            if all([k[2] < threshold for k in a]):
+                continue
 
-            def within_max_distance(target):
-                return euclidian_distance(center, target) <= walkable_distance
-
-            subgraph = nx.subgraph_view(G, filter_node=within_max_distance)
+            subgraph = nx.subgraph_view(G, filter_node=within_max_distance, filter_edge=is_walkable)
             weighting = {
                 target: idw_function(euclidian_distance(center, target))
                 for target in subgraph.nodes
@@ -182,9 +188,12 @@ class OperatorWalkability(Operator[ComputeInputWalkability]):
 
         edge_attributes = {}
         for s_node, e_node, edge_id in G.edges:
-            edge_attributes[(s_node, e_node, edge_id)] = {
-                'connectivity': (G.nodes[s_node]['connectivity'] + G.nodes[e_node]['connectivity']) / 2
-            }
+            if is_walkable(s_node, e_node, edge_id):
+                connectivity = (G.nodes[s_node]['connectivity'] + G.nodes[e_node]['connectivity']) / 2
+            else:
+                connectivity = 0.0
+            edge_attributes[(s_node, e_node, edge_id)] = {'connectivity': connectivity}
+
         nx.set_edge_attributes(G, edge_attributes)
 
         result = momepy.nx_to_gdf(G, points=False)
