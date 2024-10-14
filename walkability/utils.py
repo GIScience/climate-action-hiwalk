@@ -11,12 +11,14 @@ import networkx as nx
 import pandas as pd
 import shapely
 import yaml
+from geopandas import GeoDataFrame
 from matplotlib.colors import to_hex, Normalize
+from networkx.classes import set_node_attributes
 from ohsome import OhsomeClient
+from osmnx import simplify_graph
 from pydantic_extra_types.color import Color
 from requests import PreparedRequest
 from shapely import LineString, MultiLineString
-
 
 log = logging.getLogger(__name__)
 
@@ -330,15 +332,35 @@ def filter_start_matcher(filter_start: str) -> Callable[..., Any]:
 
 def geodataframe_to_graph(df: gpd.GeoDataFrame) -> nx.Graph:
     log.debug('Splitting paths at intersections')
+    df = df.drop(errors='ignore', labels='@other_tags', axis=1)
+    df.geometry = df.geometry.apply(lambda geom: MultiLineString([geom]) if isinstance(geom, LineString) else geom)
+    df_ = (
+        df.assign(
+            geometry=df.geometry.apply(
+                lambda geom: list(
+                    list(map(LineString, zip(geom_part.coords[:-1], geom_part.coords[1:]))) for geom_part in geom.geoms
+                )
+            )
+        )
+        .explode('geometry')
+        .explode('geometry')
+    )
     # PERF: `unary_union` might lead to performance issues ...
     # ... since it creates a single geometry
     # `unary_union`: self-intersection geometries
     # NOTE: All properties of the geodataframe are lost
-    geom: MultiLineString = df.unary_union
-    df_ = gpd.GeoDataFrame(data={'geometry': [geom]}, crs=df.crs).explode(index_parts=True)
+    # geom: MultiLineString = df.unary_union
+    # df_ = gpd.GeoDataFrame(data={'geometry': [geom], 'foo': ["bar"]}, crs=df.crs).explode(index_parts=True)
+    df_ = GeoDataFrame(df_).set_crs(df.crs)
 
     log.debug('Convert geodataframe to network graph')
-    return momepy.gdf_to_nx(df_, multigraph=True, directed=False, length='length')
+    G = momepy.gdf_to_nx(df_, multigraph=True, directed=False, length='length')
+    node_data = dict()
+    for node in G.nodes():
+        node_data[node] = {'x': node[0], 'y': node[1]}
+    set_node_attributes(G, node_data)
+    G_ = simplify_graph(G.to_directed(), remove_rings=False, edge_attrs_differ=['rating'])
+    return G_.to_undirected()
 
 
 def generate_detailed_pavement_quality_mapping_info() -> str:

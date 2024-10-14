@@ -7,6 +7,9 @@ and this project mostly adheres to [Semantic Versioning](https://semver.org/spec
 
 ## [Unreleased](https://gitlab.heigit.org/climate-action/plugins/walkability/-/compare/demo...main?from_project_id=840&straight=false)
 
+### Changed
+- Now connectivity indicator keeps unwalkable paths and assigns them connectivity of 0
+
 ## [1.0.0](https://gitlab.heigit.org/climate-action/plugins/walkability/-/releases/1.0.0) - 2024-10-14
 
 ### Changed

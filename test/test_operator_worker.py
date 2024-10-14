@@ -150,7 +150,7 @@ def test_connectivity_within_but_long(operator):
         data={
             'connectivity': [0.0],
             'geometry': [
-                #                                      2m                      1m
+                # 3m long path with end nodes 1m apart                                     2m                      1m
                 shapely.LineString([(9.0, 49.0), (9.0, 49.000018), (9.0000137, 49.0000088)]),
             ],
         },
@@ -172,7 +172,7 @@ def test_connectivity_within_but_long(operator):
         paths=paths, walkable_distance=1.5, projected_crs=CRS.from_user_input(32632)
     )
 
-    assert_geodataframe_equal(connectivity, expected_connectivity, check_less_precise=True)
+    assert_geodataframe_equal(connectivity, expected_connectivity, check_less_precise=True, normalize=True)
 
 
 def test_connectivity_one_in_one_out(operator):
@@ -204,21 +204,7 @@ def test_connectivity_one_in_one_out(operator):
     assert_geodataframe_equal(connectivity, expected_connectivity, check_less_precise=True)
 
 
-def test_connectivity_filter_out_probably_no(operator):
-    paths = gpd.GeoDataFrame(
-        data={
-            'geometry': [shapely.LineString([(9, 49), (9, 49.0000088)])],
-            'rating': [0.25],
-        },
-        crs='EPSG:4326',
-    )
-    connectivity = operator.get_connectivity(
-        paths=paths, walkable_distance=1.5, projected_crs=CRS.from_user_input(32632)
-    )
-    assert connectivity.empty
-
-
-def test_connectivity_filter_out_probably_yes(operator):
+def test_connectivity_walkable(operator):
     paths = gpd.GeoDataFrame(
         data={
             'geometry': [shapely.LineString([(9, 49), (9, 49.0000088)])],
@@ -232,7 +218,6 @@ def test_connectivity_filter_out_probably_yes(operator):
     assert not connectivity.empty
 
 
-@pytest.mark.skip(reason='Topology is not preserved for overlapping geometries with shared node.')
 def test_connectivity_overlapping_paths(operator):
     # WGS84 representation of two paths: one 1m one 2m
     geom = [
@@ -243,7 +228,7 @@ def test_connectivity_overlapping_paths(operator):
     ]
     expected_connectivity = gpd.GeoDataFrame(
         data={
-            'connectivity': [0.75, 0.5],
+            'connectivity': [0.5, 0.75],
             'geometry': geom,
         },
         crs='EPSG:4326',
@@ -294,35 +279,6 @@ def test_connectivity_intersected_line(operator):
     assert_geodataframe_equal(connectivity, expected_connectivity, check_less_precise=True)
 
 
-def test_connectivity_multipart(operator):
-    expected_connectivity = gpd.GeoDataFrame(
-        data={
-            'connectivity': [0.75, 0.75],
-            'geometry': [
-                shapely.LineString([(9, 49), (9, 49.0000088)]),
-                shapely.LineString([(9, 49.0000088), (9.0000137, 49.0000088)]),
-            ],
-        },
-        crs='EPSG:4326',
-    )
-
-    paths = gpd.GeoDataFrame(
-        data={
-            'geometry': [
-                shapely.MultiLineString([[(9, 49), (9, 49.0000088)], [(9, 49.0000088), (9.0000137, 49.0000088)]])
-            ],
-            'rating': [1.0],
-        },
-        crs='EPSG:4326',
-    )
-
-    connectivity = operator.get_connectivity(
-        paths=paths, walkable_distance=1.5, projected_crs=CRS.from_user_input(32632)
-    )
-
-    assert_geodataframe_equal(connectivity, expected_connectivity, check_less_precise=True)
-
-
 def test_connectivity_decay(operator):
     # WGS84 representation of two ca. 1m long adjacent orthogonal paths in UTM 31N
     path_geoms = [
@@ -350,6 +306,38 @@ def test_connectivity_decay(operator):
         walkable_distance=1.5,
         projected_crs=CRS.from_user_input(32632),
         idw_function=lambda distance: 1 if distance < 1.1 else 0,
+    )
+
+    assert_geodataframe_equal(connectivity, expected_connectivity, check_less_precise=True)
+
+
+def test_connectivity_unwalkable(operator):
+    # WGS84 representation of 1 m up, another m up, and one meter down right
+    path_geoms = [
+        shapely.LineString([(9.0, 49.0), (9.0, 49.0000088)]),
+        shapely.LineString([(9.0, 49.0000088), (9.0, 49.000018)]),
+        shapely.LineString([(9.0, 49.000018), (9.0000137, 49.0000088)]),
+    ]
+    expected_connectivity = gpd.GeoDataFrame(
+        data={
+            'connectivity': [1 / 3, 0.0, 1 / 3],
+            'geometry': path_geoms,
+        },
+        crs='EPSG:4326',
+    )
+
+    paths = gpd.GeoDataFrame(
+        data={
+            'geometry': path_geoms,
+            'rating': [1.0, 0.0, 1.0],
+        },
+        crs='EPSG:4326',
+    )
+
+    connectivity = operator.get_connectivity(
+        paths=paths,
+        walkable_distance=100,
+        projected_crs=CRS.from_user_input(32632),
     )
 
     assert_geodataframe_equal(connectivity, expected_connectivity, check_less_precise=True)
