@@ -101,7 +101,6 @@ def expected_compute_output(compute_resources) -> List[_Artifact]:
     connectivity = _Artifact(
         name='Connectivity',
         modality=ArtifactModality.MAP_LAYER_GEOJSON,
-        primary=False,
         file_path=Path(compute_resources.computation_dir / 'connectivity.geojson'),
         summary=Path('resources/info/connectivity/caption.md').read_text(),
         description=Path('resources/info/connectivity/description.md').read_text(),
@@ -109,7 +108,7 @@ def expected_compute_output(compute_resources) -> List[_Artifact]:
             AttachmentType.LEGEND: Legend(
                 legend_data=ContinuousLegendData(
                     cmap_name='seismic',
-                    ticks={'Low Connectivity': 1, 'Medium Connectivity': 0.5, 'High Connectivity': 0},
+                    ticks={'High Connectivity': 0, 'Medium Connectivity': 0.5, 'Low Connectivity': 1},
                 )
             )
         },

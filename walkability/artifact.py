@@ -64,13 +64,12 @@ def build_connectivity_artifact(
     connectivity = connectivity.clip(clip_aoi, keep_geom_type=True)
     color = get_color(connectivity.connectivity, cmap_name).to_list()
     legend = ContinuousLegendData(
-        cmap_name=cmap_name, ticks={'Low Connectivity': 1, 'Medium Connectivity': 0.5, 'High Connectivity': 0}
+        cmap_name=cmap_name, ticks={'High Connectivity': 0, 'Medium Connectivity': 0.5, 'Low Connectivity': 1}
     )
 
     return create_geojson_artifact(
         features=connectivity.geometry,
         layer_name='Connectivity',
-        primary=False,
         filename='connectivity',
         caption=Path('resources/info/connectivity/caption.md').read_text(),
         description=Path('resources/info/connectivity/description.md').read_text(),
