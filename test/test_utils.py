@@ -55,11 +55,12 @@ validation_objects = {
     # https://www.openstreetmap.org/way/25340617 highway=residential and sidewalk=no and maxspeed=50
     # https://www.openstreetmap.org/way/258562284 highway=tertiary and sidewalk=no and maxspeed=50
     # https://www.openstreetmap.org/way/152645928 highway=residential and sidewalk!=* and maxspeed!=*
-    PathCategory.NOT_WALKABLE: {'way/400711541', 'way/24635973', 'way/25238623'},
+    PathCategory.NOT_WALKABLE: {'way/400711541', 'way/24635973', 'way/25238623', 'way/87956068'},
     # https://www.openstreetmap.org/way/400711541 sidewalk=no and maxspeed:backward=70
     # https://www.openstreetmap.org/way/24635973 foot=no
     # https://www.openstreetmap.org/way/25238623 access=private
     # https://www.openstreetmap.org/way/225895739 service=yes and bus=yes
+    # https://www.openstreetmap.org/way/87956068 highway=track and ford=yes
 }
 
 
@@ -70,6 +71,8 @@ def bpolys():
         data=[
             # Heidelberg (large box but not full city area)
             shapely.box(8.61920, 49.36622, 8.71928, 49.44017),
+            # Bammental (small box for way/87956068)
+            shapely.box(8.7868406, 49.3701598, 8.7868428, 49.3701902),
             # Lagos (small box for way/152645928)
             shapely.box(3.354680, 6.444900, 3.369928, 6.455165),
         ],
