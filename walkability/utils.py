@@ -212,6 +212,7 @@ class PathCategoryFilters:
             or d.get('maxspeed:backward') in ['60', '70', '80', '100']
             or d.get('maxspeed:forward') in ['60', '70', '80', '100']
             or (d.get('highway') == 'service' and d.get('bus') in ['designated', 'yes'])
+            or d.get('ford') == 'yes'
         )
 
 
@@ -421,9 +422,14 @@ def euclidian_distance(point1: Tuple[float, float], point2: Tuple[float, float])
 
 
 def ohsome_filter(geometry_type: str) -> str:
+    if geometry_type == 'relation':
+        # currently unused, here as a blueprint if we want to query for relations
+        return str(f'type:{geometry_type} and ' 'route=ferry')
+
     return str(
         f'geometry:{geometry_type} and '
-        '(highway=* or route=ferry or railway=platform) and not '
+        '(highway=* or route=ferry or railway=platform or '
+        '(waterway=lock_gate and foot in (yes, designated, official, permissive))) and not '
         '(footway=separate or sidewalk=separate or sidewalk:both=separate or '
         '(sidewalk:right=separate and sidewalk:left=separate) or '
         '(sidewalk:right=separate and sidewalk:left=no) or (sidewalk:right=no and sidewalk:left=separate))'

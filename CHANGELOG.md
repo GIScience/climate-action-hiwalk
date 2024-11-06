@@ -10,9 +10,12 @@ and this project mostly adheres to [Semantic Versioning](https://semver.org/spec
 ### Changed
 - Now connectivity indicator keeps unwalkable paths and assigns them connectivity of 0
 - Connectivity is now a primary result of the plugin, on equal standing with the other indicators
+- Added edge cases like fords, designated lock gates, etc.
+- Added backend code for relations request
 
 ### Fixed
 - Connectivity legend inverted so that High connectivity values are on top
+- Match .env_template to naming choices from infrastructure setup
 
 ## [1.0.0](https://gitlab.heigit.org/climate-action/plugins/walkability/-/releases/1.0.0) - 2024-10-14
 
