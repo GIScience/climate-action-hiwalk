@@ -19,7 +19,7 @@ from walkability.utils import (
 )
 
 
-def test_get_paths(operator, expected_compute_input, ohsome_api):
+def test_get_paths(operator, expected_compute_input, default_aoi, ohsome_api):
     line_geom = shapely.LineString([(12.3, 48.22), (12.3, 48.2205), (12.3005, 48.22)])
     polygon_geom = shapely.Polygon(((12.3, 48.22), (12.3, 48.2205), (12.3005, 48.22), (12.3, 48.22)))
 
@@ -43,7 +43,7 @@ def test_get_paths(operator, expected_compute_input, ohsome_api):
     )
 
     computed_lines, computed_polygons = operator.get_paths(
-        expected_compute_input.get_aoi_geom(), expected_compute_input.get_path_rating_mapping()
+        default_aoi, expected_compute_input.get_path_rating_mapping()
     )
 
     testing.assert_geodataframe_equal(
@@ -343,7 +343,7 @@ def test_connectivity_unwalkable(operator):
     assert_geodataframe_equal(connectivity, expected_connectivity, check_less_precise=True)
 
 
-def test_aggregate(operator, expected_compute_input, responses_mock):
+def test_aggregate(operator, default_aoi, expected_compute_input, responses_mock):
     with open('resources/test/ohsome_admin_response.geojson', 'r') as admin_file:
         admin_body = admin_file.read()
     responses_mock.post(
@@ -377,14 +377,12 @@ def test_aggregate(operator, expected_compute_input, responses_mock):
         },
         crs='EPSG:4326',
     )
-    computed_charts = operator.summarise_by_area(
-        input_paths, expected_compute_input.get_aoi_geom(), 9, CRS.from_user_input(32632)
-    )
+    computed_charts = operator.summarise_by_area(input_paths, default_aoi, 9, CRS.from_user_input(32632))
 
     assert computed_charts == expected_charts
 
 
-def test_aggregate_no_boundaries(operator, expected_compute_input, responses_mock):
+def test_aggregate_no_boundaries(operator, default_aoi, expected_compute_input, responses_mock):
     responses_mock.post(
         'https://api.ohsome.org/v1/elements/geometry',
         body="""{
@@ -409,14 +407,12 @@ def test_aggregate_no_boundaries(operator, expected_compute_input, responses_moc
         },
         crs='EPSG:4326',
     )
-    computed_charts = operator.summarise_by_area(
-        input_paths, expected_compute_input.get_aoi_geom(), 9, CRS.from_user_input(32632)
-    )
+    computed_charts = operator.summarise_by_area(input_paths, default_aoi, 9, CRS.from_user_input(32632))
 
     assert computed_charts == dict()
 
 
-def test_aggregate_boundaries_no_name(operator, expected_compute_input, responses_mock):
+def test_aggregate_boundaries_no_name(operator, default_aoi, expected_compute_input, responses_mock):
     with open('resources/test/ohsome_admin_response_no_name.geojson', 'r') as admin_file:
         admin_body = admin_file.read()
     responses_mock.post(
@@ -435,9 +431,7 @@ def test_aggregate_boundaries_no_name(operator, expected_compute_input, response
         },
         crs='EPSG:4326',
     )
-    computed_charts = operator.summarise_by_area(
-        input_paths, expected_compute_input.get_aoi_geom(), 9, CRS.from_user_input(32632)
-    )
+    computed_charts = operator.summarise_by_area(input_paths, default_aoi, 9, CRS.from_user_input(32632))
 
     assert computed_charts == dict()
 

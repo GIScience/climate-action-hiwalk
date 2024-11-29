@@ -1,28 +1,9 @@
-import uuid
 from enum import Enum
 from typing import Optional, Self, Dict, Callable
 
-import geojson_pydantic
-import geopandas as gpd
-import shapely
-from pydantic import BaseModel, Field, field_validator, model_validator
-from pyproj import CRS, Transformer
-from shapely.ops import transform
+from pydantic import BaseModel, Field, model_validator
 
 from walkability.utils import PathCategory
-
-
-class AoiProperties(BaseModel):
-    name: str = Field(
-        title='Name',
-        description='The name of the area of interest i.e. a human readable description.',
-        examples=['Heidelberg'],
-    )
-    id: str = Field(
-        title='ID',
-        description='A unique identifier of the area of interest.',
-        examples=[uuid.uuid4()],
-    )
 
 
 class WalkingSpeed(Enum):
@@ -118,31 +99,6 @@ class IDW(Enum):
 
 
 class ComputeInputWalkability(BaseModel):
-    aoi: geojson_pydantic.Feature[geojson_pydantic.MultiPolygon, AoiProperties] = Field(
-        title='Area of Interest Input',
-        description='A required area of interest parameter.',
-        validate_default=True,
-        examples=[
-            {
-                'type': 'Feature',
-                'properties': {'name': 'Heidelberg', 'id': 'Q12345'},
-                'geometry': {
-                    'type': 'MultiPolygon',
-                    'coordinates': [
-                        [
-                            [
-                                [12.3, 48.22],
-                                [12.3, 48.34],
-                                [12.48, 48.34],
-                                [12.48, 48.22],
-                                [12.3, 48.22],
-                            ]
-                        ]
-                    ],
-                },
-            }
-        ],
-    )
     walkable_time: Optional[float] = Field(
         title='Maximum Trip Duration',
         description='Maximum duration of a single trip in minutes.',
@@ -182,39 +138,6 @@ class ComputeInputWalkability(BaseModel):
         examples=[IDW.STEP_FUNCTION],
         default=IDW.STEP_FUNCTION,
     )
-
-    @classmethod
-    @field_validator('aoi')
-    def assert_aoi_properties_not_null(cls, aoi: geojson_pydantic.Feature) -> geojson_pydantic.Feature:
-        assert aoi.properties, 'AOI properties are required.'
-        return aoi
-
-    def get_aoi_geom(self) -> shapely.MultiPolygon:
-        """Convert the input geojson geometry to a shapely geometry.
-
-        :return: A shapely.MultiPolygon representing the area of interest defined by the user.
-        """
-        return shapely.geometry.shape(self.aoi.geometry)
-
-    def get_utm_zone(self) -> CRS:
-        return gpd.GeoSeries(data=self.get_aoi_geom(), crs='EPSG:4326').estimate_utm_crs()
-
-    def get_buffered_aoi(self) -> shapely.MultiPolygon:
-        wgs84 = CRS('EPSG:4326')
-        utm = self.get_utm_zone()
-
-        geographic_projection_function = Transformer.from_crs(wgs84, utm, always_xy=True).transform
-        wgs84_projection_function = Transformer.from_crs(utm, wgs84, always_xy=True).transform
-        projected_aoi = transform(geographic_projection_function, self.get_aoi_geom())
-        buffered_aoi = projected_aoi.buffer(self.get_max_walking_distance())
-        return transform(wgs84_projection_function, buffered_aoi)
-
-    def get_aoi_properties(self) -> AoiProperties:
-        """Return the properties of the aoi.
-
-        :return:
-        """
-        return self.aoi.properties
 
     def get_max_walking_distance(self) -> float:
         """Calculate the maximum walking distance in m."""

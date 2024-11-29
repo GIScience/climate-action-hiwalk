@@ -8,14 +8,8 @@ import networkx as nx
 import pandas as pd
 import shapely
 from climatoology.base.artifact import Chart2dData, ChartType
-from climatoology.base.operator import (
-    ComputationResources,
-    Concern,
-    Info,
-    Operator,
-    PluginAuthor,
-    _Artifact,
-)
+from climatoology.base.baseoperator import ComputationResources, BaseOperator, AoiProperties, _Artifact
+from climatoology.base.info import generate_plugin_info, _Info, PluginAuthor, Concern
 from ohsome import OhsomeClient
 from pyproj import CRS
 from semver import Version
@@ -30,10 +24,12 @@ from walkability.input import ComputeInputWalkability
 from walkability.utils import (
     fetch_osm_data,
     boost_route_members,
+    get_buffered_aoi,
     get_color,
     PathCategory,
     PavementQuality,
     geodataframe_to_graph,
+    get_utm_zone,
     read_pavement_quality_rankings,
     get_flat_key_combinations,
     get_first_match,
@@ -45,14 +41,15 @@ from walkability.utils import (
 log = logging.getLogger(__name__)
 
 
-class OperatorWalkability(Operator[ComputeInputWalkability]):
+class Operator(BaseOperator[ComputeInputWalkability]):
     def __init__(self):
+        super().__init__()
         self.ohsome = OhsomeClient(user_agent='CA Plugin Walkability')
         log.debug('Initialised walkability operator with ohsome client')
 
-    def info(self) -> Info:
+    def info(self) -> _Info:
         # noinspection PyTypeChecker
-        info = Info(
+        info = generate_plugin_info(
             name='Walkability',
             icon=Path('resources/info/icon.jpeg'),
             authors=[
@@ -79,45 +76,47 @@ class OperatorWalkability(Operator[ComputeInputWalkability]):
             ],
             version=Version(1, 0, 0),
             concerns=[Concern.MOBILITY_PEDESTRIAN],
-            purpose=Path('resources/info/purpose.md').read_text(),
-            methodology=Path('resources/info/methodology.md').read_text(),
+            purpose=Path('resources/info/purpose.md'),
+            methodology=Path('resources/info/methodology.md'),
             sources=Path('resources/info/sources.bib'),
         )
         log.info(f'Return info {info.model_dump()}')
 
         return info
 
-    def compute(self, resources: ComputationResources, params: ComputeInputWalkability) -> List[_Artifact]:
+    def compute(
+        self,
+        resources: ComputationResources,
+        aoi: shapely.MultiPolygon,
+        aoi_properties: AoiProperties,
+        params: ComputeInputWalkability,
+    ) -> List[_Artifact]:
         log.info(f'Handling compute request: {params.model_dump()} in context: {resources}')
 
-        line_paths, polygon_paths = self.get_paths(params.get_buffered_aoi(), params.get_path_rating_mapping())
-        paths_artifact = build_paths_artifact(
-            line_paths, polygon_paths, params.path_rating, params.get_aoi_geom(), resources
+        line_paths, polygon_paths = self.get_paths(
+            get_buffered_aoi(aoi, params.get_max_walking_distance()), params.get_path_rating_mapping()
         )
+        paths_artifact = build_paths_artifact(line_paths, polygon_paths, params.path_rating, aoi, resources)
 
         line_pavement_quality = self.get_pavement_quality(line_paths)
-        pavement_quality_artifact = build_pavement_quality_artifact(
-            line_pavement_quality, params.get_aoi_geom(), resources
-        )
+        pavement_quality_artifact = build_pavement_quality_artifact(line_pavement_quality, aoi, resources)
 
         connectivity = self.get_connectivity(
             line_paths,
             params.get_max_walking_distance(),
-            params.get_utm_zone(),
+            get_utm_zone(aoi),
             idw_function=params.get_distance_weighting_function(),
         )
-        connectivity_artifact = build_connectivity_artifact(connectivity, params.get_aoi_geom(), resources)
+        connectivity_artifact = build_connectivity_artifact(connectivity, aoi, resources)
 
-        areal_summaries = self.summarise_by_area(
-            line_paths, params.get_aoi_geom(), params.admin_level, params.get_utm_zone()
-        )
+        areal_summaries = self.summarise_by_area(line_paths, aoi, params.admin_level, get_utm_zone(aoi))
         chart_artifacts = build_areal_summary_artifacts(areal_summaries, resources)
 
         return [paths_artifact, connectivity_artifact, pavement_quality_artifact] + chart_artifacts
 
     def get_paths(
         self, aoi: shapely.MultiPolygon, rating_map: Dict[PathCategory, float]
-    ) -> (gpd.GeoDataFrame, gpd.GeoDataFrame):
+    ) -> Tuple[gpd.GeoDataFrame, gpd.GeoDataFrame]:
         log.debug('Extracting paths')
 
         paths_line = fetch_osm_data(aoi, ohsome_filter('line'), self.ohsome)

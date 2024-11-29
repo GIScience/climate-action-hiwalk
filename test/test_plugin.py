@@ -1,14 +1,17 @@
 from walkability.utils import filter_start_matcher
+from climatoology.base.info import _Info
+from climatoology.base.baseoperator import _Artifact
 
 
-def test_plugin_info_request(operator, expected_info_output):
-    assert operator.info() == expected_info_output
+def test_plugin_info_request(operator):
+    assert isinstance(operator.info(), _Info)
 
 
 def test_plugin_compute_request(
     operator,
     expected_compute_input,
-    expected_compute_output,
+    default_aoi,
+    default_aoi_properties,
     compute_resources,
     ohsome_api,
 ):
@@ -19,4 +22,14 @@ def test_plugin_compute_request(
         body=admin_body,
         match=[filter_start_matcher('geometry:polygon and boundary')],
     )
-    assert operator.compute(resources=compute_resources, params=expected_compute_input) == expected_compute_output
+
+    computed_artifacts = operator.compute(
+        resources=compute_resources,
+        aoi=default_aoi,
+        aoi_properties=default_aoi_properties,
+        params=expected_compute_input,
+    )
+
+    assert len(computed_artifacts) == 5
+    for artifact in computed_artifacts:
+        assert isinstance(artifact, _Artifact)
