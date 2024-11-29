@@ -9,6 +9,7 @@ import matplotlib
 import momepy
 import networkx as nx
 import pandas as pd
+from pyproj import CRS, Transformer
 import shapely
 import yaml
 from geopandas import GeoDataFrame
@@ -19,6 +20,8 @@ from osmnx import simplify_graph
 from pydantic_extra_types.color import Color
 from requests import PreparedRequest
 from shapely import LineString, MultiLineString
+from shapely.ops import transform
+
 
 log = logging.getLogger(__name__)
 
@@ -308,7 +311,7 @@ def get_color(values: pd.Series, cmap_name: str = 'RdYlBu_r') -> pd.Series:
     return values.apply(lambda v: Color(to_hex(cmap(v))))
 
 
-def get_single_color(rating: float, cmap_name: str = 'seismic') -> Color:
+def get_single_color(rating: float, cmap_name: str = 'coolwarm') -> Color:
     norm = Normalize(0, 1)
     cmap = matplotlib.cm.ScalarMappable(norm=norm, cmap=cmap_name).get_cmap().reversed()
     cmap.set_under('#808080')
@@ -441,3 +444,18 @@ pathratings_legend_fix = {
     'shared_with_motorized_traffic_medium_speed': 'shared_with_motorized_traffic_medium_speed_(<=30_km/h)',
     'shared_with_motorized_traffic_high_speed': 'shared_with_motorized_traffic_high_speed_(<=50_km/h)',
 }
+
+
+def get_utm_zone(aoi: shapely.MultiPolygon) -> CRS:
+    return gpd.GeoSeries(data=aoi, crs='EPSG:4326').estimate_utm_crs()
+
+
+def get_buffered_aoi(aoi: shapely.MultiPolygon, distance: float) -> shapely.MultiPolygon:
+    wgs84 = CRS('EPSG:4326')
+    utm = get_utm_zone(aoi)
+
+    geographic_projection_function = Transformer.from_crs(wgs84, utm, always_xy=True).transform
+    wgs84_projection_function = Transformer.from_crs(utm, wgs84, always_xy=True).transform
+    projected_aoi = transform(geographic_projection_function, aoi)
+    buffered_aoi = projected_aoi.buffer(distance)
+    return transform(wgs84_projection_function, buffered_aoi)

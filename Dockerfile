@@ -14,7 +14,6 @@ RUN --mount=type=secret,id=CI_JOB_TOKEN \
 
 COPY $PACKAGE_NAME $PACKAGE_NAME
 COPY resources resources
-COPY conf conf
 COPY README.md ./README.md
 
 RUN poetry install --no-ansi --no-interaction --all-extras --without dev,test

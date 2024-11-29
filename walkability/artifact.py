@@ -59,7 +59,7 @@ def build_connectivity_artifact(
     connectivity: gpd.GeoDataFrame,
     clip_aoi: shapely.MultiPolygon,
     resources: ComputationResources,
-    cmap_name: str = 'seismic',
+    cmap_name: str = 'coolwarm',
 ) -> _Artifact:
     connectivity = connectivity.clip(clip_aoi, keep_geom_type=True)
     color = get_color(connectivity.connectivity, cmap_name).to_list()

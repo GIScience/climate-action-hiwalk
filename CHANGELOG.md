@@ -12,6 +12,8 @@ and this project mostly adheres to [Semantic Versioning](https://semver.org/spec
 - Connectivity is now a primary result of the plugin, on equal standing with the other indicators
 - Added edge cases like fords, designated lock gates, etc.
 - Added backend code for relations request
+- Updated Dependencies for Climatoology (5.1.0 -> 6.0.2)
+- Changed colour scheme for connectivity result (as seismic is no longer an approved colour scheme in Climatoology)
 
 ### Fixed
 - Connectivity legend inverted so that High connectivity values are on top
