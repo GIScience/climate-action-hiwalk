@@ -5,19 +5,26 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project mostly adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://gitlab.heigit.org/climate-action/plugins/walkability/-/compare/demo...main?from_project_id=840&straight=false)
+## [Unreleased](https://gitlab.heigit.org/climate-action/plugins/walkability/-/compare/1.1.0...main)
+
+## [1.1.0](https://gitlab.heigit.org/climate-action/plugins/walkability/-/releases/1.1.0) - 2024-12-06
 
 ### Changed
-- Now connectivity indicator keeps unwalkable paths and assigns them connectivity of 0
+
 - Connectivity is now a primary result of the plugin, on equal standing with the other indicators
-- Added edge cases like fords, designated lock gates, etc.
+- Changed colour scheme for connectivity result to `coolwarm`
+
 - Added backend code for relations request
 - Updated Dependencies for Climatoology (5.1.0 -> 6.0.2)
-- Changed colour scheme for connectivity result (as seismic is no longer an approved colour scheme in Climatoology)
 
 ### Fixed
+
+- Now connectivity indicator keeps unwalkable paths and assigns them connectivity of 0
 - Connectivity legend inverted so that High connectivity values are on top
-- Match .env_template to naming choices from infrastructure setup
+
+### Added
+
+- Added edge cases like fords, designated lock gates, etc.
 
 ## [1.0.0](https://gitlab.heigit.org/climate-action/plugins/walkability/-/releases/1.0.0) - 2024-10-14
 

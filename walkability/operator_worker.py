@@ -1,3 +1,4 @@
+import importlib
 import logging
 from pathlib import Path
 from typing import List, Dict, Callable, Tuple
@@ -48,7 +49,6 @@ class Operator(BaseOperator[ComputeInputWalkability]):
         log.debug('Initialised walkability operator with ohsome client')
 
     def info(self) -> _Info:
-        # noinspection PyTypeChecker
         info = generate_plugin_info(
             name='Walkability',
             icon=Path('resources/info/icon.jpeg'),
@@ -74,8 +74,8 @@ class Operator(BaseOperator[ComputeInputWalkability]):
                     website='https://heigit.org/heigit-team/',
                 ),
             ],
-            version=Version(1, 0, 0),
-            concerns=[Concern.MOBILITY_PEDESTRIAN],
+            version=Version.parse(importlib.metadata.version('walkability')),
+            concerns={Concern.MOBILITY_PEDESTRIAN},
             purpose=Path('resources/info/purpose.md'),
             methodology=Path('resources/info/methodology.md'),
             sources=Path('resources/info/sources.bib'),

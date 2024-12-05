@@ -17,7 +17,7 @@ unit_tests:
     - source .venv/bin/activate
     - pip install poetry==1.7.1
     - poetry config virtualenvs.in-project true
-    - poetry install --with test,dev --no-root
+    - poetry install --with test,dev
   script:
     - poetry run pre-commit run --all-files
     - poetry run pytest
