@@ -304,18 +304,11 @@ def get_qualitative_color(category, cmap_name: str, class_name) -> pd.Series:
         return Color(to_hex(cmap(category_norm[category])))
 
 
-def get_color(values: pd.Series, cmap_name: str = 'RdYlBu_r') -> pd.Series:
+def get_color(values: pd.Series, cmap_name: str = 'coolwarm_r') -> pd.Series:
     norm = Normalize(0, 1)
-    cmap = matplotlib.cm.ScalarMappable(norm=norm, cmap=cmap_name).get_cmap().reversed()
+    cmap = matplotlib.cm.ScalarMappable(norm=norm, cmap=cmap_name).get_cmap()
     cmap.set_under('#808080')
     return values.apply(lambda v: Color(to_hex(cmap(v))))
-
-
-def get_single_color(rating: float, cmap_name: str = 'coolwarm') -> Color:
-    norm = Normalize(0, 1)
-    cmap = matplotlib.cm.ScalarMappable(norm=norm, cmap=cmap_name).get_cmap().reversed()
-    cmap.set_under('#808080')
-    return Color(to_hex(cmap(rating)))
 
 
 def filter_start_matcher(filter_start: str) -> Callable[..., Any]:

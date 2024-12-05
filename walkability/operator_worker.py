@@ -25,7 +25,6 @@ from walkability.utils import (
     fetch_osm_data,
     boost_route_members,
     get_buffered_aoi,
-    get_color,
     PathCategory,
     PavementQuality,
     geodataframe_to_graph,
@@ -36,6 +35,7 @@ from walkability.utils import (
     apply_path_category_filters,
     euclidian_distance,
     ohsome_filter,
+    get_qualitative_color,
 )
 
 log = logging.getLogger(__name__)
@@ -284,7 +284,10 @@ class Operator(BaseOperator[ComputeInputWalkability]):
         data = {}
         for name, group in stats:
             group = group.sort_values(by=['category'], ascending=False)
-            colors = get_color(group.rating).tolist()
+            colors = [
+                get_qualitative_color(category=PathCategory(category), cmap_name='RdYlBu_r', class_name=PathCategory)
+                for category in group.category
+            ]
             data[name] = Chart2dData(
                 x=group.category.tolist(),
                 y=group.length.tolist(),

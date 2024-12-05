@@ -59,12 +59,12 @@ def build_connectivity_artifact(
     connectivity: gpd.GeoDataFrame,
     clip_aoi: shapely.MultiPolygon,
     resources: ComputationResources,
-    cmap_name: str = 'coolwarm',
+    cmap_name: str = 'coolwarm_r',
 ) -> _Artifact:
     connectivity = connectivity.clip(clip_aoi, keep_geom_type=True)
     color = get_color(connectivity.connectivity, cmap_name).to_list()
     legend = ContinuousLegendData(
-        cmap_name=cmap_name, ticks={'High Connectivity': 0, 'Medium Connectivity': 0.5, 'Low Connectivity': 1}
+        cmap_name=cmap_name, ticks={'High Connectivity': 1, 'Medium Connectivity': 0.5, 'Low Connectivity': 0}
     )
 
     return create_geojson_artifact(
