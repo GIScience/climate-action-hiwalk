@@ -1,6 +1,6 @@
-from functools import partial
 import logging
 import urllib.parse
+from functools import partial
 
 import geopandas as gpd
 import geopandas.testing
@@ -9,14 +9,17 @@ import pytest
 import shapely
 from approvaltests.approvals import verify
 from approvaltests.namer import NamerFactory
+from climatoology.utility.api import TimeRange
 from ohsome import OhsomeClient, OhsomeResponse
 from pydantic_extra_types.color import Color
+from shapely.geometry import Polygon
 from shapely.testing import assert_geometries_equal
 from urllib3 import Retry
 
 from walkability.utils import (
     boost_route_members,
     PathCategory,
+    fetch_naturalness_by_vector,
     fetch_osm_data,
     fix_geometry_collection,
     get_color,
@@ -24,7 +27,6 @@ from walkability.utils import (
     apply_path_category_filters,
     ohsome_filter,
 )
-
 
 validation_objects = {
     PathCategory.DESIGNATED: {
@@ -121,6 +123,7 @@ def osm_return_data(request_ohsome: partial[OhsomeResponse], id_filter: str) -> 
     return pd.concat([osm_line_data, osm_polygon_data])
 
 
+@pytest.mark.slow
 @pytest.mark.parametrize('category', validation_objects)
 def test_construct_filter_validate(osm_return_data: pd.DataFrame, category: PathCategory):
     osm_return_data = osm_return_data[osm_return_data['category'] == category]
@@ -144,6 +147,21 @@ def test_fetch_osm_data(expected_compute_input, default_aoi, responses_mock):
     )
     computed_osm_data = fetch_osm_data(default_aoi, 'dummy=yes', OhsomeClient())
     geopandas.testing.assert_geodataframe_equal(computed_osm_data, expected_osm_data, check_like=True)
+
+
+def test_fetch_naturalness_vectordata(naturalness_utility_mock, default_aoi):
+    vectors = gpd.GeoSeries(
+        [
+            Polygon([[7.381, 47.51], [7.385, 47.51], [7.385, 47.511], [7.381, 47.511], [7.381, 47.51]]),
+            Polygon([[7.381, 47.51], [7.385, 47.51], [7.385, 47.511], [7.381, 47.511], [7.381, 47.51]]),
+        ]
+    )
+
+    greenness_gdf = fetch_naturalness_by_vector(
+        naturalness_utility=naturalness_utility_mock, time_range=TimeRange(), vectors=[vectors]
+    )
+    assert isinstance(greenness_gdf, gpd.GeoDataFrame)
+    assert 'naturalness' in greenness_gdf.columns
 
 
 def test_boost_route_members(expected_compute_input, default_aoi, responses_mock):

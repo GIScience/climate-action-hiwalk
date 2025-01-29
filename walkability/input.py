@@ -1,6 +1,7 @@
 from enum import Enum
 from typing import Optional, Self, Dict, Callable
 
+from climatoology.utility.Naturalness import NaturalnessIndex
 from pydantic import BaseModel, Field, model_validator
 
 from walkability.utils import PathCategory
@@ -112,6 +113,12 @@ class ComputeInputWalkability(BaseModel):
         f'{WALKING_SPEED_MAP_STRING}',
         examples=[WalkingSpeed.MEDIUM],
         default=WalkingSpeed.MEDIUM,
+    )
+    naturalness_index: Optional[NaturalnessIndex] = Field(
+        title='Naturalness Index',
+        description='Which index to use as basis of the naturalness estimation.',
+        examples=[NaturalnessIndex.NDVI],
+        default=NaturalnessIndex.NDVI,
     )
     path_rating: Optional[PathRating] = Field(
         title='Path Rating Mapping',

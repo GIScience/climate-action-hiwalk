@@ -9,21 +9,23 @@ import matplotlib
 import momepy
 import networkx as nx
 import pandas as pd
-from pyproj import CRS, Transformer
 import shapely
 import yaml
-from geopandas import GeoDataFrame
+from climatoology.utility.Naturalness import NaturalnessUtility, NaturalnessIndex
+from climatoology.utility.api import TimeRange
 from matplotlib.colors import to_hex, Normalize
 from networkx.classes import set_node_attributes
 from ohsome import OhsomeClient
 from osmnx import simplify_graph
 from pydantic_extra_types.color import Color
+from pyproj import CRS, Transformer
 from requests import PreparedRequest
 from shapely import LineString, MultiLineString
 from shapely.ops import transform
 
-
 log = logging.getLogger(__name__)
+
+WGS84 = CRS('EPSG:4326')
 
 
 class PathCategory(Enum):
@@ -227,6 +229,21 @@ def fetch_osm_data(aoi: shapely.MultiPolygon, osm_filter: str, ohsome: OhsomeCli
     return elements[['geometry', '@other_tags']]
 
 
+def fetch_naturalness_by_vector(
+    naturalness_utility: NaturalnessUtility,
+    time_range: TimeRange,
+    vectors: List[gpd.GeoSeries],
+    index: NaturalnessIndex = NaturalnessIndex.NDVI,
+    agg_stat: str = 'median',
+) -> gpd.GeoDataFrame:
+    naturalness_gdf = naturalness_utility.compute_vector(
+        index=index, aggregation_stats=[agg_stat], vectors=vectors, time_range=time_range
+    )
+
+    naturalness_gdf = naturalness_gdf.rename(columns={agg_stat: 'naturalness'})
+    return naturalness_gdf
+
+
 def apply_path_category_filters(row: pd.Series) -> PathCategory:
     filters = PathCategoryFilters()
     match row['@other_tags']:
@@ -348,7 +365,7 @@ def geodataframe_to_graph(df: gpd.GeoDataFrame) -> nx.Graph:
     # NOTE: All properties of the geodataframe are lost
     # geom: MultiLineString = df.unary_union
     # df_ = gpd.GeoDataFrame(data={'geometry': [geom], 'foo': ["bar"]}, crs=df.crs).explode(index_parts=True)
-    df_ = GeoDataFrame(df_).set_crs(df.crs)
+    df_ = gpd.GeoDataFrame(df_).set_crs(df.crs)
 
     log.debug('Convert geodataframe to network graph')
     G = momepy.gdf_to_nx(df_, multigraph=True, directed=False, length='length')
@@ -420,7 +437,7 @@ def euclidian_distance(point1: Tuple[float, float], point2: Tuple[float, float])
 def ohsome_filter(geometry_type: str) -> str:
     if geometry_type == 'relation':
         # currently unused, here as a blueprint if we want to query for relations
-        return str(f'type:{geometry_type} and ' 'route=ferry')
+        return str(f'type:{geometry_type} and route=ferry')
 
     return str(
         f'geometry:{geometry_type} and '
@@ -440,15 +457,14 @@ pathratings_legend_fix = {
 
 
 def get_utm_zone(aoi: shapely.MultiPolygon) -> CRS:
-    return gpd.GeoSeries(data=aoi, crs='EPSG:4326').estimate_utm_crs()
+    return gpd.GeoSeries(data=aoi, crs=WGS84).estimate_utm_crs()
 
 
 def get_buffered_aoi(aoi: shapely.MultiPolygon, distance: float) -> shapely.MultiPolygon:
-    wgs84 = CRS('EPSG:4326')
     utm = get_utm_zone(aoi)
 
-    geographic_projection_function = Transformer.from_crs(wgs84, utm, always_xy=True).transform
-    wgs84_projection_function = Transformer.from_crs(utm, wgs84, always_xy=True).transform
+    geographic_projection_function = Transformer.from_crs(WGS84, utm, always_xy=True).transform
+    wgs84_projection_function = Transformer.from_crs(utm, WGS84, always_xy=True).transform
     projected_aoi = transform(geographic_projection_function, aoi)
     buffered_aoi = projected_aoi.buffer(distance)
     return transform(wgs84_projection_function, buffered_aoi)
