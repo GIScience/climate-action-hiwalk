@@ -1,14 +1,17 @@
 from itertools import product
 from typing import Tuple, List
 
+import geopandas
 import geopandas as gpd
 import pytest
 import shapely
 from climatoology.base.artifact import Chart2dData, ChartType
+from climatoology.utility.Naturalness import NaturalnessIndex
 from geopandas import testing
 from geopandas.testing import assert_geodataframe_equal
 from pydantic_extra_types.color import Color
 from pyproj import CRS
+from shapely.geometry.linestring import LineString
 
 from walkability.utils import (
     PathCategory,
@@ -43,7 +46,7 @@ def test_get_paths(operator, expected_compute_input, default_aoi, ohsome_api):
     )
 
     computed_lines, computed_polygons = operator.get_paths(
-        default_aoi, expected_compute_input.get_path_rating_mapping()
+        aoi=default_aoi, rating_map=expected_compute_input.get_path_rating_mapping()
     )
 
     testing.assert_geodataframe_equal(
@@ -520,3 +523,27 @@ def test_pavement_quality_hierarchy(operator, combination):
     result_line = operator.get_pavement_quality(line_paths)
 
     assert result_line['quality'].to_list() == [quality]
+
+
+def test_get_naturalness(default_aoi, operator, naturalness_utility_mock):
+    paths = gpd.GeoDataFrame(
+        index=[1, 2],
+        geometry=[
+            LineString([[12.4, 48.25], [12.4, 48.30]]),
+            LineString([[12.41, 48.25], [12.41, 48.30]]),
+        ],
+        crs='EPSG:4326',
+    )
+    computed_naturalness = operator.get_naturalness(aoi=default_aoi, paths=paths, index=NaturalnessIndex.NDVI)
+
+    expected_naturalness = gpd.GeoDataFrame(
+        index=[1, 2],
+        geometry=[
+            LineString([[12.4, 48.25], [12.4, 48.30]]),
+            LineString([[12.41, 48.25], [12.41, 48.30]]),
+        ],
+        data={'naturalness': [0.5, 0.6]},
+        crs=CRS.from_epsg(4326),
+    )
+
+    geopandas.testing.assert_geodataframe_equal(computed_naturalness, expected_naturalness, check_like=True)

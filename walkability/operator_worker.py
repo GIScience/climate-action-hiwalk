@@ -9,21 +9,26 @@ import networkx as nx
 import pandas as pd
 import shapely
 from climatoology.base.artifact import Chart2dData, ChartType
-from climatoology.base.baseoperator import ComputationResources, BaseOperator, AoiProperties, _Artifact
+from climatoology.base.baseoperator import BaseOperator, AoiProperties, _Artifact
+from climatoology.base.computation import ComputationResources
 from climatoology.base.info import generate_plugin_info, _Info, PluginAuthor, Concern
+from climatoology.utility.Naturalness import NaturalnessUtility, NaturalnessIndex
+from climatoology.utility.api import TimeRange
 from ohsome import OhsomeClient
 from pyproj import CRS
 from semver import Version
 
 from walkability.artifact import (
-    build_paths_artifact,
+    build_naturalness_artifact,
     build_pavement_quality_artifact,
-    build_areal_summary_artifacts,
+    build_paths_artifact,
     build_connectivity_artifact,
+    build_areal_summary_artifacts,
 )
 from walkability.input import ComputeInputWalkability
 from walkability.utils import (
     fetch_osm_data,
+    fetch_naturalness_by_vector,
     boost_route_members,
     get_buffered_aoi,
     PathCategory,
@@ -37,16 +42,18 @@ from walkability.utils import (
     euclidian_distance,
     ohsome_filter,
     get_qualitative_color,
+    WGS84,
 )
 
 log = logging.getLogger(__name__)
 
 
-class Operator(BaseOperator[ComputeInputWalkability]):
-    def __init__(self):
+class OperatorWalkability(BaseOperator[ComputeInputWalkability]):
+    def __init__(self, naturalness_utility: NaturalnessUtility):
         super().__init__()
+        self.naturalness_utility = naturalness_utility
         self.ohsome = OhsomeClient(user_agent='CA Plugin Walkability')
-        log.debug('Initialised walkability operator with ohsome client')
+        log.debug('Initialised walkability operator with ohsome client and Naturalness Utility')
 
     def info(self) -> _Info:
         info = generate_plugin_info(
@@ -70,6 +77,16 @@ class Operator(BaseOperator[ComputeInputWalkability]):
                 ),
                 PluginAuthor(
                     name='Jonas Kemmer',
+                    affiliation='HeiGIT gGmbH',
+                    website='https://heigit.org/heigit-team/',
+                ),
+                PluginAuthor(
+                    name='Anna Buch',
+                    affiliation='HeiGIT gGmbH',
+                    website='https://heigit.org/heigit-team/',
+                ),
+                PluginAuthor(
+                    name='Danielle Gatland',
                     affiliation='HeiGIT gGmbH',
                     website='https://heigit.org/heigit-team/',
                 ),
@@ -112,7 +129,15 @@ class Operator(BaseOperator[ComputeInputWalkability]):
         areal_summaries = self.summarise_by_area(line_paths, aoi, params.admin_level, get_utm_zone(aoi))
         chart_artifacts = build_areal_summary_artifacts(areal_summaries, resources)
 
-        return [paths_artifact, connectivity_artifact, pavement_quality_artifact] + chart_artifacts
+        naturalness_of_paths = self.get_naturalness(paths=line_paths, aoi=aoi, index=params.naturalness_index)
+        naturalness_artifact = build_naturalness_artifact(naturalness_of_paths, resources)
+
+        return [
+            paths_artifact,
+            connectivity_artifact,
+            pavement_quality_artifact,
+            naturalness_artifact,
+        ] + chart_artifacts
 
     def get_paths(
         self, aoi: shapely.MultiPolygon, rating_map: Dict[PathCategory, float]
@@ -295,3 +320,34 @@ class Operator(BaseOperator[ComputeInputWalkability]):
                 chart_type=ChartType.PIE,
             )
         return data
+
+    def get_naturalness(
+        self, aoi: shapely.MultiPolygon, paths: gpd.GeoDataFrame, index: NaturalnessIndex
+    ) -> gpd.GeoDataFrame:
+        """
+        Get NDVI along street within the AOI.
+
+        :param index:
+        :param paths:
+        :param aoi:
+        :return: RasterInfo objects with NDVI values along streets and places
+        """
+        # Clip paths to aoi, then buffer as input to naturalness calculation
+        # Clipping is temporary, pending: https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/154
+        utm = get_utm_zone(aoi)
+        paths_clipped = gpd.clip(paths, aoi, keep_geom_type=True)
+
+        paths_buffered = paths_clipped.copy()
+        paths_buffered['geometry'] = paths_clipped.to_crs(utm).buffer(10).to_crs(WGS84)
+
+        paths_ndvi = fetch_naturalness_by_vector(
+            naturalness_utility=self.naturalness_utility,
+            time_range=TimeRange(),
+            vectors=[paths_buffered.geometry],
+            index=index,
+        )
+        # due to https://gitlab.heigit.org/climate-action/climatoology/-/issues/145
+        paths_ndvi.index = paths_ndvi.index.astype(paths_clipped.index.dtype)
+
+        paths_clipped = paths_clipped.join(paths_ndvi['naturalness'])
+        return paths_clipped
