@@ -1537,6 +1537,20 @@ requests = ">=2.25.1,<3.0.0"
 urllib3 = ">=2.0.2,<3.0.0"
 
 [[package]]
+name = "openrouteservice"
+version = "2.3.3"
+description = "Python client for requests to openrouteservice API services"
+optional = false
+python-versions = "*"
+files = [
+    {file = "openrouteservice-2.3.3-py3-none-any.whl", hash = "sha256:a84fe298b1de7a4fb1d8aa19798687f4f66fe212e5206667c703ca2c7e5de0ce"},
+    {file = "openrouteservice-2.3.3.tar.gz", hash = "sha256:3696e0428533cf6bbcb9586c3bcfca7b5e7aaa269650ff16a862a7f61b857f4a"},
+]
+
+[package.dependencies]
+requests = ">=2.0"
+
+[[package]]
 name = "osmnx"
 version = "2.0.0"
 description = "Download, model, analyze, and visualize street networks and other geospatial features from OpenStreetMap"
@@ -2955,4 +2969,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "~3.11.5"
-content-hash = "8adc1d8989ef45fa37f0fde0cfd0b3ddc82383eb57447a9d8e6c9f3fed26034b"
+content-hash = "f9fdd47fca2b68717b3a743badb565493be15a894b05fe66fadb1b3aec9ba5d4"

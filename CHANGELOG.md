@@ -11,6 +11,8 @@ and this project mostly adheres to [Semantic Versioning](https://semver.org/spec
 
 - A new greenness indicator, mapping the NDVI score of walking
   paths ([#21](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/21))
+- A new slope indicator depicting the slope in % of OSM ways based on openelevationservice (
+  90x90m) ([#42](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/42))
 
 ## [1.1.0](https://gitlab.heigit.org/climate-action/plugins/walkability/-/releases/1.1.0) - 2024-12-06
 
