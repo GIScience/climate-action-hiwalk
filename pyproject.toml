@@ -20,6 +20,7 @@ momepy = "^0.7.0"
 geonetworkx = "^0.5.3"
 osmnx = "^2.0.0"
 pytest = "^8.3.4"
+openrouteservice = "^2.3.3"
 
 
 [tool.poetry.group.test.dependencies]

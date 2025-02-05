@@ -8,12 +8,7 @@ def test_plugin_info_request(operator):
 
 
 def test_plugin_compute_request(
-    operator,
-    expected_compute_input,
-    default_aoi,
-    default_aoi_properties,
-    compute_resources,
-    ohsome_api,
+    operator, expected_compute_input, default_aoi, default_aoi_properties, compute_resources, ohsome_api, ors_api
 ):
     with open('resources/test/ohsome_admin_response.geojson', 'r') as admin_file:
         admin_body = admin_file.read()
@@ -30,6 +25,6 @@ def test_plugin_compute_request(
         params=expected_compute_input,
     )
 
-    assert len(computed_artifacts) == 6
+    assert len(computed_artifacts) == 7
     for artifact in computed_artifacts:
         assert isinstance(artifact, _Artifact)

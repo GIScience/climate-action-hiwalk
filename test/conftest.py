@@ -8,6 +8,7 @@ import shapely
 from climatoology.base.baseoperator import AoiProperties
 from climatoology.base.computation import ComputationScope
 from pyproj import CRS
+from responses import matchers
 from shapely.geometry.polygon import Polygon
 
 from walkability.input import ComputeInputWalkability
@@ -31,6 +32,11 @@ def pytest_collection_modifyitems(config, items):
 def expected_compute_input() -> ComputeInputWalkability:
     # noinspection PyTypeChecker
     return ComputeInputWalkability()
+
+
+@pytest.fixture
+def global_aoi() -> shapely.MultiPolygon:
+    return shapely.MultiPolygon([[[[-90, -180], [90, -180], [90, 180], [-90, 180], [-90, -180]]]])
 
 
 @pytest.fixture
@@ -70,7 +76,7 @@ def responses_mock():
 
 @pytest.fixture
 def operator(naturalness_utility_mock):
-    return OperatorWalkability(naturalness_utility_mock)
+    return OperatorWalkability(naturalness_utility_mock, ors_api_key='test-key')
 
 
 @pytest.fixture
@@ -121,3 +127,28 @@ def naturalness_utility_mock():
 
         naturalness_utility.compute_vector.return_value = return_gdf
         yield naturalness_utility
+
+
+@pytest.fixture
+def ors_api(responses_mock):
+    responses_mock.post(
+        'https://api.openrouteservice.org/elevation/line',
+        json={
+            'attribution': 'service by https://openrouteservice.org | data by http://srtm.csi.cgiar.org',
+            'geometry': [[12.3, 48.22, 1.0], [12.3005, 48.22, 2.0]],
+            'timestamp': 1738238852,
+            'version': '0.2.1',
+        },
+        match=[
+            matchers.header_matcher({'Authorization': 'test-key'}),
+            matchers.json_params_matcher(
+                {
+                    'format_in': 'polyline',
+                    'format_out': 'polyline',
+                    'dataset': 'srtm',
+                    'geometry': [[12.3, 48.22], [12.3005, 48.22]],
+                }
+            ),
+        ],
+    )
+    return responses_mock

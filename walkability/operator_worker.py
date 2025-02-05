@@ -1,11 +1,14 @@
 import importlib
 import logging
+import math
 from pathlib import Path
 from typing import List, Dict, Callable, Tuple
 
 import geopandas as gpd
 import momepy
 import networkx as nx
+import numpy as np
+import openrouteservice
 import pandas as pd
 import shapely
 from climatoology.base.artifact import Chart2dData, ChartType
@@ -17,13 +20,15 @@ from climatoology.utility.api import TimeRange
 from ohsome import OhsomeClient
 from pyproj import CRS
 from semver import Version
+from shapely.geometry.point import Point
 
 from walkability.artifact import (
-    build_naturalness_artifact,
-    build_pavement_quality_artifact,
+    build_slope_artifact,
     build_paths_artifact,
+    build_pavement_quality_artifact,
     build_connectivity_artifact,
     build_areal_summary_artifacts,
+    build_naturalness_artifact,
 )
 from walkability.input import ComputeInputWalkability
 from walkability.utils import (
@@ -43,16 +48,18 @@ from walkability.utils import (
     ohsome_filter,
     get_qualitative_color,
     WGS84,
+    ORS_COORDINATE_PRECISION,
 )
 
 log = logging.getLogger(__name__)
 
 
 class OperatorWalkability(BaseOperator[ComputeInputWalkability]):
-    def __init__(self, naturalness_utility: NaturalnessUtility):
+    def __init__(self, naturalness_utility: NaturalnessUtility, ors_api_key: str):
         super().__init__()
         self.naturalness_utility = naturalness_utility
         self.ohsome = OhsomeClient(user_agent='CA Plugin Walkability')
+        self.ors_client = openrouteservice.Client(key=ors_api_key)
         log.debug('Initialised walkability operator with ohsome client and Naturalness Utility')
 
     def info(self) -> _Info:
@@ -132,11 +139,15 @@ class OperatorWalkability(BaseOperator[ComputeInputWalkability]):
         naturalness_of_paths = self.get_naturalness(paths=line_paths, aoi=aoi, index=params.naturalness_index)
         naturalness_artifact = build_naturalness_artifact(naturalness_of_paths, resources)
 
+        slope = self.get_slope(paths=line_paths, aoi=aoi)
+        slope_artifact = build_slope_artifact(slope, resources)
+
         return [
             paths_artifact,
             connectivity_artifact,
             pavement_quality_artifact,
             naturalness_artifact,
+            slope_artifact,
         ] + chart_artifacts
 
     def get_paths(
@@ -351,3 +362,54 @@ class OperatorWalkability(BaseOperator[ComputeInputWalkability]):
 
         paths_clipped = paths_clipped.join(paths_ndvi['naturalness'])
         return paths_clipped
+
+    def get_slope(
+        self, paths: gpd.GeoDataFrame, aoi: shapely.MultiPolygon, request_chunk_size: int = 2000
+    ) -> gpd.GeoDataFrame:
+        """Retrieve the slope of paths.
+
+        :param paths:
+        :param aoi:
+        :param request_chunk_size: Maximum number of elevation to be requested from the server. The server has a limit set that must be respected.
+        :return:
+        """
+        # Clipping is temporary, pending: https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/154
+        paths_clipped = gpd.clip(paths, aoi, keep_geom_type=True)
+        utm = get_utm_zone(aoi)
+
+        paths_clipped['start_ele'] = pd.Series(dtype='float64')
+        paths_clipped['end_ele'] = pd.Series(dtype='float64')
+        paths_clipped['start_point'] = shapely.get_point(shapely.get_geometry(paths_clipped.geometry, 0), 0)
+        paths_clipped['end_point'] = shapely.get_point(shapely.get_geometry(paths_clipped.geometry, -1), -1)
+        points = pd.concat([paths_clipped['start_point'], paths_clipped['end_point']]).drop_duplicates().sort_values()
+
+        num_chunks = math.ceil(len(points) / request_chunk_size)
+
+        # PERF: do parallel calls
+        for chunk in np.array_split(points, num_chunks):
+            polyline = list(zip(chunk.x, chunk.y))
+            response = self.ors_client.elevation_line(
+                format_in='polyline', format_out='polyline', dataset='srtm', geometry=polyline
+            )
+
+            coords = response['geometry']
+            for coord in coords:
+                point = Point(coord[0:2])
+                ele = coord[2]
+
+                start_point_match = paths_clipped['start_point'].geom_equals_exact(
+                    point, tolerance=ORS_COORDINATE_PRECISION
+                )
+                end_point_match = paths_clipped['end_point'].geom_equals_exact(
+                    point, tolerance=ORS_COORDINATE_PRECISION
+                )
+
+                paths_clipped.loc[start_point_match, 'start_ele'] = ele
+                paths_clipped.loc[end_point_match, 'end_ele'] = ele
+
+        paths_clipped['slope'] = (paths_clipped.end_ele - paths_clipped.start_ele) / (
+            paths_clipped.geometry.to_crs(utm).length / 100.0
+        )
+        paths_clipped.slope = paths_clipped.slope.round(2)
+
+        return paths_clipped[['slope', 'geometry']]

@@ -26,6 +26,7 @@ from shapely.ops import transform
 log = logging.getLogger(__name__)
 
 WGS84 = CRS('EPSG:4326')
+ORS_COORDINATE_PRECISION = 0.000001
 
 
 class PathCategory(Enum):
