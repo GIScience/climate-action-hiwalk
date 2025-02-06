@@ -47,7 +47,6 @@ from walkability.utils import (
     euclidian_distance,
     ohsome_filter,
     get_qualitative_color,
-    WGS84,
     ORS_COORDINATE_PRECISION,
 )
 
@@ -345,23 +344,16 @@ class OperatorWalkability(BaseOperator[ComputeInputWalkability]):
         """
         # Clip paths to aoi, then buffer as input to naturalness calculation
         # Clipping is temporary, pending: https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/154
-        utm = get_utm_zone(aoi)
         paths_clipped = gpd.clip(paths, aoi, keep_geom_type=True)
-
-        paths_buffered = paths_clipped.copy()
-        paths_buffered['geometry'] = paths_clipped.to_crs(utm).buffer(10).to_crs(WGS84)
 
         paths_ndvi = fetch_naturalness_by_vector(
             naturalness_utility=self.naturalness_utility,
             time_range=TimeRange(),
-            vectors=[paths_buffered.geometry],
+            vectors=[paths_clipped.geometry],
             index=index,
         )
-        # due to https://gitlab.heigit.org/climate-action/climatoology/-/issues/145
-        paths_ndvi.index = paths_ndvi.index.astype(paths_clipped.index.dtype)
 
-        paths_clipped = paths_clipped.join(paths_ndvi['naturalness'])
-        return paths_clipped
+        return paths_ndvi
 
     def get_slope(
         self, paths: gpd.GeoDataFrame, aoi: shapely.MultiPolygon, request_chunk_size: int = 2000

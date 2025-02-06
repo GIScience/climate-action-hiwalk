@@ -9,7 +9,7 @@ from climatoology.base.baseoperator import AoiProperties
 from climatoology.base.computation import ComputationScope
 from pyproj import CRS
 from responses import matchers
-from shapely.geometry.polygon import Polygon
+from shapely.geometry import LineString
 
 from walkability.input import ComputeInputWalkability
 from walkability.operator_worker import OperatorWalkability
@@ -116,8 +116,8 @@ def naturalness_utility_mock():
         vectors = gpd.GeoSeries(
             index=[1, 2],
             data=[
-                Polygon([[7.381, 47.51], [7.385, 47.51], [7.385, 47.511], [7.381, 47.511], [7.381, 47.51]]),
-                Polygon([[7.381, 47.51], [7.385, 47.51], [7.385, 47.511], [7.381, 47.511], [7.381, 47.51]]),
+                LineString([[12.4, 48.25], [12.4, 48.30]]),
+                LineString([[12.41, 48.25], [12.41, 48.30]]),
             ],
             crs=CRS.from_epsg(4326),
         )
