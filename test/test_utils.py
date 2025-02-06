@@ -12,7 +12,7 @@ from approvaltests.namer import NamerFactory
 from climatoology.utility.api import TimeRange
 from ohsome import OhsomeClient, OhsomeResponse
 from pydantic_extra_types.color import Color
-from shapely.geometry import Polygon
+from shapely.geometry import LineString, MultiLineString
 from shapely.testing import assert_geometries_equal
 from urllib3 import Retry
 
@@ -149,11 +149,16 @@ def test_fetch_osm_data(expected_compute_input, default_aoi, responses_mock):
     geopandas.testing.assert_geodataframe_equal(computed_osm_data, expected_osm_data, check_like=True)
 
 
-def test_fetch_naturalness_vectordata(naturalness_utility_mock, default_aoi):
+def test_fetch_naturalness_vectordata(naturalness_utility_mock):
     vectors = gpd.GeoSeries(
         [
-            Polygon([[7.381, 47.51], [7.385, 47.51], [7.385, 47.511], [7.381, 47.511], [7.381, 47.51]]),
-            Polygon([[7.381, 47.51], [7.385, 47.51], [7.385, 47.511], [7.381, 47.511], [7.381, 47.51]]),
+            LineString([[7.381, 47.51], [7.385, 47.51], [7.385, 47.511], [7.381, 47.511], [7.381, 47.51]]),
+            MultiLineString(
+                [
+                    [[7.381, 47.51], [7.385, 47.51], [7.385, 47.511]],
+                    [[7.381, 47.511], [7.381, 47.51]],
+                ]
+            ),
         ]
     )
 
