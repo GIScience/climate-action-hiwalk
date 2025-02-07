@@ -1,3 +1,4 @@
+import datetime as dt
 import importlib
 import logging
 import math
@@ -21,6 +22,7 @@ from ohsome import OhsomeClient
 from pyproj import CRS
 from semver import Version
 from shapely.geometry.point import Point
+import shapely.ops
 
 from walkability.artifact import (
     build_slope_artifact,
@@ -48,6 +50,7 @@ from walkability.utils import (
     ohsome_filter,
     get_qualitative_color,
     ORS_COORDINATE_PRECISION,
+    subset_aoi,
 )
 
 log = logging.getLogger(__name__)
@@ -135,7 +138,12 @@ class OperatorWalkability(BaseOperator[ComputeInputWalkability]):
         areal_summaries = self.summarise_by_area(line_paths, aoi, params.admin_level, get_utm_zone(aoi))
         chart_artifacts = build_areal_summary_artifacts(areal_summaries, resources)
 
-        naturalness_of_paths = self.get_naturalness(paths=line_paths, aoi=aoi, index=params.naturalness_index)
+        try:
+            naturalness_of_paths = self.get_naturalness(paths=line_paths, aoi=aoi, index=params.naturalness_index)
+        except Exception as error:
+            log.warning(error, exc_info=True)
+            naturalness_of_paths = line_paths.copy()
+            naturalness_of_paths['naturalness'] = None
         naturalness_artifact = build_naturalness_artifact(naturalness_of_paths, resources)
 
         slope = self.get_slope(paths=line_paths, aoi=aoi)
@@ -342,13 +350,15 @@ class OperatorWalkability(BaseOperator[ComputeInputWalkability]):
         :param aoi:
         :return: RasterInfo objects with NDVI values along streets and places
         """
-        # Clip paths to aoi, then buffer as input to naturalness calculation
-        # Clipping is temporary, pending: https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/154
-        paths_clipped = gpd.clip(paths, aoi, keep_geom_type=True)
+        # Trim the aoi, pending smarter usage of Sentinel Hub credits: https://gitlab.heigit.org/climate-action/utilities/naturalness-utility/-/issues/35
+        aoi_trimmed = subset_aoi(aoi=aoi)
+
+        # Temporarily clip paths to aoi, pending: https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/154
+        paths_clipped = gpd.clip(paths, aoi_trimmed, keep_geom_type=True)
 
         paths_ndvi = fetch_naturalness_by_vector(
             naturalness_utility=self.naturalness_utility,
-            time_range=TimeRange(),
+            time_range=TimeRange(end_date=dt.datetime.now().replace(day=1).date()),
             vectors=[paths_clipped.geometry],
             index=index,
         )
