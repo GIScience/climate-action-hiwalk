@@ -469,3 +469,29 @@ def get_buffered_aoi(aoi: shapely.MultiPolygon, distance: float) -> shapely.Mult
     projected_aoi = transform(geographic_projection_function, aoi)
     buffered_aoi = projected_aoi.buffer(distance)
     return transform(wgs84_projection_function, buffered_aoi)
+
+
+def subset_aoi(aoi: shapely.MultiPolygon, max_area: float = 50_000_000) -> shapely.MultiPolygon:
+    """Return a sample of the AOI with area less than max_area m2.
+
+    1. If the largest polygon of the aoi is less than max_area, return it
+    2. Otherwise, return the centroid of the largest polygon within aoi, buffered by sqrt(max_area/pi)
+    """
+    # Get the largest polygon of the aoi and reproject it
+    utm = get_utm_zone(aoi)
+    transform = Transformer.from_crs(CRS.from_epsg(4326), utm).transform
+    aoi_trimmed = max(list(aoi.geoms), key=lambda a: a.area)
+    aoi_trimmed = shapely.ops.transform(transform, aoi_trimmed)
+
+    # If the aoi is too large, create a buffer around its centroid
+    if aoi_trimmed.area > max_area:
+        aoi_trimmed = shapely.centroid(aoi_trimmed).buffer(math.sqrt(max_area / math.pi))
+
+    # Reproject back to WGS84
+    transform_r = Transformer.from_crs(utm, CRS.from_epsg(4326)).transform
+    aoi_trimmed = shapely.ops.transform(transform_r, aoi_trimmed)
+
+    # Clip by original aoi
+    aoi_trimmed = aoi_trimmed.intersection(aoi)
+
+    return aoi_trimmed

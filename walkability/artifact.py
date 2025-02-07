@@ -142,7 +142,7 @@ def build_naturalness_artifact(
         text = 'There was an error calculating naturalness in this computation. Contact the developers for more information.'
         return create_markdown_artifact(
             text=text,
-            name='naturalness Score',
+            name='Naturalness Score (Error)',
             tl_dr=text,
             filename='path_naturalness',
             resources=resources,
