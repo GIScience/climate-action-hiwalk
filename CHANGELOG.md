@@ -7,6 +7,11 @@ and this project mostly adheres to [Semantic Versioning](https://semver.org/spec
 
 ## [Unreleased](https://gitlab.heigit.org/climate-action/plugins/walkability/-/compare/1.1.0...main)
 
+### Fixed
+
+- Filter ohsome boundaries to polygon geometries (in `summarise_by_area`), in case other geometry types make it through
+the ohsome API
+
 ### Added
 
 - A new greenness indicator, mapping the NDVI score of walking

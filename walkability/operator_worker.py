@@ -12,6 +12,7 @@ import numpy as np
 import openrouteservice
 import pandas as pd
 import shapely
+import shapely.ops
 from climatoology.base.artifact import Chart2dData, ChartType
 from climatoology.base.baseoperator import BaseOperator, AoiProperties, _Artifact
 from climatoology.base.computation import ComputationResources
@@ -22,7 +23,6 @@ from ohsome import OhsomeClient
 from pyproj import CRS
 from semver import Version
 from shapely.geometry.point import Point
-import shapely.ops
 
 from walkability.artifact import (
     build_slope_artifact,
@@ -135,7 +135,13 @@ class OperatorWalkability(BaseOperator[ComputeInputWalkability]):
         )
         connectivity_artifact = build_connectivity_artifact(connectivity, aoi, resources)
 
-        areal_summaries = self.summarise_by_area(line_paths, aoi, params.admin_level, get_utm_zone(aoi))
+        try:
+            areal_summaries = self.summarise_by_area(line_paths, aoi, params.admin_level, get_utm_zone(aoi))
+        except Exception as error:
+            log.error(
+                'The computation of the areal summaries indicator failed. No artifact will be created.', exc_info=error
+            )
+            areal_summaries = dict()
         chart_artifacts = build_areal_summary_artifacts(areal_summaries, resources)
 
         try:
@@ -146,7 +152,14 @@ class OperatorWalkability(BaseOperator[ComputeInputWalkability]):
             naturalness_of_paths['naturalness'] = None
         naturalness_artifact = build_naturalness_artifact(naturalness_of_paths, resources)
 
-        slope = self.get_slope(paths=line_paths, aoi=aoi)
+        try:
+            slope = self.get_slope(paths=line_paths, aoi=aoi)
+        except Exception as error:
+            log.error(
+                'The computation of the slope indicator failed. An all-None artifact will be created.', exc_info=error
+            )
+            slope = line_paths.copy()
+            slope['slope'] = None
         slope_artifact = build_slope_artifact(slope, resources)
 
         return [
@@ -309,6 +322,7 @@ class OperatorWalkability(BaseOperator[ComputeInputWalkability]):
             filter=f'geometry:polygon and boundary=administrative and admin_level={admin_level}',
             clipGeometry=True,
         ).as_dataframe(explode_tags=minimum_keys)
+        boundaries = boundaries.loc[boundaries.geometry.geom_type.isin(('MultiPolygon', 'Polygon'))]
         boundaries = boundaries[boundaries.is_valid]
         boundaries = boundaries.reset_index(drop=True)
         log.debug(f'Summarising paths into {boundaries.shape[0]} boundaries')
@@ -322,10 +336,10 @@ class OperatorWalkability(BaseOperator[ComputeInputWalkability]):
         stats = stats.groupby(['name', 'category', 'rating']).aggregate({'length': 'sum'})
         stats['length'] = round(stats['length'], 2)
         stats = stats.reset_index()
-        stats = stats.groupby('name')
+        stats_group = stats.groupby('name')
 
         data = {}
-        for name, group in stats:
+        for name, group in stats_group:
             group = group.sort_values(by=['category'], ascending=False)
             colors = [
                 get_qualitative_color(category=PathCategory(category), cmap_name='RdYlBu_r', class_name=PathCategory)

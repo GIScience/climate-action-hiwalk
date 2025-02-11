@@ -309,7 +309,7 @@ def fix_geometry_collection(
         return LineString()
 
 
-def get_qualitative_color(category, cmap_name: str, class_name) -> pd.Series:
+def get_qualitative_color(category, cmap_name: str, class_name) -> Color:
     norm = Normalize(0, 1)
     cmap = matplotlib.cm.ScalarMappable(norm=norm, cmap=cmap_name).get_cmap()
     cmap.set_under('#808080')
