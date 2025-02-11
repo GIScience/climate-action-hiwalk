@@ -1,3 +1,4 @@
+import logging
 from pathlib import Path
 from typing import List, Dict, Tuple
 
@@ -37,6 +38,7 @@ def build_paths_artifact(
     resources: ComputationResources,
     cmap_name: str = 'RdYlBu_r',
 ) -> _Artifact:
+    logging.debug('Building paths artifact')
     paths_line = paths_line.clip(clip_aoi, keep_geom_type=True)
     paths_polygon = paths_polygon.clip(clip_aoi, keep_geom_type=True)
     sidewalks = pd.concat([paths_line, paths_polygon], ignore_index=True)
@@ -193,6 +195,15 @@ def clean_slope_data(slope: pd.Series) -> Tuple[pd.Series, pd.Series]:
 def build_slope_artifact(
     slope: gpd.GeoDataFrame, resources: ComputationResources, cmap_name: str = 'coolwarm'
 ) -> _Artifact:
+    if slope.slope.isna().all():
+        text = 'There was an error calculating slope in this computation. Contact the developers for more information.'
+        return create_markdown_artifact(
+            text=text,
+            name='Slope (Error)',
+            tl_dr=text,
+            filename='slope',
+            resources=resources,
+        )
     slope_values, slope_color_values = clean_slope_data(slope.slope)
 
     # Define colors and legend

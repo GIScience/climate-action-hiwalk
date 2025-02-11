@@ -348,7 +348,7 @@ def test_connectivity_unwalkable(operator):
     assert_geodataframe_equal(connectivity, expected_connectivity, check_less_precise=True)
 
 
-def test_aggregate(operator, default_aoi, expected_compute_input, responses_mock):
+def test_summarise_by_area(operator, default_aoi, expected_compute_input, responses_mock):
     with open('resources/test/ohsome_admin_response.geojson', 'r') as admin_file:
         admin_body = admin_file.read()
     responses_mock.post(
@@ -387,7 +387,7 @@ def test_aggregate(operator, default_aoi, expected_compute_input, responses_mock
     assert computed_charts == expected_charts
 
 
-def test_aggregate_no_boundaries(operator, default_aoi, expected_compute_input, responses_mock):
+def test_summarise_by_area_no_boundaries(operator, default_aoi, expected_compute_input, responses_mock):
     responses_mock.post(
         'https://api.ohsome.org/v1/elements/geometry',
         body="""{
@@ -417,7 +417,37 @@ def test_aggregate_no_boundaries(operator, default_aoi, expected_compute_input, 
     assert computed_charts == dict()
 
 
-def test_aggregate_boundaries_no_name(operator, default_aoi, expected_compute_input, responses_mock):
+def test_summarise_by_area_mixed_geometry_boundaries(operator, default_aoi, expected_compute_input, responses_mock):
+    with open('resources/test/ohsome_boundaries_mixed_geometries.geojson', 'r') as response_file:
+        response_body = response_file.read()
+    responses_mock.post(
+        'https://api.ohsome.org/v1/elements/geometry',
+        body=response_body,
+        match=[filter_start_matcher('geometry:polygon and boundary')],
+    )
+    expected_charts = {
+        'Innenstadt West': Chart2dData(
+            x=['designated'],
+            y=[0.69],
+            color=[Color('#313695')],
+            chart_type=ChartType.PIE,
+        )
+    }
+
+    input_paths = gpd.GeoDataFrame(
+        data={
+            'category': [PathCategory.DESIGNATED],
+            'rating': [1.0],
+            'geometry': [shapely.LineString([[7.42, 51.51], [7.43, 51.51]])],
+        },
+        crs='EPSG:4326',
+    )
+    computed_charts = operator.summarise_by_area(input_paths, default_aoi, 9, CRS.from_user_input(32632))
+
+    assert computed_charts == expected_charts
+
+
+def test_summarise_by_area_boundaries_no_name(operator, default_aoi, expected_compute_input, responses_mock):
     with open('resources/test/ohsome_admin_response_no_name.geojson', 'r') as admin_file:
         admin_body = admin_file.read()
     responses_mock.post(
