@@ -23,6 +23,7 @@ from ohsome import OhsomeClient
 from pyproj import CRS
 from semver import Version
 from shapely.geometry.point import Point
+from tqdm import tqdm
 
 from walkability.artifact import (
     build_slope_artifact,
@@ -173,7 +174,7 @@ class OperatorWalkability(BaseOperator[ComputeInputWalkability]):
     def get_paths(
         self, aoi: shapely.MultiPolygon, rating_map: Dict[PathCategory, float]
     ) -> Tuple[gpd.GeoDataFrame, gpd.GeoDataFrame]:
-        log.debug('Extracting paths')
+        log.info('Extracting paths')
 
         paths_line = fetch_osm_data(aoi, ohsome_filter('line'), self.ohsome)
         paths_line['category'] = paths_line.apply(apply_path_category_filters, axis=1)
@@ -200,9 +201,10 @@ class OperatorWalkability(BaseOperator[ComputeInputWalkability]):
         Walkable distance is in meter.
         Category threshold.
         """
+        log.info('Starting connectivity computation')
 
         original_crs = paths.crs
-        log.debug(f'Reproject geodataframe from {original_crs} to {projected_crs.name}')
+        log.debug(f'Reprojecting geodataframe from {original_crs} to {projected_crs.name}')
         paths = paths.to_crs(projected_crs)
 
         G = geodataframe_to_graph(paths)
@@ -215,9 +217,8 @@ class OperatorWalkability(BaseOperator[ComputeInputWalkability]):
             edge_data = G.get_edge_data(start_node, end_node)
             return edge_data.get(edge_id).get('rating') > threshold
 
-        log.debug('Evaluating connectivity for nodes')
-        for center in G.nodes:
-            # premature optimisation, does it even help?
+        for center in tqdm(G.nodes, desc='Computing connectivity for nodes', mininterval=2):
+            # Skip node if all edge fails threshold check - premature optimisation, does it even help?
             a = G.edges(nbunch=center, data='rating', default=0)
             if all([k[2] < threshold for k in a]):
                 continue
@@ -240,6 +241,7 @@ class OperatorWalkability(BaseOperator[ComputeInputWalkability]):
                 else 1.0
             }
         nx.set_node_attributes(G, node_attributes)
+        log.debug('Finished evaluating connectivity for all nodes')
 
         edge_attributes = {}
         for s_node, e_node, edge_id in G.edges:
@@ -256,7 +258,7 @@ class OperatorWalkability(BaseOperator[ComputeInputWalkability]):
         return result.to_crs(original_crs)[['connectivity', 'geometry']]
 
     def get_pavement_quality(self, line_paths: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
-        log.debug('Evaluating pavement quality')
+        log.info('Evaluating pavement quality')
 
         def evaluate_quality(
             row: pd.Series, keys: List[str], evaluation_dict: Dict[str, Dict[str, PavementQuality]]
@@ -312,6 +314,8 @@ class OperatorWalkability(BaseOperator[ComputeInputWalkability]):
         projected_crs: CRS,
         length_resolution_m: int = 1000,
     ) -> Dict[str, Chart2dData]:
+        log.info('Summarising walkability stats by area')
+
         stats = paths.copy()
         stats = stats.loc[stats.geometry.geom_type.isin(('MultiLineString', 'LineString'))]
 
@@ -364,6 +368,8 @@ class OperatorWalkability(BaseOperator[ComputeInputWalkability]):
         :param aoi:
         :return: RasterInfo objects with NDVI values along streets and places
         """
+        log.info('Computing naturalness')
+
         # Trim the aoi, pending smarter usage of Sentinel Hub credits: https://gitlab.heigit.org/climate-action/utilities/naturalness-utility/-/issues/35
         aoi_trimmed = subset_aoi(aoi=aoi)
 
@@ -389,6 +395,8 @@ class OperatorWalkability(BaseOperator[ComputeInputWalkability]):
         :param request_chunk_size: Maximum number of elevation to be requested from the server. The server has a limit set that must be respected.
         :return:
         """
+        log.info('Computing slope')
+
         # Clipping is temporary, pending: https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/154
         paths_clipped = gpd.clip(paths, aoi, keep_geom_type=True)
         utm = get_utm_zone(aoi)
