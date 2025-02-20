@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import Optional, Self, Dict, Callable
+from typing import Self, Dict, Callable
 
 from climatoology.utility.Naturalness import NaturalnessIndex
 from pydantic import BaseModel, Field, model_validator
@@ -100,33 +100,33 @@ class IDW(Enum):
 
 
 class ComputeInputWalkability(BaseModel):
-    walkable_time: Optional[float] = Field(
+    walkable_time: float = Field(
         title='Maximum Trip Duration',
         description='Maximum duration of a single trip in minutes.',
         ge=0,
         examples=[15],
         default=15,
     )
-    walking_speed: Optional[WalkingSpeed] = Field(
+    walking_speed: WalkingSpeed = Field(
         title='Walking Speed',
         description='Choose a walking speed category. The categories map to the following speed in km/h: '
         f'{WALKING_SPEED_MAP_STRING}',
         examples=[WalkingSpeed.MEDIUM],
         default=WalkingSpeed.MEDIUM,
     )
-    naturalness_index: Optional[NaturalnessIndex] = Field(
+    naturalness_index: NaturalnessIndex = Field(
         title='Naturalness Index',
         description='Which index to use as basis of the naturalness estimation.',
         examples=[NaturalnessIndex.NDVI],
         default=NaturalnessIndex.NDVI,
     )
-    path_rating: Optional[PathRating] = Field(
+    path_rating: PathRating = Field(
         title='Path Rating Mapping',
         description='Qualitative rating for each of the available path categories.',
         examples=[PathRating()],
         default=PathRating(),
     )
-    admin_level: Optional[int] = Field(
+    admin_level: int = Field(
         title='Administrative level',
         description='The administrative level the results should be aggregated to. See the '
         '[OSM wiki documentation](https://wiki.openstreetmap.org/wiki/Tag:boundary=administrative) for '
@@ -136,7 +136,7 @@ class ComputeInputWalkability(BaseModel):
         examples=[9],
         default=9,
     )
-    idw_method: Optional[IDW] = Field(
+    idw_method: IDW = Field(
         title='Distance Weighting',
         description='The function that should be used to model distance weighting. The approach is often called '
         'Inverse Distance Weighting (IDW) or Distance Decay. Walking trips exhibit a certain distribution. Many '
