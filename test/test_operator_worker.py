@@ -3,6 +3,7 @@ from typing import Tuple, List
 
 import geopandas
 import geopandas as gpd
+import numpy as np
 import pytest
 import shapely
 from climatoology.base.artifact import Chart2dData, ChartType
@@ -76,6 +77,7 @@ def test_connectivity(operator):
     expected_connectivity = gpd.GeoDataFrame(
         data={
             'connectivity': [0.75, 0.75],
+            'permeability': [0.925, 0.925],
             'geometry': path_geoms,
         },
         crs='EPSG:4326',
@@ -89,7 +91,7 @@ def test_connectivity(operator):
         crs='EPSG:4326',
     )
 
-    connectivity = operator.get_connectivity(
+    connectivity = operator.get_connectivity_permeability(
         paths=paths, walkable_distance=1.5, projected_crs=CRS.from_user_input(32632)
     )
 
@@ -104,6 +106,7 @@ def test_connectivity_fully_inside_buffer(operator):
     expected_connectivity = gpd.GeoDataFrame(
         data={
             'connectivity': [1.0],
+            'permeability': [1.0],
             'geometry': path_geoms,
         },
         crs='EPSG:4326',
@@ -117,7 +120,7 @@ def test_connectivity_fully_inside_buffer(operator):
         crs='EPSG:4326',
     )
 
-    connectivity = operator.get_connectivity(
+    connectivity = operator.get_connectivity_permeability(
         paths=paths, walkable_distance=1.5, projected_crs=CRS.from_user_input(32632)
     )
 
@@ -131,7 +134,8 @@ def test_connectivity_exceeds_buffer(operator):
     ]
     expected_connectivity = gpd.GeoDataFrame(
         data={
-            'connectivity': [1.0],
+            'connectivity': [np.nan],
+            'permeability': [np.nan],
             'geometry': path_geoms,
         },
         crs='EPSG:4326',
@@ -145,7 +149,9 @@ def test_connectivity_exceeds_buffer(operator):
         crs='EPSG:4326',
     )
 
-    connectivity = operator.get_connectivity(paths=paths, walkable_distance=1, projected_crs=CRS.from_user_input(32632))
+    connectivity = operator.get_connectivity_permeability(
+        paths=paths, walkable_distance=1, projected_crs=CRS.from_user_input(32632)
+    )
 
     assert_geodataframe_equal(connectivity, expected_connectivity, check_less_precise=True)
 
@@ -154,6 +160,7 @@ def test_connectivity_within_but_long(operator):
     expected_connectivity = gpd.GeoDataFrame(
         data={
             'connectivity': [0.0],
+            'permeability': [0.41],
             'geometry': [
                 # 3m long path with end nodes 1m apart                                     2m                      1m
                 shapely.LineString([(9.0, 49.0), (9.0, 49.000018), (9.0000137, 49.0000088)]),
@@ -173,7 +180,7 @@ def test_connectivity_within_but_long(operator):
         crs='EPSG:4326',
     )
 
-    connectivity = operator.get_connectivity(
+    connectivity = operator.get_connectivity_permeability(
         paths=paths, walkable_distance=1.5, projected_crs=CRS.from_user_input(32632)
     )
 
@@ -189,6 +196,7 @@ def test_connectivity_one_in_one_out(operator):
     expected_connectivity = gpd.GeoDataFrame(
         data={
             'connectivity': [0.75, 0.5],
+            'permeability': [0.86, 0.725],
             'geometry': path_geoms,
         },
         crs='EPSG:4326',
@@ -202,7 +210,7 @@ def test_connectivity_one_in_one_out(operator):
         crs='EPSG:4326',
     )
 
-    connectivity = operator.get_connectivity(
+    connectivity = operator.get_connectivity_permeability(
         paths=paths, walkable_distance=1.5, projected_crs=CRS.from_user_input(32632)
     )
 
@@ -217,7 +225,7 @@ def test_connectivity_walkable(operator):
         },
         crs='EPSG:4326',
     )
-    connectivity = operator.get_connectivity(
+    connectivity = operator.get_connectivity_permeability(
         paths=paths, walkable_distance=1.5, projected_crs=CRS.from_user_input(32632)
     )
     assert not connectivity.empty
@@ -234,6 +242,7 @@ def test_connectivity_overlapping_paths(operator):
     expected_connectivity = gpd.GeoDataFrame(
         data={
             'connectivity': [0.5, 0.75],
+            'permeability': [0.66, 0.83],
             'geometry': geom,
         },
         crs='EPSG:4326',
@@ -245,7 +254,7 @@ def test_connectivity_overlapping_paths(operator):
         },
         crs='EPSG:4326',
     )
-    connectivity = operator.get_connectivity(
+    connectivity = operator.get_connectivity_permeability(
         paths=paths, walkable_distance=1.5, projected_crs=CRS.from_user_input(32632)
     )
     assert_geodataframe_equal(connectivity, expected_connectivity, check_less_precise=True)
@@ -260,6 +269,7 @@ def test_connectivity_intersected_line(operator):
     expected_connectivity = gpd.GeoDataFrame(
         data={
             'connectivity': [0.75, 0.75, 0.66666666666],
+            'permeability': [0.925, 0.925, 0.9],
             'geometry': [
                 shapely.LineString([(9, 49), (9, 49.0000088)]),
                 shapely.LineString([(9, 49.0000088), (9, 49.000018)]),
@@ -277,7 +287,7 @@ def test_connectivity_intersected_line(operator):
         crs='EPSG:4326',
     )
 
-    connectivity = operator.get_connectivity(
+    connectivity = operator.get_connectivity_permeability(
         paths=paths, walkable_distance=1.5, projected_crs=CRS.from_user_input(32632)
     )
 
@@ -293,6 +303,7 @@ def test_connectivity_decay(operator):
     expected_connectivity = gpd.GeoDataFrame(
         data={
             'connectivity': [1.0, 1.0],
+            'permeability': [0.925, 0.925],
             'geometry': path_geoms,
         },
         crs='EPSG:4326',
@@ -306,7 +317,7 @@ def test_connectivity_decay(operator):
         crs='EPSG:4326',
     )
 
-    connectivity = operator.get_connectivity(
+    connectivity = operator.get_connectivity_permeability(
         paths=paths,
         walkable_distance=1.5,
         projected_crs=CRS.from_user_input(32632),
@@ -326,6 +337,7 @@ def test_connectivity_unwalkable(operator):
     expected_connectivity = gpd.GeoDataFrame(
         data={
             'connectivity': [1 / 3, 0.0, 1 / 3],
+            'permeability': [0.4, 0.0, 0.4],
             'geometry': path_geoms,
         },
         crs='EPSG:4326',
@@ -339,7 +351,7 @@ def test_connectivity_unwalkable(operator):
         crs='EPSG:4326',
     )
 
-    connectivity = operator.get_connectivity(
+    connectivity = operator.get_connectivity_permeability(
         paths=paths,
         walkable_distance=100,
         projected_crs=CRS.from_user_input(32632),

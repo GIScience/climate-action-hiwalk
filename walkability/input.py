@@ -77,7 +77,7 @@ class PathRating(BaseModel):
         ge=0,
         le=1,
         examples=[0.0],
-        default=-9999,
+        default=0.0,
     )
 
     @model_validator(mode='after')

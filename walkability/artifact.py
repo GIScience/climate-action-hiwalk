@@ -70,9 +70,7 @@ def build_connectivity_artifact(
 ) -> _Artifact:
     connectivity = connectivity.clip(clip_aoi, keep_geom_type=True)
     color = get_color(connectivity.connectivity, cmap_name).to_list()
-    legend = ContinuousLegendData(
-        cmap_name=cmap_name, ticks={'High Connectivity': 1, 'Medium Connectivity': 0.5, 'Low Connectivity': 0}
-    )
+    legend = ContinuousLegendData(cmap_name=cmap_name, ticks={'High': 1, 'Low': 0})
 
     return create_geojson_artifact(
         features=connectivity.geometry,
@@ -81,6 +79,29 @@ def build_connectivity_artifact(
         caption=Path('resources/info/connectivity/caption.md').read_text(),
         description=Path('resources/info/connectivity/description.md').read_text(),
         label=connectivity.connectivity.to_list(),
+        color=color,
+        legend_data=legend,
+        resources=resources,
+    )
+
+
+def build_permeability_artifact(
+    permeability: gpd.GeoDataFrame,
+    clip_aoi: shapely.MultiPolygon,
+    resources: ComputationResources,
+    cmap_name: str = 'coolwarm_r',
+) -> _Artifact:
+    permeability = permeability.clip(clip_aoi, keep_geom_type=True)
+    color = get_color(permeability.permeability, cmap_name).to_list()
+    legend = ContinuousLegendData(cmap_name=cmap_name, ticks={'High': 1, 'Low': 0})
+
+    return create_geojson_artifact(
+        features=permeability.geometry,
+        layer_name='Permeability',
+        filename='permeability',
+        caption=Path('resources/info/permeability/caption.md').read_text(),
+        description=Path('resources/info/permeability/description.md').read_text(),
+        label=permeability.permeability.to_list(),
         color=color,
         legend_data=legend,
         resources=resources,

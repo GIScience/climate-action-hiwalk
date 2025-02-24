@@ -32,6 +32,7 @@ from walkability.artifact import (
     build_connectivity_artifact,
     build_areal_summary_artifacts,
     build_naturalness_artifact,
+    build_permeability_artifact,
 )
 from walkability.input import ComputeInputWalkability
 from walkability.utils import (
@@ -128,13 +129,14 @@ class OperatorWalkability(BaseOperator[ComputeInputWalkability]):
         line_pavement_quality = self.get_pavement_quality(line_paths)
         pavement_quality_artifact = build_pavement_quality_artifact(line_pavement_quality, aoi, resources)
 
-        connectivity = self.get_connectivity(
+        connectivity_permeability = self.get_connectivity_permeability(
             line_paths,
             params.get_max_walking_distance(),
             get_utm_zone(aoi),
             idw_function=params.get_distance_weighting_function(),
         )
-        connectivity_artifact = build_connectivity_artifact(connectivity, aoi, resources)
+        connectivity_artifact = build_connectivity_artifact(connectivity_permeability, aoi, resources)
+        permeability_artifact = build_permeability_artifact(connectivity_permeability, aoi, resources)
 
         try:
             areal_summaries = self.summarise_by_area(line_paths, aoi, params.admin_level, get_utm_zone(aoi))
@@ -166,6 +168,7 @@ class OperatorWalkability(BaseOperator[ComputeInputWalkability]):
         return [
             paths_artifact,
             connectivity_artifact,
+            permeability_artifact,
             pavement_quality_artifact,
             naturalness_artifact,
             slope_artifact,
@@ -188,7 +191,7 @@ class OperatorWalkability(BaseOperator[ComputeInputWalkability]):
 
         return paths_line, paths_polygon
 
-    def get_connectivity(
+    def get_connectivity_permeability(
         self,
         paths: gpd.GeoDataFrame,
         walkable_distance: float,
@@ -213,6 +216,9 @@ class OperatorWalkability(BaseOperator[ComputeInputWalkability]):
         def within_max_distance(target: Tuple[float, float]) -> bool:
             return euclidian_distance(center, target) <= walkable_distance
 
+        def within_double_max_distance(target: Tuple[float, float]) -> bool:
+            return euclidian_distance(center, target) <= walkable_distance * 2
+
         def is_walkable(start_node: Tuple[float, float], end_node: Tuple[float, float], edge_id: int) -> bool:
             edge_data = G.get_edge_data(start_node, end_node)
             return edge_data.get(edge_id).get('rating') > threshold
@@ -224,21 +230,37 @@ class OperatorWalkability(BaseOperator[ComputeInputWalkability]):
                 continue
 
             subgraph = nx.subgraph_view(G, filter_node=within_max_distance, filter_edge=is_walkable)
+            subgraph_big = nx.subgraph_view(G, filter_node=within_double_max_distance, filter_edge=is_walkable)
             weighting = {
                 target: idw_function(euclidian_distance(center, target))
                 for target in subgraph.nodes
                 if target != center
             }
 
-            shortest_paths = nx.single_source_dijkstra_path_length(
-                subgraph, center, cutoff=walkable_distance, weight='length'
-            )
-            shortest_paths = {key: weighting[key] for key, value in shortest_paths.items() if value > 0}
+            shortest_paths = nx.single_source_dijkstra_path_length(subgraph_big, center, weight='length')
+            shortest_paths_connectivity = {
+                key: weighting[key] for key, value in shortest_paths.items() if 0 < value < walkable_distance
+            }
+
+            straightness = 0.0
+            for target in subgraph.nodes:
+                if center != target:
+                    network_dist = shortest_paths.get(target, None)
+                    euclidean_dist = euclidian_distance(center, target)
+                    if network_dist is None:
+                        straightness += 0.1
+                    else:
+                        straightness += euclidean_dist / network_dist
+                    if straightness < 0.1:
+                        straightness = 0.1
 
             node_attributes[center] = {
-                'connectivity': (sum(shortest_paths.values())) / (sum(weighting.values()))
+                'connectivity': (sum(shortest_paths_connectivity.values())) / (sum(weighting.values()))
                 if len(subgraph.nodes) > 1
-                else 1.0
+                else np.nan,
+                'permeability': round(straightness / (len(subgraph.nodes) - 1), 2)
+                if len(subgraph.nodes) > 1
+                else np.nan,
             }
         nx.set_node_attributes(G, node_attributes)
         log.debug('Finished evaluating connectivity for all nodes')
@@ -247,15 +269,17 @@ class OperatorWalkability(BaseOperator[ComputeInputWalkability]):
         for s_node, e_node, edge_id in G.edges:
             if is_walkable(s_node, e_node, edge_id):
                 connectivity = (G.nodes[s_node]['connectivity'] + G.nodes[e_node]['connectivity']) / 2
+                permeability = (G.nodes[s_node]['permeability'] + G.nodes[e_node]['permeability']) / 2
             else:
                 connectivity = 0.0
-            edge_attributes[(s_node, e_node, edge_id)] = {'connectivity': connectivity}
+                permeability = 0.0
+            edge_attributes[(s_node, e_node, edge_id)] = {'connectivity': connectivity, 'permeability': permeability}
 
         nx.set_edge_attributes(G, edge_attributes)
 
         result = momepy.nx_to_gdf(G, points=False)
 
-        return result.to_crs(original_crs)[['connectivity', 'geometry']]
+        return result.to_crs(original_crs)[['connectivity', 'permeability', 'geometry']]
 
     def get_pavement_quality(self, line_paths: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
         log.info('Evaluating pavement quality')
