@@ -18,6 +18,7 @@ the ohsome API
   paths ([#21](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/21))
 - A new slope indicator depicting the slope in % of OSM ways based on openelevationservice (
   90x90m) ([#42](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/42))
+- A new permeability indicator mapping the average ratio of the Euclidean (straight line) distance and the walking network distance between a node and all nearby nodes ([#173](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/173))
 
 ## [1.1.0](https://gitlab.heigit.org/climate-action/plugins/walkability/-/releases/1.1.0) - 2024-12-06
 
@@ -27,12 +28,12 @@ the ohsome API
 - Changed colour scheme for connectivity result to `coolwarm`
 
 - Added backend code for relations request
-- Updated Dependencies for Climatoology (5.1.0 -> 6.0.2)
+- Updated dependencies for climatoology (5.1.0 -> 6.0.2)
 
 ### Fixed
 
-- Now connectivity indicator keeps unwalkable paths and assigns them connectivity of 0
-- Connectivity legend inverted so that High connectivity values are on top
+- Now connectivity indicator keeps "unwalkable" paths and assigns them connectivity of 0
+- Connectivity legend inverted so that high connectivity values are on top
 
 ### Added
 
