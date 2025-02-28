@@ -11,9 +11,9 @@ from pyproj import CRS
 from responses import matchers
 from shapely.geometry import LineString
 
-from walkability.input import ComputeInputWalkability
-from walkability.operator_worker import OperatorWalkability
-from walkability.utils import filter_start_matcher
+from walkability.core.input import ComputeInputWalkability
+from walkability.core.operator_worker import OperatorWalkability
+from test.components.utils.test_misc import filter_start_matcher
 
 
 def pytest_addoption(parser):
@@ -30,7 +30,6 @@ def pytest_collection_modifyitems(config, items):
 
 @pytest.fixture
 def expected_compute_input() -> ComputeInputWalkability:
-    # noinspection PyTypeChecker
     return ComputeInputWalkability()
 
 
@@ -45,11 +44,11 @@ def default_aoi() -> shapely.MultiPolygon:
         polygons=[
             [
                 [
-                    [12.3, 48.22],
-                    [12.3, 48.34],
+                    [12.29, 48.20],
+                    [12.29, 48.34],
                     [12.48, 48.34],
-                    [12.48, 48.22],
-                    [12.3, 48.22],
+                    [12.48, 48.20],
+                    [12.29, 48.20],
                 ]
             ]
         ]
@@ -82,9 +81,9 @@ def operator(naturalness_utility_mock):
 @pytest.fixture
 def ohsome_api(responses_mock):
     with (
-        open('resources/test/ohsome_line_response.geojson', 'r') as line_file,
-        open('resources/test/ohsome_polygon_response.geojson', 'r') as polygon_file,
-        open('resources/test/ohsome_route_response.geojson', 'r') as route_file,
+        open('test/resources/ohsome_line_response.geojson', 'r') as line_file,
+        open('test/resources/ohsome_polygon_response.geojson', 'r') as polygon_file,
+        open('test/resources/ohsome_route_response.geojson', 'r') as route_file,
     ):
         line_body = line_file.read()
         polygon_body = polygon_file.read()
@@ -134,7 +133,7 @@ def ors_api(responses_mock):
     responses_mock.post(
         'https://api.openrouteservice.org/elevation/line',
         json={
-            'attribution': 'service by https://openrouteservice.org | data by http://srtm.csi.cgiar.org',
+            'attribution': 'service by https://openrouteservice.org | data by https://srtm.csi.cgiar.org',
             'geometry': [[12.3, 48.22, 1.0], [12.3005, 48.22, 2.0]],
             'timestamp': 1738238852,
             'version': '0.2.1',

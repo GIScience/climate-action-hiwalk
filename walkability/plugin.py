@@ -2,36 +2,28 @@ import logging.config
 
 from climatoology.app.plugin import start_plugin
 from climatoology.utility.Naturalness import NaturalnessUtility
-from pydantic_settings import BaseSettings, SettingsConfigDict
 
-from walkability.operator_worker import OperatorWalkability
+from walkability.core.settings import Settings
+from walkability.core.operator_worker import OperatorWalkability
 
 log = logging.getLogger(__name__)
 
 
-class Settings(BaseSettings):
-    naturalness_host: str
-    naturalness_port: int
-    naturalness_path: str
-
-    ors_api_key: str
-
-    model_config = SettingsConfigDict(env_file='.env')
-
-
-def init_plugin(settings: Settings) -> int:
+def init_plugin(initialised_settings: Settings) -> int:
     naturalness_utility = NaturalnessUtility(
-        host=settings.naturalness_host,
-        port=settings.naturalness_port,
-        path=settings.naturalness_path,
+        host=initialised_settings.naturalness_host,
+        port=initialised_settings.naturalness_port,
+        path=initialised_settings.naturalness_path,
     )
-    operator = OperatorWalkability(naturalness_utility, settings.ors_api_key)
+    operator = OperatorWalkability(naturalness_utility, initialised_settings.ors_api_key)
 
     log.info(f'Starting plugin: {operator.info().name}')
     return start_plugin(operator=operator)
 
 
 if __name__ == '__main__':
+    # We require the user to provide the settings as environment variables or in the .env file
+    # noinspection PyArgumentList
     settings = Settings()
 
     exit_code = init_plugin(settings)

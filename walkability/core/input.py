@@ -4,7 +4,7 @@ from typing import Self, Dict, Callable
 from climatoology.utility.Naturalness import NaturalnessIndex
 from pydantic import BaseModel, Field, model_validator
 
-from walkability.utils import PathCategory
+from walkability.components.utils.misc import PathCategory
 
 
 class WalkingSpeed(Enum):
@@ -146,7 +146,8 @@ class ComputeInputWalkability(BaseModel):
         default=IDW.STEP_FUNCTION,
     )
 
-    def get_max_walking_distance(self) -> float:
+    @property
+    def max_walking_distance(self) -> float:
         """Calculate the maximum walking distance in m."""
         return (1000 / 60) * WALKING_SPEED_MAP[self.walking_speed] * self.walkable_time
 
@@ -173,7 +174,7 @@ class ComputeInputWalkability(BaseModel):
                 return step_func
             case IDW.POLYNOMIAL:
 
-                def original_polynom(distance_km: float):
+                def original_polynom(distance_km: float) -> float:
                     return (
                         335.9229 * distance_km**5
                         - 1327.84 * distance_km**4
@@ -200,4 +201,6 @@ class ComputeInputWalkability(BaseModel):
                 return scaled_polynom
 
             case IDW.NONE:
-                return lambda distance: 1
+                return lambda distance: 1.0
+            case _:
+                raise ValueError(f'IDW method {self.idw_method} not implemented.')

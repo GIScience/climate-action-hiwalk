@@ -1,6 +1,6 @@
 import pandas as pd
 
-from walkability.artifact import clean_slope_data
+from walkability.components.slope.slope_artifacts import clean_slope_data
 
 
 def test_clean_slope_negative_slope():
