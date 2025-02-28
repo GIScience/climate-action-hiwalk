@@ -7,7 +7,7 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "~3.11.5"
-climatoology = {git = "ssh://git@gitlab.heigit.org:2022/climate-action/climatoology.git",  tag = "6.1.2"}
+climatoology = { git = "ssh://git@gitlab.heigit.org:2022/climate-action/climatoology.git", tag = "6.1.2" }
 pydantic = "2.8.2"
 pydantic-settings = "^2.1.0"
 geojson-pydantic = "^1.0.1"
@@ -31,6 +31,12 @@ responses = "^0.24.1"
 
 [tool.poetry.group.dev.dependencies]
 pre-commit = "^3.6.0"
+
+[tool.ruff]
+line-length = 120
+
+[tool.ruff.format]
+quote-style = "single"
 
 [build-system]
 requires = ["poetry-core"]

@@ -10,7 +10,7 @@ and this project mostly adheres to [Semantic Versioning](https://semver.org/spec
 ### Fixed
 
 - Filter ohsome boundaries to polygon geometries (in `summarise_by_area`), in case other geometry types make it through
-the ohsome API
+  the ohsome API
 
 ### Added
 
@@ -18,7 +18,9 @@ the ohsome API
   paths ([#21](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/21))
 - A new slope indicator depicting the slope in % of OSM ways based on openelevationservice (
   90x90m) ([#42](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/42))
-- A new permeability indicator mapping the average ratio of the Euclidean (straight line) distance and the walking network distance between a node and all nearby nodes ([#173](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/173))
+- A new permeability indicator mapping the average ratio of the Euclidean (straight line) distance and the walking
+  network distance between a node and all nearby
+  nodes ([#173](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/173))
 
 ## [1.1.0](https://gitlab.heigit.org/climate-action/plugins/walkability/-/releases/1.1.0) - 2024-12-06
 
@@ -67,7 +69,7 @@ the ohsome API
 ### Fixed
 
 - Defined service roads with bus=[designated, yes] as
-  inaccessible. ([#121](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/121)])
+  inaccessible. ([#121](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/121))
 - Roads without sidewalk included in
   shared_with_high_speed. ([#125](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/125))
 - Railway platforms removed from

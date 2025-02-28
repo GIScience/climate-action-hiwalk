@@ -1,32 +1,23 @@
 import logging
 import urllib.parse
 from functools import partial
+from typing import Callable, Any, Tuple
+from urllib.parse import parse_qsl
 
 import geopandas as gpd
 import geopandas.testing
 import pandas as pd
 import pytest
 import shapely
-from approvaltests.approvals import verify
+from approvaltests import verify
 from approvaltests.namer import NamerFactory
-from climatoology.utility.api import TimeRange
 from ohsome import OhsomeClient, OhsomeResponse
 from pydantic_extra_types.color import Color
-from shapely.geometry import LineString, MultiLineString
-from shapely.testing import assert_geometries_equal
+from requests import PreparedRequest
 from urllib3 import Retry
 
-from walkability.utils import (
-    boost_route_members,
-    PathCategory,
-    fetch_naturalness_by_vector,
-    fetch_osm_data,
-    fix_geometry_collection,
-    get_color,
-    generate_detailed_pavement_quality_mapping_info,
-    apply_path_category_filters,
-    ohsome_filter,
-)
+from walkability.components.categorise_paths.path_categorisation import apply_path_category_filters
+from walkability.components.utils.misc import PathCategory, ohsome_filter, fetch_osm_data, get_color
 
 validation_objects = {
     PathCategory.DESIGNATED: {
@@ -81,7 +72,7 @@ def bpolys():
         crs='EPSG:4326',
     )
     # NOTE: used to generate geojson.io link
-    base_url = 'http://geojson.io/#data=data:application/json,'
+    base_url = 'https://geojson.io/#data=data:application/json,'
     encoded = urllib.parse.quote(bpolys.to_json())
     url = base_url + encoded
     logging.debug(url)
@@ -132,7 +123,7 @@ def test_construct_filter_validate(osm_return_data: pd.DataFrame, category: Path
 
 
 def test_fetch_osm_data(expected_compute_input, default_aoi, responses_mock):
-    with open('resources/test/ohsome_line_response.geojson', 'rb') as vector:
+    with open('test/resources/ohsome_line_response.geojson', 'rb') as vector:
         responses_mock.post(
             'https://api.ohsome.org/v1/elements/geometry',
             body=vector.read(),
@@ -149,119 +140,6 @@ def test_fetch_osm_data(expected_compute_input, default_aoi, responses_mock):
     geopandas.testing.assert_geodataframe_equal(computed_osm_data, expected_osm_data, check_like=True)
 
 
-def test_fetch_naturalness_vectordata(naturalness_utility_mock):
-    vectors = gpd.GeoSeries(
-        [
-            LineString([[7.381, 47.51], [7.385, 47.51], [7.385, 47.511], [7.381, 47.511], [7.381, 47.51]]),
-            MultiLineString(
-                [
-                    [[7.381, 47.51], [7.385, 47.51], [7.385, 47.511]],
-                    [[7.381, 47.511], [7.381, 47.51]],
-                ]
-            ),
-        ]
-    )
-
-    greenness_gdf = fetch_naturalness_by_vector(
-        naturalness_utility=naturalness_utility_mock, time_range=TimeRange(), vectors=[vectors]
-    )
-    assert isinstance(greenness_gdf, gpd.GeoDataFrame)
-    assert 'naturalness' in greenness_gdf.columns
-
-
-def test_boost_route_members(expected_compute_input, default_aoi, responses_mock):
-    with open('resources/test/ohsome_line_response.geojson', 'rb') as vector:
-        responses_mock.post(
-            'https://api.ohsome.org/v1/elements/geometry',
-            body=vector.read(),
-        )
-
-    expected_output = pd.Series(
-        data=[
-            PathCategory.DESIGNATED,
-            PathCategory.DESIGNATED_SHARED_WITH_BIKES,
-            PathCategory.SHARED_WITH_MOTORIZED_TRAFFIC_LOW_SPEED,
-            PathCategory.SHARED_WITH_MOTORIZED_TRAFFIC_MEDIUM_SPEED,
-            PathCategory.SHARED_WITH_MOTORIZED_TRAFFIC_HIGH_SPEED,
-            PathCategory.NOT_WALKABLE,
-            PathCategory.UNKNOWN,
-            PathCategory.DESIGNATED,
-            PathCategory.DESIGNATED,
-        ]
-    )
-
-    paths_input = gpd.GeoDataFrame(
-        data={
-            'category': [
-                PathCategory.DESIGNATED,
-                PathCategory.DESIGNATED_SHARED_WITH_BIKES,
-                PathCategory.SHARED_WITH_MOTORIZED_TRAFFIC_LOW_SPEED,
-                PathCategory.SHARED_WITH_MOTORIZED_TRAFFIC_MEDIUM_SPEED,
-                PathCategory.SHARED_WITH_MOTORIZED_TRAFFIC_HIGH_SPEED,
-                PathCategory.NOT_WALKABLE,
-                PathCategory.UNKNOWN,
-                PathCategory.DESIGNATED,
-                PathCategory.UNKNOWN,
-            ]
-        },
-        geometry=[
-            shapely.LineString([(12.3, 48.22), (12.3, 48.2205), (12.3005, 48.22)]),
-            shapely.LineString([(12.3, 48.22), (12.3, 48.2205), (12.3005, 48.22)]),
-            shapely.LineString([(12.3, 48.22), (12.3, 48.2205), (12.3005, 48.22)]),
-            shapely.LineString([(12.3, 48.22), (12.3, 48.2205), (12.3005, 48.22)]),
-            shapely.LineString([(12.3, 48.22), (12.3, 48.2205), (12.3005, 48.22)]),
-            shapely.LineString([(12.3, 48.22), (12.3, 48.2205), (12.3005, 48.22)]),
-            shapely.LineString([(0, 0), (1, 0), (1, 1)]),
-            shapely.LineString([(12.3, 48.22), (12.3, 48.2205), (12.3005, 48.22)]),
-            shapely.LineString([(12.3, 48.22), (12.3, 48.2205), (12.3005, 48.22)]),
-        ],
-        crs=4326,
-    )
-    computed_output = boost_route_members(default_aoi, paths_input, OhsomeClient())
-    pd.testing.assert_series_equal(computed_output, expected_output)
-
-
-def test_boost_route_members_overlapping_routes(expected_compute_input, default_aoi, responses_mock):
-    with open('resources/test/ohsome_route_response.geojson', 'rb') as vector:
-        responses_mock.post(
-            'https://api.ohsome.org/v1/elements/geometry',
-            body=vector.read(),
-        )
-
-    expected_output = pd.Series(data=[PathCategory.DESIGNATED])
-
-    paths_input = gpd.GeoDataFrame(
-        data={'category': [PathCategory.UNKNOWN]},
-        geometry=[
-            shapely.LineString([(0, 0), (1, 1)]),
-        ],
-        crs=4326,
-    )
-    computed_output = boost_route_members(default_aoi, paths_input, OhsomeClient())
-    pd.testing.assert_series_equal(computed_output, expected_output)
-
-
-def test_fix_geometry_collection():
-    expected_geom = shapely.LineString([(0, 0), (1, 0), (1, 1)])
-
-    geometry_collection_input = shapely.GeometryCollection(
-        [
-            shapely.Point(-1, -1),
-            expected_geom,
-        ]
-    )
-    point_input = shapely.Point(-1, -1)
-
-    input_output_map = {
-        'unchanged': {'input': expected_geom, 'output': expected_geom},
-        'extracted': {'input': geometry_collection_input, 'output': expected_geom},
-        'ignored': {'input': point_input, 'output': shapely.LineString()},
-    }
-    for _, map in input_output_map.items():
-        computed_geom = fix_geometry_collection(map['input'])
-        assert_geometries_equal(computed_geom, map['output'])
-
-
 def test_get_color():
     expected_output = pd.Series([Color('#3b4cc0'), Color('#dcdddd'), Color('#b40426')])
 
@@ -271,10 +149,22 @@ def test_get_color():
     pd.testing.assert_series_equal(computed_output, expected_output)
 
 
-def test_pavement_quality_info_generator():
-    verify(generate_detailed_pavement_quality_mapping_info())
-
-
 @pytest.mark.parametrize('geometry_type', ['line', 'polygon'])
 def test_ohsome_filter(geometry_type):
     verify(ohsome_filter(geometry_type), options=NamerFactory.with_parameters(geometry_type))
+
+
+def filter_start_matcher(filter_start: str) -> Callable[..., Any]:
+    def match(request: PreparedRequest) -> Tuple[bool, str]:
+        request_body = request.body
+        qsl_body = dict(parse_qsl(request_body, keep_blank_values=False)) if request_body else {}
+
+        if request_body is None:
+            return False, 'The given request has no body'
+        elif qsl_body.get('filter') is None:
+            return False, 'Filter parameter not set'
+        else:
+            valid = qsl_body.get('filter', '').startswith(filter_start)
+            return (True, '') if valid else (False, f'The filter parameter does not start with {filter_start}')
+
+    return match
