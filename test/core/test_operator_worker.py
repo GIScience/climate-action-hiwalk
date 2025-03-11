@@ -13,6 +13,7 @@ def test_get_buffered_line_paths(operator, expected_compute_input, default_aoi, 
 
     expected_lines = gpd.GeoDataFrame(
         data={
+            '@osmId': ['way/171574582'],
             'category': [PathCategory.DESIGNATED],
             'rating': [1.0],
             'quality': [PavementQuality.UNKNOWN],
@@ -45,6 +46,7 @@ def test_get_line_paths(operator, expected_compute_input, ohsome_api):
 
     expected_lines = gpd.GeoDataFrame(
         data={
+            '@osmId': ['way/171574582', 'way/171574582'],
             'category': [PathCategory.DESIGNATED, PathCategory.DESIGNATED],
             'rating': [1.0, 1.0],
             'quality': [PavementQuality.UNKNOWN, PavementQuality.UNKNOWN],
@@ -86,6 +88,7 @@ def test_get_polygon_paths(operator, expected_compute_input, default_aoi, ohsome
 
     expected_polygons = gpd.GeoDataFrame(
         data={
+            '@osmId': ['way/171574582'],
             'category': [PathCategory.DESIGNATED],
             'rating': [1.0],
             'geometry': [polygon_geom],

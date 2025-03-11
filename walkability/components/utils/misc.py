@@ -62,8 +62,8 @@ def fetch_osm_data(aoi: shapely.MultiPolygon, osm_filter: str, ohsome: OhsomeCli
     elements = ohsome.elements.geometry.post(
         bpolys=aoi, clipGeometry=True, properties='tags', filter=osm_filter
     ).as_dataframe()
-    elements = elements.reset_index(drop=True)
-    return elements[['geometry', '@other_tags']]
+    elements = elements.reset_index(drop=False)
+    return elements[['@osmId', 'geometry', '@other_tags']]
 
 
 def get_qualitative_color(category, cmap_name: str, class_name) -> Color:
