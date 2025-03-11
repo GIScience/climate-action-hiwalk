@@ -1,19 +1,18 @@
 from pathlib import Path
-from typing import Tuple
 
 import geopandas as gpd
 from climatoology.base.artifact import _Artifact, ContinuousLegendData, create_geojson_artifact
 from climatoology.base.computation import ComputationResources
 
-from walkability.components.utils.misc import get_color
+from walkability.components.utils.misc import generate_colors
 
 
 def build_network_artifacts(
     connectivity_permeability: gpd.GeoDataFrame, resources: ComputationResources
-) -> Tuple[_Artifact, _Artifact]:
+) -> list[_Artifact]:
     connectivity_artifact = build_connectivity_artifact(connectivity=connectivity_permeability, resources=resources)
     permeability_artifact = build_permeability_artifact(permeability=connectivity_permeability, resources=resources)
-    return connectivity_artifact, permeability_artifact
+    return [connectivity_artifact, permeability_artifact]
 
 
 def build_connectivity_artifact(
@@ -21,7 +20,7 @@ def build_connectivity_artifact(
     resources: ComputationResources,
     cmap_name: str = 'coolwarm_r',
 ) -> _Artifact:
-    color = get_color(connectivity.connectivity, cmap_name).to_list()
+    color = generate_colors(color_by=connectivity.permeability, cmap_name=cmap_name, min=0, max=0)
     legend = ContinuousLegendData(cmap_name=cmap_name, ticks={'High': 1, 'Low': 0})
 
     return create_geojson_artifact(
@@ -42,7 +41,7 @@ def build_permeability_artifact(
     resources: ComputationResources,
     cmap_name: str = 'coolwarm_r',
 ) -> _Artifact:
-    color = get_color(permeability.permeability, cmap_name).to_list()
+    color = generate_colors(color_by=permeability.permeability, cmap_name=cmap_name, min=0, max=0)
     legend = ContinuousLegendData(cmap_name=cmap_name, ticks={'High': 1, 'Low': 0})
 
     return create_geojson_artifact(

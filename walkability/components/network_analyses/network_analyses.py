@@ -1,3 +1,4 @@
+import time
 from typing import Callable, Tuple
 import geopandas as gpd
 import momepy
@@ -16,6 +17,7 @@ from walkability.components.network_analyses.network_artifacts import build_netw
 from walkability.components.utils.geometry import euclidian_distance, get_utm_zone
 import logging
 
+
 log = logging.getLogger(__name__)
 
 
@@ -25,7 +27,7 @@ def connectivity_permeability_analyses(
     aoi: shapely.MultiPolygon,
     resources: ComputationResources,
     idw_function: Callable[[float], float] = lambda _: 1,
-) -> Tuple[_Artifact, _Artifact]:
+) -> list[_Artifact]:
     log.info('Starting network analyses')
     connectivity_permeability = get_connectivity_permeability(
         paths=paths, walkable_distance=walkable_distance, projected_crs=get_utm_zone(aoi), idw_function=idw_function
@@ -45,6 +47,7 @@ def get_connectivity_permeability(
     threshold: float = 0.5,
     idw_function: Callable[[float], float] = lambda _: 1,
 ) -> gpd.GeoDataFrame:
+    begin = time.time()
     original_crs = paths.crs
     log.debug(f'Reprojecting geodataframe from {original_crs} to {projected_crs.name}')
     paths = paths.to_crs(projected_crs)
@@ -113,6 +116,9 @@ def get_connectivity_permeability(
     nx.set_edge_attributes(G, edge_attributes)
 
     result = momepy.nx_to_gdf(G, points=False)
+
+    end = time.time()
+    log.info(f'Finished Connectivity-Permeability Calculation. Took {end-begin}s')
 
     return result.to_crs(original_crs)[['connectivity', 'permeability', 'geometry']]
 

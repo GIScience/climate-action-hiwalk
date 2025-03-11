@@ -21,6 +21,8 @@ and this project mostly adheres to [Semantic Versioning](https://semver.org/spec
 - A new permeability indicator mapping the average ratio of the Euclidean (straight line) distance and the walking
   network distance between a node and all nearby
   nodes ([#173](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/173))
+- A new detour indicator mapping the average ratio of the walking distance to the euclidian distance for cells in a hexgrid
+  ([#175](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/175))
 
 ## [1.1.0](https://gitlab.heigit.org/climate-action/plugins/walkability/-/releases/1.1.0) - 2024-12-06
 

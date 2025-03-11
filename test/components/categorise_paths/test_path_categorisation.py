@@ -12,7 +12,7 @@ from walkability.components.categorise_paths.path_categorisation import (
 from walkability.components.utils.misc import PathCategory, PavementQuality
 
 
-def test_boost_route_members(expected_compute_input, default_aoi, responses_mock):
+def test_boost_route_members(expected_compute_input, default_aoi, default_path_geometry, responses_mock):
     with open('test/resources/ohsome_line_response.geojson', 'rb') as vector:
         responses_mock.post(
             'https://api.ohsome.org/v1/elements/geometry',
@@ -48,15 +48,15 @@ def test_boost_route_members(expected_compute_input, default_aoi, responses_mock
             ]
         },
         geometry=[
-            shapely.LineString([(12.3, 48.22), (12.3, 48.2205), (12.3005, 48.22)]),
-            shapely.LineString([(12.3, 48.22), (12.3, 48.2205), (12.3005, 48.22)]),
-            shapely.LineString([(12.3, 48.22), (12.3, 48.2205), (12.3005, 48.22)]),
-            shapely.LineString([(12.3, 48.22), (12.3, 48.2205), (12.3005, 48.22)]),
-            shapely.LineString([(12.3, 48.22), (12.3, 48.2205), (12.3005, 48.22)]),
-            shapely.LineString([(12.3, 48.22), (12.3, 48.2205), (12.3005, 48.22)]),
+            default_path_geometry,
+            default_path_geometry,
+            default_path_geometry,
+            default_path_geometry,
+            default_path_geometry,
+            default_path_geometry,
             shapely.LineString([(0, 0), (1, 0), (1, 1)]),
-            shapely.LineString([(12.3, 48.22), (12.3, 48.2205), (12.3005, 48.22)]),
-            shapely.LineString([(12.3, 48.22), (12.3, 48.2205), (12.3005, 48.22)]),
+            default_path_geometry,
+            default_path_geometry,
         ],
         crs=4326,
     )
