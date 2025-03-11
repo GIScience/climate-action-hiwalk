@@ -11,21 +11,9 @@ from pyproj import CRS
 from responses import matchers
 from shapely.geometry import LineString
 
+from test.components.utils.test_misc import filter_start_matcher
 from walkability.core.input import ComputeInputWalkability
 from walkability.core.operator_worker import OperatorWalkability
-from test.components.utils.test_misc import filter_start_matcher
-
-
-def pytest_addoption(parser):
-    parser.addoption('--skip-slow', action='store_true', default=False, help='Skip slow tests')
-
-
-def pytest_collection_modifyitems(config, items):
-    if config.getoption('--skip-slow'):
-        skipper = pytest.mark.skip(reason='Skip slow tests if --skip-slow is given')
-        for item in items:
-            if 'slow' in item.keywords:
-                item.add_marker(skipper)
 
 
 @pytest.fixture
@@ -33,7 +21,7 @@ def expected_compute_input() -> ComputeInputWalkability:
     return ComputeInputWalkability()
 
 
-@pytest.fixture
+@pytest.fixture(scope='module')
 def global_aoi() -> shapely.MultiPolygon:
     return shapely.MultiPolygon([[[[-90, -180], [90, -180], [90, 180], [-90, 180], [-90, -180]]]])
 
@@ -67,7 +55,7 @@ def compute_resources():
         yield resources
 
 
-@pytest.fixture
+@pytest.fixture(scope='module')
 def responses_mock():
     with responses.RequestsMock() as rsps:
         yield rsps
