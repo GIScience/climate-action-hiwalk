@@ -4,7 +4,9 @@ import shapely
 import geopandas as gpd
 from geopandas.testing import assert_geodataframe_equal
 
-from walkability.components.network_analyses.network_analyses import get_connectivity_permeability
+from walkability.components.network_analyses.network_analyses import (
+    get_connectivity_permeability,
+)
 
 
 def test_connectivity():

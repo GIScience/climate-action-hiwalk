@@ -3,10 +3,11 @@ from enum import Enum
 from typing import Dict, Tuple, List, Optional
 
 import geopandas as gpd
-import matplotlib
+import matplotlib as mpl
+from numpy import number
 import pandas as pd
 import shapely
-from matplotlib.colors import to_hex, Normalize
+from matplotlib.colors import to_hex
 from ohsome import OhsomeClient
 from pydantic_extra_types.color import Color
 
@@ -67,8 +68,8 @@ def fetch_osm_data(aoi: shapely.MultiPolygon, osm_filter: str, ohsome: OhsomeCli
 
 
 def get_qualitative_color(category, cmap_name: str, class_name) -> Color:
-    norm = Normalize(0, 1)
-    cmap = matplotlib.cm.ScalarMappable(norm=norm, cmap=cmap_name).get_cmap()
+    norm = mpl.colors.Normalize(0, 1)
+    cmap = mpl.cm.ScalarMappable(norm=norm, cmap=cmap_name).get_cmap()
     cmap.set_under('#808080')
 
     category_norm = {name: idx / (len(class_name) - 1) for idx, name in enumerate(class_name)}
@@ -79,11 +80,30 @@ def get_qualitative_color(category, cmap_name: str, class_name) -> Color:
         return Color(to_hex(cmap(category_norm[category])))
 
 
-def get_color(values: pd.Series, cmap_name: str = 'coolwarm_r') -> pd.Series:
-    norm = Normalize(0, 1)
-    cmap = matplotlib.cm.ScalarMappable(norm=norm, cmap=cmap_name).get_cmap()
+def generate_colors(
+    color_by: pd.Series, cmap_name: str = 'coolwarm_r', min: number | None = None, max: number | None = None
+) -> list[Color]:
+    """
+    Function to generate a list of colors based on a linear normalization for each element in `color_by`.
+    ## Params
+    :param:`color_by`: `pandas.Series` with numerical values to map colors to.
+    :param:`cmap_name`: optional name of matplotlib colormap approved in climatoology. Default `'coolwarm_r'`
+    :param:`min`: optional minimal value of the normalization, numerical or `None`. If `None` minimum value of `color_by` is used.
+    :param:`max`: optional maxmial value of the normalization, numerical or `None`. If `None` maximum value of `color_by` is used.
+    ## Returns
+    :return:`mapped_colors`: list of colors matching values of `color_by`
+    """
+    if min is None:
+        min = color_by.min()
+    if max is None:
+        max = color_by.max()
+
+    norm = mpl.colors.Normalize(vmin=min, vmax=max)
+    cmap = mpl.colormaps[cmap_name]
     cmap.set_under('#808080')
-    return values.apply(lambda v: Color(to_hex(cmap(v))))
+
+    mapped_colors = [Color(mpl.colors.to_hex(cmap(norm(val)))) for val in color_by]
+    return mapped_colors
 
 
 def get_first_match(ordered_keys: List[str], tags: Dict[str, str]) -> Tuple[Optional[str], Optional[str]]:

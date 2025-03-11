@@ -14,7 +14,7 @@ from pydantic_extra_types.color import Color
 from requests import PreparedRequest
 
 from walkability.components.categorise_paths.path_categorisation import apply_path_category_filters
-from walkability.components.utils.misc import PathCategory, ohsome_filter, fetch_osm_data, get_color
+from walkability.components.utils.misc import PathCategory, generate_colors, ohsome_filter, fetch_osm_data
 
 validation_objects = {
     PathCategory.DESIGNATED: {
@@ -93,13 +93,13 @@ def test_fetch_osm_data(expected_compute_input, default_aoi, responses_mock):
     geopandas.testing.assert_geodataframe_equal(computed_osm_data, expected_osm_data, check_like=True)
 
 
-def test_get_color():
-    expected_output = pd.Series([Color('#3b4cc0'), Color('#dcdddd'), Color('#b40426')])
+def test_generate_colors():
+    expected_output = [Color('#3b4cc0'), Color('#dcdddd'), Color('#b40426')]
 
     expected_input = pd.Series([1.0, 0.5, 0.0])
-    computed_output = get_color(expected_input)
+    computed_output = generate_colors(expected_input, min=0, max=1)
 
-    pd.testing.assert_series_equal(computed_output, expected_output)
+    assert computed_output == expected_output
 
 
 @pytest.mark.parametrize('geometry_type', ['line', 'polygon'])

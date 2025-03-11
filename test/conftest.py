@@ -11,6 +11,7 @@ from pyproj import CRS
 from responses import matchers
 from shapely.geometry import LineString
 
+from walkability.components.utils.misc import PathCategory
 from test.components.utils.test_misc import filter_start_matcher
 from walkability.core.input import ComputeInputWalkability
 from walkability.core.operator_worker import OperatorWalkability
@@ -139,3 +140,21 @@ def ors_api(responses_mock):
         ],
     )
     return responses_mock
+
+
+@pytest.fixture
+def default_path_geometry() -> shapely.LineString:
+    return shapely.LineString([(12.3, 48.22), (12.3, 48.2205), (12.3005, 48.22)])
+
+
+@pytest.fixture
+def default_path(default_path_geometry) -> gpd.GeoDataFrame:
+    return gpd.GeoDataFrame(
+        data={
+            'category': [PathCategory.DESIGNATED],
+            'rating': [1.0],
+            '@other_tags': [{}],
+            'geometry': [default_path_geometry],
+        },
+        crs='EPSG:4326',
+    )

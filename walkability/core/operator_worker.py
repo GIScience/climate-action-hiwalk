@@ -14,6 +14,7 @@ from walkability.components.categorise_paths.path_categorisation import path_cat
 from walkability.components.categorise_paths.path_categorisation_artifacts import build_path_categorisation_artifact
 from walkability.components.categorise_paths.path_summarisation import summarise_by_area
 from walkability.components.naturalness.naturalness_analysis import naturalness_analysis
+from walkability.components.network_analyses.hexgrid_analysis import hexgrid_permeability_analysis
 from walkability.components.network_analyses.network_analyses import connectivity_permeability_analyses
 from walkability.components.slope.slope_analysis import slope_analysis
 from walkability.components.utils.geometry import get_utm_zone, get_buffered_aoi
@@ -48,6 +49,8 @@ class OperatorWalkability(BaseOperator[ComputeInputWalkability]):
     ) -> List[_Artifact]:
         log.info(f'Handling compute request: {params.model_dump()} in context: {resources}')
 
+        artifacts = []
+
         line_paths, line_paths_buffered, polygon_paths = self._get_paths(
             aoi=aoi, max_walking_distance=params.max_walking_distance, rating_map=params.get_path_rating_mapping()
         )
@@ -68,6 +71,7 @@ class OperatorWalkability(BaseOperator[ComputeInputWalkability]):
         path_artifacts = build_path_categorisation_artifact(
             paths_line=line_paths, paths_polygon=polygon_paths, areal_summaries=areal_summaries, resources=resources
         )
+        artifacts += path_artifacts
 
         network_artifacts = connectivity_permeability_analyses(
             line_paths_buffered,
@@ -76,6 +80,12 @@ class OperatorWalkability(BaseOperator[ComputeInputWalkability]):
             idw_function=params.get_distance_weighting_function(),
             resources=resources,
         )
+        artifacts += network_artifacts
+
+        hexgrid_permeability_artifact = hexgrid_permeability_analysis(
+            paths=line_paths_buffered, aoi=aoi, max_walking_distance=params.max_walking_distance, resources=resources
+        )
+        artifacts.append(hexgrid_permeability_artifact)
 
         naturalness_artifact = naturalness_analysis(
             line_paths=line_paths,
@@ -84,10 +94,12 @@ class OperatorWalkability(BaseOperator[ComputeInputWalkability]):
             resources=resources,
             naturalness_utility=self.naturalness_utility,
         )
+        artifacts.append(naturalness_artifact)
 
         slope_artifact = slope_analysis(line_paths=line_paths, aoi=aoi, ors_client=self.ors_client, resources=resources)
+        artifacts.append(slope_artifact)
 
-        return path_artifacts + list(network_artifacts) + [naturalness_artifact, slope_artifact]
+        return artifacts
 
     def _get_paths(
         self, aoi: shapely.MultiPolygon, max_walking_distance: float, rating_map: Dict[PathCategory, float]
