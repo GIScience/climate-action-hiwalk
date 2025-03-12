@@ -1,12 +1,23 @@
 import numpy as np
 from pyproj import CRS
+import pytest
 import shapely
 import geopandas as gpd
 from geopandas.testing import assert_geodataframe_equal
 
 from walkability.components.network_analyses.network_analyses import (
     get_connectivity_permeability,
+    split_paths_at_intersections,
+    geodataframe_to_graph,
 )
+
+
+@pytest.fixture
+def intersecting_path_geoms():
+    return [
+        shapely.LineString([(9, 49.0000088), (9.0, 49.000018)]),
+        shapely.LineString([(9.0, 49.0), (9.0, 49.000018), (9.0000137, 49.0000088)]),
+    ]
 
 
 def test_connectivity():
@@ -299,3 +310,49 @@ def test_connectivity_unwalkable():
     )
 
     assert_geodataframe_equal(connectivity, expected_connectivity, check_less_precise=True)
+
+
+def test_split_paths_at_intersections(intersecting_path_geoms):
+    expected_path_geoms = [
+        shapely.LineString([(9, 49.0000088), (9.0, 49.000018)]),
+        shapely.LineString([(9.0, 49.0), (9.0, 49.000018)]),
+        shapely.LineString([(9.0, 49.000018), (9.0000137, 49.0000088)]),
+    ]
+    paths = gpd.GeoDataFrame(
+        data={
+            'geometry': intersecting_path_geoms,
+            'rating': [1.0, 0.75],
+        },
+        crs='EPSG:4326',
+    )
+    expected = gpd.GeoDataFrame(
+        data={
+            'geometry': expected_path_geoms,
+            'rating': [1.0, 0.75, 0.75],
+        },
+        crs='EPSG:4326',
+        index=[0, 1, 1],
+    )
+    received = split_paths_at_intersections(paths)
+    assert_geodataframe_equal(received, expected)
+
+
+def test_geodataframe_to_graph(intersecting_path_geoms):
+    paths = gpd.GeoDataFrame(
+        data={
+            'geometry': intersecting_path_geoms,
+            'rating': [1.0, 0.75],
+        },
+        crs='EPSG:4326',
+    )
+    expected_edges = {
+        ((9, 49.0000088), (9.0, 49.000018), 0): 1.0,
+        ((9.0, 49.0), (9.0, 49.000018), 1): 0.75,
+        ((9.0, 49.000018), (9.0000137, 49.0000088), 2): 0.75,
+    }
+    received = geodataframe_to_graph(paths)
+    for (u, v, k), rating in expected_edges.items():
+        assert received.has_edge(u, v, key=k)
+    for (u, v, k), expected_rating in expected_edges.items():
+        assert 'rating' in received[u][v][k]
+        assert received[u][v][k]['rating'] == expected_rating
