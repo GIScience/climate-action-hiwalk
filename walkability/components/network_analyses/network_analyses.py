@@ -125,6 +125,23 @@ def get_connectivity_permeability(
 
 def geodataframe_to_graph(df: gpd.GeoDataFrame) -> nx.MultiGraph:
     log.debug('Splitting paths at intersections')
+    df_ = split_paths_at_intersections(df)
+
+    log.debug('Creating network graph from paths geodataframe')
+    G = momepy.gdf_to_nx(df_, multigraph=True, directed=False, length='length')
+    node_data = dict()
+    for node in G.nodes():
+        node_data[node] = {'x': node[0], 'y': node[1]}
+    set_node_attributes(G, node_data)
+
+    log.debug('Simplifying graph by removing intermediate nodes along edges')
+    G_ = simplify_graph(G.to_directed(), remove_rings=False, edge_attrs_differ=['rating'])
+
+    log.debug('Finished creating graph')
+    return G_.to_undirected()
+
+
+def split_paths_at_intersections(df):
     df = df.drop(errors='ignore', labels='@other_tags', axis=1)
     df.geometry = df.geometry.apply(lambda geom: MultiLineString([geom]) if isinstance(geom, LineString) else geom)
     df_ = (
@@ -145,16 +162,4 @@ def geodataframe_to_graph(df: gpd.GeoDataFrame) -> nx.MultiGraph:
     # geom: MultiLineString = df.unary_union
     # df_ = gpd.GeoDataFrame(data={'geometry': [geom], 'foo': ["bar"]}, crs=df.crs).explode(index_parts=True)
     df_ = gpd.GeoDataFrame(df_).set_crs(df.crs)
-
-    log.debug('Creating network graph from paths geodataframe')
-    G = momepy.gdf_to_nx(df_, multigraph=True, directed=False, length='length')
-    node_data = dict()
-    for node in G.nodes():
-        node_data[node] = {'x': node[0], 'y': node[1]}
-    set_node_attributes(G, node_data)
-
-    log.debug('Simplifying graph by removing intermediate nodes along edges')
-    G_ = simplify_graph(G.to_directed(), remove_rings=False, edge_attrs_differ=['rating'])
-
-    log.debug('Finished creating graph')
-    return G_.to_undirected()
+    return df_
