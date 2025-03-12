@@ -1,8 +1,8 @@
 smoothness:
   - ranking: good
-    value: good
-  - ranking: excellent
     value: excellent
+  - ranking: good
+    value: good
   - ranking: mediocre
     value: intermediate
   - ranking: poor
@@ -18,13 +18,13 @@ smoothness:
 surface:
   - ranking: potentially_good
     value: asphalt
-  - ranking: potentially_poor
+  - ranking: potentially_mediocre
     value: unpaved
   - ranking: potentially_good
     value: paved
   - ranking: potentially_good
     value: concrete
-  - ranking: potentially_mediocre
+  - ranking: potentially_good
     value: paving_stones
   - ranking: poor
     value: ground
@@ -34,19 +34,19 @@ surface:
     value: dirt
   - ranking: poor
     value: grass
-  - ranking: potentially_poor
+  - ranking: potentially_mediocre
     value: compacted
   - ranking: poor
     value: sand
-  - ranking: poor
+  - ranking: potentially_mediocre
     value: sett
   - ranking: potentially_mediocre
     value: fine_gravel
   - ranking: potentially_good
     value: wood
-  - ranking: potentially_poor
+  - ranking: potentially_good
     value: concrete:plates
-  - ranking: potentially_mediocre
+  - ranking: mediocre
     value: cobblestone
   - ranking: poor
     value: earth
@@ -54,18 +54,18 @@ surface:
     value: pebblestone
   - ranking: potentially_good
     value: metal
-  - ranking: poor
+  - ranking: mediocre
     value: grass_paver
-  - ranking: poor
+  - ranking: mediocre
     value: artificial_turf
 tracktype:
-  - ranking: mediocre
-    value: grade3
+  - ranking: potentially_good
+    value: grade1
   - ranking: mediocre
     value: grade2
+  - ranking: mediocre
+    value: grade3
   - ranking: poor
     value: grade4
   - ranking: poor
     value: grade5
-  - ranking: potentially_good
-    value: grade1

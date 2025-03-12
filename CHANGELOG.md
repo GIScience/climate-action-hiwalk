@@ -7,6 +7,11 @@ and this project mostly adheres to [Semantic Versioning](https://semver.org/spec
 
 ## [Unreleased](https://gitlab.heigit.org/climate-action/plugins/walkability/-/compare/1.1.0...main)
 
+### Changed
+
+- Merge PavementQuality categories "excellent" and "good" into "good" ([138](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/138))
+- Modify "potential" pavement quality categorization based on surface tags to reflect good road maintenance state ([138](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/138))
+
 ### Fixed
 
 - Filter ohsome boundaries to polygon geometries (in `summarise_by_area`), in case other geometry types make it through

@@ -35,8 +35,6 @@ class PathCategory(Enum):
 
 
 class PavementQuality(Enum):
-    EXCELLENT = 'excellent'
-    POTENTIALLY_EXCELLENT = 'potentially_excellent'
     GOOD = 'good'
     POTENTIALLY_GOOD = 'potentially_good'
     MEDIOCRE = 'mediocre'
@@ -47,9 +45,7 @@ class PavementQuality(Enum):
 
 
 PavementQualityRating = {
-    PavementQuality.EXCELLENT: 1.0,
-    PavementQuality.POTENTIALLY_EXCELLENT: 0.95,
-    PavementQuality.GOOD: 0.75,
+    PavementQuality.GOOD: 1.0,
     PavementQuality.POTENTIALLY_GOOD: 0.70,
     PavementQuality.MEDIOCRE: 0.5,
     PavementQuality.POTENTIALLY_MEDIOCRE: 0.45,
