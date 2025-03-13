@@ -40,17 +40,15 @@ class PavementQuality(Enum):
     MEDIOCRE = 'mediocre'
     POTENTIALLY_MEDIOCRE = 'potentially_mediocre'
     POOR = 'poor'
-    POTENTIALLY_POOR = 'potentially_poor'
     UNKNOWN = 'unknown'
 
 
 PavementQualityRating = {
     PavementQuality.GOOD: 1.0,
-    PavementQuality.POTENTIALLY_GOOD: 0.70,
+    PavementQuality.POTENTIALLY_GOOD: 0.8,
     PavementQuality.MEDIOCRE: 0.5,
-    PavementQuality.POTENTIALLY_MEDIOCRE: 0.45,
-    PavementQuality.POOR: 0.15,
-    PavementQuality.POTENTIALLY_POOR: 0.10,
+    PavementQuality.POTENTIALLY_MEDIOCRE: 0.3,
+    PavementQuality.POOR: 0.0,
     PavementQuality.UNKNOWN: -9999,
 }
 
