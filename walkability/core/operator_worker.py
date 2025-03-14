@@ -1,5 +1,4 @@
 import logging
-from typing import List, Dict, Tuple
 
 import geopandas as gpd
 import openrouteservice
@@ -14,8 +13,7 @@ from walkability.components.categorise_paths.path_categorisation import path_cat
 from walkability.components.categorise_paths.path_categorisation_artifacts import build_path_categorisation_artifact
 from walkability.components.categorise_paths.path_summarisation import summarise_by_area
 from walkability.components.naturalness.naturalness_analysis import naturalness_analysis
-from walkability.components.network_analyses.hexgrid_analysis import hexgrid_permeability_analysis
-from walkability.components.network_analyses.network_analyses import connectivity_permeability_analyses
+from walkability.components.network_analyses.detour_analysis import detour_factor_analysis
 from walkability.components.slope.slope_analysis import slope_analysis
 from walkability.components.utils.geometry import get_utm_zone, get_buffered_aoi
 from walkability.components.utils.misc import (
@@ -46,7 +44,7 @@ class OperatorWalkability(BaseOperator[ComputeInputWalkability]):
         aoi: shapely.MultiPolygon,
         aoi_properties: AoiProperties,
         params: ComputeInputWalkability,
-    ) -> List[_Artifact]:
+    ) -> list[_Artifact]:
         log.info(f'Handling compute request: {params.model_dump()} in context: {resources}')
 
         artifacts = []
@@ -71,21 +69,12 @@ class OperatorWalkability(BaseOperator[ComputeInputWalkability]):
         path_artifacts = build_path_categorisation_artifact(
             paths_line=line_paths, paths_polygon=polygon_paths, areal_summaries=areal_summaries, resources=resources
         )
-        artifacts += path_artifacts
+        artifacts.extend(path_artifacts)
 
-        network_artifacts = connectivity_permeability_analyses(
-            line_paths_buffered,
-            params.max_walking_distance,
-            aoi,
-            idw_function=params.get_distance_weighting_function(),
-            resources=resources,
-        )
-        artifacts += network_artifacts
-
-        hexgrid_permeability_artifact = hexgrid_permeability_analysis(
+        detour_artifact = detour_factor_analysis(
             paths=line_paths_buffered, aoi=aoi, max_walking_distance=params.max_walking_distance, resources=resources
         )
-        artifacts.append(hexgrid_permeability_artifact)
+        artifacts.append(detour_artifact)
 
         naturalness_artifact = naturalness_analysis(
             line_paths=line_paths,
@@ -102,8 +91,8 @@ class OperatorWalkability(BaseOperator[ComputeInputWalkability]):
         return artifacts
 
     def _get_paths(
-        self, aoi: shapely.MultiPolygon, max_walking_distance: float, rating_map: Dict[PathCategory, float]
-    ) -> Tuple[gpd.GeoDataFrame, gpd.GeoDataFrame, gpd.GeoDataFrame]:
+        self, aoi: shapely.MultiPolygon, max_walking_distance: float, rating_map: dict[PathCategory, float]
+    ) -> tuple[gpd.GeoDataFrame, gpd.GeoDataFrame, gpd.GeoDataFrame]:
         aoi_buffered = get_buffered_aoi(aoi, max_walking_distance)
 
         log.debug('Extracting paths')

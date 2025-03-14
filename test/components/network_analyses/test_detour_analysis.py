@@ -1,9 +1,12 @@
 import shapely
-from walkability.components.network_analyses.hexgrid_analysis import (
+import pytest
+from walkability.components.network_analyses.detour_analysis import (
     create_destinations,
     find_nearest_point,
-    get_hexgrid_permeability,
+    geodataframe_to_graph,
+    get_detour_factors,
     snap,
+    split_paths_at_intersections,
 )
 
 
@@ -15,17 +18,17 @@ from geopandas.testing import assert_geodataframe_equal
 from walkability.components.utils.misc import PathCategory
 
 
-def test_hexgrid_permeability(default_path, default_aoi):
+def test_get_detour_factors(default_path, default_aoi):
     assert h3pandas.version is not None
 
     permeabilities = pd.DataFrame(
-        data={'permeability': [1.5547923713301433, 1.253117941712255, 1.518730573232965]},
+        data={'detour_factor': [1.5547923713301433, 1.253117941712255, 1.518730573232965]},
         index=['8a1f8d289187fff', '8a1f8d2891a7fff', '8a1f8d2891b7fff'],
     )
 
     expected = permeabilities.h3.h3_to_geo_boundary()
 
-    result = get_hexgrid_permeability(paths=default_path, aoi=default_aoi, max_walking_distance=1000)
+    result = get_detour_factors(paths=default_path, aoi=default_aoi, max_walking_distance=1000)
 
     assert_geodataframe_equal(result.sort_index(), expected.sort_index())
 
@@ -42,15 +45,15 @@ def test_create_destinations(default_aoi, default_path):
     assert result.shape[0] == 3
     assert sorted(result.index.to_list()) == sorted(expected_index)
 
-    assert type(result['geometry'].iloc[0]) == shapely.Polygon
+    assert isinstance(result['geometry'].iloc[0], shapely.Polygon)
 
     assert 'buffer' in result.columns.to_list()
     assert result['buffer'].dtype == gpd.array.GeometryDtype()
-    assert type(result['buffer'].iloc[0]) == shapely.Polygon
+    assert isinstance(result['buffer'].iloc[0], shapely.Polygon)
 
     assert 'centroids' in result.columns.to_list()
     assert result['centroids'].dtype == gpd.array.GeometryDtype()
-    assert type(result['centroids'].iloc[0]) == shapely.Point
+    assert isinstance(result['centroids'].iloc[0], shapely.Point)
     assert result.loc[expected_index[0], 'centroids'] == expected_centroid
 
 
@@ -71,7 +74,7 @@ def test_snap(default_path):
     assert result_paths.shape[0] == 3
     for index in range(0, 3):
         assert result_paths.loc[index, 'category'] == PathCategory.DESIGNATED
-        assert type(result_paths.loc[index, 'geometry']) == shapely.LineString
+        assert isinstance(result_paths.loc[index, 'geometry'], shapely.LineString)
 
 
 def test_find_nearest_point(default_path):
@@ -85,3 +88,57 @@ def test_find_nearest_point(default_path):
     result = find_nearest_point(row, lines)
 
     assert result == shapely.from_wkt('POINT (299458.2337885652 5344278.6408732245)')
+
+
+@pytest.fixture
+def intersecting_path_geoms():
+    return [
+        shapely.LineString([(9, 49.0000088), (9.0, 49.000018)]),
+        shapely.LineString([(9.0, 49.0), (9.0, 49.000018), (9.0000137, 49.0000088)]),
+    ]
+
+
+def test_split_paths_at_intersections(intersecting_path_geoms):
+    expected_path_geoms = [
+        shapely.LineString([(9, 49.0000088), (9.0, 49.000018)]),
+        shapely.LineString([(9.0, 49.0), (9.0, 49.000018)]),
+        shapely.LineString([(9.0, 49.000018), (9.0000137, 49.0000088)]),
+    ]
+    paths = gpd.GeoDataFrame(
+        data={
+            'geometry': intersecting_path_geoms,
+            'rating': [1.0, 0.75],
+        },
+        crs='EPSG:4326',
+    )
+    expected = gpd.GeoDataFrame(
+        data={
+            'geometry': expected_path_geoms,
+            'rating': [1.0, 0.75, 0.75],
+        },
+        crs='EPSG:4326',
+        index=[0, 1, 1],
+    )
+    received = split_paths_at_intersections(paths)
+    assert_geodataframe_equal(received, expected)
+
+
+def test_geodataframe_to_graph(intersecting_path_geoms):
+    paths = gpd.GeoDataFrame(
+        data={
+            'geometry': intersecting_path_geoms,
+            'rating': [1.0, 0.75],
+        },
+        crs='EPSG:4326',
+    )
+    expected_edges = {
+        ((9, 49.0000088), (9.0, 49.000018), 0): 1.0,
+        ((9.0, 49.0), (9.0, 49.000018), 1): 0.75,
+        ((9.0, 49.000018), (9.0000137, 49.0000088), 2): 0.75,
+    }
+    received = geodataframe_to_graph(paths)
+    for (u, v, k), rating in expected_edges.items():
+        assert received.has_edge(u, v, key=k)
+    for (u, v, k), expected_rating in expected_edges.items():
+        assert 'rating' in received[u][v][k]
+        assert received[u][v][k]['rating'] == expected_rating
