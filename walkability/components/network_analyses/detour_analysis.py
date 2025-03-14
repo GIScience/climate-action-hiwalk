@@ -4,10 +4,12 @@ from climatoology.base.artifact import _Artifact, ContinuousLegendData, create_g
 from climatoology.base.computation import ComputationResources
 from pathlib import Path
 
+from networkx import set_node_attributes
 import numpy as np
+from osmnx import simplify_graph
 from pyproj import CRS
+from shapely import LineString, MultiLineString
 
-from walkability.components.network_analyses.network_analyses import geodataframe_to_graph
 from walkability.components.utils.geometry import get_buffered_aoi
 from walkability.components.utils.misc import PathCategory
 
@@ -17,6 +19,7 @@ import h3pandas
 import networkx as nx
 import pandas as pd
 import shapely
+import momepy
 
 
 from operator import itemgetter
@@ -27,20 +30,20 @@ from walkability.components.utils.misc import generate_colors
 log = logging.getLogger(__name__)
 
 
-def hexgrid_permeability_analysis(
+def detour_factor_analysis(
     paths: gpd.GeoDataFrame, aoi: shapely.MultiPolygon, max_walking_distance: float, resources: ComputationResources
 ) -> _Artifact:
-    hexgrid_permeability = get_hexgrid_permeability(paths=paths, aoi=aoi, max_walking_distance=max_walking_distance)
+    detour_factors = get_detour_factors(paths=paths, aoi=aoi, max_walking_distance=max_walking_distance)
 
-    artifact = build_hexgrid_permeability_artifact(hexgrid_permeability=hexgrid_permeability, resources=resources)
+    artifact = build_detour_factor_artifact(detour_factor_data=detour_factors, resources=resources)
     return artifact
 
 
-def get_hexgrid_permeability(
+def get_detour_factors(
     paths: gpd.GeoDataFrame, aoi: shapely.MultiPolygon, max_walking_distance: float
 ) -> gpd.GeoDataFrame:
     begin = time.time()
-    log.info('Computing hexgrid permeability')
+    log.info('Computing detour factors')
 
     buffered_aoi = get_buffered_aoi(aoi, distance=max_walking_distance)
     local_crs = paths.estimate_utm_crs()
@@ -58,19 +61,19 @@ def get_hexgrid_permeability(
 
     detours = []
     index = []
-    for cell in origins.iterrows():
-        destinations_per_cell = snapped_destinations.clip(cell[1]['buffer'])
-        origin = cell[1]['centroids']
+    for cell_index, cell in origins.iterrows():
+        destinations_per_cell = snapped_destinations.clip(cell['buffer'])
+        origin = cell['centroids']
         cell_detours = []
-        for destination in destinations_per_cell.iterrows():
+        for _i, destination in destinations_per_cell.iterrows():
             try:
                 network_distance = nx.dijkstra_path_length(
                     graph,
                     (origin.x, origin.y),
-                    (destination[1]['centroids'].x, destination[1]['centroids'].y),
+                    (destination['centroids'].x, destination['centroids'].y),
                     weight='length',
                 )
-                euclidian_distance = origin.distance(destination[1]['centroids'])
+                euclidian_distance = origin.distance(destination['centroids'])
 
                 if euclidian_distance == 0:
                     continue
@@ -79,19 +82,18 @@ def get_hexgrid_permeability(
             except nx.exception.NetworkXNoPath:
                 # TODO pass here with no value (watch fmean exceptions if list is empty)
                 pass
+        index.append(cell_index)
         if len(cell_detours) == 0:
             detours.append(np.nan)
-            index.append(cell[0])
         else:
             detours.append(fmean(cell_detours))
-            index.append(cell[0])
 
-    permeability = pd.DataFrame(data={'permeability': detours}, index=index)
-    hexgrid_permeability = permeability.h3.h3_to_geo_boundary()
+    detour_factors = pd.DataFrame(data={'detour_factor': detours}, index=index)
+    hexgrid_detour_factors = detour_factors.h3.h3_to_geo_boundary()
 
     end = time.time()
-    log.info(f'Finished calculating Hexgrid Detour Factor. Took {end-begin}s')
-    return hexgrid_permeability
+    log.info(f'Finished calculating Detour Factors. Took {end - begin}s')
+    return hexgrid_detour_factors
 
 
 def create_destinations(
@@ -111,6 +113,7 @@ def create_destinations(
     hexgrid = gpd.GeoDataFrame(geometry=[aoi], crs='EPSG:4326').h3.polyfill_resample(resolution)
     local_hexgrid = hexgrid.to_crs(crs=local_crs)
 
+    log.debug('Creating Destinations')
     local_hexgrid['buffer'] = local_hexgrid.buffer(distance=200)
     local_hexgrid['centroids'] = local_hexgrid.centroid
     destinations = local_hexgrid[local_hexgrid.intersects(paths.union_all())]
@@ -132,6 +135,8 @@ def snap(points: gpd.GeoDataFrame, paths: gpd.GeoDataFrame, crs: CRS) -> tuple[g
 
     paths['geometry'] = paths.apply(lambda row: shapely.ops.split(row['geometry'], splitter=nearest_points), axis=1)
     split_paths = paths.explode().reset_index(drop=True).set_crs(crs)
+
+    log.debug('Adding edges to hexcell centroids to paths')
     for edge in snapping_edges:
         last_row = split_paths.shape[0]
         split_paths.loc[last_row, 'category'] = PathCategory.DESIGNATED
@@ -158,22 +163,64 @@ def find_nearest_point(row: pd.Series, lines: gpd.GeoDataFrame) -> shapely.Point
     return closest_candidate['point']
 
 
-def build_hexgrid_permeability_artifact(
-    hexgrid_permeability: gpd.GeoDataFrame, resources: ComputationResources, cmap_name: str = 'YlOrRd'
+def split_paths_at_intersections(df):
+    df = df.drop(errors='ignore', labels='@other_tags', axis=1)
+    df.geometry = df.geometry.apply(lambda geom: MultiLineString([geom]) if isinstance(geom, LineString) else geom)
+    df_ = (
+        df.assign(
+            geometry=df.geometry.apply(
+                lambda geom: list(
+                    list(map(LineString, zip(geom_part.coords[:-1], geom_part.coords[1:]))) for geom_part in geom.geoms
+                )
+            )
+        )
+        .explode('geometry')
+        .explode('geometry')
+    )
+    # PERF: `unary_union` might lead to performance issues ...
+    # ... since it creates a single geometry
+    # `unary_union`: self-intersection geometries
+    # NOTE: All properties of the geodataframe are lost
+    # geom: MultiLineString = df.unary_union
+    # df_ = gpd.GeoDataFrame(data={'geometry': [geom], 'foo': ["bar"]}, crs=df.crs).explode(index_parts=True)
+    df_ = gpd.GeoDataFrame(df_).set_crs(df.crs)
+    return df_
+
+
+def geodataframe_to_graph(df: gpd.GeoDataFrame) -> nx.MultiGraph:
+    log.debug('Splitting paths at intersections')
+    df_ = split_paths_at_intersections(df)
+
+    log.debug('Creating network graph from paths geodataframe')
+    G = momepy.gdf_to_nx(df_, multigraph=True, directed=False, length='length')
+    node_data = dict()
+    for node in G.nodes():
+        node_data[node] = {'x': node[0], 'y': node[1]}
+    set_node_attributes(G, node_data)
+
+    log.debug('Simplifying graph by removing intermediate nodes along edges')
+    G_ = simplify_graph(G.to_directed(), remove_rings=False, edge_attrs_differ=['rating'])
+
+    log.debug('Finished creating graph')
+    return G_.to_undirected()
+
+
+def build_detour_factor_artifact(
+    detour_factor_data: gpd.GeoDataFrame, resources: ComputationResources, cmap_name: str = 'YlOrRd'
 ) -> _Artifact:
-    detour = hexgrid_permeability.permeability
+    detour = detour_factor_data.detour_factor
     color = generate_colors(color_by=detour, cmap_name=cmap_name)
     legend = ContinuousLegendData(
         cmap_name=cmap_name, ticks={f'{round(detour.min(), ndigits=2)}': 0, f'{round(detour.max(), ndigits=2)}': 1}
     )
 
     return create_geojson_artifact(
-        features=hexgrid_permeability.geometry,
-        layer_name='Hexgrid Detours',
-        filename='hexgrid_permeability',
-        caption=Path('resources/components/network_analyses/hexgrid_permeability/caption.md').read_text(),
-        description=Path('resources/components/network_analyses/hexgrid_permeability/description.md').read_text(),
-        label=hexgrid_permeability.permeability.round(2).to_list(),
+        features=detour_factor_data.geometry,
+        layer_name='Detour Factors',
+        filename='hexgrid_detours',
+        caption=Path('resources/components/network_analyses/detour_factor/caption.md').read_text(),
+        description=Path('resources/components/network_analyses/detour_factor/description.md').read_text(),
+        label=detour_factor_data.detour_factor.round(2).to_list(),
         color=color,
         legend_data=legend,
         resources=resources,
