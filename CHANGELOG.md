@@ -9,8 +9,13 @@ and this project mostly adheres to [Semantic Versioning](https://semver.org/spec
 
 ### Changed
 
-- Merge PavementQuality categories "excellent" and "good" into "good" ([138](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/138))
-- Modify "potential" pavement quality categorization based on surface tags to reflect good road maintenance state ([138](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/138))
+- Merge PavementQuality categories "excellent" and "good" into "
+  good" ([138](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/138))
+- Modify "potential" pavement quality categorization based on surface tags to reflect good road maintenance
+  state ([138](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/138))
+- Paths, where it is unclear if the user has to walk on the street, are now classified as '
+  Unknown' ([144](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/144)). Before it was assumed, no
+  sidewalk would be available.
 
 ### Fixed
 
@@ -23,12 +28,14 @@ and this project mostly adheres to [Semantic Versioning](https://semver.org/spec
   paths ([#21](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/21))
 - A new slope indicator depicting the slope in % of OSM ways based on openelevationservice (
   90x90m) ([#42](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/42))
-- A new detour indicator mapping the average ratio of the walking distance to the euclidian distance for cells in a hexgrid
+- A new detour indicator mapping the average ratio of the walking distance to the euclidian distance for cells in a
+  hexgrid
   ([#175](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/175))
 
 ### Removed
 
-- The old node based connectivity indicator in favor of future proper accessibility indicators and the new hexgrid detour indicator ([#178](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/178))
+- The old node based connectivity indicator in favor of future proper accessibility indicators and the new hexgrid
+  detour indicator ([#178](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/178))
 
 ## [1.1.0](https://gitlab.heigit.org/climate-action/plugins/walkability/-/releases/1.1.0) - 2024-12-06
 

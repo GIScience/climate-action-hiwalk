@@ -1,5 +1,7 @@
 import uuid
+from typing import Callable, Any, Tuple
 from unittest.mock import patch
+from urllib.parse import parse_qsl
 
 import geopandas as gpd
 import pytest
@@ -8,11 +10,11 @@ import shapely
 from climatoology.base.baseoperator import AoiProperties
 from climatoology.base.computation import ComputationScope
 from pyproj import CRS
+from requests import PreparedRequest
 from responses import matchers
 from shapely.geometry import LineString
 
 from walkability.components.utils.misc import PathCategory
-from test.components.utils.test_misc import filter_start_matcher
 from walkability.core.input import ComputeInputWalkability
 from walkability.core.operator_worker import OperatorWalkability
 
@@ -72,11 +74,9 @@ def ohsome_api(responses_mock):
     with (
         open('test/resources/ohsome_line_response.geojson', 'r') as line_file,
         open('test/resources/ohsome_polygon_response.geojson', 'r') as polygon_file,
-        open('test/resources/ohsome_route_response.geojson', 'r') as route_file,
     ):
         line_body = line_file.read()
         polygon_body = polygon_file.read()
-        route_body = route_file.read()
 
     responses_mock.post(
         'https://api.ohsome.org/v1/elements/geometry',
@@ -88,12 +88,6 @@ def ohsome_api(responses_mock):
         'https://api.ohsome.org/v1/elements/geometry',
         body=polygon_body,
         match=[filter_start_matcher('geometry:polygon')],
-    )
-
-    responses_mock.post(
-        'https://api.ohsome.org/v1/elements/geometry',
-        body=route_body,
-        match=[filter_start_matcher('route in (foot,hiking)')],
     )
     return responses_mock
 
@@ -158,3 +152,19 @@ def default_path(default_path_geometry) -> gpd.GeoDataFrame:
         },
         crs='EPSG:4326',
     )
+
+
+def filter_start_matcher(filter_start: str) -> Callable[..., Any]:
+    def match(request: PreparedRequest) -> Tuple[bool, str]:
+        request_body = request.body
+        qsl_body = dict(parse_qsl(request_body, keep_blank_values=False)) if request_body else {}
+
+        if request_body is None:
+            return False, 'The given request has no body'
+        elif qsl_body.get('filter') is None:
+            return False, 'Filter parameter not set'
+        else:
+            valid = qsl_body.get('filter', '').startswith(filter_start)
+            return (True, '') if valid else (False, f'The filter parameter does not start with {filter_start}')
+
+    return match

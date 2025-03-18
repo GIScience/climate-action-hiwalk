@@ -1,8 +1,8 @@
 from enum import Enum
-from typing import Self, Dict
+from typing import Set, Dict
 
 from climatoology.utility.Naturalness import NaturalnessIndex
-from pydantic import BaseModel, Field, model_validator
+from pydantic import BaseModel, Field
 
 from walkability.components.utils.misc import PathCategory
 
@@ -15,82 +15,6 @@ class WalkingSpeed(Enum):
 
 WALKING_SPEED_MAP = {WalkingSpeed.SLOW: 2, WalkingSpeed.MEDIUM: 4, WalkingSpeed.FAST: 6}
 WALKING_SPEED_MAP_STRING = {k.value: v for k, v in WALKING_SPEED_MAP.items()}
-
-
-class PathRating(BaseModel):
-    designated: float = Field(
-        title='Designated Path Rating',
-        description='Qualitative (between 0..1) rating of paths designated for exclusive pedestrian use.',
-        ge=0,
-        le=1,
-        examples=[1.0],
-        default=1.0,
-    )
-    designated_shared_with_bikes: float = Field(
-        title='Designated Shared with Bikes Path Rating',
-        description='Qualitative (between 0..1) rating of paths shared with bikes.',
-        ge=0,
-        le=1,
-        examples=[0.8],
-        default=0.8,
-    )
-
-    shared_with_motorized_traffic_low_speed: float = Field(
-        title='Shared with motorized traffic low speed Path Rating',
-        description='Qualitative rating (between 0..1) of streets without a sidewalk, with low '
-        'speed limits, such as living streets or service ways.',
-        ge=0,
-        le=1,
-        examples=[0.6],
-        default=0.6,
-    )
-    shared_with_motorized_traffic_medium_speed: float = Field(
-        title='Shared with motorized traffic medium speed Path Rating',
-        description='Qualitative rating (between 0..1) of streets without a sidewalk, '
-        'with medium speed limits up to 30 km/h',
-        ge=0,
-        le=1,
-        examples=[0.4],
-        default=0.4,
-    )
-    shared_with_motorized_traffic_high_speed: float = Field(
-        title='Shared with motorized traffic high speed Path Rating',
-        description='Qualitative rating (between 0..1) of streets without a sidewalk, '
-        'with higher speed limits up to 50 km/h',
-        ge=0,
-        le=1,
-        examples=[0.2],
-        default=0.2,
-    )
-    not_walkable: float = Field(
-        title='Not Walkable Path Rating',
-        description='Qualitative rating (between 0..1) of paths that are not walkable.',
-        ge=0,
-        le=1,
-        examples=[0.0],
-        default=0.0,
-    )
-    unknown: float = Field(
-        title='Unknown Path Rating',
-        description='Qualitative (between 0..1) rating of paths that are in principle walkable but '
-        'cannot be fit in one of the other categories (default -9999, which is out of scale)',
-        ge=0,
-        le=1,
-        examples=[0.0],
-        default=0.0,
-    )
-
-    @model_validator(mode='after')
-    def check_order(self) -> Self:
-        assert (
-            self.not_walkable
-            <= self.shared_with_motorized_traffic_high_speed
-            <= self.shared_with_motorized_traffic_medium_speed
-            <= self.shared_with_motorized_traffic_low_speed
-            <= self.designated_shared_with_bikes
-            <= self.designated
-        ), 'Qualitative rating must respect semantic order of categories!'
-        return self
 
 
 class ComputeInputWalkability(BaseModel):
@@ -114,11 +38,20 @@ class ComputeInputWalkability(BaseModel):
         examples=[NaturalnessIndex.NDVI],
         default=NaturalnessIndex.NDVI,
     )
-    path_rating: PathRating = Field(
-        title='Path Rating Mapping',
-        description='Qualitative rating for each of the available path categories.',
-        examples=[PathRating()],
-        default=PathRating(),
+    walkable_categories_selection: Set[PathCategory] = Field(
+        title='Potentially Walkable Categories',
+        description='Selection of path categories considered potentially walkable. For a description of the categories '
+        'refer to the methodology.',
+        examples=[{PathCategory.DESIGNATED}],
+        default={
+            PathCategory.DESIGNATED,
+            PathCategory.DESIGNATED_SHARED_WITH_BIKES,
+            PathCategory.SHARED_WITH_MOTORIZED_TRAFFIC_LOW_SPEED,
+            PathCategory.SHARED_WITH_MOTORIZED_TRAFFIC_MEDIUM_SPEED,
+            PathCategory.SHARED_WITH_MOTORIZED_TRAFFIC_HIGH_SPEED,
+            PathCategory.SHARED_WITH_MOTORIZED_TRAFFIC_UNKNOWN_SPEED,
+            PathCategory.UNKNOWN,
+        },
     )
     admin_level: int = Field(
         title='Administrative level',
