@@ -49,7 +49,6 @@ def get_detour_factors(
     local_crs = paths.estimate_utm_crs()
 
     projected_paths = paths.to_crs(local_crs)
-    projected_paths = projected_paths[projected_paths['category'] != PathCategory.NOT_WALKABLE]
 
     destinations = create_destinations(buffered_aoi, local_crs, projected_paths)
 

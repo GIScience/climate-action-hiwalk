@@ -4,10 +4,9 @@ from typing import Dict, Tuple, List, Optional
 
 import geopandas as gpd
 import matplotlib as mpl
-from numpy import number
 import pandas as pd
 import shapely
-from matplotlib.colors import to_hex
+from numpy import number
 from ohsome import OhsomeClient
 from pydantic_extra_types.color import Color
 
@@ -15,23 +14,26 @@ log = logging.getLogger(__name__)
 
 
 class PathCategory(Enum):
-    # GOOD
-    # |
-    # v
-    # BAD
-    DESIGNATED = 'designated'
-    # Designated footway with or without other traffic close by, (e.g. dedicated footway, sidewalk or sign 241)
-    DESIGNATED_SHARED_WITH_BIKES = 'designated_shared_with_bikes'
-    # sign 240 or 1022-10
-    SHARED_WITH_MOTORIZED_TRAFFIC_LOW_SPEED = 'shared_with_motorized_traffic_low_speed'
-    # living streets, parking lots, service ways
-    SHARED_WITH_MOTORIZED_TRAFFIC_MEDIUM_SPEED = 'shared_with_motorized_traffic_medium_speed'
-    # streets with no sidewalk with max speed limit 30 km/h
-    SHARED_WITH_MOTORIZED_TRAFFIC_HIGH_SPEED = 'shared_with_motorized_traffic_high_speed'
-    # streets with no sidewalk with max speed limit 50 km/h
-    NOT_WALKABLE = 'not_walkable'
-    # category replacing missing data
-    UNKNOWN = 'unknown'
+    DESIGNATED = 'Designated'
+    DESIGNATED_SHARED_WITH_BIKES = 'Shared with bikes'
+    SHARED_WITH_MOTORIZED_TRAFFIC_LOW_SPEED = 'Shared with slow cars'
+    SHARED_WITH_MOTORIZED_TRAFFIC_MEDIUM_SPEED = 'Shared with medium speed cars'
+    SHARED_WITH_MOTORIZED_TRAFFIC_HIGH_SPEED = 'Shared with fast cars'
+    SHARED_WITH_MOTORIZED_TRAFFIC_UNKNOWN_SPEED = 'Shared with cars of unknown speed'
+    NOT_WALKABLE = 'Not walkable'
+    UNKNOWN = 'Unknown'
+
+
+PATH_RATING_MAP = {
+    PathCategory.DESIGNATED: 1.0,
+    PathCategory.DESIGNATED_SHARED_WITH_BIKES: 0.8,
+    PathCategory.SHARED_WITH_MOTORIZED_TRAFFIC_LOW_SPEED: 0.6,
+    PathCategory.SHARED_WITH_MOTORIZED_TRAFFIC_MEDIUM_SPEED: 0.4,
+    PathCategory.SHARED_WITH_MOTORIZED_TRAFFIC_HIGH_SPEED: 0.2,
+    PathCategory.SHARED_WITH_MOTORIZED_TRAFFIC_UNKNOWN_SPEED: 0.1,
+    PathCategory.NOT_WALKABLE: 0.0,
+    PathCategory.UNKNOWN: None,
+}
 
 
 class PavementQuality(Enum):
@@ -43,13 +45,13 @@ class PavementQuality(Enum):
     UNKNOWN = 'unknown'
 
 
-PavementQualityRating = {
+PAVEMENT_QUALITY_RATING_MAP = {
     PavementQuality.GOOD: 1.0,
     PavementQuality.POTENTIALLY_GOOD: 0.8,
     PavementQuality.MEDIOCRE: 0.5,
     PavementQuality.POTENTIALLY_MEDIOCRE: 0.3,
     PavementQuality.POOR: 0.0,
-    PavementQuality.UNKNOWN: -9999,
+    PavementQuality.UNKNOWN: None,
 }
 
 
@@ -61,17 +63,19 @@ def fetch_osm_data(aoi: shapely.MultiPolygon, osm_filter: str, ohsome: OhsomeCli
     return elements[['@osmId', 'geometry', '@other_tags']]
 
 
-def get_qualitative_color(category, cmap_name: str, class_name) -> Color:
-    norm = mpl.colors.Normalize(0, 1)
-    cmap = mpl.cm.ScalarMappable(norm=norm, cmap=cmap_name).get_cmap()
-    cmap.set_under('#808080')
+def _dict_to_legend(d: dict) -> Dict[str, Color]:
+    data = pd.DataFrame.from_records(data=list(d.items()), columns=['category', 'rating'])
+    data['color'] = generate_colors(color_by=data.rating, min=0.0, max=1.0)
+    data['category'] = data.category.apply(lambda cat: cat.value)
+    return dict(zip(data['category'], data['color']))
 
-    category_norm = {name: idx / (len(class_name) - 1) for idx, name in enumerate(class_name)}
 
-    if category == class_name.UNKNOWN:
-        return Color(to_hex(cmap(-9999)))
-    else:
-        return Color(to_hex(cmap(category_norm[category])))
+def get_path_rating_legend() -> Dict[str, Color]:
+    return _dict_to_legend(PATH_RATING_MAP)
+
+
+def get_surface_quality_legend() -> Dict[str, Color]:
+    return _dict_to_legend(PAVEMENT_QUALITY_RATING_MAP)
 
 
 def generate_colors(
@@ -87,6 +91,7 @@ def generate_colors(
     ## Returns
     :return:`mapped_colors`: list of colors matching values of `color_by`
     """
+    color_by = color_by.astype(float)
     if min is None:
         min = color_by.min()
     if max is None:
@@ -94,7 +99,7 @@ def generate_colors(
 
     norm = mpl.colors.Normalize(vmin=min, vmax=max)
     cmap = mpl.colormaps[cmap_name]
-    cmap.set_under('#808080')
+    cmap.set_bad(color='#808080')
 
     mapped_colors = [Color(mpl.colors.to_hex(cmap(norm(val)))) for val in color_by]
     return mapped_colors
@@ -125,3 +130,10 @@ def ohsome_filter(geometry_type: str) -> str:
         '(sidewalk:right=separate and sidewalk:left=separate) or '
         '(sidewalk:right=separate and sidewalk:left=no) or (sidewalk:right=no and sidewalk:left=separate))'
     )
+
+
+def safe_string_to_float(potential_number: str | float) -> float:
+    try:
+        return float(potential_number)
+    except (TypeError, ValueError):
+        return -1

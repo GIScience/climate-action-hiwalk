@@ -17,6 +17,7 @@ def test_get_buffered_line_paths(operator, expected_compute_input, default_aoi, 
             'category': [PathCategory.DESIGNATED],
             'rating': [1.0],
             'quality': [PavementQuality.UNKNOWN],
+            'quality_rating': [None],
             'geometry': [line_geom],
             '@other_tags': [{'highway': 'pedestrian'}],
         },
@@ -26,7 +27,6 @@ def test_get_buffered_line_paths(operator, expected_compute_input, default_aoi, 
     _, computed_lines_buffered, _ = operator._get_paths(
         aoi=default_aoi,
         max_walking_distance=expected_compute_input.max_walking_distance,
-        rating_map=expected_compute_input.get_path_rating_mapping(),
     )
 
     testing.assert_geodataframe_equal(
@@ -50,6 +50,7 @@ def test_get_line_paths(operator, expected_compute_input, ohsome_api):
             'category': [PathCategory.DESIGNATED, PathCategory.DESIGNATED],
             'rating': [1.0, 1.0],
             'quality': [PavementQuality.UNKNOWN, PavementQuality.UNKNOWN],
+            'quality_rating': [None, None],
             'geometry': line_geom,
             '@other_tags': [{'highway': 'pedestrian'}, {'highway': 'pedestrian'}],
         },
@@ -71,7 +72,6 @@ def test_get_line_paths(operator, expected_compute_input, ohsome_api):
             ]
         ),
         max_walking_distance=expected_compute_input.max_walking_distance,
-        rating_map=expected_compute_input.get_path_rating_mapping(),
     )
 
     testing.assert_geodataframe_equal(
@@ -100,7 +100,6 @@ def test_get_polygon_paths(operator, expected_compute_input, default_aoi, ohsome
     _, _, computed_polygons = operator._get_paths(
         aoi=default_aoi,
         max_walking_distance=expected_compute_input.max_walking_distance,
-        rating_map=expected_compute_input.get_path_rating_mapping(),
     )
 
     testing.assert_geodataframe_equal(

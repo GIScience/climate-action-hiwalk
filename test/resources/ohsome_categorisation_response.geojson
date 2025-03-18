@@ -157,6 +157,27 @@
     "geometry" : {
       "type" : "Point",
       "coordinates" : [
+        3.3615248,
+        6.4496719
+      ]
+    },
+    "properties" : {
+      "@changesetId" : 123303787,
+      "@lastEdit" : "2022-07-07T07:04:07Z",
+      "@osmId" : "way/152645929",
+      "@osmType" : "way",
+      "@snapshotTimestamp" : "2024-01-01T00:00:00Z",
+      "@version" : 7,
+      "highway" : "residential",
+      "sidewalk":"no",
+      "name" : "Child Avenue",
+      "oneway" : "no"
+    }
+  },{
+    "type" : "Feature",
+    "geometry" : {
+      "type" : "Point",
+      "coordinates" : [
         8.6347411,
         49.4265766
       ]
@@ -278,6 +299,108 @@
     "geometry" : {
       "type" : "Point",
       "coordinates" : [
+        8.6776537,
+        49.4196499
+      ]
+    },
+    "properties" : {
+      "@changesetId" : 93602348,
+      "@osmId" : "way/25806384",
+      "highway" : "path"
+    }
+  },{
+    "type" : "Feature",
+    "geometry" : {
+      "type" : "Point",
+      "coordinates" : [
+        8.6776537,
+        49.4196499
+      ]
+    },
+    "properties" : {
+      "@changesetId" : 155312847,
+      "@osmId" : "way/721931269",
+      "highway" : "residential",
+      "lanes": 3,
+      "sidewalk": "no",
+      "zone:maxspeed": "DE:urban"
+    }
+  },{
+    "type" : "Feature",
+    "geometry" : {
+      "type" : "Point",
+      "coordinates" : [
+        8.6776537,
+        49.4196499
+      ]
+    },
+    "properties" : {
+      "@changesetId" : 142795555,
+      "@osmId" : "way/1216700677",
+      "highway" : "path",
+      "foot": "yes",
+      "bicycle": "permissive"
+    }
+  },{
+    "type" : "Feature",
+    "geometry" : {
+      "type" : "Point",
+      "coordinates" : [
+        8.6776537,
+        49.4196499
+      ]
+    },
+    "properties" : {
+      "@changesetId" : 70101055,
+      "@osmId" : "way/57774238",
+      "highway" : "path",
+      "foot": "official",
+      "bicycle": "official",
+      "segregated": "no"
+    }
+  },{
+    "type" : "Feature",
+    "geometry" : {
+      "type" : "Point",
+      "coordinates" : [
+        8.6776537,
+        49.4196499
+      ]
+    },
+    "properties" : {
+      "@changesetId" : 153010562,
+      "@osmId" : "way/171794750",
+      "highway" : "path",
+      "bicycle": "designated",
+      "segregated": "no",
+      "bridge": "yes",
+      "description": "ramp",
+      "layer": "1",
+      "lcn": "yes"
+    }
+  },{
+    "type" : "Feature",
+    "geometry" : {
+      "type" : "Point",
+      "coordinates" : [
+        8.6776537,
+        49.4196499
+      ]
+    },
+    "properties" : {
+      "@changesetId" : 103794718,
+      "@osmId" : "way/64390823",
+      "highway" : "service",
+      "cycleway:both": "track",
+      "sidewalk": "no",
+      "maxspeed": "30",
+      "surface": "paved"
+    }
+  },{
+    "type" : "Feature",
+    "geometry" : {
+      "type" : "Point",
+      "coordinates" : [
         8.6746565,
         49.4034447
       ]
@@ -379,6 +502,7 @@
       "@version" : 14,
       "check_date" : "2022-01-07",
       "highway" : "residential",
+      "sidewalk":"no",
       "lit" : "yes",
       "maxspeed" : "20",
       "name" : "Salomon-Calvi-Straße",
@@ -552,6 +676,37 @@
       "sidewalk" : "right",
       "surface" : "asphalt",
       "vehicle" : "no"
+    }
+  },{
+    "type" : "Feature",
+    "geometry" : {
+      "type" : "Point",
+      "coordinates" : [
+            8.6814825,
+            49.3942427
+      ]
+    },
+    "properties" : {
+      "@osmId" : "way/257385208",
+      "@snapshotTimestamp" : "2024-01-01T00:00:00Z",
+      "highway" : "residential",
+      "maxspeed" : "10",
+      "sidewalk" : "no"
+    }
+  },{
+    "type" : "Feature",
+    "geometry" : {
+      "type" : "Point",
+      "coordinates" : [
+        8.67674,
+        49.4129356
+      ]
+    },
+    "properties" : {
+      "@osmId" : "way/1031915576",
+      "highway" : "primary",
+      "maxspeed" : "50",
+      "sidewalk" : "separate"
     }
   }]
 }

@@ -1,12 +1,13 @@
 import logging
 from typing import Dict
-import geopandas as gpd
-from pyproj import CRS
-from ohsome import OhsomeClient
-import shapely
 
-from walkability.components.utils.misc import PathCategory, get_qualitative_color
+import geopandas as gpd
+import shapely
 from climatoology.base.artifact import Chart2dData, ChartType
+from ohsome import OhsomeClient
+from pyproj import CRS
+
+from walkability.components.utils.misc import PathCategory, PATH_RATING_MAP, generate_colors
 
 log = logging.getLogger(__name__)
 
@@ -38,22 +39,23 @@ def summarise_by_area(
 
     stats = stats.overlay(boundaries, how='identity')
     stats = stats.to_crs(projected_crs)
-
     stats['length'] = stats.length / length_resolution_m
-    stats['category'] = stats.category.apply(lambda cat: cat.value)
 
-    stats = stats.groupby(['name', 'category', 'rating']).aggregate({'length': 'sum'})
+    stats['category'] = stats.category.apply(lambda cat: cat.value)
+    stats = stats.groupby(['name', 'category']).aggregate({'length': 'sum'})
+
     stats['length'] = round(stats['length'], 2)
     stats = stats.reset_index()
     stats_group = stats.groupby('name')
 
     data = {}
     for name, group in stats_group:
-        group = group.sort_values(by=['category'], ascending=False)
-        colors = [
-            get_qualitative_color(category=PathCategory(category), cmap_name='RdYlBu_r', class_name=PathCategory)
-            for category in group.category
-        ]
+        group['rating'] = group.category.apply(lambda category: PATH_RATING_MAP[PathCategory(category)])
+        group = group.sort_values(
+            by=['rating'],
+            ascending=False,
+        )
+        colors = generate_colors(color_by=group.rating, min=0.0, max=1.0)
         data[name] = Chart2dData(
             x=group.category.tolist(),
             y=group.length.tolist(),

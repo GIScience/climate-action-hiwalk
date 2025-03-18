@@ -9,7 +9,7 @@ from climatoology.base.info import _Info
 from climatoology.utility.Naturalness import NaturalnessUtility
 from ohsome import OhsomeClient
 
-from walkability.components.categorise_paths.path_categorisation import path_categorisation
+from walkability.components.categorise_paths.path_categorisation import path_categorisation, subset_walkable_paths
 from walkability.components.categorise_paths.path_categorisation_artifacts import build_path_categorisation_artifact
 from walkability.components.categorise_paths.path_summarisation import summarise_by_area
 from walkability.components.naturalness.naturalness_analysis import naturalness_analysis
@@ -18,7 +18,6 @@ from walkability.components.slope.slope_analysis import slope_analysis
 from walkability.components.utils.geometry import get_utm_zone, get_buffered_aoi
 from walkability.components.utils.misc import (
     fetch_osm_data,
-    PathCategory,
     ohsome_filter,
 )
 from walkability.core.info import get_info
@@ -50,7 +49,7 @@ class OperatorWalkability(BaseOperator[ComputeInputWalkability]):
         artifacts = []
 
         line_paths, line_paths_buffered, polygon_paths = self._get_paths(
-            aoi=aoi, max_walking_distance=params.max_walking_distance, rating_map=params.get_path_rating_mapping()
+            aoi=aoi, max_walking_distance=params.max_walking_distance
         )
 
         try:
@@ -67,9 +66,19 @@ class OperatorWalkability(BaseOperator[ComputeInputWalkability]):
             )
             areal_summaries = dict()
         path_artifacts = build_path_categorisation_artifact(
-            paths_line=line_paths, paths_polygon=polygon_paths, areal_summaries=areal_summaries, resources=resources
+            paths_line=line_paths,
+            paths_polygon=polygon_paths,
+            areal_summaries=areal_summaries,
+            walkable_categories=params.walkable_categories_selection,
+            resources=resources,
         )
         artifacts.extend(path_artifacts)
+
+        line_paths, line_paths_buffered = subset_walkable_paths(
+            line_paths, line_paths_buffered, walkable_categories=params.walkable_categories_selection
+        )
+        if line_paths.empty or line_paths_buffered.empty:
+            return artifacts
 
         detour_artifact = detour_factor_analysis(
             paths=line_paths_buffered, aoi=aoi, max_walking_distance=params.max_walking_distance, resources=resources
@@ -91,7 +100,7 @@ class OperatorWalkability(BaseOperator[ComputeInputWalkability]):
         return artifacts
 
     def _get_paths(
-        self, aoi: shapely.MultiPolygon, max_walking_distance: float, rating_map: dict[PathCategory, float]
+        self, aoi: shapely.MultiPolygon, max_walking_distance: float
     ) -> tuple[gpd.GeoDataFrame, gpd.GeoDataFrame, gpd.GeoDataFrame]:
         aoi_buffered = get_buffered_aoi(aoi, max_walking_distance)
 
@@ -101,7 +110,7 @@ class OperatorWalkability(BaseOperator[ComputeInputWalkability]):
         log.debug('Finished extracting paths')
 
         line_paths_buffered, polygon_paths = path_categorisation(
-            self.ohsome, paths_line=line_paths_buffered, paths_polygon=polygon_paths, aoi=aoi, rating_map=rating_map
+            paths_line=line_paths_buffered, paths_polygon=polygon_paths
         )
 
         line_paths = gpd.clip(line_paths_buffered, aoi, keep_geom_type=True).explode(ignore_index=True)

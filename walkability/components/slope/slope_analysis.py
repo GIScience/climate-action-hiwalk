@@ -56,21 +56,18 @@ def get_slope(
     :param request_chunk_size: Maximum number of elevation to be requested from the server. The server has a limit set that must be respected.
     :return:
     """
-
-    # Clipping is temporary, pending: https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/154
-    paths_clipped = gpd.clip(paths, aoi, keep_geom_type=True)
     utm = get_utm_zone(aoi)
 
-    paths_clipped['start_ele'] = pd.Series(dtype='float64')
-    paths_clipped['end_ele'] = pd.Series(dtype='float64')
-    paths_clipped['start_point'] = shapely.get_point(shapely.get_geometry(paths_clipped.geometry, 0), 0)
-    paths_clipped['end_point'] = shapely.get_point(shapely.get_geometry(paths_clipped.geometry, -1), -1)
-    points: pd.Series = pd.concat([paths_clipped['start_point'], paths_clipped['end_point']])
+    paths['start_ele'] = pd.Series(dtype='float64')
+    paths['end_ele'] = pd.Series(dtype='float64')
+    paths['start_point'] = shapely.get_point(shapely.get_geometry(paths.geometry, 0), 0)
+    paths['end_point'] = shapely.get_point(shapely.get_geometry(paths.geometry, -1), -1)
+    points: pd.Series = pd.concat([paths['start_point'], paths['end_point']])
     points = points.drop_duplicates().sort_values()
 
     num_chunks = math.ceil(len(points) / request_chunk_size)
 
-    # PERF: do parallel calls
+    # PERF: do parallel calls (using async?)
     for chunk in np.array_split(points, num_chunks):
         polyline = list(zip(chunk.x, chunk.y))
         response = ors_client.elevation_line(
@@ -82,17 +79,13 @@ def get_slope(
             point = shapely.Point(coord[0:2])
             ele = coord[2]
 
-            start_point_match = paths_clipped['start_point'].geom_equals_exact(
-                point, tolerance=ORS_COORDINATE_PRECISION
-            )
-            end_point_match = paths_clipped['end_point'].geom_equals_exact(point, tolerance=ORS_COORDINATE_PRECISION)
+            start_point_match = paths['start_point'].geom_equals_exact(point, tolerance=ORS_COORDINATE_PRECISION)
+            end_point_match = paths['end_point'].geom_equals_exact(point, tolerance=ORS_COORDINATE_PRECISION)
 
-            paths_clipped.loc[start_point_match, 'start_ele'] = ele
-            paths_clipped.loc[end_point_match, 'end_ele'] = ele
+            paths.loc[start_point_match, 'start_ele'] = ele
+            paths.loc[end_point_match, 'end_ele'] = ele
 
-    paths_clipped['slope'] = (paths_clipped.end_ele - paths_clipped.start_ele) / (
-        paths_clipped.geometry.to_crs(utm).length / 100.0
-    )
-    paths_clipped.slope = paths_clipped.slope.round(2)
+    paths['slope'] = (paths.end_ele - paths.start_ele) / (paths.geometry.to_crs(utm).length / 100.0)
+    paths.slope = paths.slope.round(2)
 
-    return paths_clipped[['slope', 'geometry']]
+    return paths[['slope', 'geometry']]

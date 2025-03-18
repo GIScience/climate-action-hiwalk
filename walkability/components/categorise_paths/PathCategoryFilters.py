@@ -1,8 +1,10 @@
 from typing import Dict
 
+from walkability.components.utils.misc import safe_string_to_float
+
 
 class PathCategoryFilters:
-    def __init__(self):
+    def __init__(self, tags: dict, speed_category_max: Dict[str, float] = None):
         # Potential: potentially walkable features (to be restricted by AND queries)
         self._potential_highway_values = (
             'primary',
@@ -23,98 +25,167 @@ class PathCategoryFilters:
         )
         self._potential_highway_values_all = self._potential_highway_values + self._potential_highway_values_low_speed
 
+        self.max_speed = PathCategoryFilters.extract_speed(tags=tags)
+
+        self.speed_category_max = speed_category_max or {'slow': 10, 'medium': 30, 'fast': 50}
+
+    @staticmethod
+    def extract_speed(tags: dict) -> float:
+        maxspeed_zone = PathCategoryFilters._parse_maxspeed_zone(tags)
+
+        potential_speeds = [
+            tags.get('maxspeed'),
+            tags.get('maxspeed:forward'),
+            tags.get('maxspeed:backward'),
+            maxspeed_zone,
+        ]
+        speeds = [safe_string_to_float(speed) for speed in potential_speeds]
+        return max(speeds)
+
+    @staticmethod
+    def _parse_maxspeed_zone(tags: dict) -> float | str:
+        zone_string = tags.get('zone:maxspeed') or tags.get('zone:traffic') or ''
+        zone_split = zone_string.split(':', 1)
+        zone_split.reverse()
+        zone_info = zone_split[0]
+        country = zone_split[1] if len(zone_split) == 2 else ''
+
+        match zone_info:
+            case 'urban':
+                if country in ['BQ-SE', 'BQ-BO', 'CW']:
+                    maxspeed_zone = 40
+                elif country in ['BE-BRU', 'BQ-SA', 'SX']:
+                    maxspeed_zone = 30
+                else:
+                    maxspeed_zone = 50
+            case 'rural':
+                if country in ['DE']:
+                    maxspeed_zone = 100
+                elif country in ['LU', 'BE-WAL']:
+                    maxspeed_zone = 90
+                elif country in ['NL', 'FR', 'AW']:
+                    maxspeed_zone = 80
+                elif country in ['BE-VLG', 'BE-BRU']:
+                    maxspeed_zone = 70
+                elif country in ['BQ-SA', 'BQ-SE', 'BQ-BO', 'CW']:
+                    maxspeed_zone = 60
+                elif country in ['SX']:
+                    maxspeed_zone = 50
+                else:
+                    maxspeed_zone = 70
+            case 'school':
+                maxspeed_zone = 50
+            case 'motorway':
+                maxspeed_zone = 120
+            case _:
+                maxspeed_zone = zone_info
+
+        return maxspeed_zone
+
     def _potential(self, d: Dict) -> bool:
         return d.get('highway') in self._potential_highway_values_all or d.get('route') == 'ferry'
 
     # Exclusive: Only for pedestrians
-    def _exclusive(self, d: Dict) -> bool:
+    def _potentially_exclusive(self, d: Dict) -> bool:
         return (
-            d.get('highway') in ['steps', 'corridor', 'pedestrian', 'platform']
-            or d.get('railway') == 'platform'
-            or (
-                d.get('highway') == 'path'
-                and (
-                    d.get('foot') in ['yes', 'designated', 'official']
-                    or d.get('footway') in ['access_aisle', 'alley', 'residential', 'link', 'path']
-                    or d.get('bicycle') == 'no'
-                )
+            (
+                d.get('highway') in ['steps', 'corridor', 'pedestrian', 'platform']
+                or d.get('railway') == 'platform'
                 or (
-                    d.get('highway') == 'footway'
-                    and d.get('bicycle') != 'yes'
-                    and d.get('footway') not in ['sidewalk', 'crossing', 'traffic_island', 'yes']
+                    d.get('highway') == 'path'
+                    and (
+                        d.get('foot') in ['yes', 'designated', 'official']
+                        or d.get('footway') in ['access_aisle', 'alley', 'residential', 'link', 'path']
+                        or d.get('bicycle') == 'no'
+                    )
+                    or (
+                        d.get('highway') == 'footway'
+                        and d.get('footway') not in ['sidewalk', 'crossing', 'traffic_island', 'yes']
+                    )
                 )
-                and d.get('motor_vehicle') != 'yes'
-                and d.get('vehicle') != 'yes'
             )
-        ) and d.get('bicycle') not in ['yes', 'designated']
-
-    def _shared_with_bikes(self, d: Dict) -> bool:
-        return d.get('bicycle') in ['yes', 'designated'] and (
-            d.get('segregated') != 'yes' or d.get('segregated') == 'no'
+            and d.get('motor_vehicle') != 'yes'
+            and d.get('vehicle') != 'yes'
         )
 
-    def _separated_foot(self, d: Dict) -> bool:
-        return d.get('foot') in ['yes', 'permissive', 'designated', 'official'] and d.get('maxspeed') is None
+    def _shared_with_bikes(self, d: Dict) -> bool:
+        return d.get('bicycle') in ['yes', 'designated', 'permissive', 'official'] and (d.get('segregated') != 'yes')
 
-    def _separated(self, d: Dict) -> bool:
+    def _designated_foot(self, d: Dict) -> bool:
+        return d.get('foot') in ['yes', 'permissive', 'designated', 'official'] and self.max_speed == -1
+
+    def _potentially_separated(self, d: Dict) -> bool:
         return (
-            d.get('highway') == 'footway'
-            or (
-                d.get('highway') in ['path', 'cycleway']
-                and (
-                    self._separated_foot(d)
-                    or d.get('footway') in ['sidewalk', 'crossing', 'traffic_island', 'yes']
-                    or d.get('segregated') == 'yes'
-                )
-            )
-        ) or (
-            (self._potential(d))
-            and (
-                self._separated_foot(d)
-                or d.get('sidewalk') in ['both', 'left', 'right', 'yes', 'lane']
-                or d.get('sidewalk:left') == 'yes'
-                or d.get('sidewalk:right') == 'yes'
-                or d.get('sidewalk:both') == 'yes'
-            )
+            d.get('highway') in ['footway', 'path', 'cycleway']
+            and (self._designated_foot(d) or d.get('footway') in ['sidewalk', 'crossing', 'traffic_island', 'yes'])
+        ) or (self._potential(d) and self._designated_foot(d))
+
+    @staticmethod
+    def has_sidewalk(d: Dict) -> bool:
+        return (
+            d.get('sidewalk') in ['both', 'left', 'right', 'yes', 'lane']
+            or d.get('sidewalk:left') == 'yes'
+            or d.get('sidewalk:right') == 'yes'
+            or d.get('sidewalk:both') == 'yes'
+        )
+
+    @staticmethod
+    def has_no_sidewalk(d: Dict):
+        return (
+            d.get('sidewalk') == 'no'
+            or d.get('sidewalk:both') == 'no'
+            or (d.get('sidewalk:left') == 'no' and d.get('sidewalk:right') == 'no')
+            or d.get('sidewalk') == 'none'
+            or d.get('sidewalk:both') == 'none'
+            or (d.get('sidewalk:left') == 'none' and d.get('sidewalk:right') == 'none')
+        )
+
+    @staticmethod
+    def sidewalk_is_separate(d: Dict):
+        return (
+            d.get('sidewalk') == 'separate'
+            or d.get('sidewalk:both') == 'separate'
+            or (d.get('sidewalk:left') == 'separate' and d.get('sidewalk:right') == 'separate')
         )
 
     def designated(self, d: Dict) -> bool:
-        return (self._exclusive(d) or self._separated(d)) and not self._shared_with_bikes(d)
+        return (
+            (self._potentially_exclusive(d) or self._potentially_separated(d)) and not self._shared_with_bikes(d)
+        ) or (self._potential(d) and PathCategoryFilters.has_sidewalk(d))
 
     def designated_shared_with_bikes(self, d: Dict) -> bool:
-        return ((self._exclusive(d) or self._separated(d)) and self._shared_with_bikes(d)) or (
-            d.get('highway') in ['path', 'track', 'pedestrian']
-            and d.get('motor_vehicle') != 'yes'
-            and d.get('vehicle') != 'yes'
-            and d.get('segregated') != 'yes'
-        )
+        return (
+            (self._potentially_exclusive(d) or self._potentially_separated(d)) and self._shared_with_bikes(d)
+        ) or d.get('highway') == 'path'
 
     def shared_with_low_speed(self, d: Dict) -> bool:
-        return d.get('highway') in self._potential_highway_values_low_speed
+        return (
+            d.get('highway') in self._potential_highway_values_low_speed
+            and self.max_speed <= self.speed_category_max.get('slow')
+            or 0 < self.max_speed <= self.speed_category_max.get('slow')
+        )
 
     def shared_with_medium_speed(self, d: Dict) -> bool:
-        return d.get('maxspeed') in ['5', '10', '15', '20', '25', '30'] or d.get('zone:maxspeed') in ['DE:30', '30']
+        return (
+            d.get('highway') == 'track'
+            and (
+                self.speed_category_max.get('slow') < self.max_speed <= self.speed_category_max.get('medium')
+                or self.max_speed == -1
+            )
+        ) or (
+            PathCategoryFilters.has_no_sidewalk(d)
+            and self.speed_category_max.get('slow') < self.max_speed <= self.speed_category_max.get('medium')
+        )
 
     def shared_with_high_speed(self, d: Dict) -> bool:
         return (
             self._potential(d)
-            and (
-                d.get('sidewalk') == 'no'
-                or d.get('sidewalk:both') == 'no'
-                or (d.get('sidewalk:left') == 'no' and d.get('sidewalk:right') == 'no')
-                or d.get('sidewalk') == 'none'
-                or d.get('sidewalk:both') == 'none'
-                or (d.get('sidewalk:left') == 'none' and d.get('sidewalk:right') == 'none')
-                or d.get('sidewalk') != '*'
-                or d.get('sidewalk:both') != '*'
-                or (d.get('sidewalk:left') != '*' and d.get('sidewalk:right') != '*')
-            )
-            and not (
-                d.get('maxspeed') in ['60', '70', '80', '100']
-                or d.get('maxspeed:backward') in ['60', '70', '80', '100']
-                or d.get('maxspeed:forward') in ['60', '70', '80', '100']
-            )
+            and PathCategoryFilters.has_no_sidewalk(d)
+            and self.speed_category_max.get('medium') < self.max_speed <= self.speed_category_max.get('fast')
         )
+
+    def shared_with_unknown_speed(self, d: Dict) -> bool:
+        return self._potential(d) and PathCategoryFilters.has_no_sidewalk(d) and self.max_speed == -1
 
     # For documentation:
     # ignored_primary = 'highway in (motorway,trunk,motorway_link,trunk_link,
@@ -138,12 +209,11 @@ class PathCategoryFilters:
                 ]
                 and d.get('railway') != 'platform'
             )
+            or PathCategoryFilters.sidewalk_is_separate(d=d)
             or d.get('footway') == 'no'
             or d.get('access') in ['no', 'private', 'permit', 'military', 'delivery', 'customers']
             or d.get('foot') in ['no', 'private', 'use_sidepath', 'discouraged', 'destination']
-            or d.get('maxspeed') in ['60', '70', '80', '100']
-            or d.get('maxspeed:backward') in ['60', '70', '80', '100']
-            or d.get('maxspeed:forward') in ['60', '70', '80', '100']
+            or self.max_speed > self.speed_category_max.get('fast')
             or (d.get('highway') == 'service' and d.get('bus') in ['designated', 'yes'])
             or d.get('ford') == 'yes'
         )
