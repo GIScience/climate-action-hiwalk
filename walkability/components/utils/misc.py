@@ -55,6 +55,46 @@ PAVEMENT_QUALITY_RATING_MAP = {
 }
 
 
+class SmoothnessCategory(Enum):
+    GOOD = 'good'
+    MEDIOCRE = 'mediocre'
+    POOR = 'poor'
+    VERY_POOR = 'very_poor'
+    UNKNOWN = 'unknown'
+
+
+SMOOTHNESS_CATEGORY_RATING_MAP = {
+    SmoothnessCategory.GOOD: 1.0,
+    SmoothnessCategory.MEDIOCRE: 0.5,
+    SmoothnessCategory.POOR: 0.2,
+    SmoothnessCategory.VERY_POOR: 0.0,
+    SmoothnessCategory.UNKNOWN: None,
+}
+
+
+class SurfaceType(Enum):
+    CONTINUOUS_PAVEMENT = 'continuous_pavement'
+    MODULAR_PAVEMENT = 'modular_pavement'
+    COBBLESTONE = 'cobblestone'
+    OTHER_PAVED = 'other_paved_surfaces'
+    GRAVEL = 'gravel'
+    GROUND = 'ground'
+    OTHER_UNPAVED = 'other_unpaved_surfaces'
+    UNKNOWN = 'unknown'
+
+
+SURFACE_TYPE_RATING_MAP = {
+    SurfaceType.CONTINUOUS_PAVEMENT: 1.0,
+    SurfaceType.MODULAR_PAVEMENT: 0.85,
+    SurfaceType.COBBLESTONE: 0.6,
+    SurfaceType.OTHER_PAVED: 0.5,
+    SurfaceType.GRAVEL: 0.4,
+    SurfaceType.GROUND: 0.2,
+    SurfaceType.OTHER_UNPAVED: 0.0,
+    SurfaceType.UNKNOWN: None,
+}
+
+
 def fetch_osm_data(aoi: shapely.MultiPolygon, osm_filter: str, ohsome: OhsomeClient) -> gpd.GeoDataFrame:
     elements = ohsome.elements.geometry.post(
         bpolys=aoi, clipGeometry=True, properties='tags', filter=osm_filter
@@ -63,9 +103,9 @@ def fetch_osm_data(aoi: shapely.MultiPolygon, osm_filter: str, ohsome: OhsomeCli
     return elements[['@osmId', 'geometry', '@other_tags']]
 
 
-def _dict_to_legend(d: dict) -> Dict[str, Color]:
+def _dict_to_legend(d: dict, cmap_name: str = 'coolwarm_r') -> Dict[str, Color]:
     data = pd.DataFrame.from_records(data=list(d.items()), columns=['category', 'rating'])
-    data['color'] = generate_colors(color_by=data.rating, min=0.0, max=1.0)
+    data['color'] = generate_colors(color_by=data.rating, cmap_name=cmap_name, min=0.0, max=1.0)
     data['category'] = data.category.apply(lambda cat: cat.value)
     return dict(zip(data['category'], data['color']))
 
@@ -76,6 +116,14 @@ def get_path_rating_legend() -> Dict[str, Color]:
 
 def get_surface_quality_legend() -> Dict[str, Color]:
     return _dict_to_legend(PAVEMENT_QUALITY_RATING_MAP)
+
+
+def get_smoothness_legend() -> Dict[str, Color]:
+    return _dict_to_legend(SMOOTHNESS_CATEGORY_RATING_MAP, cmap_name='RdYlBu')
+
+
+def get_surface_type_legend() -> Dict[str, Color]:
+    return _dict_to_legend(SURFACE_TYPE_RATING_MAP, cmap_name='tab10')
 
 
 def generate_colors(

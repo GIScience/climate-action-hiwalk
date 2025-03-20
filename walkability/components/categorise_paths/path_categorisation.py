@@ -11,6 +11,10 @@ from walkability.components.utils.misc import (
     get_first_match,
     PATH_RATING_MAP,
     PAVEMENT_QUALITY_RATING_MAP,
+    SmoothnessCategory,
+    SurfaceType,
+    SMOOTHNESS_CATEGORY_RATING_MAP,
+    SURFACE_TYPE_RATING_MAP,
 )
 
 
@@ -29,6 +33,12 @@ def path_categorisation(
 
     paths_line['quality'] = paths_line.apply(lambda row: evaluate_quality(row, keys, rankings), axis=1)
     paths_line['quality_rating'] = paths_line.quality.apply(lambda quality: PAVEMENT_QUALITY_RATING_MAP[quality])
+    paths_line['smoothness'] = paths_line.apply(apply_path_smoothness_filters, axis=1)
+    paths_line['smoothness_rating'] = paths_line.smoothness.apply(
+        lambda smoothness: SMOOTHNESS_CATEGORY_RATING_MAP[smoothness]
+    )
+    paths_line['surface'] = paths_line.apply(apply_path_surface_filters, axis=1)
+    paths_line['surface_rating'] = paths_line.surface.apply(lambda surface: SURFACE_TYPE_RATING_MAP[surface])
 
     return paths_line, paths_polygon
 
@@ -133,3 +143,65 @@ def subset_walkable_paths(
 ) -> Generator[gpd.GeoDataFrame, None, None]:
     for path in args:
         yield path[path['category'].isin(walkable_categories)]
+
+
+def apply_path_smoothness_filters(row: pd.Series) -> SmoothnessCategory:
+    smoothness_tag = row['@other_tags'].get('smoothness')
+    match smoothness_tag:
+        case 'very_bad' | 'horrible' | 'very_horrible' | 'impassable':
+            return SmoothnessCategory.VERY_POOR
+        case 'bad':
+            return SmoothnessCategory.POOR
+        case 'intermediate':
+            return SmoothnessCategory.MEDIOCRE
+        case 'good' | 'excellent':
+            return SmoothnessCategory.GOOD
+        case _:
+            return SmoothnessCategory.UNKNOWN
+
+
+def apply_path_surface_filters(row: pd.Series) -> SurfaceType:
+    surface_tag = row['@other_tags'].get('surface')
+    match surface_tag:
+        case 'asphalt' | 'concrete':
+            return SurfaceType.CONTINUOUS_PAVEMENT
+        case 'concrete:lanes' | 'concrete:plates' | 'paving_stones' | 'paving_stones:lanes':
+            return SurfaceType.MODULAR_PAVEMENT
+        case 'cobblestones' | 'sett' | 'unhewn_cobblestone':
+            return SurfaceType.COBBLESTONE
+        case (
+            'chipseal'
+            | 'grass_paver'
+            | 'bricks'
+            | 'metal'
+            | 'metal_grid'
+            | 'wood'
+            | 'stepping_stones'
+            | 'rubber'
+            | 'tiles'
+            | 'paved'
+        ):
+            return SurfaceType.OTHER_PAVED
+        case 'compacted' | 'fine_gravel' | 'gravel':
+            return SurfaceType.GRAVEL
+        case 'ground' | 'dirt' | 'earth':
+            return SurfaceType.GROUND
+        case (
+            'shells'
+            | 'rock'
+            | 'pebblestone'
+            | 'ground'
+            | 'dirt'
+            | 'earth'
+            | 'grass'
+            | 'mud'
+            | 'sand'
+            | 'snow'
+            | 'woodchips'
+            | 'ice'
+            | 'salt'
+            | 'unpaved'
+        ):
+            return SurfaceType.OTHER_UNPAVED
+        case _:
+            return SurfaceType.UNKNOWN

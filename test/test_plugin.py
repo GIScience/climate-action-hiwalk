@@ -27,7 +27,7 @@ def test_plugin_compute_request(
         params=expected_compute_input,
     )
 
-    assert len(computed_artifacts) == 7
+    assert len(computed_artifacts) == 9
     for artifact in computed_artifacts:
         assert isinstance(artifact, _Artifact)
 
@@ -40,6 +40,6 @@ def test_plugin_compute_request_empty(operator, default_aoi, default_aoi_propert
         params=ComputeInputWalkability(walkable_categories_selection=set()),
     )
 
-    assert len(computed_artifacts) == 2
+    assert len(computed_artifacts) == 4
     for artifact in computed_artifacts:
         assert isinstance(artifact, _Artifact) or artifact is None
