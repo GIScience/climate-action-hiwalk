@@ -1,0 +1,2 @@
+What is the surface of the walkable paths made of? This map classifies the paths on the basis of the most common surface types tagged in OpenStreetMap. Paved surface types are in general preferred over unpaved surfaces, with exceptions like cobblestone, which are not good for wheelchairs or strollers.
+A detailed explanation of the individual surface types can be found in the description below.

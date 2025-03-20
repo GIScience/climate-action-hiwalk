@@ -5,6 +5,8 @@ from geopandas import testing
 from walkability.components.utils.misc import (
     PathCategory,
     PavementQuality,
+    SmoothnessCategory,
+    SurfaceType,
 )
 
 
@@ -18,6 +20,10 @@ def test_get_buffered_line_paths(operator, expected_compute_input, default_aoi, 
             'rating': [1.0],
             'quality': [PavementQuality.UNKNOWN],
             'quality_rating': [None],
+            'smoothness': [SmoothnessCategory.UNKNOWN],
+            'smoothness_rating': [None],
+            'surface': [SurfaceType.UNKNOWN],
+            'surface_rating': [None],
             'geometry': [line_geom],
             '@other_tags': [{'highway': 'pedestrian'}],
         },
@@ -51,6 +57,10 @@ def test_get_line_paths(operator, expected_compute_input, ohsome_api):
             'rating': [1.0, 1.0],
             'quality': [PavementQuality.UNKNOWN, PavementQuality.UNKNOWN],
             'quality_rating': [None, None],
+            'smoothness': [SmoothnessCategory.UNKNOWN, SmoothnessCategory.UNKNOWN],
+            'smoothness_rating': [None, None],
+            'surface': [SurfaceType.UNKNOWN, SurfaceType.UNKNOWN],
+            'surface_rating': [None, None],
             'geometry': line_geom,
             '@other_tags': [{'highway': 'pedestrian'}, {'highway': 'pedestrian'}],
         },

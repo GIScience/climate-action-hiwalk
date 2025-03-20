@@ -18,6 +18,8 @@ from walkability.components.utils.misc import (
     get_path_rating_legend,
     get_surface_quality_legend,
     PathCategory,
+    get_smoothness_legend,
+    get_surface_type_legend,
 )
 
 
@@ -40,9 +42,13 @@ def build_path_categorisation_artifact(
         resources=resources,
     )
 
+    smoothness = build_smoothness_artifact(paths_line=paths_line, resources=resources)
+
+    surface_type = build_surface_artifact(paths_line=paths_line, resources=resources)
+
     summary_artifacts = build_areal_summary_artifacts(regional_aggregates=areal_summaries, resources=resources)
 
-    return [walkable_paths, surface_quality] + summary_artifacts
+    return [walkable_paths, surface_quality, smoothness, surface_type] + summary_artifacts
 
 
 def build_walkable_paths_artifact(
@@ -95,6 +101,38 @@ def build_surface_quality_artifact(
         legend_data=get_surface_quality_legend(),
         resources=resources,
         filename='pavement_quality',
+    )
+
+
+def build_smoothness_artifact(paths_line: gpd.GeoDataFrame, resources: ComputationResources) -> _Artifact:
+    paths_line['color'] = generate_colors(paths_line.smoothness_rating, cmap_name='RdYlBu', min=0.0, max=1.0)
+    return create_geojson_artifact(
+        features=paths_line.geometry,
+        layer_name='Smoothness',
+        caption=Path('resources/components/categorise_paths/smoothness_caption.md').read_text(),
+        description=Path('resources/components/categorise_paths/smoothness_description.md').read_text(),
+        label=paths_line.smoothness.apply(lambda r: r.name).to_list(),
+        color=paths_line.color.to_list(),
+        legend_data=get_smoothness_legend(),
+        resources=resources,
+        filename='smoothness',
+        primary=False,
+    )
+
+
+def build_surface_artifact(paths_line: gpd.GeoDataFrame, resources: ComputationResources) -> _Artifact:
+    paths_line['color'] = generate_colors(paths_line.surface_rating, cmap_name='tab10', min=0.0, max=1.0)
+    return create_geojson_artifact(
+        features=paths_line.geometry,
+        layer_name='Surface Type',
+        caption=Path('resources/components/categorise_paths/surface_caption.md').read_text(),
+        description=Path('resources/components/categorise_paths/surface_description.md').read_text(),
+        label=paths_line.surface.apply(lambda r: r.name).to_list(),
+        color=paths_line.color.to_list(),
+        legend_data=get_surface_type_legend(),
+        resources=resources,
+        filename='surface_type',
+        primary=False,
     )
 
 

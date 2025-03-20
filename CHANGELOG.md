@@ -31,6 +31,7 @@ and this project mostly adheres to [Semantic Versioning](https://semver.org/spec
 - A new detour indicator mapping the average ratio of the walking distance to the euclidian distance for cells in a
   hexgrid
   ([#175](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/175))
+- A new smoothness and a new surface type indicator (components of the surface quality indicator) ([#172](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/172))
 
 ### Removed
 
