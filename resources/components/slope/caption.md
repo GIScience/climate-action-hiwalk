@@ -1,1 +1,1 @@
-Slope of paths in %.
+How steep is this path?

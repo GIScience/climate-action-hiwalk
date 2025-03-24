@@ -1,7 +1,1 @@
-Surface quality of walkable paths:
-
-Surface quality refers to the quality of a path surface for walking by the most vulnerable, considering also the quality for wheelchairs, and wheeled walking frames. Smooth surfaces where people are less likely to trip over are considered to be of higher quality.
-
-The classification is based on the values of the OSM `smoothness`, `surface` and `tracktype` tags (in the order they are evaluated). While the values of `smoothness` directly correspond to our surface quality, they are only sparsely mapped. We therefore also use the `surface` and `tracktype` as a proxy to complement the data. In doing so, we consider that for a given surface type there might be a wide variety in the maintenance status and thus only yield a conservative estimate for the surface quality. This is to reflect our commitment to creating our indicators from the perspective of the most vulnerable, for whom a poor surface quality can become a major obstacle. To highlight the uncertainty of the maintenance status, we add the prefix "potentially" to values of the surface quality that are derived from the surface type. Exceptions are surface types like sand, which can be confidently categorised to be poor in any case.
-
-A full list of the given surface quality rankings for the different tag values can be found in the description below.
+How smooth and comfortable is the surface of this path for walking?
