@@ -7,6 +7,12 @@ from pydantic import BaseModel, Field
 from walkability.components.utils.misc import PathCategory
 
 
+class WalkabilityIndicators(Enum):
+    DETOURS = 'Detour factor'
+    SLOPE = 'Slope'
+    NATURALNESS = 'Naturalness'
+
+
 class WalkingSpeed(Enum):
     SLOW = 'slow'
     MEDIUM = 'medium'
@@ -18,6 +24,33 @@ WALKING_SPEED_MAP_STRING = {k.value: v for k, v in WALKING_SPEED_MAP.items()}
 
 
 class ComputeInputWalkability(BaseModel):
+    indicators_to_compute: Set[WalkabilityIndicators] = Field(
+        title='Optional indicators to compute',
+        description='Selection of optional hiWalk indicators. Computing these indicators for large areas may exceed '
+        'the time limit for individual assessments in the Climate Action Navigator. Click "Read more >>" above for a '
+        'description of each of these indicators.',
+        examples=[{WalkabilityIndicators.DETOURS}],
+        default={
+            WalkabilityIndicators.DETOURS,
+            WalkabilityIndicators.SLOPE,
+            WalkabilityIndicators.NATURALNESS,
+        },
+    )
+    walkable_categories_selection: Set[PathCategory] = Field(
+        title='Potentially Walkable Categories',
+        description='Selection of path categories considered potentially walkable. For a description of the categories '
+        'click "Read more >>" above.',
+        examples=[{PathCategory.DESIGNATED}],
+        default={
+            PathCategory.DESIGNATED,
+            PathCategory.DESIGNATED_SHARED_WITH_BIKES,
+            PathCategory.SHARED_WITH_MOTORIZED_TRAFFIC_LOW_SPEED,
+            PathCategory.SHARED_WITH_MOTORIZED_TRAFFIC_MEDIUM_SPEED,
+            PathCategory.SHARED_WITH_MOTORIZED_TRAFFIC_HIGH_SPEED,
+            PathCategory.SHARED_WITH_MOTORIZED_TRAFFIC_UNKNOWN_SPEED,
+            PathCategory.UNKNOWN,
+        },
+    )
     walkable_time: float = Field(
         title='Maximum Trip Duration',
         description='Maximum duration of a single trip in minutes.',
@@ -34,24 +67,11 @@ class ComputeInputWalkability(BaseModel):
     )
     naturalness_index: NaturalnessIndex = Field(
         title='Naturalness Index',
-        description='Which index to use as basis of the naturalness estimation.',
+        description='Which the naturalness estimation be based of? Choose "NDVI" to focus on measuring the greenness of'
+        ' vegetation on and around streets, choose "WATER" to focus on assessing the presence of water bodies, and'
+        ' choose "NATURALNESS" to produce a composite indicator accounting for both vegetation and water bodies.',
         examples=[NaturalnessIndex.NDVI],
         default=NaturalnessIndex.NDVI,
-    )
-    walkable_categories_selection: Set[PathCategory] = Field(
-        title='Potentially Walkable Categories',
-        description='Selection of path categories considered potentially walkable. For a description of the categories '
-        'refer to the methodology.',
-        examples=[{PathCategory.DESIGNATED}],
-        default={
-            PathCategory.DESIGNATED,
-            PathCategory.DESIGNATED_SHARED_WITH_BIKES,
-            PathCategory.SHARED_WITH_MOTORIZED_TRAFFIC_LOW_SPEED,
-            PathCategory.SHARED_WITH_MOTORIZED_TRAFFIC_MEDIUM_SPEED,
-            PathCategory.SHARED_WITH_MOTORIZED_TRAFFIC_HIGH_SPEED,
-            PathCategory.SHARED_WITH_MOTORIZED_TRAFFIC_UNKNOWN_SPEED,
-            PathCategory.UNKNOWN,
-        },
     )
     admin_level: int = Field(
         title='Administrative level',

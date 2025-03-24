@@ -21,7 +21,7 @@ from walkability.components.utils.misc import (
     ohsome_filter,
 )
 from walkability.core.info import get_info
-from walkability.core.input import ComputeInputWalkability
+from walkability.core.input import ComputeInputWalkability, WalkabilityIndicators
 
 log = logging.getLogger(__name__)
 
@@ -80,22 +80,30 @@ class OperatorWalkability(BaseOperator[ComputeInputWalkability]):
         if line_paths.empty or line_paths_buffered.empty:
             return artifacts
 
-        detour_artifact = detour_factor_analysis(
-            paths=line_paths_buffered, aoi=aoi, max_walking_distance=params.max_walking_distance, resources=resources
-        )
-        artifacts.append(detour_artifact)
+        if WalkabilityIndicators.DETOURS in params.indicators_to_compute:
+            detour_artifact = detour_factor_analysis(
+                paths=line_paths_buffered,
+                aoi=aoi,
+                max_walking_distance=params.max_walking_distance,
+                resources=resources,
+            )
+            artifacts.append(detour_artifact)
 
-        naturalness_artifact = naturalness_analysis(
-            line_paths=line_paths,
-            aoi=aoi,
-            index=params.naturalness_index,
-            resources=resources,
-            naturalness_utility=self.naturalness_utility,
-        )
-        artifacts.append(naturalness_artifact)
+        if WalkabilityIndicators.NATURALNESS in params.indicators_to_compute:
+            naturalness_artifact = naturalness_analysis(
+                line_paths=line_paths,
+                aoi=aoi,
+                index=params.naturalness_index,
+                resources=resources,
+                naturalness_utility=self.naturalness_utility,
+            )
+            artifacts.append(naturalness_artifact)
 
-        slope_artifact = slope_analysis(line_paths=line_paths, aoi=aoi, ors_client=self.ors_client, resources=resources)
-        artifacts.append(slope_artifact)
+        if WalkabilityIndicators.SLOPE in params.indicators_to_compute:
+            slope_artifact = slope_analysis(
+                line_paths=line_paths, aoi=aoi, ors_client=self.ors_client, resources=resources
+            )
+            artifacts.append(slope_artifact)
 
         return artifacts
 

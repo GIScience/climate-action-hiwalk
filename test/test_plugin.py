@@ -2,7 +2,7 @@ from climatoology.base.baseoperator import _Artifact
 from climatoology.base.info import _Info
 
 from test.conftest import filter_start_matcher
-from walkability.core.input import ComputeInputWalkability
+from walkability.core.input import ComputeInputWalkability, WalkabilityIndicators
 
 
 def test_plugin_info_request(operator):
@@ -41,5 +41,20 @@ def test_plugin_compute_request_empty(operator, default_aoi, default_aoi_propert
     )
 
     assert len(computed_artifacts) == 4
+    for artifact in computed_artifacts:
+        assert isinstance(artifact, _Artifact) or artifact is None
+
+
+def test_plugin_compute_request_with_only_one_optional_indicator(
+    operator, default_aoi, default_aoi_properties, compute_resources, ohsome_api
+):
+    computed_artifacts = operator.compute(
+        resources=compute_resources,
+        aoi=default_aoi,
+        aoi_properties=default_aoi_properties,
+        params=ComputeInputWalkability(indicators_to_compute={WalkabilityIndicators.SLOPE}),
+    )
+
+    assert len(computed_artifacts) == 5
     for artifact in computed_artifacts:
         assert isinstance(artifact, _Artifact) or artifact is None

@@ -32,6 +32,7 @@ and this project mostly adheres to [Semantic Versioning](https://semver.org/spec
   hexgrid
   ([#175](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/175))
 - A new smoothness and a new surface type indicator (components of the surface quality indicator) ([#172](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/172))
+- The option for users to select which optional indicators to compute (slope, naturalness, and detour factors)
 
 ### Removed
 

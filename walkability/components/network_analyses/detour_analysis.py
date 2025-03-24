@@ -215,7 +215,7 @@ def build_detour_factor_artifact(
 
     return create_geojson_artifact(
         features=detour_factor_data.geometry,
-        layer_name='Detour Factors',
+        layer_name='Detour Factor',
         filename='hexgrid_detours',
         caption=Path('resources/components/network_analyses/detour_factor/caption.md').read_text(),
         description=Path('resources/components/network_analyses/detour_factor/description.md').read_text(),
