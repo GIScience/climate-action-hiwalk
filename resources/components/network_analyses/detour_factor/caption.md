@@ -1,1 +1,1 @@
-How many times longer you must walk compared to the straight line distance to the destination?
+How many times longer must I walk to reach my surroundings compared to the straight line distance?

@@ -60,24 +60,22 @@ class ComputeInputWalkability(BaseModel):
     )
     walking_speed: WalkingSpeed = Field(
         title='Walking Speed',
-        description='Choose a walking speed category. The categories map to the following speed in km/h: '
+        description='Average walking speed. Categories correspond to the following speeds in km/h: '
         f'{WALKING_SPEED_MAP_STRING}',
         examples=[WalkingSpeed.MEDIUM],
         default=WalkingSpeed.MEDIUM,
     )
     naturalness_index: NaturalnessIndex = Field(
         title='Naturalness Index',
-        description='Which the naturalness estimation be based of? Choose "NDVI" to focus on measuring the greenness of'
-        ' vegetation on and around streets, choose "WATER" to focus on assessing the presence of water bodies, and'
-        ' choose "NATURALNESS" to produce a composite indicator accounting for both vegetation and water bodies.',
+        description='What should naturalness be based on? Choose "NDVI" to focus on measuring the greenness of'
+        ' vegetation on and around streets. Choose "WATER" to focus on assessing the presence of water bodies. Choose'
+        ' "NATURALNESS" to compute a composite indicator accounting for both vegetation and water bodies.',
         examples=[NaturalnessIndex.NDVI],
         default=NaturalnessIndex.NDVI,
     )
     admin_level: int = Field(
         title='Administrative level',
-        description='The administrative level the results should be aggregated to. See the '
-        '[OSM wiki documentation](https://wiki.openstreetmap.org/wiki/Tag:boundary=administrative) for '
-        'available values.',
+        description='Administrative level to aggregate results.',
         ge=6,
         le=12,
         examples=[9],

@@ -12,11 +12,26 @@ log = logging.getLogger(__name__)
 
 def get_info() -> _Info:
     info = generate_plugin_info(
-        name='Walkability',
+        name='hiWalk',
         icon=Path('resources/info/icon.jpeg'),
         authors=[
             PluginAuthor(
                 name='Moritz Schott',
+                affiliation='HeiGIT gGmbH',
+                website='https://heigit.org/heigit-team/',
+            ),
+            PluginAuthor(
+                name='Emily Wilke',
+                affiliation='HeiGIT gGmbH',
+                website='https://heigit.org/heigit-team/',
+            ),
+            PluginAuthor(
+                name='Jonas Kemmer',
+                affiliation='HeiGIT gGmbH',
+                website='https://heigit.org/heigit-team/',
+            ),
+            PluginAuthor(
+                name='Veit Ulrich',
                 affiliation='HeiGIT gGmbH',
                 website='https://heigit.org/heigit-team/',
             ),
@@ -31,11 +46,6 @@ def get_info() -> _Info:
                 website='https://heigit.org/heigit-team/',
             ),
             PluginAuthor(
-                name='Jonas Kemmer',
-                affiliation='HeiGIT gGmbH',
-                website='https://heigit.org/heigit-team/',
-            ),
-            PluginAuthor(
                 name='Anna Buch',
                 affiliation='HeiGIT gGmbH',
                 website='https://heigit.org/heigit-team/',
@@ -45,12 +55,16 @@ def get_info() -> _Info:
                 affiliation='HeiGIT gGmbH',
                 website='https://heigit.org/heigit-team/',
             ),
+            PluginAuthor(
+                name='Sebastian Block',
+                affiliation='HeiGIT gGmbH',
+                website='https://heigit.org/heigit-team/',
+            ),
         ],
         version=Version.parse(importlib.metadata.version('walkability')),
         concerns={Concern.MOBILITY_PEDESTRIAN},
         purpose=Path('resources/info/purpose.md'),
         methodology=Path('resources/info/methodology.md'),
-        sources=Path('resources/info/sources.bib'),
     )
     log.info(f'Return info {info.model_dump()}')
 

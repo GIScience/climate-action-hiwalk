@@ -1,3 +1,7 @@
+The map classifies walkable paths based on the most common surface types tagged in OpenStreetMap.
+Paved surface types are in general preferred over unpaved surfaces, with some important exceptions.
+For example, cobblestone is a paved surface that hampers the mobility of people using wheelchairs or strollers.
+
 Detailed description of the surface type categories (in parts taken from the [OSMWiki](https://wiki.openstreetmap.org/wiki/Key:surface)):
 
 * Continuous Pavement: Seamless pavement without cracks, suitable for rollerblades and scooters. Comprises the surface type tags asphalt and concrete.
