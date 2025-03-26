@@ -1,4 +1,4 @@
- ### Key `smoothness`: ### 
+ ### Key `smoothness`: 
  |Value|Ranking| 
  |:----|:------| 
  |excellent | Good| 
@@ -9,7 +9,7 @@
  |horrible | Poor| 
  |very_horrible | Poor| 
  |impassable | Poor| 
- ### Key `surface`: ### 
+ ### Key `surface`: 
  |Value|Ranking| 
  |:----|:------| 
  |asphalt | Potentially Good| 
@@ -33,7 +33,7 @@
  |metal | Potentially Good| 
  |grass_paver | Mediocre| 
  |artificial_turf | Mediocre| 
- ### Key `tracktype`: ### 
+ ### Key `tracktype`: 
  |Value|Ranking| 
  |:----|:------| 
  |grade1 | Potentially Good| 
