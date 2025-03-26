@@ -75,7 +75,7 @@ def generate_detailed_pavement_quality_mapping_info() -> str:
     rankings = read_pavement_quality_rankings()
     text = ''
     for key, value_map in rankings.items():
-        text += f' ### Key `{key}`: ### \n'
+        text += f' ### Key `{key}`: \n'
         text += ' |Value|Ranking| \n'
         text += ' |:----|:------| \n'
         for value, ranking in value_map.items():
