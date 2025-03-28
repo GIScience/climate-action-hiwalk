@@ -23,7 +23,10 @@ def path_categorisation(
     paths_polygon: gpd.GeoDataFrame,
 ) -> Tuple[gpd.GeoDataFrame, gpd.GeoDataFrame]:
     paths_line['category'] = paths_line.apply(apply_path_category_filters, axis=1)
-    paths_polygon['category'] = paths_polygon.apply(apply_path_category_filters, axis=1)
+    if paths_polygon.empty:
+        paths_polygon['category'] = pd.Series()
+    else:
+        paths_polygon['category'] = paths_polygon.apply(apply_path_category_filters, axis=1)
 
     paths_line['rating'] = paths_line.category.apply(lambda category: PATH_RATING_MAP[category])
     paths_polygon['rating'] = paths_polygon.category.apply(lambda category: PATH_RATING_MAP[category])

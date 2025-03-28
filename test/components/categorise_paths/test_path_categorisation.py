@@ -11,8 +11,15 @@ from walkability.components.categorise_paths.path_categorisation import (
     read_pavement_quality_rankings,
     subset_walkable_paths,
     apply_path_category_filters,
+    path_categorisation,
 )
-from walkability.components.utils.misc import PathCategory, PavementQuality, fetch_osm_data
+from walkability.components.utils.misc import (
+    PathCategory,
+    PavementQuality,
+    fetch_osm_data,
+    SmoothnessCategory,
+    SurfaceType,
+)
 
 validation_objects = {
     PathCategory.DESIGNATED: {
@@ -74,6 +81,47 @@ def ohsome_test_data_categorisation(global_aoi, responses_mock) -> pd.DataFrame:
     osm_data = fetch_osm_data(aoi=global_aoi, osm_filter='', ohsome=OhsomeClient())
 
     return osm_data
+
+
+def test_path_categorisation_only_line_paths():
+    line_geom = shapely.LineString([(12.3, 48.22), (12.3, 48.2205), (12.3005, 48.22)])
+    line_paths = gpd.GeoDataFrame(
+        data={'@osmId': ['way/171574582'], 'geometry': [line_geom], '@other_tags': [{'highway': 'pedestrian'}]},
+        crs='EPSG:4326',
+    )
+    polygon_paths = gpd.GeoDataFrame(
+        data={'@osmId': [], 'geometry': [], '@other_tags': []},
+        crs='EPSG:4326',
+    )
+    expected_paths_line = gpd.GeoDataFrame(
+        data={
+            '@osmId': ['way/171574582'],
+            'geometry': [line_geom],
+            '@other_tags': [{'highway': 'pedestrian'}],
+            'category': [PathCategory.DESIGNATED],
+            'rating': [1.0],
+            'quality': [PavementQuality.UNKNOWN],
+            'quality_rating': [None],
+            'smoothness': [SmoothnessCategory.UNKNOWN],
+            'smoothness_rating': [None],
+            'surface': [SurfaceType.UNKNOWN],
+            'surface_rating': [None],
+        },
+        crs='EPSG:4326',
+    )
+    expected_polygon_paths = gpd.GeoDataFrame(
+        data={
+            '@osmId': [],
+            'geometry': [],
+            '@other_tags': [],
+            'category': [],
+            'rating': [],
+        },
+        crs='EPSG:4326',
+    )
+    line_paths_categorised, polygon_paths_categorised = path_categorisation(line_paths, polygon_paths)
+    pd.testing.assert_frame_equal(expected_paths_line, line_paths_categorised)
+    pd.testing.assert_frame_equal(expected_polygon_paths, polygon_paths_categorised, check_dtype=False)
 
 
 @pytest.mark.parametrize('category', validation_objects)

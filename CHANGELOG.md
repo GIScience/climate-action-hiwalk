@@ -21,6 +21,7 @@ and this project mostly adheres to [Semantic Versioning](https://semver.org/spec
 
 - Filter ohsome boundaries to polygon geometries (in `summarise_by_area`), in case other geometry types make it through
   the ohsome API
+- Fixed bug that threw error when calculating walkability for areas without polygon paths ([#87](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/87))
 
 ### Added
 
