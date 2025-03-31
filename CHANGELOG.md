@@ -16,6 +16,7 @@ and this project mostly adheres to [Semantic Versioning](https://semver.org/spec
 - Paths, where it is unclear if the user has to walk on the street, are now classified as '
   Unknown' ([144](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/144)). Before it was assumed, no
   sidewalk would be available.
+- Remove default colormap from generate_colors ([#190](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/190))
 
 ### Fixed
 

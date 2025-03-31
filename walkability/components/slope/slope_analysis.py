@@ -35,7 +35,7 @@ def slope_analysis(
         slope = line_paths.copy()
         slope['slope'] = None
 
-    slope_artifact = build_slope_artifact(slope=slope, resources=resources, cmap_name='coolwarm')
+    slope_artifact = build_slope_artifact(slope=slope, resources=resources)
 
     log.info('Finished computing slope')
 

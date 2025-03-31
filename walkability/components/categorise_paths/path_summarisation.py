@@ -55,7 +55,7 @@ def summarise_by_area(
             by=['rating'],
             ascending=False,
         )
-        colors = generate_colors(color_by=group.rating, min=0.0, max=1.0)
+        colors = generate_colors(color_by=group.rating, min=0.0, max=1.0, cmap_name='coolwarm_r')
         data[name] = Chart2dData(
             x=group.category.tolist(),
             y=group.length.tolist(),

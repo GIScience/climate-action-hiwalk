@@ -111,15 +111,15 @@ def _dict_to_legend(d: dict, cmap_name: str = 'coolwarm_r') -> Dict[str, Color]:
 
 
 def get_path_rating_legend() -> Dict[str, Color]:
-    return _dict_to_legend(PATH_RATING_MAP)
+    return _dict_to_legend(PATH_RATING_MAP, cmap_name='coolwarm_r')
 
 
 def get_surface_quality_legend() -> Dict[str, Color]:
-    return _dict_to_legend(PAVEMENT_QUALITY_RATING_MAP)
+    return _dict_to_legend(PAVEMENT_QUALITY_RATING_MAP, cmap_name='coolwarm_r')
 
 
 def get_smoothness_legend() -> Dict[str, Color]:
-    return _dict_to_legend(SMOOTHNESS_CATEGORY_RATING_MAP, cmap_name='RdYlBu')
+    return _dict_to_legend(SMOOTHNESS_CATEGORY_RATING_MAP, cmap_name='coolwarm_r')
 
 
 def get_surface_type_legend() -> Dict[str, Color]:
@@ -127,13 +127,13 @@ def get_surface_type_legend() -> Dict[str, Color]:
 
 
 def generate_colors(
-    color_by: pd.Series, cmap_name: str = 'coolwarm_r', min: number | None = None, max: number | None = None
+    color_by: pd.Series, cmap_name: str, min: number | None = None, max: number | None = None
 ) -> list[Color]:
     """
     Function to generate a list of colors based on a linear normalization for each element in `color_by`.
     ## Params
     :param:`color_by`: `pandas.Series` with numerical values to map colors to.
-    :param:`cmap_name`: optional name of matplotlib colormap approved in climatoology. Default `'coolwarm_r'`
+    :param:`cmap_name`: name of matplotlib colormap approved in climatoology.
     :param:`min`: optional minimal value of the normalization, numerical or `None`. If `None` minimum value of `color_by` is used.
     :param:`max`: optional maxmial value of the normalization, numerical or `None`. If `None` maximum value of `color_by` is used.
     ## Returns

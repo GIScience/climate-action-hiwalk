@@ -56,7 +56,7 @@ def build_walkable_paths_artifact(
 ) -> _Artifact:
     walkable_locations = pd.concat([paths_line, paths_polygon], ignore_index=True)
 
-    walkable_locations['color'] = generate_colors(walkable_locations.rating, min=0.0, max=1.0)
+    walkable_locations['color'] = generate_colors(walkable_locations.rating, min=0.0, max=1.0, cmap_name='coolwarm_r')
 
     return create_geojson_artifact(
         features=walkable_locations.geometry,
@@ -89,7 +89,7 @@ def build_surface_quality_artifact(
     paths_line = next(subset_walkable_paths(paths_line, walkable_categories=walkable_categories))
     if paths_line.empty:
         return
-    paths_line['color'] = generate_colors(paths_line.quality_rating, min=0.0, max=1.0)
+    paths_line['color'] = generate_colors(paths_line.quality_rating, min=0.0, max=1.0, cmap_name='coolwarm_r')
     return create_geojson_artifact(
         features=paths_line.geometry,
         layer_name='Surface Quality',
@@ -105,7 +105,7 @@ def build_surface_quality_artifact(
 
 
 def build_smoothness_artifact(paths_line: gpd.GeoDataFrame, resources: ComputationResources) -> _Artifact:
-    paths_line['color'] = generate_colors(paths_line.smoothness_rating, cmap_name='RdYlBu', min=0.0, max=1.0)
+    paths_line['color'] = generate_colors(paths_line.smoothness_rating, cmap_name='coolwarm_r', min=0.0, max=1.0)
     return create_geojson_artifact(
         features=paths_line.geometry,
         layer_name='Smoothness',
