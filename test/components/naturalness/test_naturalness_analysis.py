@@ -7,7 +7,7 @@ from shapely import LineString, MultiLineString
 from walkability.components.naturalness.naturalness_analysis import get_naturalness, fetch_naturalness_by_vector
 
 
-def test_get_naturalness(default_aoi, operator, naturalness_utility_mock):
+def test_get_naturalness(operator, naturalness_utility_mock):
     paths = gpd.GeoDataFrame(
         index=[1, 2],
         geometry=[
@@ -17,7 +17,7 @@ def test_get_naturalness(default_aoi, operator, naturalness_utility_mock):
         crs='EPSG:4326',
     )
     computed_naturalness = get_naturalness(
-        aoi=default_aoi, paths=paths, index=NaturalnessIndex.NDVI, naturalness_utility=operator.naturalness_utility
+        paths=paths, index=NaturalnessIndex.NDVI, naturalness_utility=operator.naturalness_utility
     )
 
     expected_naturalness = gpd.GeoDataFrame(

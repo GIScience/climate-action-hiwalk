@@ -1,10 +1,10 @@
+from test.conftest import filter_start_matcher
+
 import geopandas as gpd
 import shapely
-from climatoology.base.artifact import Chart2dData, ChartType
-from pydantic_extra_types.color import Color
+from plotly.graph_objects import Figure
 from pyproj import CRS
 
-from test.conftest import filter_start_matcher
 from walkability.components.categorise_paths.path_summarisation import summarise_by_area
 from walkability.components.utils.misc import PathCategory
 
@@ -17,20 +17,6 @@ def test_summarise_by_area(operator, default_aoi, responses_mock):
         body=admin_body,
         match=[filter_start_matcher('geometry:polygon and boundary')],
     )
-    expected_charts = {
-        'Bergheim': Chart2dData(
-            x=['Designated'],
-            y=[0.12],
-            color=[Color('#3b4cc0')],
-            chart_type=ChartType.PIE,
-        ),
-        'Südstadt': Chart2dData(
-            x=['Designated'],
-            y=[0.12],
-            color=[Color('#3b4cc0')],
-            chart_type=ChartType.PIE,
-        ),
-    }
 
     line_geom = shapely.LineString([(12.3, 48.22), (12.3, 48.2205), (12.3005, 48.22)])
     polygon_geom = shapely.Polygon(((12.3, 48.22), (12.3, 48.2205), (12.3005, 48.22), (12.3, 48.22)))
@@ -51,7 +37,12 @@ def test_summarise_by_area(operator, default_aoi, responses_mock):
         ohsome_client=operator.ohsome,
     )
 
-    assert computed_charts == expected_charts
+    assert isinstance(computed_charts, dict)
+    assert all(
+        isinstance(chart, Figure) and city in ['Bergheim', 'Südstadt'] for city, chart in computed_charts.items()
+    )
+    assert computed_charts['Bergheim']['data'][0]['values'] == (0.12,)
+    assert computed_charts['Südstadt']['data'][0]['values'] == (0.12,)
 
 
 def test_summarise_by_area_no_boundaries(operator, default_aoi, responses_mock):
@@ -98,14 +89,6 @@ def test_summarise_by_area_mixed_geometry_boundaries(operator, default_aoi, resp
         body=response_body,
         match=[filter_start_matcher('geometry:polygon and boundary')],
     )
-    expected_charts = {
-        'Innenstadt West': Chart2dData(
-            x=['Designated'],
-            y=[0.69],
-            color=[Color('#3b4cc0')],
-            chart_type=ChartType.PIE,
-        )
-    }
 
     input_paths = gpd.GeoDataFrame(
         data={
@@ -123,7 +106,8 @@ def test_summarise_by_area_mixed_geometry_boundaries(operator, default_aoi, resp
         ohsome_client=operator.ohsome,
     )
 
-    assert computed_charts == expected_charts
+    assert len(computed_charts.items()) == 1
+    assert isinstance(computed_charts['Innenstadt West'], Figure)
 
 
 def test_summarise_by_area_boundaries_no_name(operator, default_aoi, responses_mock):
@@ -164,20 +148,6 @@ def test_summarise_by_area_two_types(operator, default_aoi, responses_mock):
         body=admin_body,
         match=[filter_start_matcher('geometry:polygon and boundary')],
     )
-    expected_charts = {
-        'Bergheim': Chart2dData(
-            x=['Designated', 'Unknown'],
-            y=[0.12, 0.12],
-            color=[Color('#3b4cc0'), Color('grey')],
-            chart_type=ChartType.PIE,
-        ),
-        'Südstadt': Chart2dData(
-            x=['Designated', 'Unknown'],
-            y=[0.12, 0.12],
-            color=[Color('#3b4cc0'), Color('grey')],
-            chart_type=ChartType.PIE,
-        ),
-    }
 
     line_geom = shapely.LineString([(12.3, 48.22), (12.3, 48.2205), (12.3005, 48.22)])
 
@@ -196,7 +166,7 @@ def test_summarise_by_area_two_types(operator, default_aoi, responses_mock):
         ohsome_client=operator.ohsome,
     )
 
-    assert computed_charts == expected_charts
+    assert all(chart['data'][0]['labels'] == ('Designated', 'Unknown') for _, chart in computed_charts.items())
 
 
 def test_summarise_by_area_order_by_category_rating(operator, default_aoi, responses_mock):
@@ -207,20 +177,6 @@ def test_summarise_by_area_order_by_category_rating(operator, default_aoi, respo
         body=admin_body,
         match=[filter_start_matcher('geometry:polygon and boundary')],
     )
-    expected_charts = {
-        'Bergheim': Chart2dData(
-            x=['Designated', 'Shared with bikes', 'Unknown'],
-            y=[0.12, 0.12, 0.12],
-            color=[Color('#3b4cc0'), Color('#7b9ff9'), Color('grey')],
-            chart_type=ChartType.PIE,
-        ),
-        'Südstadt': Chart2dData(
-            x=['Designated', 'Shared with bikes', 'Unknown'],
-            y=[0.12, 0.12, 0.12],
-            color=[Color('#3b4cc0'), Color('#7b9ff9'), Color('grey')],
-            chart_type=ChartType.PIE,
-        ),
-    }
 
     line_geom = shapely.LineString([(12.3, 48.22), (12.3, 48.2205), (12.3005, 48.22)])
 
@@ -239,4 +195,7 @@ def test_summarise_by_area_order_by_category_rating(operator, default_aoi, respo
         ohsome_client=operator.ohsome,
     )
 
-    assert computed_charts == expected_charts
+    assert all(
+        chart['data'][0]['labels'] == ('Designated', 'Shared with bikes', 'Unknown')
+        for _, chart in computed_charts.items()
+    )
