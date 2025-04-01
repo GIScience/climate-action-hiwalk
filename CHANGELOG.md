@@ -17,6 +17,7 @@ and this project mostly adheres to [Semantic Versioning](https://semver.org/spec
   Unknown' ([144](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/144)). Before it was assumed, no
   sidewalk would be available.
 - Remove default colormap from generate_colors ([#190](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/190))
+- Update climatoology to 6.2.0: use `create_plotly_chart_artifact` and include `demo_input_parameters` in info
 
 ### Fixed
 

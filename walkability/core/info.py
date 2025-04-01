@@ -6,6 +6,7 @@ from pathlib import Path
 from climatoology.base.info import _Info, generate_plugin_info, PluginAuthor, Concern
 from semver import Version
 
+from walkability.core.input import ComputeInputWalkability
 
 log = logging.getLogger(__name__)
 
@@ -65,6 +66,7 @@ def get_info() -> _Info:
         concerns={Concern.MOBILITY_PEDESTRIAN},
         purpose=Path('resources/info/purpose.md'),
         methodology=Path('resources/info/methodology.md'),
+        demo_input_parameters=ComputeInputWalkability(),
     )
     log.info(f'Return info {info.model_dump()}')
 

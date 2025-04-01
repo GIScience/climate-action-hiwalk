@@ -25,18 +25,8 @@ def slope_analysis(
     resources: ComputationResources,
 ) -> _Artifact:
     log.info('Computing slope')
-
-    try:
-        slope = get_slope(paths=line_paths, aoi=aoi, ors_client=ors_client)
-    except Exception as error:
-        log.error(
-            'The computation of the slope indicator failed. An all-None artifact will be created.', exc_info=error
-        )
-        slope = line_paths.copy()
-        slope['slope'] = None
-
+    slope = get_slope(paths=line_paths, aoi=aoi, ors_client=ors_client)
     slope_artifact = build_slope_artifact(slope=slope, resources=resources)
-
     log.info('Finished computing slope')
 
     return slope_artifact

@@ -1,6 +1,6 @@
 How is 'Naturalness' calculated?
 
-In its current version, Naturalness score each path accounting for the presence of vegetation (NDVI) and water bodies within 10 m from the center of a path or road, reflecting the environment perceived by pedestrians. Users have the option to focus the naturalness assessment on either vegetation (greenness) or on water (blueness).
+In its current version, Naturalness score each path accounting for the presence of vegetation (NDVI) and water bodies within 15 m from the center of a path or road, reflecting the environment perceived by pedestrians. Users have the option to focus the naturalness assessment on either vegetation (greenness) or on water (blueness).
 
 For assessing vegetation, we calculate the Normalized Difference Vegetation Index (NDVI) from Sentinel-2 satellite imagery (available at 10-m resolution).
 

@@ -2,12 +2,13 @@ import logging
 from typing import Dict
 
 import geopandas as gpd
+import plotly.graph_objects as go
 import shapely
-from climatoology.base.artifact import Chart2dData, ChartType
 from ohsome import OhsomeClient
+from plotly.graph_objects import Figure
 from pyproj import CRS
 
-from walkability.components.utils.misc import PathCategory, PATH_RATING_MAP, generate_colors
+from walkability.components.utils.misc import PATH_RATING_MAP, PathCategory, generate_colors
 
 log = logging.getLogger(__name__)
 
@@ -19,7 +20,7 @@ def summarise_by_area(
     projected_crs: CRS,
     ohsome_client: OhsomeClient,
     length_resolution_m: int = 1000,
-) -> Dict[str, Chart2dData]:
+) -> Dict[str, Figure]:
     log.info('Summarising walkability stats by area')
 
     stats = paths.copy()
@@ -56,10 +57,13 @@ def summarise_by_area(
             ascending=False,
         )
         colors = generate_colors(color_by=group.rating, min=0.0, max=1.0, cmap_name='coolwarm_r')
-        data[name] = Chart2dData(
-            x=group.category.tolist(),
-            y=group.length.tolist(),
-            color=colors,
-            chart_type=ChartType.PIE,
+        data[name] = Figure(
+            data=go.Pie(
+                labels=group['category'].tolist(),
+                values=group['length'].tolist(),
+                marker_colors=[c.as_hex() for c in colors],
+                hovertemplate='%{label}: %{value}km (%{percent}) <extra></extra>',
+            )
         )
+
     return data

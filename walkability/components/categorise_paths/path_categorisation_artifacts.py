@@ -1,24 +1,27 @@
 import logging
 from pathlib import Path
-from typing import Dict, List, Set, Optional
+from typing import Dict, List, Optional, Set
 
 import geopandas as gpd
 import pandas as pd
-from climatoology.base.artifact import Chart2dData
-from climatoology.base.artifact import create_chart_artifact, create_geojson_artifact
+from climatoology.base.artifact import (
+    create_geojson_artifact,
+    create_plotly_chart_artifact,
+)
 from climatoology.base.baseoperator import _Artifact
 from climatoology.base.computation import ComputationResources
+from plotly.graph_objects import Figure
 
 from walkability.components.categorise_paths.path_categorisation import (
     read_pavement_quality_rankings,
     subset_walkable_paths,
 )
 from walkability.components.utils.misc import (
+    PathCategory,
     generate_colors,
     get_path_rating_legend,
-    get_surface_quality_legend,
-    PathCategory,
     get_smoothness_legend,
+    get_surface_quality_legend,
     get_surface_type_legend,
 )
 
@@ -26,7 +29,7 @@ from walkability.components.utils.misc import (
 def build_path_categorisation_artifact(
     paths_line: gpd.GeoDataFrame,
     paths_polygon: gpd.GeoDataFrame,
-    areal_summaries: Dict[str, Chart2dData],
+    areal_summaries: Dict[str, Figure],
     walkable_categories: Set[PathCategory],
     resources: ComputationResources,
 ) -> List[_Artifact]:
@@ -137,15 +140,15 @@ def build_surface_artifact(paths_line: gpd.GeoDataFrame, resources: ComputationR
 
 
 def build_areal_summary_artifacts(
-    regional_aggregates: Dict[str, Chart2dData], resources: ComputationResources
+    regional_aggregates: Dict[str, Figure], resources: ComputationResources
 ) -> List[_Artifact]:
     chart_artifacts = []
-    for region, data in regional_aggregates.items():
-        chart_artifact = create_chart_artifact(
-            data=data,
+    for region, figure in regional_aggregates.items():
+        chart_artifact = create_plotly_chart_artifact(
+            figure=figure,
             title=f'Distribution of Path Categories in {region}',
             caption=f'Fraction of the total length of paths in each category, out '
-            f'of {sum(data.y)} km of paths in this area.',
+            f'of {round(sum(figure["data"][0].values), 2)} km of paths in this area.',
             resources=resources,
             filename=f'aggregation_{region}',
             primary=False,
