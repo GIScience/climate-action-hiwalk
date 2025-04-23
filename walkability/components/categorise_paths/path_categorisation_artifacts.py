@@ -30,6 +30,8 @@ def build_path_categorisation_artifact(
     paths_line: gpd.GeoDataFrame,
     paths_polygon: gpd.GeoDataFrame,
     areal_summaries: Dict[str, Figure],
+    aoi_summary_category_stacked_bar: Figure,
+    aoi_summary_quality_stacked_bar: Figure,
     walkable_categories: Set[PathCategory],
     resources: ComputationResources,
 ) -> List[_Artifact]:
@@ -49,9 +51,26 @@ def build_path_categorisation_artifact(
 
     surface_type = build_surface_artifact(paths_line=paths_line, resources=resources)
 
-    summary_artifacts = build_areal_summary_artifacts(regional_aggregates=areal_summaries, resources=resources)
+    summary_artifacts = []
+    if areal_summaries:
+        summary_artifacts = build_areal_summary_artifacts(regional_aggregates=areal_summaries, resources=resources)
 
-    return [walkable_paths, surface_quality, smoothness, surface_type] + summary_artifacts
+    aoi_summary_category_stacked_bar_artifact = build_aoi_summary_category_stacked_bar_artifact(
+        aoi_aggregate=aoi_summary_category_stacked_bar, resources=resources
+    )
+
+    aoi_summary_quality_stacked_bar_artifact = build_aoi_summary_quality_stacked_bar_artifact(
+        aoi_aggregate=aoi_summary_quality_stacked_bar, resources=resources
+    )
+
+    return [
+        walkable_paths,
+        surface_quality,
+        smoothness,
+        surface_type,
+        aoi_summary_category_stacked_bar_artifact,
+        aoi_summary_quality_stacked_bar_artifact,
+    ] + summary_artifacts
 
 
 def build_walkable_paths_artifact(
@@ -148,10 +167,34 @@ def build_areal_summary_artifacts(
             figure=figure,
             title=f'Distribution of Path Categories in {region}',
             caption=f'Fraction of the total length of paths in each category, out '
-            f'of {round(sum(figure["data"][0].values), 2)} km of paths in this area.',
+            f'of {round(sum(figure["data"][0].values), 2)} km of paths.',
             resources=resources,
             filename=f'aggregation_{region}',
             primary=False,
         )
         chart_artifacts.append(chart_artifact)
     return chart_artifacts
+
+
+def build_aoi_summary_category_stacked_bar_artifact(
+    aoi_aggregate: Figure, resources: ComputationResources
+) -> _Artifact:
+    return create_plotly_chart_artifact(
+        figure=aoi_aggregate,
+        title='Distribution of Path Categories',
+        caption='How is the total length of paths distributed across the path categories?',
+        resources=resources,
+        filename='aggregation_aoi_category_stacked_bar',
+        primary=True,
+    )
+
+
+def build_aoi_summary_quality_stacked_bar_artifact(aoi_aggregate: Figure, resources: ComputationResources) -> _Artifact:
+    return create_plotly_chart_artifact(
+        figure=aoi_aggregate,
+        title='Distribution of Surface Quality',
+        caption='How is the total length of paths distributed across the surface quality categories?',
+        resources=resources,
+        filename='aggregation_aoi_quality_stacked_bar',
+        primary=True,
+    )

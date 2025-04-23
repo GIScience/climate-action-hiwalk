@@ -1,10 +1,16 @@
 from pathlib import Path
 from climatoology.base.baseoperator import _Artifact
 from climatoology.base.computation import ComputationResources
-from climatoology.base.artifact import ContinuousLegendData, create_geojson_artifact, create_markdown_artifact
+from climatoology.base.artifact import (
+    ContinuousLegendData,
+    create_geojson_artifact,
+    create_markdown_artifact,
+    create_plotly_chart_artifact,
+)
 import geopandas as gpd
 import matplotlib
 from matplotlib.colors import to_hex
+from plotly.graph_objects import Figure
 from pydantic_extra_types.color import Color
 
 
@@ -52,4 +58,15 @@ def build_naturalness_artifact(
         legend_data=legend,
         resources=resources,
         filename='path_naturalness',
+    )
+
+
+def build_naturalness_summary_bar_artifact(aoi_aggregate: Figure, resources: ComputationResources) -> _Artifact:
+    return create_plotly_chart_artifact(
+        figure=aoi_aggregate,
+        title='Distribution of Naturalness Categories',
+        caption='How is the total length of paths distributed across the naturalness categories?',
+        resources=resources,
+        filename='aggregation_aoi_naturalness_bar',
+        primary=True,
     )

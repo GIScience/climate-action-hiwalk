@@ -27,7 +27,7 @@ def test_plugin_compute_request(
         params=expected_compute_input,
     )
 
-    assert len(computed_artifacts) == 9
+    assert len(computed_artifacts) == 14
     for artifact in computed_artifacts:
         assert isinstance(artifact, _Artifact)
 
@@ -40,7 +40,7 @@ def test_plugin_compute_request_empty(operator, default_aoi, default_aoi_propert
         params=ComputeInputWalkability(walkable_categories_selection=set()),
     )
 
-    assert len(computed_artifacts) == 4
+    assert len(computed_artifacts) == 6
     for artifact in computed_artifacts:
         assert isinstance(artifact, _Artifact) or artifact is None
 
@@ -55,6 +55,6 @@ def test_plugin_compute_request_with_only_one_optional_indicator(
         params=ComputeInputWalkability(indicators_to_compute={WalkabilityIndicators.SLOPE}),
     )
 
-    assert len(computed_artifacts) == 5
+    assert len(computed_artifacts) == 8
     for artifact in computed_artifacts:
         assert isinstance(artifact, _Artifact) or artifact is None

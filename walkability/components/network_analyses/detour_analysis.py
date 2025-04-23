@@ -1,12 +1,20 @@
 import time
 import logging
-from climatoology.base.artifact import _Artifact, ContinuousLegendData, create_geojson_artifact
+from typing import Tuple
+
+from climatoology.base.artifact import (
+    _Artifact,
+    ContinuousLegendData,
+    create_geojson_artifact,
+    create_plotly_chart_artifact,
+)
 from climatoology.base.computation import ComputationResources
 from pathlib import Path
 
 from networkx import set_node_attributes
 import numpy as np
 from osmnx import simplify_graph
+from plotly.graph_objects import Figure
 from pyproj import CRS
 from shapely import LineString, MultiLineString
 
@@ -32,11 +40,11 @@ log = logging.getLogger(__name__)
 
 def detour_factor_analysis(
     paths: gpd.GeoDataFrame, aoi: shapely.MultiPolygon, max_walking_distance: float, resources: ComputationResources
-) -> _Artifact:
+) -> Tuple[_Artifact, gpd.GeoDataFrame]:
     detour_factors = get_detour_factors(paths=paths, aoi=aoi, max_walking_distance=max_walking_distance)
 
     artifact = build_detour_factor_artifact(detour_factor_data=detour_factors, resources=resources)
-    return artifact
+    return artifact, detour_factors
 
 
 def get_detour_factors(
@@ -223,4 +231,15 @@ def build_detour_factor_artifact(
         color=color,
         legend_data=legend,
         resources=resources,
+    )
+
+
+def build_detour_summary_artifact(aoi_aggregate: Figure, resources: ComputationResources) -> _Artifact:
+    return create_plotly_chart_artifact(
+        figure=aoi_aggregate,
+        title='Histogram of Detour Factors',
+        caption='How are detour factor values distributed?',
+        resources=resources,
+        filename='aggregation_aoi_detour',
+        primary=True,
     )
