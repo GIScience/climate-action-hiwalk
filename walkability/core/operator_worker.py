@@ -11,10 +11,25 @@ from ohsome import OhsomeClient
 
 from walkability.components.categorise_paths.path_categorisation import path_categorisation, subset_walkable_paths
 from walkability.components.categorise_paths.path_categorisation_artifacts import build_path_categorisation_artifact
-from walkability.components.categorise_paths.path_summarisation import summarise_by_area
+from walkability.components.categorise_paths.path_summarisation import (
+    summarise_by_area,
+    summarise_aoi,
+    summarise_naturalness,
+    summarise_slope,
+    summarise_detour,
+)
 from walkability.components.naturalness.naturalness_analysis import naturalness_analysis
-from walkability.components.network_analyses.detour_analysis import detour_factor_analysis
+from walkability.components.naturalness.naturalness_artifacts import (
+    build_naturalness_summary_bar_artifact,
+)
+from walkability.components.network_analyses.detour_analysis import (
+    detour_factor_analysis,
+    build_detour_summary_artifact,
+)
 from walkability.components.slope.slope_analysis import slope_analysis
+from walkability.components.slope.slope_artifacts import (
+    build_slope_summary_bar_artifact,
+)
 from walkability.components.utils.geometry import get_utm_zone, get_buffered_aoi
 from walkability.components.utils.misc import (
     fetch_osm_data,
@@ -52,7 +67,7 @@ class OperatorWalkability(BaseOperator[ComputeInputWalkability]):
             aoi=aoi, max_walking_distance=params.max_walking_distance
         )
 
-        with self.catch_exceptions(indicator_name='Areal summary charts', resources=resources):
+        with self.catch_exceptions(indicator_name='Sub-district areal summary charts', resources=resources):
             areal_summaries = dict()  # Empty dict in case summaries fail
             areal_summaries = summarise_by_area(
                 paths=line_paths,
@@ -61,10 +76,22 @@ class OperatorWalkability(BaseOperator[ComputeInputWalkability]):
                 projected_crs=get_utm_zone(aoi),
                 ohsome_client=self.ohsome,
             )
+
+            with self.catch_exceptions(
+                indicator_name='Areal summary charts for Walkable Path Categories and Surface Quality',
+                resources=resources,
+            ):
+                (
+                    aoi_summary_category_stacked_bar,
+                    aoi_summary_quality_stacked_bar,
+                ) = summarise_aoi(paths=line_paths, projected_crs=get_utm_zone(aoi))
+
         path_artifacts = build_path_categorisation_artifact(
             paths_line=line_paths,
             paths_polygon=polygon_paths,
             areal_summaries=areal_summaries,
+            aoi_summary_category_stacked_bar=aoi_summary_category_stacked_bar,
+            aoi_summary_quality_stacked_bar=aoi_summary_quality_stacked_bar,
             walkable_categories=params.walkable_categories_selection,
             resources=resources,
         )
@@ -77,30 +104,45 @@ class OperatorWalkability(BaseOperator[ComputeInputWalkability]):
             return artifacts
 
         if WalkabilityIndicators.DETOURS in params.indicators_to_compute:
-            detour_artifact = detour_factor_analysis(
-                paths=line_paths_buffered,
-                aoi=aoi,
-                max_walking_distance=params.max_walking_distance,
-                resources=resources,
-            )
-            artifacts.append(detour_artifact)
+            with self.catch_exceptions(indicator_name='Detour Factors', resources=resources):
+                detour_artifact, hexgrid_detour = detour_factor_analysis(
+                    paths=line_paths_buffered,
+                    aoi=aoi,
+                    max_walking_distance=params.max_walking_distance,
+                    resources=resources,
+                )
+                detour_summary = summarise_detour(hexgrid=hexgrid_detour, projected_crs=get_utm_zone(aoi))
+                detour_summary_artifact = build_detour_summary_artifact(
+                    aoi_aggregate=detour_summary, resources=resources
+                )
+                artifacts.extend([detour_artifact, detour_summary_artifact])
 
         if WalkabilityIndicators.NATURALNESS in params.indicators_to_compute:
             with self.catch_exceptions(indicator_name='Naturalness', resources=resources):
-                naturalness_artifact = naturalness_analysis(
+                naturalness_artifact, line_paths_naturalness = naturalness_analysis(
                     line_paths=line_paths,
                     index=params.naturalness_index,
                     resources=resources,
                     naturalness_utility=self.naturalness_utility,
                 )
-                artifacts.append(naturalness_artifact)
+                naturalness_summary_bar = summarise_naturalness(
+                    paths=line_paths_naturalness, projected_crs=get_utm_zone(aoi)
+                )
+                naturalness_summary_bar_artifact = build_naturalness_summary_bar_artifact(
+                    aoi_aggregate=naturalness_summary_bar, resources=resources
+                )
+                artifacts.extend([naturalness_artifact, naturalness_summary_bar_artifact])
 
         if WalkabilityIndicators.SLOPE in params.indicators_to_compute:
             with self.catch_exceptions(indicator_name='Slope', resources=resources):
-                slope_artifact = slope_analysis(
+                slope_artifact, line_paths_slope = slope_analysis(
                     line_paths=line_paths, aoi=aoi, ors_client=self.ors_client, resources=resources
                 )
-                artifacts.append(slope_artifact)
+                slope_summary_bar = summarise_slope(paths=line_paths_slope, projected_crs=get_utm_zone(aoi))
+                slope_summary_bar_artifact = build_slope_summary_bar_artifact(
+                    aoi_aggregate=slope_summary_bar, resources=resources
+                )
+                artifacts.extend([slope_artifact, slope_summary_bar_artifact])
 
         return artifacts
 

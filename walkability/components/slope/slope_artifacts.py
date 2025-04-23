@@ -2,12 +2,18 @@ from pathlib import Path
 from typing import Tuple
 from climatoology.base.baseoperator import _Artifact
 from climatoology.base.computation import ComputationResources
-from climatoology.base.artifact import ContinuousLegendData, create_geojson_artifact, create_markdown_artifact
+from climatoology.base.artifact import (
+    ContinuousLegendData,
+    create_geojson_artifact,
+    create_markdown_artifact,
+    create_plotly_chart_artifact,
+)
 
 import geopandas as gpd
 import matplotlib
 from matplotlib.colors import to_hex
 import pandas as pd
+from plotly.graph_objects import Figure
 from pydantic_extra_types.color import Color
 
 
@@ -62,4 +68,15 @@ def build_slope_artifact(
         legend_data=legend,
         resources=resources,
         filename='slope',
+    )
+
+
+def build_slope_summary_bar_artifact(aoi_aggregate: Figure, resources: ComputationResources) -> _Artifact:
+    return create_plotly_chart_artifact(
+        figure=aoi_aggregate,
+        title='Distribution of Slope Categories',
+        caption='How is the total length of paths distributed across the slope categories?',
+        resources=resources,
+        filename='aggregation_aoi_slope_bar',
+        primary=True,
     )

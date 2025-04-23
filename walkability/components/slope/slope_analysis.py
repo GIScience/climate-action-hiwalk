@@ -1,6 +1,6 @@
 import logging
 import math
-
+from typing import Tuple
 
 import geopandas as gpd
 
@@ -23,13 +23,13 @@ def slope_analysis(
     aoi: shapely.MultiPolygon,
     ors_client: openrouteservice.Client,
     resources: ComputationResources,
-) -> _Artifact:
+) -> Tuple[_Artifact, gpd.GeoDataFrame]:
     log.info('Computing slope')
     slope = get_slope(paths=line_paths, aoi=aoi, ors_client=ors_client)
     slope_artifact = build_slope_artifact(slope=slope, resources=resources)
     log.info('Finished computing slope')
 
-    return slope_artifact
+    return slope_artifact, slope
 
 
 def get_slope(

@@ -142,6 +142,11 @@ def default_path_geometry() -> shapely.LineString:
 
 
 @pytest.fixture
+def default_polygon_geometry() -> shapely.Polygon:
+    return shapely.Polygon(((12.3, 48.22), (12.3, 48.2205), (12.3005, 48.22), (12.3, 48.22)))
+
+
+@pytest.fixture
 def default_path(default_path_geometry) -> gpd.GeoDataFrame:
     return gpd.GeoDataFrame(
         data={

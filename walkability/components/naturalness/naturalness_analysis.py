@@ -1,6 +1,6 @@
 import datetime as dt
 import logging
-from typing import List
+from typing import List, Tuple
 
 import geopandas as gpd
 from climatoology.base.baseoperator import _Artifact
@@ -18,12 +18,12 @@ def naturalness_analysis(
     index: NaturalnessIndex,
     resources: ComputationResources,
     naturalness_utility: NaturalnessUtility,
-) -> _Artifact:
+) -> Tuple[_Artifact, gpd.GeoDataFrame]:
     log.info('Computing naturalness')
     naturalness_of_paths = get_naturalness(paths=line_paths, index=index, naturalness_utility=naturalness_utility)
     naturalness_artifact = build_naturalness_artifact(naturalness_of_paths, resources)
     log.info('Finished computing Naturalness')
-    return naturalness_artifact
+    return naturalness_artifact, naturalness_of_paths
 
 
 def get_naturalness(
