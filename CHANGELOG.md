@@ -25,6 +25,7 @@ and this project mostly adheres to [Semantic Versioning](https://semver.org/spec
   the ohsome API
 - Fixed bug that threw error when calculating walkability for areas without polygon paths ([#87](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/87))
 - Fixed typos in naturallness description ([#195](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/195))
+- Sanitized subregion names in areal summaries, so file creation doesn't fail at special characters in subregion names ([#208](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/208))
 
 ### Added
 
