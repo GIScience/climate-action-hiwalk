@@ -163,13 +163,14 @@ def build_areal_summary_artifacts(
 ) -> List[_Artifact]:
     chart_artifacts = []
     for region, figure in regional_aggregates.items():
+        sanitised_region = region.translate({ord(character): None for character in '/<>|:&'})
         chart_artifact = create_plotly_chart_artifact(
             figure=figure,
             title=f'Distribution of Path Categories in {region}',
             caption=f'Fraction of the total length of paths in each category, out '
             f'of {round(sum(figure["data"][0].values), 2)} km of paths.',
             resources=resources,
-            filename=f'aggregation_{region}',
+            filename=f'aggregation_{sanitised_region}',
             primary=False,
         )
         chart_artifacts.append(chart_artifact)
