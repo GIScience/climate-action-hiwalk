@@ -233,7 +233,7 @@ def summarise_naturalness(
         title=dict(
             subtitle=dict(text='Length (km)', font=dict(size=14)),
         ),
-        xaxis_title=f'Percentage of the {round(sum(summary["length"]), 2)} km of paths in each naturalness category',
+        xaxis_title=f'Proportionate length of the {round(sum(summary["length"]), 2)} km of paths in each naturalness category',
         yaxis_title=None,
         margin=dict(t=30, b=60, l=80, r=30),
     )
@@ -287,7 +287,7 @@ def summarise_slope(
         title=dict(
             subtitle=dict(text='Length (km)', font=dict(size=14)),
         ),
-        xaxis_title=f'Percentage of the {round(sum(summary["length"]), 2)} km of paths in each slope category',
+        xaxis_title=f'Proportionate length of the {round(sum(summary["length"]), 2)} km of paths in each slope category',
         yaxis_title=None,
         margin=dict(t=30, b=60, l=80, r=30),
     )
