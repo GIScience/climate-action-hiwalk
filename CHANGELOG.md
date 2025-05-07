@@ -24,9 +24,11 @@ and this project mostly adheres to [Semantic Versioning](https://semver.org/spec
 - Filter ohsome boundaries to polygon geometries (in `summarise_by_area`), in case other geometry types make it through
   the ohsome API
 - Fixed bug that threw error when calculating walkability for areas without polygon paths ([#87](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/87))
-- Fixed typos in naturalness description ([#195](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/195))
-- Fixed typos in slope description ([#200](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/200))
-- Sanitized subregion names in areal summaries, so file creation doesn't fail at special characters in subregion names ([#208](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/208))
+- Polished description of indicators:
+  - naturalness ([#195](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/195))
+  - surface quality ([#196](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/196))
+  - slope ([#200](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/200))
+- Clean subregion names in areal summaries to deal with special characters ([#208](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/208))
 
 ### Added
 
