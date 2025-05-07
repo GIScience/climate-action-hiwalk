@@ -1,9 +1,9 @@
-import geopandas
 import geopandas as gpd
 from pyproj import CRS
 from responses import matchers
 from shapely.geometry.linestring import LineString
 from shapely.geometry.multilinestring import MultiLineString
+from geopandas.testing import assert_geodataframe_equal
 
 from walkability.components.slope.slope_analysis import get_slope
 
@@ -40,7 +40,7 @@ def test_get_slope(global_aoi, responses_mock, operator):
         ],
         crs='EPSG:4326',
     )
-    computed_slope = get_slope(aoi=global_aoi, paths=paths, ors_client=operator.ors_client)
+    computed_slope = get_slope(aoi=global_aoi, paths=paths, ors_client=operator.ors_settings.client)
 
     expected_naturalness = gpd.GeoDataFrame(
         index=[1],
@@ -51,7 +51,7 @@ def test_get_slope(global_aoi, responses_mock, operator):
         crs=CRS.from_epsg(4326),
     )
 
-    geopandas.testing.assert_geodataframe_equal(computed_slope, expected_naturalness, check_like=True)
+    assert_geodataframe_equal(computed_slope, expected_naturalness, check_like=True)
 
 
 def test_get_negative_slope(global_aoi, responses_mock, operator):
@@ -89,7 +89,7 @@ def test_get_negative_slope(global_aoi, responses_mock, operator):
         ],
         crs='EPSG:4326',
     )
-    computed_slope = get_slope(aoi=global_aoi, paths=paths, ors_client=operator.ors_client)
+    computed_slope = get_slope(aoi=global_aoi, paths=paths, ors_client=operator.ors_settings.client)
 
     expected_naturalness = gpd.GeoDataFrame(
         index=[1, 2],
@@ -101,7 +101,7 @@ def test_get_negative_slope(global_aoi, responses_mock, operator):
         crs=CRS.from_epsg(4326),
     )
 
-    geopandas.testing.assert_geodataframe_equal(computed_slope, expected_naturalness, check_like=True)
+    assert_geodataframe_equal(computed_slope, expected_naturalness, check_like=True)
 
 
 def test_get_duplicate_slope(global_aoi, responses_mock, operator):
@@ -138,7 +138,7 @@ def test_get_duplicate_slope(global_aoi, responses_mock, operator):
         ],
         crs='EPSG:4326',
     )
-    computed_slope = get_slope(aoi=global_aoi, paths=paths, ors_client=operator.ors_client)
+    computed_slope = get_slope(aoi=global_aoi, paths=paths, ors_client=operator.ors_settings.client)
 
     expected_slope = gpd.GeoDataFrame(
         index=[1, 2],
@@ -150,7 +150,7 @@ def test_get_duplicate_slope(global_aoi, responses_mock, operator):
         crs=CRS.from_epsg(4326),
     )
 
-    geopandas.testing.assert_geodataframe_equal(computed_slope, expected_slope, check_like=True)
+    assert_geodataframe_equal(computed_slope, expected_slope, check_like=True)
 
 
 def test_slope_matching_according_to_ORS_precision(responses_mock, global_aoi, operator):
@@ -185,7 +185,7 @@ def test_slope_matching_according_to_ORS_precision(responses_mock, global_aoi, o
         ],
         crs='EPSG:4326',
     )
-    computed_slope = get_slope(aoi=global_aoi, paths=paths, ors_client=operator.ors_client)
+    computed_slope = get_slope(aoi=global_aoi, paths=paths, ors_client=operator.ors_settings.client)
 
     expected_naturalness = gpd.GeoDataFrame(
         index=[1],
@@ -196,7 +196,7 @@ def test_slope_matching_according_to_ORS_precision(responses_mock, global_aoi, o
         crs=CRS.from_epsg(4326),
     )
 
-    geopandas.testing.assert_geodataframe_equal(computed_slope, expected_naturalness, check_like=True)
+    assert_geodataframe_equal(computed_slope, expected_naturalness, check_like=True)
 
 
 def test_get_large_amount_of_slopes(global_aoi, responses_mock, operator):
@@ -246,7 +246,9 @@ def test_get_large_amount_of_slopes(global_aoi, responses_mock, operator):
         geometry=geoms,
         crs='EPSG:4326',
     )
-    computed_slope = get_slope(aoi=global_aoi, paths=paths, ors_client=operator.ors_client, request_chunk_size=2)
+    computed_slope = get_slope(
+        aoi=global_aoi, paths=paths, ors_client=operator.ors_settings.client, request_chunk_size=2
+    )
 
     expected_slope = gpd.GeoDataFrame(
         geometry=geoms,
@@ -254,7 +256,7 @@ def test_get_large_amount_of_slopes(global_aoi, responses_mock, operator):
         crs=CRS.from_epsg(4326),
     )
 
-    geopandas.testing.assert_geodataframe_equal(computed_slope, expected_slope, check_like=True)
+    assert_geodataframe_equal(computed_slope, expected_slope, check_like=True)
 
 
 def test_slope_for_multipart_geom(responses_mock, global_aoi, operator):
@@ -289,7 +291,7 @@ def test_slope_for_multipart_geom(responses_mock, global_aoi, operator):
         ],
         crs='EPSG:4326',
     )
-    computed_slope = get_slope(aoi=global_aoi, paths=paths, ors_client=operator.ors_client)
+    computed_slope = get_slope(aoi=global_aoi, paths=paths, ors_client=operator.ors_settings.client)
 
     expected_naturalness = gpd.GeoDataFrame(
         index=[1],
@@ -300,4 +302,4 @@ def test_slope_for_multipart_geom(responses_mock, global_aoi, operator):
         crs=CRS.from_epsg(4326),
     )
 
-    geopandas.testing.assert_geodataframe_equal(computed_slope, expected_naturalness, check_like=True)
+    assert_geodataframe_equal(computed_slope, expected_naturalness, check_like=True)

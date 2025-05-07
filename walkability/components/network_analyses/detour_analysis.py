@@ -1,6 +1,5 @@
-import time
 import logging
-from typing import Tuple
+import time
 
 from climatoology.base.artifact import (
     _Artifact,
@@ -10,224 +9,474 @@ from climatoology.base.artifact import (
 )
 from climatoology.base.computation import ComputationResources
 from pathlib import Path
-
-from networkx import set_node_attributes
-import numpy as np
-from osmnx import simplify_graph
 from plotly.graph_objects import Figure
-from pyproj import CRS
-from shapely import LineString, MultiLineString
-
-from walkability.components.utils.geometry import get_buffered_aoi
-from walkability.components.utils.misc import PathCategory
 
 
 import geopandas as gpd
-import h3pandas
-import networkx as nx
+import openrouteservice
+import openrouteservice.directions
 import pandas as pd
+import h3pandas
+import h3
+import numpy as np
+from requests_ratelimiter import LimiterSession
 import shapely
-import momepy
-
-
-from operator import itemgetter
-from statistics import fmean
+import math
 
 from walkability.components.utils.misc import generate_colors
+from walkability.components.utils.ORSSettings import ORSSettings
 
 log = logging.getLogger(__name__)
 
 
 def detour_factor_analysis(
-    paths: gpd.GeoDataFrame, aoi: shapely.MultiPolygon, max_walking_distance: float, resources: ComputationResources
-) -> Tuple[_Artifact, gpd.GeoDataFrame]:
-    detour_factors = get_detour_factors(paths=paths, aoi=aoi, max_walking_distance=max_walking_distance)
+    aoi: shapely.MultiPolygon,
+    ors_settings: ORSSettings,
+    resources: ComputationResources,
+) -> tuple[_Artifact, gpd.GeoDataFrame]:
+    detour_factors = get_detour_factors(aoi=aoi, ors_settings=ors_settings)
 
     artifact = build_detour_factor_artifact(detour_factor_data=detour_factors, resources=resources)
     return artifact, detour_factors
 
 
-def get_detour_factors(
-    paths: gpd.GeoDataFrame, aoi: shapely.MultiPolygon, max_walking_distance: float
-) -> gpd.GeoDataFrame:
-    begin = time.time()
+def get_detour_factors(aoi: shapely.MultiPolygon, ors_settings: ORSSettings) -> gpd.GeoDataFrame:
     log.info('Computing detour factors')
 
-    buffered_aoi = get_buffered_aoi(aoi, distance=max_walking_distance)
-    local_crs = paths.estimate_utm_crs()
+    destinations = create_destinations(aoi, max_waypoint_number=ors_settings.directions_waypoint_limit)
+    distance_between_cells = get_cell_distance(destinations)
 
-    projected_paths = paths.to_crs(local_crs)
+    # This following calculation gives the distance from the cell center point to one of the corners.
+    # It's based on the normal distance from the center point of the cell to one of its sides,
+    # which is half the distance to its neighbouring cell.
+    distance_center_corner = int(np.ceil((distance_between_cells / 2) * math.cos(math.pi / 6)))
 
-    destinations = create_destinations(buffered_aoi, local_crs, projected_paths)
+    snapped_destinations = snap_destinations(
+        destinations,
+        ors_settings=ors_settings,
+        snapping_radius=distance_center_corner,
+    )
 
-    split_paths, snapped_destinations = snap(points=destinations, paths=projected_paths, crs=local_crs)
+    destinations_with_snapping = pd.merge(
+        left=destinations, right=snapped_destinations, how='left', left_on='id', right_on='id'
+    )
 
-    graph = geodataframe_to_graph(df=split_paths)
-
-    origins = snapped_destinations[snapped_destinations.to_crs('EPSG:4326').intersects(aoi)]
-
-    detours = []
-    index = []
-    for cell_index, cell in origins.iterrows():
-        destinations_per_cell = snapped_destinations.clip(cell['buffer'])
-        origin = cell['centroids']
-        cell_detours = []
-        for _i, destination in destinations_per_cell.iterrows():
-            try:
-                network_distance = nx.dijkstra_path_length(
-                    graph,
-                    (origin.x, origin.y),
-                    (destination['centroids'].x, destination['centroids'].y),
-                    weight='length',
-                )
-                euclidian_distance = origin.distance(destination['centroids'])
-
-                if euclidian_distance == 0:
-                    continue
-                else:
-                    cell_detours.append(network_distance / euclidian_distance)
-            except nx.exception.NetworkXNoPath:
-                # TODO pass here with no value (watch fmean exceptions if list is empty)
-                pass
-        index.append(cell_index)
-        if len(cell_detours) == 0:
-            detours.append(np.nan)
-        else:
-            detours.append(fmean(cell_detours))
-
-    detour_factors = pd.DataFrame(data={'detour_factor': detours}, index=index)
-    hexgrid_detour_factors = detour_factors.h3.h3_to_geo_boundary()
-
-    end = time.time()
-    log.info(f'Finished calculating Detour Factors. Took {end - begin}s')
-    return hexgrid_detour_factors
+    mean_walking_distances = get_ors_walking_distances(ors_settings, distance_between_cells, destinations_with_snapping)
+    return mean_walking_distances.h3.h3_to_geo_boundary().drop(columns='distance')
 
 
-def create_destinations(
-    aoi: shapely.MultiPolygon, local_crs: CRS, paths: gpd.GeoDataFrame, resolution: int = 10
-) -> gpd.GeoDataFrame:
+def create_destinations(aoi: shapely.MultiPolygon, resolution: int = 10, max_waypoint_number: int = 50) -> pd.DataFrame:
     """
-    Creates a h3 hexgrid for the aoi and drops all cells that do not contain any paths
-    ## Params
-    :param:`aoi`: `shapely.Multipolygon` to be polyfilled as a hexgrid in `EPSG:4326`
-    :param:`local_crs`: `pyproject.CRS` local UTM CRS of the `aoi` and `paths`
-    :param:`paths`: `geopandas.GeoDataFrame` of local paths. CRS must match `local_crs`
-    ## Returns
-    :return:`destinations`: `geopandas.GeoDataFrame` hexgrid of the `aoi` in `local_crs` with added centroids and 200 m buffer
+    This function creates a set of spurs (straight lines) through the hexgrid covering the aoi.
+    These spurs cover all three directions in a hexagonal grid,
+    and are the basis for routing to get the distances between all adjacent cells in the hexgrid.
+    ## Parameters
+    - :param:`aoi`: the `shapely.MultiPolygon` to be covered with spurs.
+    - :param:`resolution`: h3 grid resolution to use. Default: `10`.
+    - :param:`max_waypoint_number`: length of the admissible ors_directions request.
+    Defines how long each resulting spur can be. Default: `50`.
+    ## Return
+    - :return:`batched_spurs`: `gpd.GeoDataFrame` containing `'id'` with h3 cell ids, and `'spur_id'` in order of adjacency
     """
     log.debug(f'Using h3pandas v{h3pandas.version} to get hexgrid for aoi.')  # need to use h3pandas import
-
-    hexgrid = gpd.GeoDataFrame(geometry=[aoi], crs='EPSG:4326').h3.polyfill_resample(resolution)
-    local_hexgrid = hexgrid.to_crs(crs=local_crs)
+    hexgrid = gpd.GeoDataFrame(geometry=[aoi], crs='EPSG:4326').h3.polyfill_resample(resolution).reset_index()
 
     log.debug('Creating Destinations')
-    local_hexgrid['buffer'] = local_hexgrid.buffer(distance=200)
-    local_hexgrid['centroids'] = local_hexgrid.centroid
-    destinations = local_hexgrid[local_hexgrid.intersects(paths.union_all())]
+    origin_id = hexgrid.loc[0, 'h3_polyfill']
+    hexgrid['local_ij'] = hexgrid['h3_polyfill'].apply(lambda cell_id: h3.cell_to_local_ij(origin=origin_id, h=cell_id))
+    hexgrid['local_i'] = hexgrid['local_ij'].apply(lambda ij: ij[0])
+    hexgrid['local_j'] = hexgrid['local_ij'].apply(lambda ij: ij[1])
 
-    return destinations
+    # all i and j spurs start and end here
+    min_ij = (hexgrid.local_i.min(), hexgrid.local_j.min())
+    max_ij = (hexgrid.local_i.max(), hexgrid.local_j.max())
 
+    current_ij_starting_point = min_ij
+    # i_and_j_spurs = pd.DataFrame(data={'id': [], 'spur_id': [], 'ordinal': []})
+    i_and_j_spurs: list[pd.DataFrame] = []
+    while current_ij_starting_point[0] <= max_ij[0] or current_ij_starting_point[1] <= max_ij[1]:
+        # all i spurs
+        current_j = current_ij_starting_point[1]
+        i_spurs = get_i_or_j_spurs(aoi, origin_id, min_ij, max_ij, current_value=current_j, current_direction='i')
 
-def snap(points: gpd.GeoDataFrame, paths: gpd.GeoDataFrame, crs: CRS) -> tuple[gpd.GeoDataFrame, gpd.GeoDataFrame]:
-    log.debug('Snapping points to path network.')
+        current_j += 1
+        i_and_j_spurs.append(i_spurs)
 
-    points['nearest_point'] = points.apply(find_nearest_point, lines=paths, axis=1)
-    points['nearest_point'].set_crs(crs)
-    points['snapping_distance'] = points.apply(lambda row: row['nearest_point'].distance(row['centroids']), axis=1)
+        # all j spurs
+        current_i = current_ij_starting_point[0]
+        j_spurs = get_i_or_j_spurs(aoi, origin_id, min_ij, max_ij, current_value=current_i, current_direction='j')
 
-    snapping_edges = points.apply(lambda row: shapely.LineString([row['centroids'], row['nearest_point']]), axis=1)
+        current_i += 1
+        i_and_j_spurs.append(j_spurs)
 
-    nearest_points = points['nearest_point'].union_all()
-    paths['geometry'] = paths.snap(other=nearest_points, tolerance=1)
+        current_ij_starting_point = (current_i, current_j)
 
-    paths['geometry'] = paths.apply(lambda row: shapely.ops.split(row['geometry'], splitter=nearest_points), axis=1)
-    split_paths = paths.explode().reset_index(drop=True).set_crs(crs)
+    ij_spurs = get_ij_spurs(aoi, hexgrid, origin_id, min_ij, max_ij)
 
-    log.debug('Adding edges to hexcell centroids to paths')
-    for edge in snapping_edges:
-        last_row = split_paths.shape[0]
-        split_paths.loc[last_row, 'category'] = PathCategory.DESIGNATED
-        split_paths.loc[last_row, 'rating'] = 1.0
-        split_paths.loc[last_row, 'geometry'] = edge
+    i_and_j_spurs.append(ij_spurs)
+    all_spurs = pd.concat(i_and_j_spurs).reset_index(drop=True)
 
-    return split_paths, points
+    filtered_spurs = batch_and_filter_spurs(all_spurs, max_waypoint_number=max_waypoint_number)
 
-
-def find_nearest_point(row: pd.Series, lines: gpd.GeoDataFrame) -> shapely.Point:
-    paths_in_cell = lines.clip(row['geometry'])
-    point_candidates = []
-    for geometry in paths_in_cell['geometry']:
-        centroid, point_on_path = shapely.ops.nearest_points(row['centroids'], geometry)
-        distance = centroid.distance(point_on_path)
-        candidate = {'point': point_on_path, 'distance': distance}
-        point_candidates.append(candidate)
-
-    if len(point_candidates) == 0:
-        return shapely.Point()
-
-    sorted_candidates = sorted(point_candidates, key=itemgetter('distance'))
-    closest_candidate = sorted_candidates[0]
-    return closest_candidate['point']
+    log.debug(f'Created {filtered_spurs.shape[0]} batches of destinations')
+    return filtered_spurs
 
 
-def split_paths_at_intersections(df):
-    df = df.drop(errors='ignore', labels='@other_tags', axis=1)
-    df.geometry = df.geometry.apply(lambda geom: MultiLineString([geom]) if isinstance(geom, LineString) else geom)
-    df_ = (
-        df.assign(
-            geometry=df.geometry.apply(
-                lambda geom: list(
-                    list(map(LineString, zip(geom_part.coords[:-1], geom_part.coords[1:]))) for geom_part in geom.geoms
-                )
-            )
-        )
-        .explode('geometry')
-        .explode('geometry')
+def get_i_or_j_spurs(
+    aoi: shapely.MultiPolygon,
+    origin_id: str,
+    min_ij: tuple[int, int],
+    max_ij: tuple[int, int],
+    current_value: int,
+    current_direction: str,
+) -> pd.DataFrame:
+    """
+    Gets an ordered line of cells in `i` or `j` direction, from the current coordinate value.
+    ## Parameters
+    - :param:`aoi`: area of interest for which the spur is created.
+    - :param:`origin_id`: reference id for a common origin hexcell to reference the local coordinate system.
+    - :param:`min_ij`: the minimum i and j values of hexcells in the aoi, with the origin of :param:`origin_id`.
+    - :param:`max_ij`: the maximum i and j values of hexcells in the aoi, with the origin of :param:`origin_id`.
+    - :param:`current_value` the current i or j value starting point. Either i or j, inverse of :param:`current_direction`.
+    - :param:`current_direction`: either `'i'` or `'j'`. Gives the direction of spur to return.
+    ## Returns
+    - :return:`spur`: a pandas Dataframe with an ordered and numbered list of cells in the line.
+    """
+    match current_direction:
+        case 'i':
+            working_index = 0
+            static_index = 1
+        case 'j':
+            working_index = 1
+            static_index = 0
+        case _:
+            raise ValueError()
+
+    ordered_line_of_cells: list[dict] = []
+
+    current_cell_ij: list[int] = [0, 0]
+    current_cell_ij[static_index] = current_value
+    spur_number = 0
+    ordinal = 0
+
+    for i in range(min_ij[working_index], max_ij[working_index] + 1):
+        current_cell_ij[working_index] = i
+        current_cell_id: str = h3.local_ij_to_cell(origin=origin_id, i=current_cell_ij[0], j=current_cell_ij[1])
+
+        if check_contains_cell(aoi, current_cell_id):
+            current_cell = {
+                'id': current_cell_id,
+                'spur_id': f'{current_direction}:{current_value}:{spur_number}',
+                'ordinal': ordinal,
+            }
+            ordered_line_of_cells.append(current_cell)
+            ordinal += 1
+        else:
+            spur_number += 1
+            ordinal = 0
+
+    spur = pd.DataFrame.from_records(ordered_line_of_cells)
+    return spur
+
+
+def get_ij_spurs(
+    aoi: shapely.MultiPolygon,
+    hexgrid: gpd.GeoDataFrame,
+    origin_id: str,
+    min_ij: tuple[int, int],
+    max_ij: tuple[int, int],
+) -> pd.DataFrame:
+    """
+    Gets ordered lines of cells in `ij` direction, for the aoi.
+    ## Parameters
+    - :param:`aoi`: area of interest for which the spur is created.
+    - :param:`hexgrid`: the `gpd.GeoDataFrame` containing the hexcells for the aoi
+    - :param:`origin_id`: reference id for a common origin hexcell to reference the local coordinate system.
+    - :param:`min_ij`: the minimum i and j values of hexcells in the aoi, with the origin of :param:`origin_id`.
+    - :param:`max_ij`: the maximum i and j values of hexcells in the aoi, with the origin of :param:`origin_id`.
+    ## Returns
+    - :return:`ij_spurs`: a pandas.Dataframe with an ordered and numbered list of cells in line in ij direction.
+    """
+
+    min_i = min_ij[0]
+    max_i = max_ij[0]
+    max_j = max_ij[1]
+    # starting_ij = h3.cell_to_local_ij(origin=origin_id, h=origin_id)
+
+    tried_j_values: set[int] = set()
+    spur_number = 0
+    ordered_line_of_cells: list[dict] = []
+
+    for i in range(min_i, max_i + 1):
+        matching_js = hexgrid.loc[hexgrid['local_i'] == i, 'local_j'].sort_values()
+        # This loop iterates through all available js at current i
+        for matching_j in matching_js:
+            if matching_j in tried_j_values:
+                continue
+            tried_j_values.add(matching_j)
+            current_ij = np.array([i, matching_j])
+            ordinal = 0
+            # The following loop goes throug one spur
+            while current_ij[0] <= max_i or current_ij[1] <= max_j:
+                current_cell_id = h3.local_ij_to_cell(origin=origin_id, i=current_ij[0], j=current_ij[1])
+                if check_contains_cell(aoi, current_cell_id):
+                    current_cell = {'id': current_cell_id, 'spur_id': f'ij:{spur_number}', 'ordinal': ordinal}
+                    ordered_line_of_cells.append(current_cell)
+                    ordinal += 1
+                else:
+                    spur_number += 1
+                    ordinal = 0
+
+                current_ij += np.array([1, 1])
+            spur_number += 1
+
+    ij_spurs = pd.DataFrame.from_records(ordered_line_of_cells)
+    return ij_spurs
+
+
+def check_contains_cell(aoi: shapely.MultiPolygon, cell_id: str) -> bool:
+    lat, lon = h3.cell_to_latlng(h=cell_id)
+    return aoi.contains(shapely.Point(lon, lat))
+
+
+def batch_and_filter_spurs(spurs: pd.DataFrame, max_waypoint_number: int = 50) -> pd.DataFrame:
+    """
+    Removes spurs with less than 2 members. And splits up spurs above length 50, packing them into batches.
+    ## Parameters
+    - :param:`spurs`: `pd.DataFrame` containing spurs with columns `'id'` containing hexcell ids,
+    `'spur_id'` containing the id of a spur, and `'ordinal'` describing the order in the spur.
+    - :param:`max_waypoint_number`: the maximum batch size for a single ors directions request.
+    Determines the batch size for longer spurs.
+    ## Returns
+    - :return:`filtered_spurs`: `pd.DataFrame` with updated spurs
+    """
+
+    spur_lengths = spurs.groupby('spur_id').count()
+
+    # Filter out short spurs
+    short_spurs = spur_lengths[spur_lengths['id'] < 2]
+    short_spur_ids: list[str] = short_spurs.index.to_list()
+    sufficiently_long_spurs = spurs[~spurs['spur_id'].isin(short_spur_ids)]
+
+    long_spurs = spur_lengths[spur_lengths['id'] > max_waypoint_number]
+
+    if long_spurs.empty:
+        return sufficiently_long_spurs.reset_index(drop=True)
+
+    long_spur_ids: list[str] = long_spurs.index.to_list()
+    sufficiently_short_spurs = sufficiently_long_spurs[~sufficiently_long_spurs['spur_id'].isin(long_spur_ids)]
+    overlength_spurs = sufficiently_long_spurs[sufficiently_long_spurs['spur_id'].isin(long_spur_ids)]
+
+    split_spurs: list[pd.DataFrame] = []
+    for spur_id in long_spur_ids:
+        old_spur = overlength_spurs[overlength_spurs['spur_id'] == spur_id]
+        number_of_batches = int(np.ceil(len(old_spur) / (max_waypoint_number)))
+        spur_segment_start = 0
+        for i in range(number_of_batches):
+            spur_segment_end = spur_segment_start + max_waypoint_number
+            batch = old_spur[(spur_segment_start <= old_spur['ordinal']) & (old_spur['ordinal'] < spur_segment_end)]
+            batch['spur_id'] = f'{batch["spur_id"].iloc[0]}:{i}'
+
+            split_spurs.append(batch)
+            spur_segment_start = spur_segment_end - 1
+
+    modified_spurs = pd.concat(split_spurs)
+
+    filtered_spurs = pd.concat([sufficiently_short_spurs, modified_spurs]).reset_index(drop=True)
+    return filtered_spurs
+
+
+def get_cell_distance(destinations: pd.DataFrame) -> float:
+    """Return distance in meter between the center points of two adjacent cells."""
+    first_spur_id = destinations.loc[0, 'spur_id']
+    first_spur = destinations[destinations['spur_id'] == first_spur_id].set_index('id')
+    first_spur_gdf = first_spur.h3.h3_to_geo().set_index('ordinal')
+    first_spur_locations = first_spur_gdf.to_crs(first_spur_gdf.estimate_utm_crs())
+    location_a: shapely.Point = first_spur_locations.loc[0, 'geometry']
+    location_b: shapely.Point = first_spur_locations.loc[1, 'geometry']
+
+    return location_a.distance(location_b)
+
+
+def snap_destinations(
+    destinations: pd.DataFrame, ors_settings: ORSSettings, snapping_radius: int = 150
+) -> pd.DataFrame:
+    """Snap to closest path in radius from center of cell."""
+    log.debug('Setting up unique destinations')
+    # sorted here serves no purpose other than to preserve the order for testing
+    # TODO maybe fix mocking for the snapping response to keep order of set irrelevant here
+    unique_destinations: pd.DataFrame = destinations.groupby('id').count()
+    unique_destinations_gdf = unique_destinations.h3.h3_to_geo().drop(columns=['spur_id', 'ordinal'])
+
+    batched_destinations = batching(
+        series=unique_destinations_gdf.geometry, batch_size=ors_settings.snapping_request_size_limit
     )
-    # PERF: `unary_union` might lead to performance issues ...
-    # ... since it creates a single geometry
-    # `unary_union`: self-intersection geometries
-    # NOTE: All properties of the geodataframe are lost
-    # geom: MultiLineString = df.unary_union
-    # df_ = gpd.GeoDataFrame(data={'geometry': [geom], 'foo': ["bar"]}, crs=df.crs).explode(index_parts=True)
-    df_ = gpd.GeoDataFrame(df_).set_crs(df.crs)
-    return df_
+
+    snapped_records = snap_batched_records(ors_settings, batched_destinations, snapping_radius=snapping_radius)
+    log.debug(f'Snapped {len(snapped_records)} unique destinations')
+    return snapped_records
 
 
-def geodataframe_to_graph(df: gpd.GeoDataFrame) -> nx.MultiGraph:
-    log.debug('Splitting paths at intersections')
-    df_ = split_paths_at_intersections(df)
+def snap_batched_records(
+    ors_settings: ORSSettings,
+    batched_locations: list[gpd.GeoSeries],
+    snapping_radius: int = 150,
+) -> pd.DataFrame:
+    log.debug('Snapping Destinations')
+    # snapping unfortunately does not have a wrapper in openrouteservice-py
+    headers = {
+        'Accept': 'application/json, application/geo+json, application/gpx+xml, img/png; charset=utf-8',
+        'Authorization': ors_settings.client._key,
+        'Content-Type': 'application/json; charset=utf-8',
+    }
 
-    log.debug('Creating network graph from paths geodataframe')
-    G = momepy.gdf_to_nx(df_, multigraph=True, directed=False, length='length')
-    node_data = dict()
-    for node in G.nodes():
-        node_data[node] = {'x': node[0], 'y': node[1]}
-    set_node_attributes(G, node_data)
+    request_session = LimiterSession(per_minute=ors_settings.snapping_rate_limit)
 
-    log.debug('Simplifying graph by removing intermediate nodes along edges')
-    G_ = simplify_graph(G.to_directed(), remove_rings=False, edge_attrs_differ=['rating'])
+    snapped_df_list = []
+    for i, batch in enumerate(batched_locations):
+        locations = [(x, y) for x, y in zip(batch.x, batch.y)]
+        body = {'locations': locations, 'radius': snapping_radius}
 
-    log.debug('Finished creating graph')
-    return G_.to_undirected()
+        call = request_session.post(f'{ors_settings.client._base_url}/v2/snap/foot-walking', json=body, headers=headers)
+        if call.status_code == 200:
+            json_result = call.json()
+        else:
+            raise RuntimeError()
+
+        snapping_response = pd.Series(index=batch.index, data=json_result['locations'])
+        snapped_response_extracted = snapping_response.apply(extract_ors_snapping_results)
+        snapped_df = pd.DataFrame()
+        snapped_df['snapping_results'] = snapped_response_extracted
+        snapped_df['snapped_location'], snapped_df['snapped_distance'] = zip(*snapped_df.snapping_results)
+
+        snapped_df_list.append(snapped_df)
+
+    return pd.concat(snapped_df_list).drop(columns=['snapping_results'])
+
+
+def extract_ors_snapping_results(result: None | dict) -> tuple[None, None] | tuple[list[float], float]:
+    if result is None:
+        return None, None
+    else:
+        return result['location'], result['snapped_distance']
+
+
+def batching(series: gpd.GeoSeries, batch_size: int) -> list[gpd.GeoSeries]:
+    num_batches = int(np.ceil(len(series) / batch_size))
+
+    batches = []
+    for i in range(num_batches):
+        start = batch_size * i
+        end = start + batch_size
+        batches.append(series.iloc[start:end])
+    return batches
+
+
+def get_ors_walking_distances(
+    ors_settings: ORSSettings, cell_distance: float, destinations_with_snapping: pd.DataFrame
+) -> pd.DataFrame:
+    """Route between destinations of adjacent cells using ORS."""
+    log.debug('Requesting direction from the ors')
+    sleep_time = 60 / ors_settings.directions_rate_limit
+    spur_ids: set[str] = set(destinations_with_snapping['spur_id'].to_list())
+
+    list_of_df: list[pd.DataFrame] = []
+    for spur_id in spur_ids:
+        spur = (
+            destinations_with_snapping[destinations_with_snapping['spur_id'] == spur_id]
+            .set_index('ordinal')
+            .sort_index()
+            .reset_index()
+        )
+        coordinates: list[float] = list(filter(lambda x: x is not None, spur['snapped_location'].to_list()))
+        if len(coordinates) < 2:
+            continue
+
+        json_result = openrouteservice.directions.directions(
+            client=ors_settings.client, coordinates=coordinates, profile='foot-walking', geometry=False
+        )
+        start = time.time()
+        distances = [segment['distance'] for segment in json_result['routes'][0]['segments']]
+
+        # TODO this matching actually breaks, whoopsie
+        walking_distances = match_ors_distance_to_cells(spur, distances)
+
+        list_of_df.append(walking_distances)
+
+        time_remaining = sleep_time - (time.time() - start)
+        if time_remaining > 0:
+            time.sleep(time_remaining)
+
+    cell_walking_distances = pd.concat(list_of_df)
+    mean_walking_distances = cell_walking_distances.groupby('id').mean()
+    mean_walking_distances['detour_factor'] = mean_walking_distances['distance'].apply(
+        lambda distance: distance / cell_distance
+    )
+    log.debug('Calculated Detour Factors')
+    return mean_walking_distances
+
+
+def match_ors_distance_to_cells(spur: pd.DataFrame, distances: list[float]) -> pd.DataFrame:
+    walking_distances = pd.DataFrame(columns=['id', 'distance'])
+    waypoint_pairs = generate_waypoint_pairs(spur)
+    spur_by_ordinal = spur.set_index('ordinal', drop=True)
+
+    for index, distance in enumerate(distances):
+        origin_ordinal = waypoint_pairs[index][0]
+        destination_ordinal = waypoint_pairs[index][1]
+        if origin_ordinal + 1 != destination_ordinal:
+            # cells are not adjacent
+            continue
+        cell_id_origin = spur_by_ordinal.loc[origin_ordinal, 'id']
+        cell_id_destination = spur_by_ordinal.loc[destination_ordinal, 'id']
+
+        actual_distance = (
+            distance
+            + spur_by_ordinal.loc[origin_ordinal, 'snapped_distance']  # type: ignore
+            + spur_by_ordinal.loc[destination_ordinal, 'snapped_distance']
+        )  # type: ignore
+
+        walking_distances.loc[len(walking_distances)] = [cell_id_origin, actual_distance]
+        walking_distances.loc[len(walking_distances)] = [cell_id_destination, actual_distance]
+    return walking_distances
+
+
+def generate_waypoint_pairs(spur: pd.DataFrame) -> list[tuple[int, int]]:
+    spur_without_na = spur[~spur['snapped_distance'].isna()]
+    last_valid_ordinal: int = spur_without_na['ordinal'].min()
+
+    waypoint_pairs: list[tuple[int, int]] = []
+
+    for index, row in spur.iterrows():
+        if row['ordinal'] <= last_valid_ordinal:
+            continue
+        if np.isnan(row.loc['snapped_distance']):
+            continue
+
+        waypoint_pairs.append((last_valid_ordinal, row.loc['ordinal']))
+        last_valid_ordinal = row.loc['ordinal']
+
+    return waypoint_pairs
 
 
 def build_detour_factor_artifact(
     detour_factor_data: gpd.GeoDataFrame, resources: ComputationResources, cmap_name: str = 'YlOrRd'
 ) -> _Artifact:
-    detour = detour_factor_data.detour_factor
+    """Artifact containing a GeoJSON with hex-grid cells and the Detour Factor."""
+    detour_factor_data_no_na = detour_factor_data.dropna()
+    detour = detour_factor_data_no_na.detour_factor
     color = generate_colors(color_by=detour, cmap_name=cmap_name)
     legend = ContinuousLegendData(
         cmap_name=cmap_name, ticks={f'{round(detour.min(), ndigits=2)}': 0, f'{round(detour.max(), ndigits=2)}': 1}
     )
 
     return create_geojson_artifact(
-        features=detour_factor_data.geometry,
+        features=detour_factor_data_no_na.geometry,
         layer_name='Detour Factor',
         filename='hexgrid_detours',
         caption=Path('resources/components/network_analyses/detour_factor/caption.md').read_text(),
         description=Path('resources/components/network_analyses/detour_factor/description.md').read_text(),
-        label=detour_factor_data.detour_factor.round(2).to_list(),
+        label=detour_factor_data_no_na.detour_factor.round(2).to_list(),
         color=color,
         legend_data=legend,
         resources=resources,
