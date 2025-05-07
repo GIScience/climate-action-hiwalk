@@ -1,1 +1,1 @@
-How smooth and comfortable is the surface of this path for walking?
+Can I walk comfortably on this surface?
