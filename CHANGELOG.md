@@ -24,7 +24,8 @@ and this project mostly adheres to [Semantic Versioning](https://semver.org/spec
 - Filter ohsome boundaries to polygon geometries (in `summarise_by_area`), in case other geometry types make it through
   the ohsome API
 - Fixed bug that threw error when calculating walkability for areas without polygon paths ([#87](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/87))
-- Fixed typos in naturallness description ([#195](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/195))
+- Fixed typos in naturalness description ([#195](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/195))
+- Fixed typos in slope description ([#200](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/200))
 - Sanitized subregion names in areal summaries, so file creation doesn't fail at special characters in subregion names ([#208](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/208))
 
 ### Added
@@ -37,7 +38,7 @@ and this project mostly adheres to [Semantic Versioning](https://semver.org/spec
   hexgrid based on the ors directions and snapping endpoints
   ([#175](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/175), [#180](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/180))
 - A new smoothness and a new surface type indicator (components of the surface quality indicator) ([#172](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/172))
-- The option for users to select which optional indicators to compute (slope, naturalness, and detour factors)
+- Option to select which indicators to compute (slope, naturalness, and detour factors)
 - Summary charts of the entire area of interest for the different indicators ([#194](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/194))
 
 ### Removed
