@@ -299,7 +299,7 @@ def summarise_detour(
     projected_crs: CRS,
 ) -> Figure:
     log.info('Summarising detour factor stats')
-    stats = hexgrid.copy()
+    stats = hexgrid.dropna(how='any')
     stats = stats.to_crs(projected_crs)
 
     counts, bin_edges = np.histogram(stats['detour_factor'], bins=30)

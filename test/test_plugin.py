@@ -4,13 +4,32 @@ from climatoology.base.info import _Info
 from test.conftest import filter_start_matcher
 from walkability.core.input import ComputeInputWalkability, WalkabilityIndicators
 
+import pytest
+from unittest.mock import patch
+
 
 def test_plugin_info_request(operator):
     assert isinstance(operator.info(), _Info)
 
 
+@pytest.fixture
+def mock_detour_factor_calculation(expected_detour_factors):
+    # This higher level mock exists because mocking a response for the api calls required for all hexcells of the entired default_aoi, is massive
+    # The functionality is already covered by smaller tests in test/components/network_analyses/test_detour_analysis.py
+    with patch('walkability.components.network_analyses.detour_analysis.get_detour_factors') as detour_factors:
+        detour_factors.return_value = expected_detour_factors
+        yield detour_factors
+
+
 def test_plugin_compute_request(
-    operator, expected_compute_input, default_aoi, default_aoi_properties, compute_resources, ohsome_api, ors_api
+    operator,
+    expected_compute_input,
+    default_aoi,
+    default_aoi_properties,
+    compute_resources,
+    ohsome_api,
+    ors_elevation_api,
+    mock_detour_factor_calculation,
 ):
     with open('test/resources/ohsome_admin_response.geojson', 'r') as admin_file:
         admin_body = admin_file.read()
@@ -46,7 +65,7 @@ def test_plugin_compute_request_empty(operator, default_aoi, default_aoi_propert
 
 
 def test_plugin_compute_request_with_only_one_optional_indicator(
-    operator, default_aoi, default_aoi_properties, compute_resources, ohsome_api
+    operator, default_aoi, default_aoi_properties, compute_resources, ohsome_api, ors_elevation_api
 ):
     computed_artifacts = operator.compute(
         resources=compute_resources,

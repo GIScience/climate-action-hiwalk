@@ -1,0 +1,95 @@
+{
+  "records": [
+    {
+      "id": "8a1faa996857fff",
+      "long_lat": [
+        8.69013028805145,
+        49.418231907096406
+      ],
+      "snapped": true,
+      "snapped_location": [
+        8.690396,
+        49.418228
+      ],
+      "snapped_distance": 19.2
+    },
+    {
+      "id": "8a1faa9968effff",
+      "long_lat": [
+        8.690611828227471,
+        49.41718262978112
+      ],
+      "snapped": true,
+      "snapped_location": [
+        8.690353,
+        49.417188
+      ],
+      "snapped_distance": 18.76
+    },
+    {
+      "id": "8a1faa9968c7fff",
+      "long_lat": [
+        8.689363474284477,
+        49.41632170330085
+      ],
+      "snapped": true,
+      "snapped_location": [
+        8.689776,
+        49.416313
+      ],
+      "snapped_distance": 29.88
+    },
+    {
+      "id": "8a1faa996bb7fff",
+      "long_lat": [
+        8.692341738692683,
+        49.416994246743926
+      ],
+      "snapped": true,
+      "snapped_location": [
+        8.692346,
+        49.416992
+      ],
+      "snapped_distance": 0.43
+    },
+    {
+      "id": "8a1faa99684ffff",
+      "long_lat": [
+        8.693108650823548,
+        49.418904430920584
+      ],
+      "snapped": true,
+      "snapped_location": [
+        8.693091,
+        49.418907
+      ],
+      "snapped_distance": 1.28
+    },
+    {
+      "id": "8a1faa99685ffff",
+      "long_lat": [
+        8.691860220406983,
+        49.41804353898817
+      ],
+      "snapped": true,
+      "snapped_location": [
+        8.692439,
+        49.418159
+      ],
+      "snapped_distance": 43.83
+    },
+    {
+      "id": "8a1faa996847fff",
+      "long_lat": [
+        8.691378689376812,
+        49.41909281213633
+      ],
+      "snapped": true,
+      "snapped_location": [
+        8.691352,
+        49.419144
+      ],
+      "snapped_distance": 6.04
+    }
+  ]
+}

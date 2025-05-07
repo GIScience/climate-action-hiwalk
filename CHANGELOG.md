@@ -34,8 +34,8 @@ and this project mostly adheres to [Semantic Versioning](https://semver.org/spec
 - A new slope indicator depicting the slope in % of OSM ways based on openelevationservice (
   90x90m) ([#42](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/42))
 - A new detour indicator mapping the average ratio of the walking distance to the euclidian distance for cells in a
-  hexgrid
-  ([#175](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/175))
+  hexgrid based on the ors directions and snapping endpoints
+  ([#175](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/175), [#180](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/180))
 - A new smoothness and a new surface type indicator (components of the surface quality indicator) ([#172](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/172))
 - The option for users to select which optional indicators to compute (slope, naturalness, and detour factors)
 - Summary charts of the entire area of interest for the different indicators ([#194](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/194))

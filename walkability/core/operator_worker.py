@@ -35,6 +35,7 @@ from walkability.components.utils.misc import (
     fetch_osm_data,
     ohsome_filter,
 )
+from walkability.components.utils.ORSSettings import ORSSettings
 from walkability.core.info import get_info
 from walkability.core.input import ComputeInputWalkability, WalkabilityIndicators
 
@@ -42,11 +43,33 @@ log = logging.getLogger(__name__)
 
 
 class OperatorWalkability(BaseOperator[ComputeInputWalkability]):
-    def __init__(self, naturalness_utility: NaturalnessUtility, ors_api_key: str):
+    def __init__(
+        self,
+        naturalness_utility: NaturalnessUtility,
+        ors_api_key: str,
+        ors_snapping_rate_limit: int = 100,
+        ors_snapping_request_size_limit: int = 5000,
+        ors_directions_rate_limit: int = 40,
+        ors_directions_waypoint_limit: int = 50,
+        ors_base_url: str | None = None,
+    ):
         super().__init__()
         self.naturalness_utility = naturalness_utility
         self.ohsome = OhsomeClient(user_agent='CA Plugin Walkability')
-        self.ors_client = openrouteservice.Client(key=ors_api_key)
+
+        if ors_base_url is None:
+            ors_client = openrouteservice.Client(key=ors_api_key)
+        else:
+            ors_client = openrouteservice.Client(key=ors_api_key, base_url=ors_base_url)
+
+        self.ors_settings = ORSSettings(
+            client=ors_client,
+            snapping_rate_limit=ors_snapping_rate_limit,
+            snapping_request_size_limit=ors_snapping_request_size_limit,
+            directions_rate_limit=ors_directions_rate_limit,
+            directions_waypoint_limit=ors_directions_waypoint_limit,
+        )
+
         log.debug('Initialised walkability operator with ohsome client and Naturalness Utility')
 
     def info(self) -> _Info:
@@ -106,9 +129,8 @@ class OperatorWalkability(BaseOperator[ComputeInputWalkability]):
         if WalkabilityIndicators.DETOURS in params.indicators_to_compute:
             with self.catch_exceptions(indicator_name='Detour Factors', resources=resources):
                 detour_artifact, hexgrid_detour = detour_factor_analysis(
-                    paths=line_paths_buffered,
                     aoi=aoi,
-                    max_walking_distance=params.max_walking_distance,
+                    ors_settings=self.ors_settings,
                     resources=resources,
                 )
                 detour_summary = summarise_detour(hexgrid=hexgrid_detour, projected_crs=get_utm_zone(aoi))
@@ -136,7 +158,7 @@ class OperatorWalkability(BaseOperator[ComputeInputWalkability]):
         if WalkabilityIndicators.SLOPE in params.indicators_to_compute:
             with self.catch_exceptions(indicator_name='Slope', resources=resources):
                 slope_artifact, line_paths_slope = slope_analysis(
-                    line_paths=line_paths, aoi=aoi, ors_client=self.ors_client, resources=resources
+                    line_paths=line_paths, aoi=aoi, ors_client=self.ors_settings.client, resources=resources
                 )
                 slope_summary_bar = summarise_slope(paths=line_paths_slope, projected_crs=get_utm_zone(aoi))
                 slope_summary_bar_artifact = build_slope_summary_bar_artifact(
