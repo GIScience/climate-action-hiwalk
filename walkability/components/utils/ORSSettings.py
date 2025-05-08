@@ -8,7 +8,7 @@ class ORSSettings:
     client: openrouteservice.Client
 
     snapping_rate_limit: int = 100
-    snapping_request_size_limit: int = 5000
+    snapping_request_size_limit: int = 4999
 
     directions_rate_limit: int = 40
     directions_waypoint_limit: int = 50

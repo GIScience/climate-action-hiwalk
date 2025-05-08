@@ -335,17 +335,21 @@ def snap_batched_records(
 
     snapped_df_list = []
     for i, batch in enumerate(batched_locations):
-        locations = [(x, y) for x, y in zip(batch.x, batch.y)]
+        locations = [[round(x, 5), round(y, 5)] for x, y in zip(batch.x, batch.y)]
         body = {'locations': locations, 'radius': snapping_radius}
 
         call = request_session.post(f'{ors_settings.client._base_url}/v2/snap/foot-walking', json=body, headers=headers)
-        if call.status_code == 200:
-            json_result = call.json()
-        else:
-            raise HTTPError(
-                f'{ors_settings.client._base_url}/v2/snap/foot-walking responded wih error code {call.status_code}:{call.json}',
-                response=call,
+        if call.status_code != 200:
+            log.debug(f'Failed with {call.status_code}: {call.text}. Retrying once.')
+            call = request_session.post(
+                f'{ors_settings.client._base_url}/v2/snap/foot-walking', json=body, headers=headers
             )
+            if call.status_code != 200:
+                raise HTTPError(
+                    f'{ors_settings.client._base_url}/v2/snap/foot-walking responded wih error code {call.status_code}:{call.json()}. Retried once.',
+                    response=call,
+                )
+        json_result = call.json()
 
         snapping_response = pd.Series(index=batch.index, data=json_result['locations'])
         snapped_response_extracted = snapping_response.apply(extract_ors_snapping_results)
@@ -362,7 +366,10 @@ def extract_ors_snapping_results(result: None | dict) -> tuple[None, None] | tup
     if result is None:
         return None, None
     else:
-        return result['location'], result['snapped_distance']
+        snapped_distance = result.get('snapped_distance')
+        if snapped_distance is None:
+            snapped_distance = 0
+        return result['location'], snapped_distance
 
 
 def batching(series: gpd.GeoSeries, batch_size: int) -> list[gpd.GeoSeries]:

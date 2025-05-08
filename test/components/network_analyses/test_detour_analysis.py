@@ -294,7 +294,8 @@ def small_ors_snapping_response():
     ]
 
 
-def test_snap_destinations(small_ors_snapping_response):
+@use_cassette
+def test_snap_destinations():
     destinations = pd.DataFrame(
         data={
             'id': ['8a1faad6992ffff', '8a1faad69927fff', '8a1faad69927fff', '8a1faad6992ffff'],
@@ -304,37 +305,16 @@ def test_snap_destinations(small_ors_snapping_response):
     )
 
     expected_results = pd.DataFrame(
-        data={'snapped_location': [None, [8.773085, 49.376161]], 'snapped_distance': [None, 114.44]},
+        data={'snapped_location': [[8.773085, 49.376161], None], 'snapped_distance': [122.49, None]},
         index=['8a1faad69927fff', '8a1faad6992ffff'],
     ).rename_axis('id')
 
-    with responses.RequestsMock() as rsps:
-        rsps.add(
-            method='POST',
-            url='https://api.openrouteservice.org/v2/snap/foot-walking',
-            json=small_ors_snapping_response[0],
-            match=[
-                responses.matchers.json_params_matcher(
-                    {'locations': [[8.772978584588666, 49.377259809601995]], 'radius': 150}
-                )
-            ],
-        )
-        rsps.add(
-            method='POST',
-            url='https://api.openrouteservice.org/v2/snap/foot-walking',
-            json=small_ors_snapping_response[1],
-            match=[
-                responses.matchers.json_params_matcher(
-                    {'locations': [[8.774708093757534, 49.37706987059154]], 'radius': 150}
-                )
-            ],
-        )
+    results = snap_destinations(
+        destinations,
+        ors_settings=ORSSettings(ors.Client(base_url='http://localhost:8080/ors'), snapping_request_size_limit=1),
+    )
 
-        results = snap_destinations(
-            destinations, ors_settings=ORSSettings(ors.Client(key=''), snapping_request_size_limit=1)
-        )
-
-        assert_frame_equal(results, expected_results)
+    assert_frame_equal(results, expected_results)
 
 
 def test_snap_batched_records(small_ors_snapping_response):
