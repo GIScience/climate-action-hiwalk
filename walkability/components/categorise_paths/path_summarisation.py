@@ -68,14 +68,44 @@ def summarise_by_area(
                 by=['rating'],
                 ascending=False,
             )
-            colors = generate_colors(color_by=group.rating, min=0.0, max=1.0, cmap_name='coolwarm_r')
-            data[name] = Figure(
-                data=go.Pie(
-                    labels=group['category'].tolist(),
-                    values=group['length'].tolist(),
-                    marker_colors=[c.as_hex() for c in colors],
-                    hovertemplate='%{label}: %{value:.2f} km (%{percent:.1%}) <extra></extra>',
+
+            summary = group.groupby(['rating', 'category'], sort=True, dropna=False)['length'].sum().reset_index()
+            total_length = summary['length'].sum()
+            summary['percent'] = summary['length'] / total_length * 100
+            stacked_bar_colors = [
+                c.as_hex()
+                for c in generate_colors(color_by=summary['rating'], min=0.0, max=1.0, cmap_name='coolwarm_r')
+            ]
+
+            data[name] = go.Figure()
+
+            for i, (_, row) in enumerate(summary.iterrows()):
+                data[name].add_trace(
+                    go.Bar(
+                        y=['Path Types'],
+                        x=[row['percent']],
+                        name=row['category'],
+                        orientation='h',
+                        marker_color=stacked_bar_colors[i],
+                        hovertemplate=f"{row['category']}: {row['length']:.2f} km ({row['percent']:.1f}%)<extra></extra>",
+                        showlegend=True,
+                    )
                 )
+
+            data[name].update_layout(
+                barmode='stack',
+                height=300,
+                margin=dict(t=30, b=80, l=30, r=30),
+                xaxis_title=f'Percentage of the {round(sum(summary["length"]), 2)} km of paths in each category',
+                yaxis=dict(showticklabels=False),
+                legend=dict(
+                    orientation='h',
+                    yanchor='top',
+                    y=-1,
+                    xanchor='center',
+                    x=0.5,
+                    font=dict(size=12),
+                ),
             )
 
     return data

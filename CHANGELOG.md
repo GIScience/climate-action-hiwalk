@@ -18,6 +18,7 @@ and this project mostly adheres to [Semantic Versioning](https://semver.org/spec
   sidewalk would be available.
 - Remove default colormap from generate_colors ([#190](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/190))
 - Update climatoology to 6.3.1: use `create_plotly_chart_artifact` and include `demo_input_parameters` in info
+- Change summary charts of the sub-areas of the AOI from pie charts to horizontal stacked bar charts ([#209](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/209))
 
 ### Fixed
 

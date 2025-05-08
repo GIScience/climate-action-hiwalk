@@ -46,8 +46,8 @@ def test_summarise_by_area(operator, default_aoi, responses_mock, default_path_g
     assert all(
         isinstance(chart, Figure) and city in ['Bergheim', 'Südstadt'] for city, chart in computed_charts.items()
     )
-    assert computed_charts['Bergheim']['data'][0]['values'] == (0.12,)
-    assert computed_charts['Südstadt']['data'][0]['values'] == (0.12,)
+    assert computed_charts['Bergheim']['data'][0]['x'] == (100,)
+    assert computed_charts['Südstadt']['data'][0]['x'] == (100,)
 
 
 def test_summarise_by_area_no_boundaries(operator, default_aoi, responses_mock, default_path_geometry):
@@ -165,7 +165,8 @@ def test_summarise_by_area_two_types(operator, default_aoi, responses_mock, defa
         ohsome_client=operator.ohsome,
     )
 
-    assert all(chart['data'][0]['labels'] == ('Designated', 'Unknown') for _, chart in computed_charts.items())
+    assert all(chart['data'][0]['name'] == 'Designated' for _, chart in computed_charts.items())
+    assert all(chart['data'][1]['name'] == 'Unknown' for _, chart in computed_charts.items())
 
 
 def test_summarise_by_area_order_by_category_rating(operator, default_aoi, responses_mock, default_path_geometry):
@@ -192,10 +193,9 @@ def test_summarise_by_area_order_by_category_rating(operator, default_aoi, respo
         ohsome_client=operator.ohsome,
     )
 
-    assert all(
-        chart['data'][0]['labels'] == ('Designated', 'Shared with bikes', 'Unknown')
-        for _, chart in computed_charts.items()
-    )
+    assert all(chart['data'][0]['name'] == 'Shared with bikes' for _, chart in computed_charts.items())
+    assert all(chart['data'][1]['name'] == 'Designated' for _, chart in computed_charts.items())
+    assert all(chart['data'][2]['name'] == 'Unknown' for _, chart in computed_charts.items())
 
 
 def test_summarise_aoi(default_path_geometry, default_polygon_geometry):
