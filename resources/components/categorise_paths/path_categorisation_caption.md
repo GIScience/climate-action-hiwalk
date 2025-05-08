@@ -1,2 +1,1 @@
-Who do I have to share this path with?
-
+Who shares this path with me?
