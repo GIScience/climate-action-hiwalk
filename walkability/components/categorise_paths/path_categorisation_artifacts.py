@@ -167,8 +167,7 @@ def build_areal_summary_artifacts(
         chart_artifact = create_plotly_chart_artifact(
             figure=figure,
             title=f'Distribution of Path Categories in {region}',
-            caption=f'Fraction of the total length of paths in each category, out '
-            f'of {round(sum(figure["data"][0].values), 2)} km of paths.',
+            caption=f'How is the total length of paths distributed across the path categories in {region}?',
             resources=resources,
             filename=f'aggregation_{sanitised_region}',
             primary=False,
