@@ -1,5 +1,6 @@
 import logging
 import time
+from requests import HTTPError
 
 from climatoology.base.artifact import (
     _Artifact,
@@ -341,7 +342,10 @@ def snap_batched_records(
         if call.status_code == 200:
             json_result = call.json()
         else:
-            raise RuntimeError()
+            raise HTTPError(
+                f'{ors_settings.client._base_url}/v2/snap/foot-walking responded wih error code {call.status_code}:{call.json}',
+                response=call,
+            )
 
         snapping_response = pd.Series(index=batch.index, data=json_result['locations'])
         snapped_response_extracted = snapping_response.apply(extract_ors_snapping_results)
