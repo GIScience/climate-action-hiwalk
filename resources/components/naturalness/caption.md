@@ -1,3 +1,1 @@
-How much "nature" is there along my path? "Nature" meaning vegetation and/or water bodies.
-
-
+How green and/or blue are this path's surroundings?
