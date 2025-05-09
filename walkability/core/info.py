@@ -1,6 +1,7 @@
 import importlib
 import importlib.metadata
 import logging
+from datetime import timedelta
 from pathlib import Path
 
 from climatoology.base.info import _Info, generate_plugin_info, PluginAuthor, Concern
@@ -67,6 +68,7 @@ def get_info() -> _Info:
         purpose=Path('resources/info/purpose.md'),
         methodology=Path('resources/info/methodology.md'),
         demo_input_parameters=ComputeInputWalkability(),
+        computation_shelf_life=timedelta(weeks=24),
     )
     log.info(f'Return info {info.model_dump()}')
 
