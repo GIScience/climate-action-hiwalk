@@ -232,13 +232,13 @@ def summarise_naturalness(
     stats = calculate_length(length_resolution_m, paths, projected_crs)
 
     # Categorize naturalness values and set negative values (e.g. water) to 0
-    stats['naturalness_rating'] = stats['naturalness'].apply(lambda x: 0 if x <= 0.3 else (0.5 if x <= 0.7 else 1))
+    stats['naturalness_rating'] = stats['naturalness'].apply(lambda x: 0 if x < 0.3 else (0.5 if x < 0.6 else 1))
 
     # Add naturalness categories for labels
     naturalness_map = {
-        0: 'Low naturalness',
-        0.5: 'Moderate naturalness',
-        1: 'High naturalness',
+        0: 'Low (< 0.3) ',
+        0.5: 'Medium (0.3 to 0.6)',
+        1: 'High (> 0.6)',
         -999: 'Unknown naturalness',
     }
     stats['naturalness_category'] = stats['naturalness_rating'].map(naturalness_map)
@@ -263,7 +263,7 @@ def summarise_naturalness(
         title=dict(
             subtitle=dict(text='Length (km)', font=dict(size=14)),
         ),
-        xaxis_title=f'Proportionate length of the {round(sum(summary["length"]), 2)} km of paths in each naturalness category',
+        xaxis_title='Length of paths with different naturalness levels',
         yaxis_title=None,
         margin=dict(t=30, b=60, l=80, r=30),
     )
