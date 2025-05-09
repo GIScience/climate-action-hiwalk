@@ -34,20 +34,19 @@ and this project mostly adheres to [Semantic Versioning](https://semver.org/spec
 
 ### Added
 
-- A new greenness indicator, mapping the NDVI score of walking
-  paths ([#21](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/21))
+- A new naturalness indicator, quantifying greenness (NDVI) and blueness (presence of water bodies) in a
+  paths' immediate surroundings ([#21](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/21))
 - A new slope indicator depicting the slope in % of OSM ways based on openelevationservice (
   90x90m) ([#42](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/42))
-- A new detour indicator mapping the average ratio of the walking distance to the euclidian distance for cells in a
-  hexgrid
+- A new detour indicator mapping the average ratio of walking distance to straight-line distance between adjacent cells
+  in a hexgrid
   ([#175](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/175))
 - A new smoothness and a new surface type indicator (components of the surface quality indicator) ([#172](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/172))
-- The option for users to select which optional indicators to compute (slope, naturalness, and detour factors)
+- Possibility for users to select which optional indicators to compute (slope, naturalness, and detour factors)
 
 ### Removed
 
-- The old node based connectivity indicator in favor of future proper accessibility indicators and the new hexgrid
-  detour indicator ([#178](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/178))
+- The old node-based connectivity indicator in favor the new hexgrid detour indicator ([#178](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/178))
 
 ## [1.1.0](https://gitlab.heigit.org/climate-action/plugins/walkability/-/releases/1.1.0) - 2024-12-06
 
