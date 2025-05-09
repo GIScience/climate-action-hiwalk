@@ -24,7 +24,7 @@ def build_naturalness_artifact(
         text = 'There was an error calculating naturalness in this computation. Contact the developers for more information.'
         return create_markdown_artifact(
             text=text,
-            name='Naturalness Score (Error)',
+            name='Naturalness (Error)',
             tl_dr=text,
             filename='path_naturalness',
             resources=resources,
@@ -44,13 +44,13 @@ def build_naturalness_artifact(
     color = naturalness['naturalness_col'].apply(lambda v: Color(to_hex(cmap(v))))
     legend = ContinuousLegendData(
         cmap_name=cmap_name,
-        ticks={'Low naturalness (Score=0)': 0.0, 'Moderate naturalness': 0.5, 'High naturalness (Score=1)': 1.0},
+        ticks={'Low (0)': 0.0, 'High (1)': 1.0},
     )
 
     # Build artifact
     return create_geojson_artifact(
         features=naturalness.geometry,
-        layer_name='Naturalness Score',
+        layer_name='Naturalness',
         caption=Path('resources/components/naturalness/caption.md').read_text(),
         description=Path('resources/components/naturalness/description.md').read_text(),
         label=naturalness.naturalness.to_list(),
@@ -64,8 +64,8 @@ def build_naturalness_artifact(
 def build_naturalness_summary_bar_artifact(aoi_aggregate: Figure, resources: ComputationResources) -> _Artifact:
     return create_plotly_chart_artifact(
         figure=aoi_aggregate,
-        title='Distribution of Naturalness Categories',
-        caption='How is the total length of paths distributed across the naturalness categories?',
+        title='Distribution of Naturalness',
+        caption='What length of paths has low, mid, and high naturalness?',
         resources=resources,
         filename='aggregation_aoi_naturalness_bar',
         primary=True,

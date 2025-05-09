@@ -9,16 +9,19 @@ and this project mostly adheres to [Semantic Versioning](https://semver.org/spec
 
 ### Changed
 
-- Merge PavementQuality categories "excellent" and "good" into "
+- Surface quality categories "excellent" and "good" were merged into a single category "
   good" ([138](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/138))
-- Modify "potential" pavement quality categorization based on surface tags to reflect good road maintenance
+- Surface quality categories based on surface type now assume good road maintenance
   state ([138](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/138))
 - Paths, where it is unclear if the user has to walk on the street, are now classified as '
   Unknown' ([144](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/144)). Before it was assumed, no
   sidewalk would be available.
+- Summary charts of the sub-areas of the AOI are now horizontal stacked bar charts ([#209](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/209))
+- Naturalness legend is now simpler and more concise ([#215](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/215))
+
 - Remove default colormap from generate_colors ([#190](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/190))
 - Update climatoology to 6.3.1: use `create_plotly_chart_artifact` and include `demo_input_parameters` in info
-- Change summary charts of the sub-areas of the AOI from pie charts to horizontal stacked bar charts ([#209](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/209))
+
 
 ### Fixed
 

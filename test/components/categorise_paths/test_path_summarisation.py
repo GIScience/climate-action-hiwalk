@@ -252,7 +252,7 @@ def test_summarise_naturalness(default_path_geometry, default_polygon_geometry):
     bar_chart = summarise_naturalness(paths=input_paths, projected_crs=CRS.from_user_input(32632))
 
     assert isinstance(bar_chart, Figure)
-    assert bar_chart['data'][0]['x'] == ('Moderate naturalness',)
+    assert bar_chart['data'][0]['x'] == ('Medium (0.3 to 0.6)',)
     assert bar_chart['data'][0]['y'] == (0.12,)
 
 
