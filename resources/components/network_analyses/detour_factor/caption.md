@@ -1,1 +1,1 @@
-How many times longer must I walk to reach my surroundings compared to the straight line distance?
+Can I reach my surroundings without big detours?
