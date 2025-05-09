@@ -1,5 +1,5 @@
 hiWalk is currently composed of two core indicators:
-1. **Walkable paths**: A categorisation of walkable paths based on which other users share the path with pedestrians
+1. **Path category**: A categorisation of walkable paths based on which other users share the path with pedestrians
 (such as bicycles and/or motorised traffic).
 
 2. **Surface quality**: A grading of the paths' surface quality based on its reported smoothness or surface material. For transparency and interpretability, hiWalk separately displays each path's surface type and smoothness value.

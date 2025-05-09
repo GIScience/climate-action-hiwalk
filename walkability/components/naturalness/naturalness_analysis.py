@@ -15,20 +15,26 @@ log = logging.getLogger(__name__)
 
 def naturalness_analysis(
     line_paths: gpd.GeoDataFrame,
+    polygon_paths: gpd.GeoDataFrame,
     index: NaturalnessIndex,
     resources: ComputationResources,
     naturalness_utility: NaturalnessUtility,
 ) -> Tuple[_Artifact, gpd.GeoDataFrame]:
     log.info('Computing naturalness')
-    naturalness_of_paths = get_naturalness(paths=line_paths, index=index, naturalness_utility=naturalness_utility)
-    naturalness_artifact = build_naturalness_artifact(naturalness_of_paths, resources)
+    naturalness_of_paths, naturalness_of_polygons = get_naturalness(
+        paths=line_paths, polygons=polygon_paths, index=index, naturalness_utility=naturalness_utility
+    )
+    naturalness_artifact = build_naturalness_artifact(naturalness_of_paths, naturalness_of_polygons, resources)
     log.info('Finished computing Naturalness')
     return naturalness_artifact, naturalness_of_paths
 
 
 def get_naturalness(
-    paths: gpd.GeoDataFrame, index: NaturalnessIndex, naturalness_utility: NaturalnessUtility
-) -> gpd.GeoDataFrame:
+    paths: gpd.GeoDataFrame,
+    polygons: gpd.GeoDataFrame,
+    index: NaturalnessIndex,
+    naturalness_utility: NaturalnessUtility,
+) -> Tuple[gpd.GeoDataFrame, gpd.GeoDataFrame]:
     """
     Get NDVI along street within the AOI.
 
@@ -43,8 +49,13 @@ def get_naturalness(
         vectors=[paths.geometry],
         index=index,
     )
-
-    return paths_ndvi
+    polygons_ndvi = fetch_naturalness_by_vector(
+        naturalness_utility=naturalness_utility,
+        time_range=TimeRange(end_date=dt.datetime.now().replace(day=1).date()),
+        vectors=[polygons.geometry],
+        index=index,
+    )
+    return paths_ndvi, polygons_ndvi
 
 
 def fetch_naturalness_by_vector(

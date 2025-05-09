@@ -1,5 +1,6 @@
 from climatoology.utility.Naturalness import NaturalnessIndex
 import geopandas as gpd
+import shapely
 from climatoology.utility.api import TimeRange
 from pyproj import CRS
 from shapely import LineString, MultiLineString
@@ -8,6 +9,7 @@ from walkability.components.naturalness.naturalness_analysis import get_naturaln
 
 
 def test_get_naturalness(operator, naturalness_utility_mock):
+    polygon_geom = shapely.Polygon(((12.3, 48.2), (12.3, 48.25), (12.35, 48.25), (12.3, 48.25)))
     paths = gpd.GeoDataFrame(
         index=[1, 2],
         geometry=[
@@ -16,10 +18,14 @@ def test_get_naturalness(operator, naturalness_utility_mock):
         ],
         crs='EPSG:4326',
     )
-    computed_naturalness = get_naturalness(
-        paths=paths, index=NaturalnessIndex.NDVI, naturalness_utility=operator.naturalness_utility
+    polygons = gpd.GeoDataFrame(
+        index=[1, 2],
+        geometry=[polygon_geom, polygon_geom],
+        crs='EPSG:4326',
     )
-
+    computed_naturalness = get_naturalness(
+        paths=paths, polygons=polygons, index=NaturalnessIndex.NDVI, naturalness_utility=operator.naturalness_utility
+    )
     expected_naturalness = gpd.GeoDataFrame(
         index=[1, 2],
         geometry=[
@@ -30,7 +36,7 @@ def test_get_naturalness(operator, naturalness_utility_mock):
         crs=CRS.from_epsg(4326),
     )
 
-    gpd.testing.assert_geodataframe_equal(computed_naturalness, expected_naturalness, check_like=True)
+    gpd.testing.assert_geodataframe_equal(computed_naturalness[0], expected_naturalness, check_like=True)
 
 
 def test_fetch_naturalness_vectordata(naturalness_utility_mock):
@@ -46,6 +52,20 @@ def test_fetch_naturalness_vectordata(naturalness_utility_mock):
         ]
     )
 
+    greenness_gdf = fetch_naturalness_by_vector(
+        naturalness_utility=naturalness_utility_mock, time_range=TimeRange(), vectors=[vectors]
+    )
+    assert isinstance(greenness_gdf, gpd.GeoDataFrame)
+    assert 'naturalness' in greenness_gdf.columns
+
+
+def test_fetch_naturalness_polygon(naturalness_utility_mock):
+    vectors = gpd.GeoSeries(
+        [
+            shapely.Polygon(((12.3, 48.2), (12.3, 48.25), (12.35, 48.25), (12.35, 48.2))),
+            shapely.Polygon(((12.3, 48.2), (12.3, 48.25), (12.35, 48.25), (12.35, 48.2))),
+        ]
+    )
     greenness_gdf = fetch_naturalness_by_vector(
         naturalness_utility=naturalness_utility_mock, time_range=TimeRange(), vectors=[vectors]
     )

@@ -22,26 +22,40 @@ def path_categorisation(
     paths_line: gpd.GeoDataFrame,
     paths_polygon: gpd.GeoDataFrame,
 ) -> Tuple[gpd.GeoDataFrame, gpd.GeoDataFrame]:
+    rankings = read_pavement_quality_rankings()
+    keys = get_flat_key_combinations()
+
     paths_line['category'] = paths_line.apply(apply_path_category_filters, axis=1)
+    paths_line['quality'] = paths_line.apply(lambda row: evaluate_quality(row, keys, rankings), axis=1)
+    paths_line['smoothness'] = paths_line.apply(apply_path_smoothness_filters, axis=1)
+    paths_line['surface'] = paths_line.apply(apply_path_surface_filters, axis=1)
+
     if paths_polygon.empty:
         paths_polygon['category'] = pd.Series()
+        paths_polygon['quality'] = pd.Series()
+        paths_polygon['smoothness'] = pd.Series()
+        paths_polygon['surface'] = pd.Series()
     else:
         paths_polygon['category'] = paths_polygon.apply(apply_path_category_filters, axis=1)
+        paths_polygon['quality'] = paths_polygon.apply(lambda row: evaluate_quality(row, keys, rankings), axis=1)
+        paths_polygon['smoothness'] = paths_polygon.apply(apply_path_smoothness_filters, axis=1)
+        paths_polygon['surface'] = paths_polygon.apply(apply_path_surface_filters, axis=1)
 
     paths_line['rating'] = paths_line.category.apply(lambda category: PATH_RATING_MAP[category])
     paths_polygon['rating'] = paths_polygon.category.apply(lambda category: PATH_RATING_MAP[category])
 
-    rankings = read_pavement_quality_rankings()
-    keys = get_flat_key_combinations()
-
-    paths_line['quality'] = paths_line.apply(lambda row: evaluate_quality(row, keys, rankings), axis=1)
     paths_line['quality_rating'] = paths_line.quality.apply(lambda quality: PAVEMENT_QUALITY_RATING_MAP[quality])
-    paths_line['smoothness'] = paths_line.apply(apply_path_smoothness_filters, axis=1)
+    paths_polygon['quality_rating'] = paths_polygon.quality.apply(lambda quality: PAVEMENT_QUALITY_RATING_MAP[quality])
+
     paths_line['smoothness_rating'] = paths_line.smoothness.apply(
         lambda smoothness: SMOOTHNESS_CATEGORY_RATING_MAP[smoothness]
     )
-    paths_line['surface'] = paths_line.apply(apply_path_surface_filters, axis=1)
+    paths_polygon['smoothness_rating'] = paths_polygon.smoothness.apply(
+        lambda smoothness: SMOOTHNESS_CATEGORY_RATING_MAP[smoothness]
+    )
+
     paths_line['surface_rating'] = paths_line.surface.apply(lambda surface: SURFACE_TYPE_RATING_MAP[surface])
+    paths_polygon['surface_rating'] = paths_polygon.surface.apply(lambda surface: SURFACE_TYPE_RATING_MAP[surface])
 
     return paths_line, paths_polygon
 
