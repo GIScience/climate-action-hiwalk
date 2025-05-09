@@ -18,10 +18,9 @@ and this project mostly adheres to [Semantic Versioning](https://semver.org/spec
   sidewalk would be available.
 - Summary charts of the sub-areas of the AOI are now horizontal stacked bar charts ([#209](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/209))
 - Naturalness legend is now simpler and more concise ([#215](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/215))
-
 - Remove default colormap from generate_colors ([#190](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/190))
 - Update climatoology to 6.3.1: use `create_plotly_chart_artifact` and include `demo_input_parameters` in info
-
+- Add polygon paths to surface quality, surface type, smoothness, and naturalness ([#203](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/203))
 
 ### Fixed
 

@@ -143,6 +143,7 @@ class OperatorWalkability(BaseOperator[ComputeInputWalkability]):
             with self.catch_exceptions(indicator_name='Naturalness', resources=resources):
                 naturalness_artifact, line_paths_naturalness = naturalness_analysis(
                     line_paths=line_paths,
+                    polygon_paths=polygon_paths,
                     index=params.naturalness_index,
                     resources=resources,
                     naturalness_utility=self.naturalness_utility,

@@ -103,6 +103,12 @@ def test_get_polygon_paths(operator, expected_compute_input, default_aoi, ohsome
             'rating': [1.0],
             'geometry': [polygon_geom],
             '@other_tags': [{'highway': 'platform', 'area': 'yes'}],
+            'quality': [PavementQuality.UNKNOWN],
+            'quality_rating': [None],
+            'smoothness': [SmoothnessCategory.UNKNOWN],
+            'smoothness_rating': [None],
+            'surface': [SurfaceType.UNKNOWN],
+            'surface_rating': [None],
         },
         crs='EPSG:4326',
     )
