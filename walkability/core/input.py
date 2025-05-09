@@ -26,9 +26,8 @@ WALKING_SPEED_MAP_STRING = {k.value: v for k, v in WALKING_SPEED_MAP.items()}
 class ComputeInputWalkability(BaseModel):
     indicators_to_compute: Set[WalkabilityIndicators] = Field(
         title='Optional indicators to compute',
-        description='Selection of optional hiWalk indicators. Computing these indicators for large areas may exceed '
-        'the time limit for individual assessments in the Climate Action Navigator. Click "Read more >>" above for a '
-        'description of each of these indicators.',
+        description='Computing these indicators for large areas may exceed '
+        'the time limit for individual assessments in the Climate Action Navigator.',
         examples=[{WalkabilityIndicators.DETOURS}],
         default={
             WalkabilityIndicators.DETOURS,
