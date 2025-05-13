@@ -36,6 +36,8 @@ and this project mostly adheres to [Semantic Versioning](https://semver.org/spec
 
 ### Added
 
+- A check on the maximum number of line paths within the AOI, after which computation is aborted
+  and an error is shown to the user. ([#211](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/211))
 - A new naturalness indicator, quantifying greenness (NDVI) and blueness (presence of water bodies) in a
   paths' immediate surroundings ([#21](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/21))
 - A new slope indicator depicting the slope in % of OSM ways based on openelevationservice (
