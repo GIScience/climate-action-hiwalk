@@ -7,6 +7,7 @@ from climatoology.base.baseoperator import BaseOperator, AoiProperties, _Artifac
 from climatoology.base.computation import ComputationResources
 from climatoology.base.info import _Info
 from climatoology.utility.Naturalness import NaturalnessUtility
+from climatoology.utility.exception import ClimatoologyUserError
 from ohsome import OhsomeClient
 
 from walkability.components.categorise_paths.path_categorisation import path_categorisation, subset_walkable_paths
@@ -89,6 +90,12 @@ class OperatorWalkability(BaseOperator[ComputeInputWalkability]):
         line_paths, line_paths_buffered, polygon_paths = self._get_paths(
             aoi=aoi, max_walking_distance=params.max_walking_distance
         )
+        number_of_paths = len(line_paths)
+        max_paths = 100000
+        if number_of_paths > max_paths:
+            raise ClimatoologyUserError(
+                f'There are too many path segments in the selected area: {number_of_paths} path segments. Currently, only areas with a maximum of {max_paths} path segments are allowed. Please select a smaller area or a sub-region of your selected area'
+            )
 
         with self.catch_exceptions(indicator_name='Sub-district areal summary charts', resources=resources):
             areal_summaries = dict()  # Empty dict in case summaries fail
