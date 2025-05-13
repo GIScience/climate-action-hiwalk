@@ -5,10 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project mostly adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://gitlab.heigit.org/climate-action/plugins/walkability/-/compare/1.1.0...main)
+## [Unreleased](https://gitlab.heigit.org/climate-action/plugins/walkability/-/compare/2.0.0...main)
+
+## [2.0.0](https://gitlab.heigit.org/climate-action/plugins/walkability/-/releases/2.0.0) - 2025-05-13
 
 ### Changed
 
+- Surface quality, surface type, smoothness, and naturalness now include polygon paths ([#203](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/203))
 - Surface quality categories "excellent" and "good" were merged into a single category "
   good" ([138](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/138))
 - Surface quality categories based on surface type now assume good road maintenance
@@ -18,16 +21,12 @@ and this project mostly adheres to [Semantic Versioning](https://semver.org/spec
   sidewalk would be available.
 - Summary charts of the sub-areas of the AOI are now horizontal stacked bar charts ([#209](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/209))
 - Naturalness legend is now simpler and more concise ([#215](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/215))
+
 - Remove default colormap from generate_colors ([#190](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/190))
 - Update climatoology to 6.3.1: use `create_plotly_chart_artifact` and include `demo_input_parameters` in info
-- Add polygon paths to surface quality, surface type, smoothness, and naturalness ([#203](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/203))
-- Changed default of input parameter "Optional indicators to compute" to nothing ([#217](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/217))
 
 ### Fixed
 
-- Filter ohsome boundaries to polygon geometries (in `summarise_by_area`), in case other geometry types make it through
-  the ohsome API
-- Fixed bug that threw error when calculating walkability for areas without polygon paths ([#87](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/87))
 - Polished description of indicators:
   - naturalness ([#195](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/195))
   - surface quality ([#196](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/196))
@@ -35,25 +34,22 @@ and this project mostly adheres to [Semantic Versioning](https://semver.org/spec
   - slope ([#200](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/200))
 - Clean subregion names in areal summaries to deal with special characters ([#208](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/208))
 
+- Filter ohsome boundaries to polygon geometries (in `summarise_by_area`), in case other geometry types make it through
+  the ohsome API
+- Fixed bug that threw error when calculating walkability for areas without polygon paths ([#87](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/87))
+
 ### Added
 
-- A check on the maximum number of line paths within the AOI, after which computation is aborted
-  and an error is shown to the user. ([#211](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/211))
-- A new naturalness indicator, quantifying greenness (NDVI) and blueness (presence of water bodies) in a
+- New naturalness indicator, quantifying greenness (NDVI) and blueness (presence of water bodies) in a
   paths' immediate surroundings ([#21](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/21))
-- A new slope indicator depicting the slope in % of OSM ways based on openelevationservice (
+- New slope indicator depicting the slope in % of OSM ways based on openelevationservice (
   90x90m) ([#42](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/42))
-- A new detour indicator mapping the average ratio of walking distance to straight-line distance between adjacent cells
-  in a hexgrid
-  ([#175](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/175))
-- A new smoothness and a new surface type indicator (components of the surface quality indicator) ([#172](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/172))
-- Possibility for users to select which optional indicators to compute (slope, naturalness, and detour factors)
+- New smoothness and a new surface type indicator (components of the surface quality indicator) ([#172](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/172))
+- Possibility for users to select which optional indicators to compute (slope and naturalness)
 
 ### Removed
 
-- The old node-based connectivity indicator in favor the new hexgrid detour indicator ([#178](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/178))
-- Option to calculate detour factors (temporarily)! ([#217](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/217))
-- Input parameters "Potentially Walkable Categories", "Max trip duration", "Walking Speed", "Administrative level" ([#217](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/217))
+- Node-based connectivity indicator in favor of a new hexgrid detour indicator to be included in next minor release ([#178](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/178))
 
 ## [1.1.0](https://gitlab.heigit.org/climate-action/plugins/walkability/-/releases/1.1.0) - 2024-12-06
 
