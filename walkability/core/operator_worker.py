@@ -17,15 +17,10 @@ from walkability.components.categorise_paths.path_summarisation import (
     summarise_aoi,
     summarise_naturalness,
     summarise_slope,
-    summarise_detour,
 )
 from walkability.components.naturalness.naturalness_analysis import naturalness_analysis
 from walkability.components.naturalness.naturalness_artifacts import (
     build_naturalness_summary_bar_artifact,
-)
-from walkability.components.network_analyses.detour_analysis import (
-    detour_factor_analysis,
-    build_detour_summary_artifact,
 )
 from walkability.components.slope.slope_analysis import slope_analysis
 from walkability.components.slope.slope_artifacts import (
@@ -35,10 +30,11 @@ from walkability.components.utils.geometry import get_utm_zone, get_buffered_aoi
 from walkability.components.utils.misc import (
     fetch_osm_data,
     ohsome_filter,
+    WALKABLE_CATEGORIES,
 )
 from walkability.components.utils.ORSSettings import ORSSettings
 from walkability.core.info import get_info
-from walkability.core.input import ComputeInputWalkability, WalkabilityIndicators
+from walkability.core.input import ComputeInputWalkability, WalkabilityIndicators, WALKING_SPEED_MAP, WalkingSpeed
 
 log = logging.getLogger(__name__)
 
@@ -70,6 +66,8 @@ class OperatorWalkability(BaseOperator[ComputeInputWalkability]):
             directions_rate_limit=ors_directions_rate_limit,
             directions_waypoint_limit=ors_directions_waypoint_limit,
         )
+        self.admin_level = 1
+        self.max_walking_distance = (1000 / 60) * WALKING_SPEED_MAP[WalkingSpeed.MEDIUM] * 15
 
         log.debug('Initialised walkability operator with ohsome client and Naturalness Utility')
 
@@ -88,7 +86,7 @@ class OperatorWalkability(BaseOperator[ComputeInputWalkability]):
         artifacts = []
 
         line_paths, line_paths_buffered, polygon_paths = self._get_paths(
-            aoi=aoi, max_walking_distance=params.max_walking_distance
+            aoi=aoi, max_walking_distance=self.max_walking_distance
         )
         number_of_paths = len(line_paths)
         max_paths = 100000
@@ -102,7 +100,7 @@ class OperatorWalkability(BaseOperator[ComputeInputWalkability]):
             areal_summaries = summarise_by_area(
                 paths=line_paths,
                 aoi=aoi,
-                admin_level=params.admin_level,
+                admin_level=self.admin_level,
                 projected_crs=get_utm_zone(aoi),
                 ohsome_client=self.ohsome,
             )
@@ -122,29 +120,31 @@ class OperatorWalkability(BaseOperator[ComputeInputWalkability]):
             areal_summaries=areal_summaries,
             aoi_summary_category_stacked_bar=aoi_summary_category_stacked_bar,
             aoi_summary_quality_stacked_bar=aoi_summary_quality_stacked_bar,
-            walkable_categories=params.walkable_categories_selection,
+            walkable_categories=WALKABLE_CATEGORIES,
             resources=resources,
         )
         artifacts.extend(path_artifacts)
 
         line_paths, line_paths_buffered = subset_walkable_paths(
-            line_paths, line_paths_buffered, walkable_categories=params.walkable_categories_selection
+            line_paths,
+            line_paths_buffered,
+            walkable_categories=WALKABLE_CATEGORIES,
         )
         if line_paths.empty or line_paths_buffered.empty:
             return artifacts
 
-        if WalkabilityIndicators.DETOURS in params.indicators_to_compute:
-            with self.catch_exceptions(indicator_name='Detour Factors', resources=resources):
-                detour_artifact, hexgrid_detour = detour_factor_analysis(
-                    aoi=aoi,
-                    ors_settings=self.ors_settings,
-                    resources=resources,
-                )
-                detour_summary = summarise_detour(hexgrid=hexgrid_detour, projected_crs=get_utm_zone(aoi))
-                detour_summary_artifact = build_detour_summary_artifact(
-                    aoi_aggregate=detour_summary, resources=resources
-                )
-                artifacts.extend([detour_artifact, detour_summary_artifact])
+        # if WalkabilityIndicators.DETOURS in params.indicators_to_compute:
+        #     with self.catch_exceptions(indicator_name='Detour Factors', resources=resources):
+        #         detour_artifact, hexgrid_detour = detour_factor_analysis(
+        #             aoi=aoi,
+        #             ors_settings=self.ors_settings,
+        #             resources=resources,
+        #         )
+        #         detour_summary = summarise_detour(hexgrid=hexgrid_detour, projected_crs=get_utm_zone(aoi))
+        #         detour_summary_artifact = build_detour_summary_artifact(
+        #             aoi_aggregate=detour_summary, resources=resources
+        #         )
+        #         artifacts.extend([detour_artifact, detour_summary_artifact])
 
         if WalkabilityIndicators.NATURALNESS in params.indicators_to_compute:
             with self.catch_exceptions(indicator_name='Naturalness', resources=resources):

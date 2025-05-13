@@ -5,6 +5,7 @@ from unittest.mock import patch
 from urllib.parse import parse_qsl
 
 import geopandas as gpd
+import pandas as pd
 import pytest
 import responses
 import shapely
@@ -14,7 +15,6 @@ from pyproj import CRS
 from requests import PreparedRequest
 from responses import matchers
 from shapely.geometry import LineString
-import pandas as pd
 
 from walkability.components.utils.misc import PathCategory
 from walkability.core.input import ComputeInputWalkability

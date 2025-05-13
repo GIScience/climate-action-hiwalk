@@ -21,6 +21,7 @@ and this project mostly adheres to [Semantic Versioning](https://semver.org/spec
 - Remove default colormap from generate_colors ([#190](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/190))
 - Update climatoology to 6.3.1: use `create_plotly_chart_artifact` and include `demo_input_parameters` in info
 - Add polygon paths to surface quality, surface type, smoothness, and naturalness ([#203](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/203))
+- Changed default of input parameter "Optional indicators to compute" to nothing ([#217](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/217))
 
 ### Fixed
 
@@ -51,6 +52,8 @@ and this project mostly adheres to [Semantic Versioning](https://semver.org/spec
 ### Removed
 
 - The old node-based connectivity indicator in favor the new hexgrid detour indicator ([#178](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/178))
+- Option to calculate detour factors (temporarily)! ([#217](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/217))
+- Input parameters "Potentially Walkable Categories", "Max trip duration", "Walking Speed", "Administrative level" ([#217](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/217))
 
 ## [1.1.0](https://gitlab.heigit.org/climate-action/plugins/walkability/-/releases/1.1.0) - 2024-12-06
 
