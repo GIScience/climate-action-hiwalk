@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "walkability"
-version = "1.1.0"
+version = "2.0.0"
 description = "The Walkability plugin"
 authors = ["Moritz Schott <moritz.schott@heigit.org>", "Maciej Adamiak <maciej.adamiak@heigit.org>"]
 readme = "README.md"
