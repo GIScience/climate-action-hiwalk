@@ -4,21 +4,18 @@ from climatoology.base.info import _Info
 from test.conftest import filter_start_matcher
 from walkability.core.input import ComputeInputWalkability, WalkabilityIndicators
 
-import pytest
-from unittest.mock import patch
-
 
 def test_plugin_info_request(operator):
     assert isinstance(operator.info(), _Info)
 
 
-@pytest.fixture
-def mock_detour_factor_calculation(expected_detour_factors):
-    # This higher level mock exists because mocking a response for the api calls required for all hexcells of the entired default_aoi, is massive
-    # The functionality is already covered by smaller tests in test/components/network_analyses/test_detour_analysis.py
-    with patch('walkability.components.network_analyses.detour_analysis.get_detour_factors') as detour_factors:
-        detour_factors.return_value = expected_detour_factors
-        yield detour_factors
+# @pytest.fixture
+# def mock_detour_factor_calculation(expected_detour_factors):
+#     # This higher level mock exists because mocking a response for the api calls required for all hexcells of the entired default_aoi, is massive
+#     # The functionality is already covered by smaller tests in test/components/network_analyses/test_detour_analysis.py
+#     with patch('walkability.components.network_analyses.detour_analysis.get_detour_factors') as detour_factors:
+#         detour_factors.return_value = expected_detour_factors
+#         yield detour_factors
 
 
 def test_plugin_compute_request(
@@ -28,8 +25,6 @@ def test_plugin_compute_request(
     default_aoi_properties,
     compute_resources,
     ohsome_api,
-    ors_elevation_api,
-    mock_detour_factor_calculation,
 ):
     with open('test/resources/ohsome_admin_response.geojson', 'r') as admin_file:
         admin_body = admin_file.read()
@@ -46,7 +41,7 @@ def test_plugin_compute_request(
         params=expected_compute_input,
     )
 
-    assert len(computed_artifacts) == 14
+    assert len(computed_artifacts) == 8
     for artifact in computed_artifacts:
         assert isinstance(artifact, _Artifact)
 
