@@ -15,7 +15,7 @@ log = logging.getLogger(__name__)
 def get_info() -> _Info:
     info = generate_plugin_info(
         name='hiWalk',
-        icon=Path('resources/info/icon.jpeg'),
+        icon=Path('resources/info/walk.jpeg'),
         authors=[
             PluginAuthor(
                 name='Moritz Schott',
