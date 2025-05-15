@@ -65,7 +65,7 @@ def apply_path_category_filters(row: pd.Series) -> PathCategory:
     filters = PathCategoryFilters(tags=tags)
     match tags:
         case x if filters.inaccessible(x):
-            return PathCategory.NOT_WALKABLE
+            return PathCategory.INACCESSIBLE
         case x if filters.designated(x):
             return PathCategory.DESIGNATED
         case x if filters.designated_shared_with_bikes(x):
@@ -76,6 +76,8 @@ def apply_path_category_filters(row: pd.Series) -> PathCategory:
             return PathCategory.SHARED_WITH_MOTORIZED_TRAFFIC_MEDIUM_SPEED
         case x if filters.shared_with_high_speed(x):
             return PathCategory.SHARED_WITH_MOTORIZED_TRAFFIC_HIGH_SPEED
+        case x if filters.shared_with_very_high_speed(x):
+            return PathCategory.SHARED_WITH_MOTORIZED_TRAFFIC_VERY_HIGH_SPEED
         case x if filters.shared_with_unknown_speed(x):
             return PathCategory.SHARED_WITH_MOTORIZED_TRAFFIC_UNKNOWN_SPEED
         case _:
