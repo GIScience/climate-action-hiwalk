@@ -87,7 +87,7 @@ def summarise_by_area(
                         name=row['category'],
                         orientation='h',
                         marker_color=stacked_bar_colors[i],
-                        hovertemplate=f"{row['category']}: {row['length']:.2f} km ({row['percent']:.1f}%)<extra></extra>",
+                        hovertemplate=f'{row["category"]}: {row["length"]:.2f} km ({row["percent"]:.1f}%)<extra></extra>',
                         showlegend=True,
                     )
                 )
@@ -151,7 +151,7 @@ def summarise_aoi(
                 name=row['category'],
                 orientation='h',
                 marker_color=stacked_bar_colors[i],
-                hovertemplate=f"{row['category']}: {row['length']:.2f} km ({row['percent']:.1f}%)<extra></extra>",
+                hovertemplate=f'{row["category"]}: {row["length"]:.2f} km ({row["percent"]:.1f}%)<extra></extra>',
                 showlegend=True,
             )
         )
@@ -198,7 +198,7 @@ def summarise_aoi(
                 name=row['quality'].replace('_', ' '),
                 orientation='h',
                 marker_color=stacked_bar_colors[i],
-                hovertemplate=f"{row['quality'].replace('_', ' ')}: {row['length']:.2f} km ({row['percent']:.1f}%)<extra></extra>",
+                hovertemplate=f'{row["quality"].replace("_", " ")}: {row["length"]:.2f} km ({row["percent"]:.1f}%)<extra></extra>',
                 showlegend=True,
             )
         )

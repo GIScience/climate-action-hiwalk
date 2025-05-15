@@ -172,17 +172,13 @@ class PathCategoryFilters:
                 self.speed_category_max.get('slow') < self.max_speed <= self.speed_category_max.get('medium')
                 or self.max_speed == -1
             )
-        ) or (
-            PathCategoryFilters.has_no_sidewalk(d)
-            and self.speed_category_max.get('slow') < self.max_speed <= self.speed_category_max.get('medium')
-        )
+        ) or (self.speed_category_max.get('slow') < self.max_speed <= self.speed_category_max.get('medium'))
 
     def shared_with_high_speed(self, d: Dict) -> bool:
-        return (
-            self._potential(d)
-            and PathCategoryFilters.has_no_sidewalk(d)
-            and self.speed_category_max.get('medium') < self.max_speed <= self.speed_category_max.get('fast')
-        )
+        return self.speed_category_max.get('medium') < self.max_speed <= self.speed_category_max.get('fast')
+
+    def shared_with_very_high_speed(self, d: Dict) -> bool:
+        return self.max_speed > self.speed_category_max.get('fast')
 
     def shared_with_unknown_speed(self, d: Dict) -> bool:
         return self._potential(d) and PathCategoryFilters.has_no_sidewalk(d) and self.max_speed == -1
@@ -213,7 +209,6 @@ class PathCategoryFilters:
             or d.get('footway') == 'no'
             or d.get('access') in ['no', 'private', 'permit', 'military', 'delivery', 'customers']
             or d.get('foot') in ['no', 'private', 'use_sidepath', 'discouraged', 'destination']
-            or self.max_speed > self.speed_category_max.get('fast')
             or (d.get('highway') == 'service' and d.get('bus') in ['designated', 'yes'])
             or d.get('ford') == 'yes'
         )

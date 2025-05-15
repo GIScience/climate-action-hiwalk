@@ -58,13 +58,15 @@ validation_objects = {
         'way/152645929',
         # fake https://www.openstreetmap.org/way/152645928 highway=residential and sidewalk=no and maxspeed not given
     },
-    PathCategory.NOT_WALKABLE: {
-        'way/400711541',  # https://www.openstreetmap.org/way/400711541 sidewalk=no and maxspeed:backward=70
+    PathCategory.INACCESSIBLE: {
         'way/24635973',  # https://www.openstreetmap.org/way/24635973 foot=no
         'way/25238623',  # https://www.openstreetmap.org/way/25238623 access=private
         'way/87956068',  # https://www.openstreetmap.org/way/87956068 highway=track and ford=yes
         'way/225895739',  # https://www.openstreetmap.org/way/225895739 service=yes and bus=yes
         'way/1031915576',  # reduced https://www.openstreetmap.org/way/1031915576 sidewalk=separate
+    },
+    PathCategory.SHARED_WITH_MOTORIZED_TRAFFIC_VERY_HIGH_SPEED: {
+        'way/400711541',  # https://www.openstreetmap.org/way/400711541 sidewalk=no and maxspeed:backward=70
     },
     PathCategory.UNKNOWN: {
         'way/152645928',  # https://www.openstreetmap.org/way/152645928 highway=residential and sidewalk not given

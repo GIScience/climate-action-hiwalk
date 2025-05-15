@@ -16,22 +16,24 @@ log = logging.getLogger(__name__)
 class PathCategory(Enum):
     DESIGNATED = 'Designated'
     DESIGNATED_SHARED_WITH_BIKES = 'Shared with bikes'
-    SHARED_WITH_MOTORIZED_TRAFFIC_LOW_SPEED = 'Shared with slow cars'
-    SHARED_WITH_MOTORIZED_TRAFFIC_MEDIUM_SPEED = 'Shared with medium speed cars'
-    SHARED_WITH_MOTORIZED_TRAFFIC_HIGH_SPEED = 'Shared with fast cars'
+    SHARED_WITH_MOTORIZED_TRAFFIC_LOW_SPEED = 'Shared with cars up to 15 km/h'
+    SHARED_WITH_MOTORIZED_TRAFFIC_MEDIUM_SPEED = 'Shared with cars up to 30 km/h'
+    SHARED_WITH_MOTORIZED_TRAFFIC_HIGH_SPEED = 'Shared with cars up to 50 km/h'
+    SHARED_WITH_MOTORIZED_TRAFFIC_VERY_HIGH_SPEED = 'Shared with cars above 50 km/h'
     SHARED_WITH_MOTORIZED_TRAFFIC_UNKNOWN_SPEED = 'Shared with cars of unknown speed'
-    NOT_WALKABLE = 'Not walkable'
+    INACCESSIBLE = 'No access'
     UNKNOWN = 'Unknown'
 
 
 PATH_RATING_MAP = {
     PathCategory.DESIGNATED: 1.0,
     PathCategory.DESIGNATED_SHARED_WITH_BIKES: 0.8,
-    PathCategory.SHARED_WITH_MOTORIZED_TRAFFIC_LOW_SPEED: 0.6,
+    PathCategory.SHARED_WITH_MOTORIZED_TRAFFIC_LOW_SPEED: 0.5,
     PathCategory.SHARED_WITH_MOTORIZED_TRAFFIC_MEDIUM_SPEED: 0.4,
-    PathCategory.SHARED_WITH_MOTORIZED_TRAFFIC_HIGH_SPEED: 0.2,
+    PathCategory.SHARED_WITH_MOTORIZED_TRAFFIC_HIGH_SPEED: 0.3,
+    PathCategory.SHARED_WITH_MOTORIZED_TRAFFIC_VERY_HIGH_SPEED: 0.2,
     PathCategory.SHARED_WITH_MOTORIZED_TRAFFIC_UNKNOWN_SPEED: 0.1,
-    PathCategory.NOT_WALKABLE: 0.0,
+    PathCategory.INACCESSIBLE: 0.0,
     PathCategory.UNKNOWN: None,
 }
 
