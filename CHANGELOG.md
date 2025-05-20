@@ -7,6 +7,10 @@ and this project mostly adheres to [Semantic Versioning](https://semver.org/spec
 
 ## [Unreleased](https://gitlab.heigit.org/climate-action/plugins/walkability/-/compare/2.0.1...main)
 
+### Added
+
+- A new detour indicator mapping the average ratio of the walking distance to the euclidian distance for cells in a hexgrid based on the ors directions and snapping endpoints ([#175](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/175), [#180](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/180))
+
 ### Changed
 
 - Split Not Walkable category into an inaccessible category 'No access' and a category for shared with cars above 50 km/h ([#204](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/204))
