@@ -9,6 +9,7 @@ from climatoology.base.info import _Info
 from climatoology.utility.Naturalness import NaturalnessUtility
 from climatoology.utility.exception import ClimatoologyUserError
 from ohsome import OhsomeClient
+from shapely import make_valid
 
 from walkability.components.categorise_paths.path_categorisation import path_categorisation, subset_walkable_paths
 from walkability.components.categorise_paths.path_categorisation_artifacts import build_path_categorisation_artifact
@@ -184,6 +185,15 @@ class OperatorWalkability(BaseOperator[ComputeInputWalkability]):
         log.debug('Extracting paths')
         line_paths_buffered = fetch_osm_data(aoi_buffered, ohsome_filter('line'), self.ohsome)
         polygon_paths = fetch_osm_data(aoi, ohsome_filter('polygon'), self.ohsome)
+
+        invalid_line = ~line_paths_buffered.is_valid
+        line_paths_buffered.loc[invalid_line, 'geometry'] = line_paths_buffered.loc[invalid_line, 'geometry'].apply(
+            make_valid
+        )
+        invalid_polygon = ~polygon_paths.is_valid
+        polygon_paths.loc[invalid_polygon, 'geometry'] = polygon_paths.loc[invalid_polygon, 'geometry'].apply(
+            make_valid
+        )
         log.debug('Finished extracting paths')
 
         line_paths_buffered, polygon_paths = path_categorisation(
