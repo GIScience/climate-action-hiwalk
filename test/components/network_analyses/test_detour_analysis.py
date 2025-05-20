@@ -1,5 +1,6 @@
 from functools import partial
 import json
+from unittest.mock import patch
 import pytest
 import responses.matchers
 import shapely
@@ -15,6 +16,7 @@ from walkability.components.network_analyses.detour_analysis import (
     get_ij_spurs,
     get_ors_walking_distances,
     match_ors_distance_to_cells,
+    ors_request,
     snap_destinations,
     snap_batched_records,
 )
@@ -27,7 +29,8 @@ import pandas as pd
 import geopandas as gpd
 from geopandas.testing import assert_geodataframe_equal
 from pandas.testing import assert_frame_equal, assert_series_equal
-import openrouteservice as ors
+import openrouteservice
+from openrouteservice.exceptions import ApiError
 import responses
 import warnings
 from vcr import use_cassette
@@ -79,7 +82,7 @@ def test_get_detour_factors(
         )
 
         result = get_detour_factors(
-            aoi=small_aoi, ors_settings=ORSSettings(ors.Client(key=''), directions_rate_limit=1000)
+            aoi=small_aoi, ors_settings=ORSSettings(openrouteservice.Client(key=''), directions_rate_limit=1000)
         )
 
         assert_geodataframe_equal(
@@ -311,7 +314,9 @@ def test_snap_destinations():
 
     results = snap_destinations(
         destinations,
-        ors_settings=ORSSettings(ors.Client(base_url='http://localhost:8080/ors'), snapping_request_size_limit=1),
+        ors_settings=ORSSettings(
+            openrouteservice.Client(base_url='http://localhost:8080/ors'), snapping_request_size_limit=1
+        ),
     )
 
     assert_frame_equal(results, expected_results)
@@ -342,7 +347,7 @@ def test_snap_batched_records(small_ors_snapping_response):
         )
 
         result = snap_batched_records(
-            ors_settings=ORSSettings(ors.Client(key='')),
+            ors_settings=ORSSettings(openrouteservice.Client(key='')),
             batched_locations=locations,
         )
 
@@ -354,7 +359,7 @@ def test_batching():
     batch_size = 2
 
     expected_result = [pd.Series([0, 1]), pd.Series([2, 3]), pd.Series([4, 5])]
-    result = batching(origins, batch_size)
+    result = batching(origins, batch_size)  # type: ignore
 
     for index, batch in enumerate(result):
         assert len(batch) == batch_size
@@ -373,11 +378,50 @@ def test_get_ors_walking_distances():
         },
     )
     result = get_ors_walking_distances(
-        ors_settings=ORSSettings(ors.Client(base_url='http://localhost:8080/ors')),
+        ors_settings=ORSSettings(openrouteservice.Client(base_url='http://localhost:8080/ors')),
         cell_distance=150,
         destinations_with_snapping=destinations,
     )
 
+    verify(result)
+
+
+@pytest.fixture
+def ors_request_fail():
+    with patch('openrouteservice.directions.directions') as mock:
+        mock.side_effect = mock_directions_with_ors_error
+        yield mock
+
+
+def mock_directions_with_ors_error(
+    client: ORSSettings, coordinates: list[list[float]], profile: str, geometry: bool
+) -> None:
+    raise ApiError(status=500)
+
+
+@pytest.fixture
+def mock_sleep():
+    with patch('time.sleep') as mock:
+        mock.return_value = None
+
+
+def test_ors_request_fail(ors_request_fail, mock_sleep):
+    coordinates = [[1.0, 1.0], [1.1, 1.1]]
+    ors_settings = ORSSettings(client=openrouteservice.Client(base_url=''))
+    with pytest.raises(ApiError):
+        ors_request(ors_settings, coordinates)
+
+    ors_request_fail.assert_called()
+    assert ors_request_fail.call_count == 5
+
+
+@use_cassette
+def test_ors_request():
+    result, start_time = ors_request(
+        ors_settings=ORSSettings(client=openrouteservice.Client(key='')),
+        coordinates=[[8.773, 49.376], [8.773085, 49.376161]],
+    )
+    assert isinstance(start_time, float)
     verify(result)
 
 

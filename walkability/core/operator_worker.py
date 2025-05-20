@@ -16,12 +16,17 @@ from walkability.components.categorise_paths.path_categorisation_artifacts impor
 from walkability.components.categorise_paths.path_summarisation import (
     summarise_by_area,
     summarise_aoi,
+    summarise_detour,
     summarise_naturalness,
     summarise_slope,
 )
 from walkability.components.naturalness.naturalness_analysis import naturalness_analysis
 from walkability.components.naturalness.naturalness_artifacts import (
     build_naturalness_summary_bar_artifact,
+)
+from walkability.components.network_analyses.detour_analysis import (
+    build_detour_summary_artifact,
+    detour_factor_analysis,
 )
 from walkability.components.slope.slope_analysis import slope_analysis
 from walkability.components.slope.slope_artifacts import (
@@ -134,18 +139,18 @@ class OperatorWalkability(BaseOperator[ComputeInputWalkability]):
         if line_paths.empty or line_paths_buffered.empty:
             return artifacts
 
-        # if WalkabilityIndicators.DETOURS in params.indicators_to_compute:
-        #     with self.catch_exceptions(indicator_name='Detour Factors', resources=resources):
-        #         detour_artifact, hexgrid_detour = detour_factor_analysis(
-        #             aoi=aoi,
-        #             ors_settings=self.ors_settings,
-        #             resources=resources,
-        #         )
-        #         detour_summary = summarise_detour(hexgrid=hexgrid_detour, projected_crs=get_utm_zone(aoi))
-        #         detour_summary_artifact = build_detour_summary_artifact(
-        #             aoi_aggregate=detour_summary, resources=resources
-        #         )
-        #         artifacts.extend([detour_artifact, detour_summary_artifact])
+        if WalkabilityIndicators.DETOURS in params.indicators_to_compute:
+            with self.catch_exceptions(indicator_name='Detour Factors', resources=resources):
+                detour_artifact, hexgrid_detour = detour_factor_analysis(
+                    aoi=aoi,
+                    ors_settings=self.ors_settings,
+                    resources=resources,
+                )
+                detour_summary = summarise_detour(hexgrid=hexgrid_detour, projected_crs=get_utm_zone(aoi))
+                detour_summary_artifact = build_detour_summary_artifact(
+                    aoi_aggregate=detour_summary, resources=resources
+                )
+                artifacts.extend([detour_artifact, detour_summary_artifact])
 
         if WalkabilityIndicators.NATURALNESS in params.indicators_to_compute:
             with self.catch_exceptions(indicator_name='Naturalness', resources=resources):

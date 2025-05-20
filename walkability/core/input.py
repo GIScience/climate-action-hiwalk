@@ -10,6 +10,7 @@ from walkability.components.utils.misc import PathCategory
 class WalkabilityIndicators(Enum):
     SLOPE = 'Slope'
     NATURALNESS = 'Naturalness'
+    DETOURS = 'Detour Factor'
 
 
 class WalkingSpeed(Enum):

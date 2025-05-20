@@ -1,5 +1,6 @@
 import logging
 import time
+import openrouteservice.exceptions
 from requests import HTTPError
 
 from climatoology.base.artifact import (
@@ -305,7 +306,6 @@ def snap_destinations(
     """Snap to closest path in radius from center of cell."""
     log.debug('Setting up unique destinations')
     # sorted here serves no purpose other than to preserve the order for testing
-    # TODO maybe fix mocking for the snapping response to keep order of set irrelevant here
     unique_destinations: pd.DataFrame = destinations.groupby('id').count()
     unique_destinations_gdf = unique_destinations.h3.h3_to_geo().drop(columns=['spur_id', 'ordinal'])
 
@@ -339,6 +339,10 @@ def snap_batched_records(
         body = {'locations': locations, 'radius': snapping_radius}
 
         call = request_session.post(f'{ors_settings.client._base_url}/v2/snap/foot-walking', json=body, headers=headers)
+        # TODO remove this extensive log exposing the ors key before the next release
+        log.debug(
+            f'Request to url {ors_settings.client._base_url}/v2/snap/foot-walking sent.\nHeaders: {headers}\nBody: {body}'
+        )
         if call.status_code != 200:
             log.debug(f'Failed with {call.status_code}: {call.text}. Retrying once.')
             call = request_session.post(
@@ -399,22 +403,18 @@ def get_ors_walking_distances(
             .sort_index()
             .reset_index()
         )
-        coordinates: list[float] = list(filter(lambda x: x is not None, spur['snapped_location'].to_list()))
+        coordinates: list[list[float]] = list(filter(lambda x: x is not None, spur['snapped_location'].to_list()))
         if len(coordinates) < 2:
             continue
+        json_result, start_time = ors_request(ors_settings, coordinates)
 
-        json_result = openrouteservice.directions.directions(
-            client=ors_settings.client, coordinates=coordinates, profile='foot-walking', geometry=False
-        )
-        start = time.time()
         distances = [segment['distance'] for segment in json_result['routes'][0]['segments']]
 
-        # TODO this matching actually breaks, whoopsie
         walking_distances = match_ors_distance_to_cells(spur, distances)
 
         list_of_df.append(walking_distances)
 
-        time_remaining = sleep_time - (time.time() - start)
+        time_remaining = sleep_time - (time.time() - start_time)
         if time_remaining > 0:
             time.sleep(time_remaining)
 
@@ -425,6 +425,32 @@ def get_ors_walking_distances(
     )
     log.debug('Calculated Detour Factors')
     return mean_walking_distances
+
+
+def ors_request(
+    ors_settings: ORSSettings, coordinates: list[list[float]], sleep_time: float = 0.0
+) -> tuple[dict, float]:
+    time.sleep(sleep_time)
+    if sleep_time == 0.0:
+        sleep_time += 2.0
+    else:
+        sleep_time *= 2.0
+    try:
+        json_result = openrouteservice.directions.directions(
+            client=ors_settings.client, coordinates=coordinates, profile='foot-walking', geometry=False
+        )
+    except (
+        openrouteservice.exceptions.ApiError,
+        openrouteservice.exceptions.Timeout,
+        openrouteservice.exceptions.HTTPError,
+    ) as e:
+        if sleep_time > 16.0:
+            raise e
+        log.debug(f'OpenRouteService request failed with {e}. Retrying once in 1 second.')
+        json_result, _ = ors_request(ors_settings, coordinates, sleep_time)
+    finally:
+        start = time.time()
+    return json_result, start
 
 
 def match_ors_distance_to_cells(spur: pd.DataFrame, distances: list[float]) -> pd.DataFrame:
