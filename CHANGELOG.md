@@ -12,6 +12,9 @@ and this project mostly adheres to [Semantic Versioning](https://semver.org/spec
 - Split Not Walkable category into an inaccessible category 'No access' and a category for shared with cars above 50 km/h ([#204](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/204))
 - Updated legend labels for path categories shared with cars to include speed limit instead of category label
 
+### Fixed
+- Fix invalid path geometries ([#223](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/223))
+
 ## [2.0.1](https://gitlab.heigit.org/climate-action/plugins/walkability/-/releases/2.0.1) - 2025-05-14
 
 ### Changed
