@@ -78,3 +78,7 @@ To deploy this plugin to the central docker repository run
 DOCKER_BUILDKIT=1 docker build --secret id=CI_JOB_TOKEN . --tag heigit/ca-walkability:devel
 docker image push heigit/ca-walkability:devel
 ```
+
+
+To mimic the build behaviour of the CI you have to add `--build-arg CI_COMMIT_SHORT_SHA=$(git rev-parse --short HEAD)`
+to the above command.
