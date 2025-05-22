@@ -42,6 +42,9 @@ line-length = 120
 [tool.ruff.format]
 quote-style = "single"
 
+[tool.coverage.run]
+omit = ["test/*" , "plugin_blueprint/core/*"]
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"

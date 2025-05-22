@@ -12,4 +12,7 @@ CI_JOB_TOKEN
 
 ohsome_log/
 
+.coverage
+coverage.xml
+
 playground.py
