@@ -1,7 +1,6 @@
 import logging
 import time
 import openrouteservice.exceptions
-from requests import HTTPError
 
 from climatoology.base.artifact import (
     _Artifact,
@@ -24,6 +23,8 @@ import numpy as np
 from requests_ratelimiter import LimiterSession
 import shapely
 import math
+from urllib3.util import Retry
+from requests.adapters import HTTPAdapter
 
 from walkability.components.utils.misc import generate_colors
 from walkability.components.utils.ORSSettings import ORSSettings
@@ -331,7 +332,16 @@ def snap_batched_records(
         'Content-Type': 'application/json; charset=utf-8',
     }
 
+    retries = Retry(
+        total=3,
+        backoff_factor=0.1,
+        status_forcelist=[502, 503, 504],
+        allowed_methods={'POST'},
+    )
+
     request_session = LimiterSession(per_minute=ors_settings.snapping_rate_limit)
+
+    request_session.mount('https://', HTTPAdapter(max_retries=retries))
 
     snapped_df_list = []
     for i, batch in enumerate(batched_locations):
@@ -339,20 +349,8 @@ def snap_batched_records(
         body = {'locations': locations, 'radius': snapping_radius}
 
         call = request_session.post(f'{ors_settings.client._base_url}/v2/snap/foot-walking', json=body, headers=headers)
-        # TODO remove this extensive log exposing the ors key before the next release
-        log.debug(
-            f'Request to url {ors_settings.client._base_url}/v2/snap/foot-walking sent.\nHeaders: {headers}\nBody: {body}'
-        )
-        if call.status_code != 200:
-            log.debug(f'Failed with {call.status_code}: {call.text}. Retrying once.')
-            call = request_session.post(
-                f'{ors_settings.client._base_url}/v2/snap/foot-walking', json=body, headers=headers
-            )
-            if call.status_code != 200:
-                raise HTTPError(
-                    f'{ors_settings.client._base_url}/v2/snap/foot-walking responded wih error code {call.status_code}:{call.json()}. Retried once.',
-                    response=call,
-                )
+
+        call.raise_for_status()
         json_result = call.json()
 
         snapping_response = pd.Series(index=batch.index, data=json_result['locations'])
