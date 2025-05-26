@@ -244,7 +244,7 @@ def summarise_naturalness(
         0: 'Low (< 0.3) ',
         0.5: 'Medium (0.3 to 0.6)',
         1: 'High (> 0.6)',
-        -999: 'Unknown naturalness',
+        -999: 'Unknown greenness',
     }
     stats['naturalness_category'] = stats['naturalness_rating'].map(naturalness_map)
 
@@ -268,7 +268,7 @@ def summarise_naturalness(
         title=dict(
             subtitle=dict(text='Length (km)', font=dict(size=14)),
         ),
-        xaxis_title='Length of paths with different naturalness levels',
+        xaxis_title='Length of paths with different greenness levels',
         yaxis_title=None,
         margin=dict(t=30, b=60, l=80, r=30),
     )

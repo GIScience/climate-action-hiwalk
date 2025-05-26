@@ -25,10 +25,12 @@ def build_naturalness_artifact(
     naturalness_locations = pd.concat([naturalness_line_paths, naturalness_polygon_paths], ignore_index=True)
     # If no good data is returned (e.g. due to an error), return a text artifact with a simple message
     if naturalness_locations['naturalness'].isna().all():
-        text = 'There was an error calculating naturalness in this computation. Contact the developers for more information.'
+        text = (
+            'There was an error calculating greenness in this computation. Contact the developers for more information.'
+        )
         return create_markdown_artifact(
             text=text,
-            name='Naturalness (Error)',
+            name='Greenness (Error)',
             tl_dr=text,
             filename='path_naturalness',
             resources=resources,
@@ -54,22 +56,22 @@ def build_naturalness_artifact(
     # Build artifact
     return create_geojson_artifact(
         features=naturalness_locations.geometry,
-        layer_name='Naturalness',
+        layer_name='Greenness',
         caption=Path('resources/components/naturalness/caption.md').read_text(),
         description=Path('resources/components/naturalness/description.md').read_text(),
         label=naturalness_locations.naturalness.to_list(),
         color=color,
         legend_data=legend,
         resources=resources,
-        filename='path_naturalness',
+        filename='path_greenness',
     )
 
 
 def build_naturalness_summary_bar_artifact(aoi_aggregate: Figure, resources: ComputationResources) -> _Artifact:
     return create_plotly_chart_artifact(
         figure=aoi_aggregate,
-        title='Distribution of Naturalness',
-        caption='What length of paths has low, mid, and high naturalness?',
+        title='Distribution of Greenness',
+        caption='What length of paths has low, mid, and high NDVI?',
         resources=resources,
         filename='aggregation_aoi_naturalness_bar',
         primary=True,

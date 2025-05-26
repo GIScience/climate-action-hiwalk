@@ -7,7 +7,7 @@ from climatoology.base.baseoperator import AoiProperties, BaseOperator, _Artifac
 from climatoology.base.computation import ComputationResources
 from climatoology.base.info import _Info
 from climatoology.utility.exception import ClimatoologyUserError
-from climatoology.utility.Naturalness import NaturalnessUtility
+from climatoology.utility.Naturalness import NaturalnessIndex, NaturalnessUtility
 from ohsome import OhsomeClient
 from shapely import make_valid
 
@@ -139,7 +139,7 @@ class OperatorWalkability(BaseOperator[ComputeInputWalkability]):
         if line_paths.empty or line_paths_buffered.empty:
             return artifacts
 
-        if WalkabilityIndicators.DETOURS in params.indicators_to_compute:
+        if WalkabilityIndicators.DETOURS in params.optional_indicators:
             with self.catch_exceptions(indicator_name='Detour Factors', resources=resources):
                 detour_artifact, hexgrid_detour = detour_factor_analysis(
                     aoi=aoi,
@@ -152,12 +152,12 @@ class OperatorWalkability(BaseOperator[ComputeInputWalkability]):
                 )
                 artifacts.extend([detour_artifact, detour_summary_artifact])
 
-        if WalkabilityIndicators.NATURALNESS in params.indicators_to_compute:
-            with self.catch_exceptions(indicator_name='Naturalness', resources=resources):
+        if WalkabilityIndicators.NATURALNESS in params.optional_indicators:
+            with self.catch_exceptions(indicator_name='Greenness', resources=resources):
                 naturalness_artifact, line_paths_naturalness = naturalness_analysis(
                     line_paths=line_paths,
                     polygon_paths=polygon_paths,
-                    index=params.naturalness_index,
+                    index=NaturalnessIndex.NDVI,
                     resources=resources,
                     naturalness_utility=self.naturalness_utility,
                 )
@@ -169,7 +169,7 @@ class OperatorWalkability(BaseOperator[ComputeInputWalkability]):
                 )
                 artifacts.extend([naturalness_artifact, naturalness_summary_bar_artifact])
 
-        if WalkabilityIndicators.SLOPE in params.indicators_to_compute:
+        if WalkabilityIndicators.SLOPE in params.optional_indicators:
             with self.catch_exceptions(indicator_name='Slope', resources=resources):
                 slope_artifact, line_paths_slope = slope_analysis(
                     line_paths=line_paths, aoi=aoi, ors_client=self.ors_settings.client, resources=resources
