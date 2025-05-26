@@ -1,9 +1,25 @@
-from functools import partial
 import json
+import warnings
+from functools import partial
 from unittest.mock import patch
+
+import geopandas as gpd
+import h3
+import h3pandas
+import numpy as np
+import openrouteservice
+import pandas as pd
 import pytest
+import responses
 import responses.matchers
 import shapely
+from approvaltests import DiffReporter, set_default_reporter, verify
+from geopandas.testing import assert_geodataframe_equal
+from openrouteservice.exceptions import ApiError
+from pandas.testing import assert_frame_equal, assert_series_equal
+from requests.exceptions import HTTPError, RetryError
+from vcr import use_cassette
+
 from walkability.components.network_analyses.detour_analysis import (
     batch_and_filter_spurs,
     batching,
@@ -17,26 +33,10 @@ from walkability.components.network_analyses.detour_analysis import (
     get_ors_walking_distances,
     match_ors_distance_to_cells,
     ors_request,
-    snap_destinations,
     snap_batched_records,
+    snap_destinations,
 )
-
-from approvaltests import DiffReporter, set_default_reporter, verify
-import h3pandas
-import h3
-import numpy as np
-import pandas as pd
-import geopandas as gpd
-from geopandas.testing import assert_geodataframe_equal
-from pandas.testing import assert_frame_equal, assert_series_equal
-import openrouteservice
-from openrouteservice.exceptions import ApiError
-from requests.exceptions import RetryError, HTTPError
-import responses
-import warnings
-from vcr import use_cassette
-
-from walkability.components.utils.ORSSettings import ORSSettings
+from walkability.components.utils.ors_settings import ORSSettings
 
 
 @pytest.fixture(autouse=True)
@@ -118,7 +118,7 @@ def test_create_destinations(default_aoi):
     for spur_id in set(result['spur_id']):
         spur: pd.DataFrame = result[result['spur_id'] == spur_id]
         id_sublist = spur['id'].to_list()
-        for index, id in enumerate(id_sublist):
+        for index, _ in enumerate(id_sublist):
             if index >= len(id_sublist) - 1:
                 break
             first_cell = np.array(h3.cell_to_local_ij(origin=id_sublist[0], h=id_sublist[index]))
@@ -168,7 +168,7 @@ def test_get_i_or_j_spurs(default_aoi, default_hexgrid, default_origin_id):
     for spur_id in result_i['spur_id']:
         spur = result_i[result_i['spur_id'] == spur_id]
         id_sublist = spur['id'].to_list()
-        for index, id in enumerate(id_sublist):
+        for index, _ in enumerate(id_sublist):
             if index >= len(id_sublist) - 1:
                 break
 
@@ -181,7 +181,7 @@ def test_get_i_or_j_spurs(default_aoi, default_hexgrid, default_origin_id):
     for spur_id in result_j['spur_id']:
         spur = result_j[result_j['spur_id'] == spur_id]
         id_sublist = spur['id'].to_list()
-        for index, id in enumerate(id_sublist):
+        for index, _ in enumerate(id_sublist):
             if index >= len(id_sublist) - 1:
                 break
 
@@ -203,7 +203,7 @@ def test_get_ij_spurs(default_aoi, default_hexgrid, default_origin_id):
     for spur_id in result['spur_id']:
         spur = result[result['spur_id'] == spur_id]
         id_sublist = spur['id'].to_list()
-        for index, id in enumerate(id_sublist):
+        for index, _ in enumerate(id_sublist):
             if index >= len(id_sublist) - 1:
                 break
 

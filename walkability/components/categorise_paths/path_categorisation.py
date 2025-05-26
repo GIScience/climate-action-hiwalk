@@ -1,20 +1,20 @@
-from typing import Dict, Tuple, List, Set, Generator
+from typing import Dict, Generator, List, Set, Tuple
 
 import geopandas as gpd
 import pandas as pd
 import yaml
 
-from walkability.components.categorise_paths.PathCategoryFilters import PathCategoryFilters
+from walkability.components.categorise_paths.path_category_filters import PathCategoryFilters
 from walkability.components.utils.misc import (
-    PathCategory,
-    PavementQuality,
-    get_first_match,
     PATH_RATING_MAP,
     PAVEMENT_QUALITY_RATING_MAP,
-    SmoothnessCategory,
-    SurfaceType,
     SMOOTHNESS_CATEGORY_RATING_MAP,
     SURFACE_TYPE_RATING_MAP,
+    PathCategory,
+    PavementQuality,
+    SmoothnessCategory,
+    SurfaceType,
+    get_first_match,
 )
 
 
@@ -97,10 +97,7 @@ def evaluate_quality(
     match match_key:
         # Decision: We don't re-check if the sidewalk is actually mapped, we rely on the smoothnes/surface tagging
         case (
-            'sidewalk:both:smoothness'
-            | 'sidewalk:left:smoothness'
-            | 'sidewalk:right:smoothness'
-            | 'footway:smoothness'
+            'sidewalk:both:smoothness' | 'sidewalk:left:smoothness' | 'sidewalk:right:smoothness' | 'footway:smoothness'
         ):
             # If the tag refers specifically to the sidewalk, evaluate quality based on this value
             match_key = 'smoothness'

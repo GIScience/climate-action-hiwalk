@@ -1,5 +1,6 @@
-from walkability.components.categorise_paths.PathCategoryFilters import PathCategoryFilters
 import pytest
+
+from walkability.components.categorise_paths.path_category_filters import PathCategoryFilters
 
 
 def test_get_max_speed():

@@ -1,9 +1,9 @@
 import geopandas as gpd
+from geopandas.testing import assert_geodataframe_equal
 from pyproj import CRS
 from responses import matchers
 from shapely.geometry.linestring import LineString
 from shapely.geometry.multilinestring import MultiLineString
-from geopandas.testing import assert_geodataframe_equal
 
 from walkability.components.slope.slope_analysis import get_slope
 
@@ -153,7 +153,7 @@ def test_get_duplicate_slope(global_aoi, responses_mock, operator):
     assert_geodataframe_equal(computed_slope, expected_slope, check_like=True)
 
 
-def test_slope_matching_according_to_ORS_precision(responses_mock, global_aoi, operator):
+def test_slope_matching_according_to_ors_precision(responses_mock, global_aoi, operator):
     responses_mock.post(
         'https://api.openrouteservice.org/elevation/line',
         json={

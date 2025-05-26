@@ -5,8 +5,8 @@ from typing import List, Tuple
 import geopandas as gpd
 from climatoology.base.baseoperator import _Artifact
 from climatoology.base.computation import ComputationResources
-from climatoology.utility.Naturalness import NaturalnessIndex, NaturalnessUtility
 from climatoology.utility.api import TimeRange
+from climatoology.utility.Naturalness import NaturalnessIndex, NaturalnessUtility
 
 from walkability.components.naturalness.naturalness_artifacts import build_naturalness_artifact
 

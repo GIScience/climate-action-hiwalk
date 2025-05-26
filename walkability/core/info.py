@@ -4,7 +4,7 @@ import logging
 from datetime import timedelta
 from pathlib import Path
 
-from climatoology.base.info import _Info, generate_plugin_info, PluginAuthor, Concern
+from climatoology.base.info import Concern, PluginAuthor, _Info, generate_plugin_info
 from semver import Version
 
 from walkability.core.input import ComputeInputWalkability

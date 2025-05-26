@@ -8,7 +8,7 @@ from approvaltests.namer import NamerFactory
 from ohsome import OhsomeClient
 from pydantic_extra_types.color import Color
 
-from walkability.components.utils.misc import generate_colors, ohsome_filter, fetch_osm_data
+from walkability.components.utils.misc import fetch_osm_data, generate_colors, ohsome_filter
 
 
 def test_fetch_osm_data(expected_compute_input, default_aoi, responses_mock):
@@ -34,7 +34,7 @@ def test_generate_colors():
     expected_output = [Color('#3b4cc0'), Color('#dcdddd'), Color('#b40426')]
 
     expected_input = pd.Series([1.0, 0.5, 0.0])
-    computed_output = generate_colors(expected_input, min=0, max=1, cmap_name='coolwarm_r')
+    computed_output = generate_colors(expected_input, min_value=0, max_value=1, cmap_name='coolwarm_r')
 
     assert computed_output == expected_output
 

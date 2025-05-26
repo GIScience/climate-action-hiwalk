@@ -13,4 +13,4 @@ class Settings(BaseSettings):
     ors_directions_waypoint_limit: int = 50
     ors_base_url: str | None = None
 
-    model_config = SettingsConfigDict(env_file='.env')
+    model_config = SettingsConfigDict(env_file='.env')  # dead: disable

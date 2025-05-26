@@ -1,10 +1,8 @@
 from enum import Enum
-from typing import Set, Dict
+from typing import Set
 
 from climatoology.utility.Naturalness import NaturalnessIndex
 from pydantic import BaseModel, Field
-
-from walkability.components.utils.misc import PathCategory
 
 
 class WalkabilityIndicators(Enum):
@@ -20,7 +18,6 @@ class WalkingSpeed(Enum):
 
 
 WALKING_SPEED_MAP = {WalkingSpeed.SLOW: 2, WalkingSpeed.MEDIUM: 4, WalkingSpeed.FAST: 6}
-WALKING_SPEED_MAP_STRING = {k.value: v for k, v in WALKING_SPEED_MAP.items()}
 
 
 class ComputeInputWalkability(BaseModel):
@@ -42,7 +39,3 @@ class ComputeInputWalkability(BaseModel):
     def max_walking_distance(self) -> float:
         """Calculate the maximum walking distance in m."""
         return (1000 / 60) * WALKING_SPEED_MAP[WalkingSpeed.MEDIUM] * 15
-
-    def get_path_rating_mapping(self) -> Dict[PathCategory, float]:
-        mapping = self.path_rating.model_dump()
-        return {PathCategory(k): v for k, v in mapping.items()}

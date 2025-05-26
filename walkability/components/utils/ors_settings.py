@@ -1,5 +1,6 @@
-import openrouteservice
 from dataclasses import dataclass
+
+import openrouteservice
 
 
 @dataclass

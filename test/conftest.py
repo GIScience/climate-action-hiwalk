@@ -1,6 +1,6 @@
 import json
 import uuid
-from typing import Callable, Any, Tuple
+from typing import Any, Callable, Tuple
 from unittest.mock import patch
 from urllib.parse import parse_qsl
 

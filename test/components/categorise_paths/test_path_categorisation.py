@@ -6,19 +6,19 @@ from ohsome import OhsomeClient
 from pandas import DataFrame
 
 from walkability.components.categorise_paths.path_categorisation import (
+    apply_path_category_filters,
     evaluate_quality,
     get_flat_key_combinations,
+    path_categorisation,
     read_pavement_quality_rankings,
     subset_walkable_paths,
-    apply_path_category_filters,
-    path_categorisation,
 )
 from walkability.components.utils.misc import (
     PathCategory,
     PavementQuality,
-    fetch_osm_data,
     SmoothnessCategory,
     SurfaceType,
+    fetch_osm_data,
 )
 
 validation_objects = {
@@ -188,7 +188,8 @@ def test_evaluate_quality_dedicated_surface():
 
 def test_evaluate_quality_generic_smoothness_and_no_sidewalk():
     """A smooth residential road made of paving_stones with no sidewalk.
-    Assumption: we walk on the highway and therefore the generic smoothness tag of the highway applies to us."""
+    Assumption: we walk on the highway and therefore the generic smoothness tag of the highway applies to us.
+    """
     input_row = pd.Series(
         data={
             '@other_tags': {
@@ -210,7 +211,8 @@ def test_evaluate_quality_generic_smoothness_and_no_sidewalk():
 
 def test_evaluate_quality_generic_smoothness_and_sidewalk():
     """A smooth residential road made of paving_stones with a sidewalk.
-    Assumption: The generic smoothness tag only applies to the highway and not to the sidewalk."""
+    Assumption: The generic smoothness tag only applies to the highway and not to the sidewalk.
+    """
     input_row = pd.Series(
         data={
             '@other_tags': {
@@ -232,7 +234,8 @@ def test_evaluate_quality_generic_smoothness_and_sidewalk():
 
 def test_evaluate_quality_generic_surface_and_no_sidewalk():
     """A residential road made of asphalt with no sidewalk.
-    Assumption: we walk on the highway and therefore the generic surface tag of the highway applies to us."""
+    Assumption: we walk on the highway and therefore the generic surface tag of the highway applies to us.
+    """
     input_row = pd.Series(
         data={
             '@other_tags': {
@@ -253,7 +256,8 @@ def test_evaluate_quality_generic_surface_and_no_sidewalk():
 
 def test_evaluate_quality_generic_surface_and_sidewalk():
     """A residential road made of asphalt with a sidewalk.
-    Assumption: The generic surface tag only applies to the highway and not to the sidewalk."""
+    Assumption: The generic surface tag only applies to the highway and not to the sidewalk.
+    """
     input_row = pd.Series(
         data={
             '@other_tags': {'highway': 'residential', 'surface': 'asphalt', 'sidewalk:both': 'yes'},

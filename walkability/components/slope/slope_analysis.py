@@ -3,17 +3,15 @@ import math
 from typing import Tuple
 
 import geopandas as gpd
-
-from climatoology.base.baseoperator import _Artifact
-from climatoology.base.computation import ComputationResources
 import numpy as np
 import openrouteservice
 import pandas as pd
 import shapely
+from climatoology.base.baseoperator import _Artifact
+from climatoology.base.computation import ComputationResources
 
 from walkability.components.slope.slope_artifacts import build_slope_artifact
 from walkability.components.utils.geometry import ORS_COORDINATE_PRECISION, get_utm_zone
-
 
 log = logging.getLogger(__name__)
 
