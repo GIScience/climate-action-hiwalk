@@ -1,33 +1,31 @@
 import logging
+import math
 import time
-import openrouteservice.exceptions
+from pathlib import Path
 
+import geopandas as gpd
+import h3
+import h3pandas
+import numpy as np
+import openrouteservice
+import openrouteservice.directions
+import openrouteservice.exceptions
+import pandas as pd
+import shapely
 from climatoology.base.artifact import (
-    _Artifact,
     ContinuousLegendData,
+    _Artifact,
     create_geojson_artifact,
     create_plotly_chart_artifact,
 )
 from climatoology.base.computation import ComputationResources
-from pathlib import Path
 from plotly.graph_objects import Figure
-
-
-import geopandas as gpd
-import openrouteservice
-import openrouteservice.directions
-import pandas as pd
-import h3pandas
-import h3
-import numpy as np
-from requests_ratelimiter import LimiterSession
-import shapely
-import math
-from urllib3.util import Retry
 from requests.adapters import HTTPAdapter
+from requests_ratelimiter import LimiterSession
+from urllib3.util import Retry
 
 from walkability.components.utils.misc import generate_colors
-from walkability.components.utils.ORSSettings import ORSSettings
+from walkability.components.utils.ors_settings import ORSSettings
 
 log = logging.getLogger(__name__)
 
@@ -95,7 +93,7 @@ def create_destinations(aoi: shapely.MultiPolygon, resolution: int = 10, max_way
     max_ij = (hexgrid.local_i.max(), hexgrid.local_j.max())
 
     current_ij_starting_point = min_ij
-    # i_and_j_spurs = pd.DataFrame(data={'id': [], 'spur_id': [], 'ordinal': []})
+
     i_and_j_spurs: list[pd.DataFrame] = []
     while current_ij_starting_point[0] <= max_ij[0] or current_ij_starting_point[1] <= max_ij[1]:
         # all i spurs
@@ -204,7 +202,6 @@ def get_ij_spurs(
     min_i = min_ij[0]
     max_i = max_ij[0]
     max_j = max_ij[1]
-    # starting_ij = h3.cell_to_local_ij(origin=origin_id, h=origin_id)
 
     tried_j_values: set[int] = set()
     spur_number = 0

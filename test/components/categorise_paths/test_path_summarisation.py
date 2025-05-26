@@ -1,18 +1,16 @@
-import numpy as np
-
-from test.conftest import filter_start_matcher
-
 import geopandas as gpd
+import numpy as np
 import shapely
 from plotly.graph_objects import Figure
 from pyproj import CRS
 
+from test.conftest import filter_start_matcher
 from walkability.components.categorise_paths.path_summarisation import (
-    summarise_by_area,
     summarise_aoi,
+    summarise_by_area,
+    summarise_detour,
     summarise_naturalness,
     summarise_slope,
-    summarise_detour,
 )
 from walkability.components.utils.misc import PathCategory, PavementQuality
 

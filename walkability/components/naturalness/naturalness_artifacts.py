@@ -1,16 +1,16 @@
 from pathlib import Path
 
+import geopandas as gpd
+import matplotlib
 import pandas as pd
-from climatoology.base.baseoperator import _Artifact
-from climatoology.base.computation import ComputationResources
 from climatoology.base.artifact import (
     ContinuousLegendData,
     create_geojson_artifact,
     create_markdown_artifact,
     create_plotly_chart_artifact,
 )
-import geopandas as gpd
-import matplotlib
+from climatoology.base.baseoperator import _Artifact
+from climatoology.base.computation import ComputationResources
 from matplotlib.colors import to_hex
 from plotly.graph_objects import Figure
 from pydantic_extra_types.color import Color

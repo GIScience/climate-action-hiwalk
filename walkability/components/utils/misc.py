@@ -1,6 +1,6 @@
 import logging
 from enum import Enum
-from typing import Dict, Tuple, List, Optional
+from typing import Dict, List, Optional, Tuple
 
 import geopandas as gpd
 import matplotlib as mpl
@@ -118,7 +118,7 @@ def fetch_osm_data(aoi: shapely.MultiPolygon, osm_filter: str, ohsome: OhsomeCli
 
 def _dict_to_legend(d: dict, cmap_name: str = 'coolwarm_r') -> Dict[str, Color]:
     data = pd.DataFrame.from_records(data=list(d.items()), columns=['category', 'rating'])
-    data['color'] = generate_colors(color_by=data.rating, cmap_name=cmap_name, min=0.0, max=1.0)
+    data['color'] = generate_colors(color_by=data.rating, cmap_name=cmap_name, min_value=0.0, max_value=1.0)
     data['category'] = data.category.apply(lambda cat: cat.value)
     return dict(zip(data['category'], data['color']))
 
@@ -140,7 +140,7 @@ def get_surface_type_legend() -> Dict[str, Color]:
 
 
 def generate_colors(
-    color_by: pd.Series, cmap_name: str, min: number | None = None, max: number | None = None
+    color_by: pd.Series, cmap_name: str, min_value: number | None = None, max_value: number | None = None
 ) -> list[Color]:
     """
     Function to generate a list of colors based on a linear normalization for each element in `color_by`.
@@ -153,12 +153,12 @@ def generate_colors(
     :return:`mapped_colors`: list of colors matching values of `color_by`
     """
     color_by = color_by.astype(float)
-    if min is None:
-        min = color_by.min()
-    if max is None:
-        max = color_by.max()
+    if min_value is None:
+        min_value = color_by.min()
+    if max_value is None:
+        max_value = color_by.max()
 
-    norm = mpl.colors.Normalize(vmin=min, vmax=max)
+    norm = mpl.colors.Normalize(vmin=min_value, vmax=max_value)
     cmap = mpl.colormaps[cmap_name]
     cmap.set_bad(color='#808080')
 

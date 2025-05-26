@@ -8,8 +8,12 @@ repos:
       - id: trailing-whitespace
         exclude: ^test/.*\.approved.txt$
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.1.15
+    rev: v0.9.9
     hooks:
       - id: ruff
         args: [ --fix ]
       - id: ruff-format
+  - repo: https://github.com/asottile/dead
+    rev: v2.1.0
+    hooks:
+    -   id: dead

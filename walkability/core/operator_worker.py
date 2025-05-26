@@ -3,19 +3,19 @@ import logging
 import geopandas as gpd
 import openrouteservice
 import shapely.ops
-from climatoology.base.baseoperator import BaseOperator, AoiProperties, _Artifact
+from climatoology.base.baseoperator import AoiProperties, BaseOperator, _Artifact
 from climatoology.base.computation import ComputationResources
 from climatoology.base.info import _Info
-from climatoology.utility.Naturalness import NaturalnessUtility
 from climatoology.utility.exception import ClimatoologyUserError
+from climatoology.utility.Naturalness import NaturalnessUtility
 from ohsome import OhsomeClient
 from shapely import make_valid
 
 from walkability.components.categorise_paths.path_categorisation import path_categorisation, subset_walkable_paths
 from walkability.components.categorise_paths.path_categorisation_artifacts import build_path_categorisation_artifact
 from walkability.components.categorise_paths.path_summarisation import (
-    summarise_by_area,
     summarise_aoi,
+    summarise_by_area,
     summarise_detour,
     summarise_naturalness,
     summarise_slope,
@@ -32,15 +32,15 @@ from walkability.components.slope.slope_analysis import slope_analysis
 from walkability.components.slope.slope_artifacts import (
     build_slope_summary_bar_artifact,
 )
-from walkability.components.utils.geometry import get_utm_zone, get_buffered_aoi
+from walkability.components.utils.geometry import get_buffered_aoi, get_utm_zone
 from walkability.components.utils.misc import (
+    WALKABLE_CATEGORIES,
     fetch_osm_data,
     ohsome_filter,
-    WALKABLE_CATEGORIES,
 )
-from walkability.components.utils.ORSSettings import ORSSettings
+from walkability.components.utils.ors_settings import ORSSettings
 from walkability.core.info import get_info
-from walkability.core.input import ComputeInputWalkability, WalkabilityIndicators, WALKING_SPEED_MAP, WalkingSpeed
+from walkability.core.input import WALKING_SPEED_MAP, ComputeInputWalkability, WalkabilityIndicators, WalkingSpeed
 
 log = logging.getLogger(__name__)
 
@@ -80,7 +80,7 @@ class OperatorWalkability(BaseOperator[ComputeInputWalkability]):
     def info(self) -> _Info:
         return get_info()
 
-    def compute(
+    def compute(  # dead: disable
         self,
         resources: ComputationResources,
         aoi: shapely.MultiPolygon,

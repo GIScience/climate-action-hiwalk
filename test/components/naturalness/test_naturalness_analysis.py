@@ -1,11 +1,11 @@
-from climatoology.utility.Naturalness import NaturalnessIndex
 import geopandas as gpd
 import shapely
 from climatoology.utility.api import TimeRange
+from climatoology.utility.Naturalness import NaturalnessIndex
 from pyproj import CRS
 from shapely import LineString, MultiLineString
 
-from walkability.components.naturalness.naturalness_analysis import get_naturalness, fetch_naturalness_by_vector
+from walkability.components.naturalness.naturalness_analysis import fetch_naturalness_by_vector, get_naturalness
 
 
 def test_get_naturalness(operator, naturalness_utility_mock):

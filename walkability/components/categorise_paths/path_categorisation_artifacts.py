@@ -79,7 +79,9 @@ def build_walkable_paths_artifact(
 ) -> _Artifact:
     walkable_locations = pd.concat([paths_line, paths_polygon], ignore_index=True)
 
-    walkable_locations['color'] = generate_colors(walkable_locations.rating, min=0.0, max=1.0, cmap_name='coolwarm_r')
+    walkable_locations['color'] = generate_colors(
+        walkable_locations.rating, min_value=0.0, max_value=1.0, cmap_name='coolwarm_r'
+    )
 
     return create_geojson_artifact(
         features=walkable_locations.geometry,
@@ -117,7 +119,7 @@ def build_surface_quality_artifact(
     if surface_quality_locations.empty:
         return
     surface_quality_locations['color'] = generate_colors(
-        surface_quality_locations.quality_rating, min=0.0, max=1.0, cmap_name='coolwarm_r'
+        surface_quality_locations.quality_rating, min_value=0.0, max_value=1.0, cmap_name='coolwarm_r'
     )
     return create_geojson_artifact(
         features=surface_quality_locations.geometry,
@@ -138,7 +140,7 @@ def build_smoothness_artifact(
 ) -> _Artifact:
     smoothness_locations = pd.concat([paths_line, paths_polygon], ignore_index=True)
     smoothness_locations['color'] = generate_colors(
-        smoothness_locations.smoothness_rating, cmap_name='coolwarm_r', min=0.0, max=1.0
+        smoothness_locations.smoothness_rating, cmap_name='coolwarm_r', min_value=0.0, max_value=1.0
     )
     return create_geojson_artifact(
         features=smoothness_locations.geometry,
@@ -158,7 +160,9 @@ def build_surface_artifact(
     paths_line: gpd.GeoDataFrame, paths_polygon: gpd.GeoDataFrame, resources: ComputationResources
 ) -> _Artifact:
     surface_locations = pd.concat([paths_line, paths_polygon], ignore_index=True)
-    surface_locations['color'] = generate_colors(surface_locations.surface_rating, cmap_name='tab10', min=0.0, max=1.0)
+    surface_locations['color'] = generate_colors(
+        surface_locations.surface_rating, cmap_name='tab10', min_value=0.0, max_value=1.0
+    )
     return create_geojson_artifact(
         features=surface_locations.geometry,
         layer_name='Surface Type',
