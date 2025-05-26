@@ -1,1 +1,1 @@
-How green and/or blue are this path's surroundings?
+How green are this path's surroundings?

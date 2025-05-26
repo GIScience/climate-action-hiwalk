@@ -76,7 +76,7 @@ def test_plugin_compute_request_with_only_one_optional_indicator(
         aoi=default_aoi,
         aoi_properties=default_aoi_properties,
         params=ComputeInputWalkability(
-            indicators_to_compute={WalkabilityIndicators.SLOPE, WalkabilityIndicators.DETOURS}
+            optional_indicators={WalkabilityIndicators.SLOPE, WalkabilityIndicators.DETOURS}
         ),
     )
 
