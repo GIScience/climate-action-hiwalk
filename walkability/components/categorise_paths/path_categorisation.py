@@ -41,23 +41,34 @@ def path_categorisation(
         paths_polygon['smoothness'] = paths_polygon.apply(apply_path_smoothness_filters, axis=1)
         paths_polygon['surface'] = paths_polygon.apply(apply_path_surface_filters, axis=1)
 
-    paths_line['rating'] = paths_line.category.apply(lambda category: PATH_RATING_MAP[category])
-    paths_polygon['rating'] = paths_polygon.category.apply(lambda category: PATH_RATING_MAP[category])
+    paths_line_visible = paths_line[paths_line.category.isin(PathCategory.get_visible())]
+    paths_polygon_visible = paths_polygon[paths_polygon.category.isin(PathCategory.get_visible())]
 
-    paths_line['quality_rating'] = paths_line.quality.apply(lambda quality: PAVEMENT_QUALITY_RATING_MAP[quality])
-    paths_polygon['quality_rating'] = paths_polygon.quality.apply(lambda quality: PAVEMENT_QUALITY_RATING_MAP[quality])
+    paths_line_visible['rating'] = paths_line_visible.category.apply(lambda category: PATH_RATING_MAP[category])
+    paths_polygon_visible['rating'] = paths_polygon_visible.category.apply(lambda category: PATH_RATING_MAP[category])
 
-    paths_line['smoothness_rating'] = paths_line.smoothness.apply(
+    paths_line_visible['quality_rating'] = paths_line_visible.quality.apply(
+        lambda quality: PAVEMENT_QUALITY_RATING_MAP[quality]
+    )
+    paths_polygon_visible['quality_rating'] = paths_polygon_visible.quality.apply(
+        lambda quality: PAVEMENT_QUALITY_RATING_MAP[quality]
+    )
+
+    paths_line_visible['smoothness_rating'] = paths_line_visible.smoothness.apply(
         lambda smoothness: SMOOTHNESS_CATEGORY_RATING_MAP[smoothness]
     )
-    paths_polygon['smoothness_rating'] = paths_polygon.smoothness.apply(
+    paths_polygon_visible['smoothness_rating'] = paths_polygon_visible.smoothness.apply(
         lambda smoothness: SMOOTHNESS_CATEGORY_RATING_MAP[smoothness]
     )
 
-    paths_line['surface_rating'] = paths_line.surface.apply(lambda surface: SURFACE_TYPE_RATING_MAP[surface])
-    paths_polygon['surface_rating'] = paths_polygon.surface.apply(lambda surface: SURFACE_TYPE_RATING_MAP[surface])
+    paths_line_visible['surface_rating'] = paths_line_visible.surface.apply(
+        lambda surface: SURFACE_TYPE_RATING_MAP[surface]
+    )
+    paths_polygon_visible['surface_rating'] = paths_polygon_visible.surface.apply(
+        lambda surface: SURFACE_TYPE_RATING_MAP[surface]
+    )
 
-    return paths_line, paths_polygon
+    return paths_line_visible, paths_polygon_visible
 
 
 def apply_path_category_filters(row: pd.Series) -> PathCategory:
