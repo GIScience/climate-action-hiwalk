@@ -24,16 +24,23 @@ class PathCategory(Enum):
     INACCESSIBLE = 'No access'
     UNKNOWN = 'Unknown'
 
+    @classmethod
+    def get_hidden(cls):
+        return [cls.INACCESSIBLE]
+
+    @classmethod
+    def get_visible(cls):
+        return [category for category in cls if category not in cls.get_hidden()]
+
 
 PATH_RATING_MAP = {
     PathCategory.DESIGNATED: 1.0,
     PathCategory.DESIGNATED_SHARED_WITH_BIKES: 0.8,
-    PathCategory.SHARED_WITH_MOTORIZED_TRAFFIC_LOW_SPEED: 0.5,
+    PathCategory.SHARED_WITH_MOTORIZED_TRAFFIC_LOW_SPEED: 0.6,
     PathCategory.SHARED_WITH_MOTORIZED_TRAFFIC_MEDIUM_SPEED: 0.4,
-    PathCategory.SHARED_WITH_MOTORIZED_TRAFFIC_HIGH_SPEED: 0.3,
-    PathCategory.SHARED_WITH_MOTORIZED_TRAFFIC_VERY_HIGH_SPEED: 0.2,
-    PathCategory.SHARED_WITH_MOTORIZED_TRAFFIC_UNKNOWN_SPEED: 0.1,
-    PathCategory.INACCESSIBLE: 0.0,
+    PathCategory.SHARED_WITH_MOTORIZED_TRAFFIC_HIGH_SPEED: 0.2,
+    PathCategory.SHARED_WITH_MOTORIZED_TRAFFIC_VERY_HIGH_SPEED: 0.0,
+    PathCategory.SHARED_WITH_MOTORIZED_TRAFFIC_UNKNOWN_SPEED: 0.0,
     PathCategory.UNKNOWN: None,
 }
 

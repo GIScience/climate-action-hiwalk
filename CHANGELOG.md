@@ -17,6 +17,7 @@ and this project mostly adheres to [Semantic Versioning](https://semver.org/spec
 - Updated legend labels for path categories shared with cars to include speed limit instead of category label
 - Renamed input field to select optional indicators, making computation parameters report more understandable ([#224](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/224))
 - The Naturalness indicator now includes only NDVI and was thus renamed "Greenness".
+- Private paths and other streets with restricted access are now hidden from display to avoid cluttering the maps and distracting from problems in the public street network ([#222](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/222))
 
 - Docker builds now take the commit hash as an argument to avoid version collisions on staging ([#226](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/226))
 - CI pipeline now includes test-coverage checks ([#225](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/225))
