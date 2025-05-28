@@ -7,7 +7,7 @@ and this project mostly adheres to [Semantic Versioning](https://semver.org/spec
 
 ## [Unreleased](https://gitlab.heigit.org/climate-action/plugins/walkability/-/compare/2.1.0...main)
 
-## [2.1.0](https://gitlab.heigit.org/climate-action/plugins/walkability/-/releases/2.0.0)
+## [2.1.0](https://gitlab.heigit.org/climate-action/plugins/walkability/-/releases/2.1.0) - 2025-05-28
 
 ### Added
 
