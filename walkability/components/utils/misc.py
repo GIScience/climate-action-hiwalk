@@ -1,11 +1,15 @@
 import logging
-from enum import Enum
-from typing import Dict, List, Optional, Tuple
+import uuid
+from enum import Enum, StrEnum
+from typing import Dict, List, Optional, Set, Tuple
 
 import geopandas as gpd
 import matplotlib as mpl
 import pandas as pd
 import shapely
+from climatoology.base.artifact import Attachments, ContinuousLegendData, Legend
+from climatoology.base.baseoperator import ArtifactModality, _Artifact
+from climatoology.base.computation import ComputationResources
 from numpy import number
 from ohsome import OhsomeClient
 from pydantic_extra_types.color import Color
@@ -205,3 +209,97 @@ def safe_string_to_float(potential_number: str | float) -> float:
         return float(potential_number)
     except (TypeError, ValueError):
         return -1
+
+
+# TODO replace me when multicolumn functionality is present in climatoology 7.0.0
+def create_multicolumn_geojson_artifact(
+    features: gpd.GeoSeries,
+    layer_name: str,
+    caption: str,
+    color: List[Color],
+    label: List[str],
+    resources: ComputationResources,
+    extra_columns: list[pd.Series] | None = None,
+    primary: bool = True,
+    legend_data: ContinuousLegendData | dict[str, Color] | None = None,
+    description: str | None = None,
+    tags: Set[StrEnum] | tuple = (),
+    filename: str | uuid.UUID = uuid.uuid4(),
+) -> _Artifact:
+    """Create a vector data artifact.
+
+    This will create a GeoJSON file holding all information required to plot a simple map layer.
+
+    :param features: The Geodata. Must have a CRS set.
+    :param color: Color of the features. Will be applied to surfaces, lines and points. Must be the same length as the
+    features.
+    :param label: Label of the features. Must be the same length as the features.
+    :param layer_name: Name of the map layer.
+    :param caption: A short description of the layer.
+    :param description: A longer description of the layer.
+    :param tags: Association tags this artifact belongs to.
+    :param legend_data: Can be used to display a custom legend. For a continuous legend, use the ContinuousLegendData
+    type. For a legend with distinct colors provide a dictionary mapping labels (str) to colors. If not provided, a
+    distinct legend will be created from the unique combinations of labels and colors.
+    :param resources: The computation resources of the plugin.
+    :param extra_columns: List of extra columns in the output geojson.
+    :param primary: Is this a primary artifact or does it exhibit additional or contextual information?
+    :param filename: A filename for the created file (without extension!).
+    :return: The artifact that contains a path-pointer to the created file.
+    """
+    file_path = resources.computation_dir / f'{filename}.geojson'
+    assert not file_path.exists(), (
+        'The target artifact data file already exists. Make sure to choose a unique filename.'
+    )
+    log.debug(f'Writing vector dataset {file_path}.')
+
+    assert len(color) == features.size, 'The number of colors does not match the number of features.'
+    color = [color.as_hex() for color in color]
+
+    assert len(label) == features.size, 'The number of labels does not match the number of features.'
+
+    if isinstance(features.index, pd.MultiIndex):
+        # Format the index the same way a tuple index would be rendered in `to_file()`
+        features.index = "('" + features.index.map("', '".join) + "')"
+
+    output_data = {'color': color, 'label': label}
+
+    if extra_columns is not None:
+        for column in extra_columns:
+            name = column.name
+            assert len(column) == features.size, (
+                f'The number of extra values in column {name} does not match the number of features.'
+            )
+            output_data.update({name: column})
+
+    gdf = gpd.GeoDataFrame(output_data, index=features.index, geometry=features)
+    gdf = gdf.to_crs(4326)
+    gdf.geometry = shapely.set_precision(gdf.geometry, grid_size=0.0000001)
+
+    gdf.to_file(
+        file_path.absolute().as_posix(),
+        index=True,
+        driver='GeoJSON',
+        engine='pyogrio',
+        layer_options={'SIGNIFICANT_FIGURES': 7, 'RFC7946': 'YES', 'WRITE_NAME': 'NO'},
+    )
+
+    if not legend_data:
+        legend_df = gdf.groupby(['color', 'label']).size().index.to_frame(index=False)
+        legend_df = legend_df.set_index('label')
+        legend_data = legend_df.to_dict()['color']
+
+    result = _Artifact(
+        name=layer_name,
+        modality=ArtifactModality.MAP_LAYER_GEOJSON,
+        file_path=file_path,
+        summary=caption,
+        description=description,
+        tags=tags,
+        primary=primary,
+        attachments=Attachments(legend=Legend(legend_data=legend_data)),
+    )
+
+    log.debug(f'Returning Artifact: {result.model_dump()}.')
+
+    return result

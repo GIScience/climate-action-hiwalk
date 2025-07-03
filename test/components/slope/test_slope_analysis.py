@@ -35,6 +35,7 @@ def test_get_slope(global_aoi, responses_mock, operator):
 
     paths = gpd.GeoDataFrame(
         index=[1],
+        data={'@osmId': ['way/a']},
         geometry=[
             LineString([[0.0, 0.0], [0.01, 0.01]]),
         ],
@@ -47,7 +48,7 @@ def test_get_slope(global_aoi, responses_mock, operator):
         geometry=[
             LineString([[0.0, 0.0], [0.01, 0.01]]),
         ],
-        data={'slope': [0.06]},
+        data={'slope': [0.06], '@osmId': ['way/a']},
         crs=CRS.from_epsg(4326),
     )
 
@@ -87,6 +88,7 @@ def test_get_negative_slope(global_aoi, responses_mock, operator):
             LineString([[0.0, 0.0], [0.01, 0.01]]),
             LineString([[0.02, 0.02], [0.03, 0.03]]),
         ],
+        data={'@osmId': ['way/a', 'way/b']},
         crs='EPSG:4326',
     )
     computed_slope = get_slope(aoi=global_aoi, paths=paths, ors_client=operator.ors_settings.client)
@@ -97,7 +99,7 @@ def test_get_negative_slope(global_aoi, responses_mock, operator):
             LineString([[0.0, 0.0], [0.01, 0.01]]),
             LineString([[0.02, 0.02], [0.03, 0.03]]),
         ],
-        data={'slope': [0.06, -0.06]},
+        data={'slope': [0.06, -0.06], '@osmId': ['way/a', 'way/b']},
         crs=CRS.from_epsg(4326),
     )
 
@@ -136,6 +138,7 @@ def test_get_duplicate_slope(global_aoi, responses_mock, operator):
             LineString([[0.0, 0.0], [0.01, 0.01]]),
             LineString([[0.01, 0.01], [0.02, 0.02]]),
         ],
+        data={'@osmId': ['way/a', 'way/b']},
         crs='EPSG:4326',
     )
     computed_slope = get_slope(aoi=global_aoi, paths=paths, ors_client=operator.ors_settings.client)
@@ -146,7 +149,7 @@ def test_get_duplicate_slope(global_aoi, responses_mock, operator):
             LineString([[0.0, 0.0], [0.01, 0.01]]),
             LineString([[0.01, 0.01], [0.02, 0.02]]),
         ],
-        data={'slope': [0.06, -0.06]},
+        data={'slope': [0.06, -0.06], '@osmId': ['way/a', 'way/b']},
         crs=CRS.from_epsg(4326),
     )
 
@@ -183,6 +186,7 @@ def test_slope_matching_according_to_ors_precision(responses_mock, global_aoi, o
         geometry=[
             LineString([[0.0, 0.0], [0.01, 0.01]]),
         ],
+        data={'@osmId': ['way/a']},
         crs='EPSG:4326',
     )
     computed_slope = get_slope(aoi=global_aoi, paths=paths, ors_client=operator.ors_settings.client)
@@ -192,7 +196,7 @@ def test_slope_matching_according_to_ors_precision(responses_mock, global_aoi, o
         geometry=[
             LineString([[0.0, 0.0], [0.01, 0.01]]),
         ],
-        data={'slope': [0.06]},
+        data={'slope': [0.06], '@osmId': ['way/a']},
         crs=CRS.from_epsg(4326),
     )
 
@@ -242,17 +246,14 @@ def test_get_large_amount_of_slopes(global_aoi, responses_mock, operator):
     )
 
     geoms = [LineString([[0.0, 0.0], [1.0, 1.0]]), LineString([[1.0, 1.0], [2.0, 2.0]])]
-    paths = gpd.GeoDataFrame(
-        geometry=geoms,
-        crs='EPSG:4326',
-    )
+    paths = gpd.GeoDataFrame(geometry=geoms, crs='EPSG:4326', data={'@osmId': ['way/a', 'way/b']})
     computed_slope = get_slope(
         aoi=global_aoi, paths=paths, ors_client=operator.ors_settings.client, request_chunk_size=2
     )
 
     expected_slope = gpd.GeoDataFrame(
         geometry=geoms,
-        data={'slope': [0.0, 0.0]},
+        data={'slope': [0.0, 0.0], '@osmId': ['way/a', 'way/b']},
         crs=CRS.from_epsg(4326),
     )
 
@@ -289,6 +290,7 @@ def test_slope_for_multipart_geom(responses_mock, global_aoi, operator):
         geometry=[
             MultiLineString([[[0.0, 0.0], [0.01, 0.01]], [[0.02, 0.02], [0.03, 0.03]]]),
         ],
+        data={'@osmId': ['way/a']},
         crs='EPSG:4326',
     )
     computed_slope = get_slope(aoi=global_aoi, paths=paths, ors_client=operator.ors_settings.client)
@@ -298,7 +300,7 @@ def test_slope_for_multipart_geom(responses_mock, global_aoi, operator):
         geometry=[
             MultiLineString([[[0.0, 0.0], [0.01, 0.01]], [[0.02, 0.02], [0.03, 0.03]]]),
         ],
-        data={'slope': [0.0]},
+        data={'slope': [0.0], '@osmId': ['way/a']},
         crs=CRS.from_epsg(4326),
     )
 

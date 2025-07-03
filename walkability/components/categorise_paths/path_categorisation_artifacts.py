@@ -5,7 +5,6 @@ from typing import Dict, List, Optional, Set
 import geopandas as gpd
 import pandas as pd
 from climatoology.base.artifact import (
-    create_geojson_artifact,
     create_plotly_chart_artifact,
 )
 from climatoology.base.baseoperator import _Artifact
@@ -18,6 +17,7 @@ from walkability.components.categorise_paths.path_categorisation import (
 )
 from walkability.components.utils.misc import (
     PathCategory,
+    create_multicolumn_geojson_artifact,
     generate_colors,
     get_path_rating_legend,
     get_smoothness_legend,
@@ -77,19 +77,20 @@ def build_path_categorisation_artifact(
 def build_walkable_paths_artifact(
     paths_line: gpd.GeoDataFrame, paths_polygon: gpd.GeoDataFrame, resources: ComputationResources
 ) -> _Artifact:
-    walkable_locations = pd.concat([paths_line, paths_polygon], ignore_index=True)
+    walkable_locations: gpd.GeoDataFrame = pd.concat([paths_line, paths_polygon], ignore_index=True)
 
     walkable_locations['color'] = generate_colors(
         walkable_locations.rating, min_value=0.0, max_value=1.0, cmap_name='coolwarm_r'
     )
 
-    return create_geojson_artifact(
+    return create_multicolumn_geojson_artifact(
         features=walkable_locations.geometry,
         layer_name='Path Category',
         caption=Path('resources/components/categorise_paths/path_categorisation_caption.md').read_text(),
         description=Path('resources/components/categorise_paths/path_categorisation_description.md').read_text(),
         label=walkable_locations.category.apply(lambda r: r.value).to_list(),
         color=walkable_locations.color.to_list(),
+        extra_columns=[walkable_locations['@osmId']],
         legend_data=get_path_rating_legend(),
         resources=resources,
         filename='walkable',
@@ -121,7 +122,7 @@ def build_surface_quality_artifact(
     surface_quality_locations['color'] = generate_colors(
         surface_quality_locations.quality_rating, min_value=0.0, max_value=1.0, cmap_name='coolwarm_r'
     )
-    return create_geojson_artifact(
+    return create_multicolumn_geojson_artifact(
         features=surface_quality_locations.geometry,
         layer_name='Surface Quality',
         caption=Path('resources/components/categorise_paths/surface_quality_caption.md').read_text(),
@@ -129,6 +130,7 @@ def build_surface_quality_artifact(
         + generate_detailed_pavement_quality_mapping_info(),
         label=surface_quality_locations.quality.apply(lambda r: r.value).to_list(),
         color=surface_quality_locations.color.to_list(),
+        extra_columns=[surface_quality_locations['@osmId']],
         legend_data=get_surface_quality_legend(),
         resources=resources,
         filename='pavement_quality',
@@ -142,13 +144,14 @@ def build_smoothness_artifact(
     smoothness_locations['color'] = generate_colors(
         smoothness_locations.smoothness_rating, cmap_name='coolwarm_r', min_value=0.0, max_value=1.0
     )
-    return create_geojson_artifact(
+    return create_multicolumn_geojson_artifact(
         features=smoothness_locations.geometry,
         layer_name='Smoothness',
         caption=Path('resources/components/categorise_paths/smoothness_caption.md').read_text(),
         description=Path('resources/components/categorise_paths/smoothness_description.md').read_text(),
         label=smoothness_locations.smoothness.apply(lambda r: r.name).to_list(),
         color=smoothness_locations.color.to_list(),
+        extra_columns=[smoothness_locations['@osmId']],
         legend_data=get_smoothness_legend(),
         resources=resources,
         filename='smoothness',
@@ -163,13 +166,14 @@ def build_surface_artifact(
     surface_locations['color'] = generate_colors(
         surface_locations.surface_rating, cmap_name='tab10', min_value=0.0, max_value=1.0
     )
-    return create_geojson_artifact(
+    return create_multicolumn_geojson_artifact(
         features=surface_locations.geometry,
         layer_name='Surface Type',
         caption=Path('resources/components/categorise_paths/surface_caption.md').read_text(),
         description=Path('resources/components/categorise_paths/surface_description.md').read_text(),
         label=surface_locations.surface.apply(lambda r: r.name).to_list(),
         color=surface_locations.color.to_list(),
+        extra_columns=[surface_locations['@osmId']],
         legend_data=get_surface_type_legend(),
         resources=resources,
         filename='surface_type',
