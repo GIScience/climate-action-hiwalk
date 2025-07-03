@@ -6,7 +6,6 @@ import matplotlib
 import pandas as pd
 from climatoology.base.artifact import (
     ContinuousLegendData,
-    create_geojson_artifact,
     create_markdown_artifact,
     create_plotly_chart_artifact,
 )
@@ -15,6 +14,8 @@ from climatoology.base.computation import ComputationResources
 from matplotlib.colors import to_hex
 from plotly.graph_objects import Figure
 from pydantic_extra_types.color import Color
+
+from walkability.components.utils.misc import create_multicolumn_geojson_artifact
 
 
 def clean_slope_data(slope: pd.Series) -> Tuple[pd.Series, pd.Series]:
@@ -58,13 +59,14 @@ def build_slope_artifact(
         },
     )
 
-    return create_geojson_artifact(
+    return create_multicolumn_geojson_artifact(
         features=slope.geometry,
         layer_name='Slope',
         caption=Path('resources/components/slope/caption.md').read_text(),
         description=Path('resources/components/slope/description.md').read_text(),
         label=slope_values.to_list(),
         color=color.to_list(),
+        extra_columns=[slope['@osmId']],
         legend_data=legend,
         resources=resources,
         filename='slope',

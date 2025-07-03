@@ -76,4 +76,4 @@ def get_slope(
     paths['slope'] = (paths.end_ele - paths.start_ele) / (paths.geometry.to_crs(utm).length / 100.0)
     paths.slope = paths.slope.round(2)
 
-    return paths[['slope', 'geometry']]
+    return paths[['@osmId', 'slope', 'geometry']]

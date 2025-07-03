@@ -5,7 +5,6 @@ import matplotlib
 import pandas as pd
 from climatoology.base.artifact import (
     ContinuousLegendData,
-    create_geojson_artifact,
     create_markdown_artifact,
     create_plotly_chart_artifact,
 )
@@ -14,6 +13,8 @@ from climatoology.base.computation import ComputationResources
 from matplotlib.colors import to_hex
 from plotly.graph_objects import Figure
 from pydantic_extra_types.color import Color
+
+from walkability.components.utils.misc import create_multicolumn_geojson_artifact
 
 
 def build_naturalness_artifact(
@@ -54,7 +55,7 @@ def build_naturalness_artifact(
     )
 
     # Build artifact
-    return create_geojson_artifact(
+    return create_multicolumn_geojson_artifact(
         features=naturalness_locations.geometry,
         layer_name='Greenness',
         caption=Path('resources/components/naturalness/caption.md').read_text(),

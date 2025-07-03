@@ -7,6 +7,10 @@ and this project mostly adheres to [Semantic Versioning](https://semver.org/spec
 
 ## [Unreleased](https://gitlab.heigit.org/climate-action/plugins/walkability/-/compare/2.1.1...main)
 
+### Changed
+
+- Path artifacts now contain OSM ids in their downloadable file ([#236](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/236))
+
 ## [2.1.1](https://gitlab.heigit.org/climate-action/plugins/walkability/-/releases/2.1.1) - 2025-06-04
 
 ### Changed
