@@ -1,15 +1,14 @@
 FROM python:3.11.5-bookworm
-SHELL ["bin/bash", "-c"]
+SHELL ["/bin/bash", "-c"]
 
 ENV PACKAGE_NAME='walkability'
 
-RUN pip install --no-cache-dir poetry==1.7.1
+RUN pip install --no-cache-dir poetry==1.8.2
 
 COPY pyproject.toml poetry.lock ./
 
 
-RUN --mount=type=secret,id=CI_JOB_TOKEN \
-    export CI_JOB_TOKEN=$(cat /run/secrets/CI_JOB_TOKEN) && \
+RUN --mount=type=secret,id=CI_JOB_TOKEN,env=CI_JOB_TOKEN \
     git config --global url."https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.heigit.org".insteadOf "ssh://git@gitlab.heigit.org:2022" && \
     poetry install --no-ansi --no-interaction --all-extras --without dev,test --no-root
 
@@ -23,4 +22,4 @@ RUN if [[ -n "${CI_COMMIT_SHORT_SHA}" ]]; then sed -E -i "s/^(version *= *\"[^+]
 RUN poetry install --no-ansi --no-interaction --all-extras --without dev,test
 
 SHELL ["/bin/bash", "-c"]
-ENTRYPOINT poetry run python ${PACKAGE_NAME}/plugin.py
+ENTRYPOINT exec poetry run python ${PACKAGE_NAME}/plugin.py
