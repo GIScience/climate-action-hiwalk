@@ -77,7 +77,7 @@ If the [infrastructure](https://gitlab.heigit.org/climate-action/infrastructure)
 copy [.env.base_template](.env.base_template) to `.env.base` and then run
 
 ```shell
-DOCKER_BUILDKIT=1 docker build --secret id=CI_JOB_TOKEN . --tag heigit/ca-walkability:devel
+docker build --secret id=CI_JOB_TOKEN . --tag heigit/ca-walkability:devel
 docker run --env-file .env.base --network=host heigit/ca-walkability:devel
 ```
 
@@ -87,7 +87,7 @@ process as secret.
 To deploy this plugin to the central docker repository run
 
 ```shell
-DOCKER_BUILDKIT=1 docker build --secret id=CI_JOB_TOKEN . --tag heigit/ca-walkability:devel
+docker build --secret id=CI_JOB_TOKEN . --tag heigit/ca-walkability:devel
 docker image push heigit/ca-walkability:devel
 ```
 
