@@ -8,17 +8,13 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "~3.11.5"
 climatoology = { git = "ssh://git@gitlab.heigit.org:2022/climate-action/climatoology.git", tag = "6.4.3" }
-pydantic = "2.8.2"
+pydantic = "2.11.7"
 pydantic-settings = "^2.1.0"
 geojson-pydantic = "^1.0.1"
 shapely = "^2.0.2"
 pyyaml = "^6.0.1"
 ohsome = "^0.4.0"
 matplotlib = "^3.8.3"
-networkx = "^3.3"
-momepy = "^0.7.0"
-geonetworkx = "^0.5.3"
-osmnx = "^2.0.0"
 pytest = "^8.3.4"
 openrouteservice = "^2.3.3"
 h3pandas = "^0.3.0"
@@ -28,7 +24,7 @@ requests-ratelimiter = "^0.7.0"
 [tool.poetry.group.test.dependencies]
 approvaltests = "^12.2.0"
 pytest-approvaltests = "^0.2.4"
-responses = "^0.24.1"
+responses = "^0.25.0"
 pytest-cov = "^6.1.1"
 vcrpy = {version = "^7.0.0", markers = "platform_python_implementation !='PyPy'"}  # https://github.com/kevin1024/vcrpy/issues/880
 

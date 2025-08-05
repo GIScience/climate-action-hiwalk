@@ -2,8 +2,8 @@ import logging
 from typing import Dict, Tuple
 
 import geopandas as gpd
-import matplotlib.cm as cm
 import matplotlib.colors as mcolors
+import matplotlib.pyplot as pyplt
 import numpy as np
 import plotly.graph_objects as go
 import shapely
@@ -338,7 +338,7 @@ def summarise_detour(
     stats = stats.to_crs(projected_crs)
 
     counts, bin_edges = np.histogram(stats['detour_factor'], bins=30)
-    cmap = cm.get_cmap('YlOrRd', len(counts))
+    cmap = pyplt.get_cmap('YlOrRd', len(counts))
     colors = [mcolors.to_hex(cmap(i)) for i in range(len(counts))]
 
     histogram = go.Histogram(
