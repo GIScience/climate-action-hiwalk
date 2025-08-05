@@ -90,6 +90,7 @@ def test_get_detour_factors(
             result.drop(columns='detour_factor').sort_index(),
             expected_detour_factors.drop(columns='detour_factor').sort_index(),
         )
+        # TODO why is this warning in here?
         warnings.warn(f'{result.dtypes}, {expected_detour_factors.dtypes}')
         assert_frame_equal(
             result.drop(columns='geometry').sort_index(),

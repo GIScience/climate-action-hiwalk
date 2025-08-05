@@ -275,7 +275,7 @@ def batch_and_filter_spurs(spurs: pd.DataFrame, max_waypoint_number: int = 50) -
         for i in range(number_of_batches):
             spur_segment_end = spur_segment_start + max_waypoint_number
             batch = old_spur[(spur_segment_start <= old_spur['ordinal']) & (old_spur['ordinal'] < spur_segment_end)]
-            batch['spur_id'] = f'{batch["spur_id"].iloc[0]}:{i}'
+            batch.loc[:, 'spur_id'] = f'{batch["spur_id"].iloc[0]}:{i}'
 
             split_spurs.append(batch)
             spur_segment_start = spur_segment_end - 1
