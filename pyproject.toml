@@ -21,7 +21,7 @@ requests-ratelimiter = "^0.7.0"
 
 
 [tool.poetry.group.test.dependencies]
-approvaltests = "^12.2.0"
+approvaltests = "^15.0.0"
 pytest-approvaltests = "^0.2.4"
 responses = "^0.25.0"
 pytest-cov = "^6.1.1"
