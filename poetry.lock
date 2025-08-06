@@ -72,39 +72,38 @@ files = [
 
 [[package]]
 name = "approval-utilities"
-version = "12.2.1"
+version = "15.0.0"
 description = "Utilities for your production code that work well with approvaltests"
 optional = false
 python-versions = ">=3.8"
 groups = ["test"]
 files = [
-    {file = "approval_utilities-12.2.1-py3-none-any.whl", hash = "sha256:9543f98a978f70e9250aae2373df420178375bc4735f3bb92e747eda12e846c4"},
-    {file = "approval_utilities-12.2.1.tar.gz", hash = "sha256:b69772f813f892cee0cf8652df8e0f24faa2adbf5ce493c1adbccafe2464650b"},
+    {file = "approval_utilities-15.0.0-py3-none-any.whl", hash = "sha256:b8bd98961464c24d5048c8d106863726e32ff3d5624fb971a50bdacc3ac738a9"},
+    {file = "approval_utilities-15.0.0.tar.gz", hash = "sha256:ff4bc9d2907a21bf914f1d86621f06c3a3317c79a385c5284b2eb7a7f21f76c7"},
 ]
 
 [[package]]
 name = "approvaltests"
-version = "12.2.1"
+version = "15.0.0"
 description = "Assertion/verification library to aid testing"
 optional = false
 python-versions = ">=3.8"
 groups = ["test"]
 files = [
-    {file = "approvaltests-12.2.1-py3-none-any.whl", hash = "sha256:a284561de839daff34ed329a42e26f118bd3441991eaf5786fff4c350a9f1558"},
-    {file = "approvaltests-12.2.1.tar.gz", hash = "sha256:3648a7cec689fbd59bb290ad6a963498ecc8fe02f33de7435aae4b537cac5c98"},
+    {file = "approvaltests-15.0.0-py3-none-any.whl", hash = "sha256:f1967255f18541cd60a6ce3e0aa630e8eff74107a22e9e29786945428a386ae7"},
+    {file = "approvaltests-15.0.0.tar.gz", hash = "sha256:8ac15bad2b63c0b645207672046c3f7e71ed552b87c736d5cfa18d1ed85f76ba"},
 ]
 
 [package.dependencies]
 allpairspy = ">=2.1.0"
-approval-utilities = "12.2.1"
+approval_utilities = "15.0.0"
 beautifulsoup4 = ">=4.4.0"
 empty-files = ">=0.0.3"
 mock = ">=5.1.0"
-mrjob = ">=0.7.4"
 pyperclip = ">=1.5.29"
 pytest = ">=4.0.0"
 testfixtures = ">=7.1.0"
-typing-extensions = ">=3.6.2"
+typing_extensions = ">=3.6.2"
 
 [[package]]
 name = "argon2-cffi"
@@ -1488,28 +1487,6 @@ files = [
 build = ["blurb", "twine", "wheel"]
 docs = ["sphinx"]
 test = ["pytest", "pytest-cov"]
-
-[[package]]
-name = "mrjob"
-version = "0.7.4"
-description = "Python MapReduce framework"
-optional = false
-python-versions = "*"
-groups = ["test"]
-files = [
-    {file = "mrjob-0.7.4-py2.py3-none-any.whl", hash = "sha256:d8fa1bafcada0ffe3e7166896a27e996815e2cb835088aec025e3dd12c7146ce"},
-    {file = "mrjob-0.7.4.tar.gz", hash = "sha256:2c8d8dc8aa4b354a97de18d0260f551f018693af74af104b3d41daf165eebdd4"},
-]
-
-[package.dependencies]
-PyYAML = ">=3.10"
-
-[package.extras]
-aws = ["boto3 (>=1.10.0)", "botocore (>=1.13.26)"]
-google = ["google-cloud-dataproc (>=0.3.0,<=1.1.0)", "google-cloud-logging (>=1.9.0)", "google-cloud-storage (>=1.13.1)"]
-rapidjson = ["python-rapidjson"]
-simplejson = ["simplejson"]
-ujson = ["ujson"]
 
 [[package]]
 name = "multidict"
@@ -3647,4 +3624,4 @@ propcache = ">=0.2.1"
 [metadata]
 lock-version = "2.1"
 python-versions = "~3.11.5"
-content-hash = "36093da2d78433a6e855e336729a529d558edec6d05bfda60b8b46f353dea922"
+content-hash = "e1036720ee7a554982f9452ef778d399ad1f045cdb55ab95723e3d107eda25a8"
