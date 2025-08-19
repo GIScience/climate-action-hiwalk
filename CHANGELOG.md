@@ -11,6 +11,7 @@ and this project mostly adheres to [Semantic Versioning](https://semver.org/spec
 
 - Path artifacts now contain OSM ids in their downloadable file ([#236](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/236))
 - Remove Kaniko from bulid process ([#237](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/237))
+- Add teaser to the plugin
 
 ## [2.1.1](https://gitlab.heigit.org/climate-action/plugins/walkability/-/releases/2.1.1) - 2025-06-04
 

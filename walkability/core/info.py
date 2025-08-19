@@ -66,6 +66,7 @@ def get_info() -> _Info:
         version=Version.parse(importlib.metadata.version('walkability')),
         concerns={Concern.MOBILITY_PEDESTRIAN},
         purpose=Path('resources/info/purpose.md'),
+        teaser='Assess the safety, comfort, and quality of walkable infrastructure in an area of interest.',
         methodology=Path('resources/info/methodology.md'),
         demo_input_parameters=ComputeInputWalkability(),
         computation_shelf_life=timedelta(weeks=24),
