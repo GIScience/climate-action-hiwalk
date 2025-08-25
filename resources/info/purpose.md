@@ -1,1 +1,1 @@
-Assess the safety, comfort, and quality of walkable infrastructure in an area of interest.
+hiWalk provides a suite of indicators to assess the safety, comfort, and quality of walkable infrastructure in an area of interest. In the future, hiWalk will aggregate its component indicators into a general Walkability index score.
