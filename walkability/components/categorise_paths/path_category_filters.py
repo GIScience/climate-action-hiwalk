@@ -184,10 +184,8 @@ class PathCategoryFilters:
         return self._potential(d) and PathCategoryFilters.has_no_sidewalk(d) and self.max_speed == -1
 
     # For documentation:
-    # ignored_primary = 'highway in (motorway,trunk,motorway_link,trunk_link,
-    # primary_link,secondary_link,tertiary_link,bus_guideway,escape,raceway,busway,
-    # bridleway,via_ferrata,cycleway'
-    # ignored_secondary = 'sidewalk=no'
+    # ignored primary tags = 'highway in (motorway,trunk,motorway_link,trunk_link,primary_link,secondary_link,tertiary_link,bus_guideway,escape,raceway,busway,bridleway,via_ferrata,cycleway)'
+    # ignored secondary tags = 'sidewalk=no'
     def inaccessible(self, d: Dict) -> bool:
         return (
             (

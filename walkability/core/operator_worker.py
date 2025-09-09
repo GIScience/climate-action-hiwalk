@@ -32,13 +32,17 @@ from walkability.components.slope.slope_analysis import slope_analysis
 from walkability.components.slope.slope_artifacts import (
     build_slope_summary_bar_artifact,
 )
-from walkability.components.utils.geometry import get_buffered_aoi, get_utm_zone
+from walkability.components.utils.geometry import get_utm_zone
 from walkability.components.utils.misc import (
     WALKABLE_CATEGORIES,
     fetch_osm_data,
     ohsome_filter,
 )
 from walkability.components.utils.ors_settings import ORSSettings
+from walkability.components.wellness.benches_and_drinking_water import PointsOfInterest
+from walkability.components.wellness.wellness_artifacts import (
+    compute_wellness_artifacts,
+)
 from walkability.core.info import get_info
 from walkability.core.input import WALKING_SPEED_MAP, ComputeInputWalkability, WalkabilityIndicators, WalkingSpeed
 
@@ -73,7 +77,14 @@ class OperatorWalkability(BaseOperator[ComputeInputWalkability]):
             directions_waypoint_limit=ors_directions_waypoint_limit,
         )
         self.admin_level = 1
-        self.max_walking_distance = (1000 / 60) * WALKING_SPEED_MAP[WalkingSpeed.MEDIUM] * 15
+
+        m_per_minute = (1000 / 60) * WALKING_SPEED_MAP[WalkingSpeed.MEDIUM]
+        max_walking_distance_map = {
+            PointsOfInterest.DRINKING_WATER: m_per_minute * 10,
+            PointsOfInterest.SEATING: m_per_minute * 5,
+            PointsOfInterest.REMAINDER: m_per_minute * 15,
+        }
+        self.max_walking_distance_map = {k: round(v, -1) for k, v in max_walking_distance_map.items()}
 
         log.debug('Initialised walkability operator with ohsome client and Naturalness Utility')
 
@@ -91,9 +102,7 @@ class OperatorWalkability(BaseOperator[ComputeInputWalkability]):
 
         artifacts = []
 
-        line_paths, line_paths_buffered, polygon_paths = self._get_paths(
-            aoi=aoi, max_walking_distance=self.max_walking_distance
-        )
+        line_paths, polygon_paths = self._get_paths(aoi=aoi)
         number_of_paths = len(line_paths)
         max_paths = 100000
         if number_of_paths > max_paths:
@@ -131,12 +140,12 @@ class OperatorWalkability(BaseOperator[ComputeInputWalkability]):
         )
         artifacts.extend(path_artifacts)
 
-        line_paths, line_paths_buffered = subset_walkable_paths(
+        line_paths = subset_walkable_paths(
             line_paths,
-            line_paths_buffered,
             walkable_categories=WALKABLE_CATEGORIES,
         )
-        if line_paths.empty or line_paths_buffered.empty:
+        line_paths = next(line_paths)
+        if line_paths.empty:
             return artifacts
 
         if WalkabilityIndicators.DETOURS in params.optional_indicators:
@@ -172,7 +181,7 @@ class OperatorWalkability(BaseOperator[ComputeInputWalkability]):
         if WalkabilityIndicators.SLOPE in params.optional_indicators:
             with self.catch_exceptions(indicator_name='Slope', resources=resources):
                 slope_artifact, line_paths_slope = slope_analysis(
-                    line_paths=line_paths, aoi=aoi, ors_client=self.ors_settings.client, resources=resources
+                    line_paths=line_paths, aoi=aoi, ors_settings=self.ors_settings, resources=resources
                 )
                 slope_summary_bar = summarise_slope(paths=line_paths_slope, projected_crs=get_utm_zone(aoi))
                 slope_summary_bar_artifact = build_slope_summary_bar_artifact(
@@ -180,31 +189,37 @@ class OperatorWalkability(BaseOperator[ComputeInputWalkability]):
                 )
                 artifacts.extend([slope_artifact, slope_summary_bar_artifact])
 
+        if WalkabilityIndicators.WELLNESS in params.optional_indicators:
+            log.info('Computing Wellness Indicators')
+            wellness_artifacts = compute_wellness_artifacts(
+                paths=line_paths,
+                aoi=aoi,
+                max_walking_distance_map=self.max_walking_distance_map,
+                ohsome_client=self.ohsome,
+                ors_settings=self.ors_settings,
+                resources=resources,
+            )
+            artifacts.extend(wellness_artifacts)
+            log.info('Wellness Computed')
+
         return artifacts
 
-    def _get_paths(
-        self, aoi: shapely.MultiPolygon, max_walking_distance: float
-    ) -> tuple[gpd.GeoDataFrame, gpd.GeoDataFrame, gpd.GeoDataFrame]:
-        aoi_buffered = get_buffered_aoi(aoi, max_walking_distance)
-
+    def _get_paths(self, aoi: shapely.MultiPolygon) -> tuple[gpd.GeoDataFrame, gpd.GeoDataFrame]:
         log.debug('Extracting paths')
-        line_paths_buffered = fetch_osm_data(aoi_buffered, ohsome_filter('line'), self.ohsome)
+        line_paths = fetch_osm_data(aoi, ohsome_filter('line'), self.ohsome)
         polygon_paths = fetch_osm_data(aoi, ohsome_filter('polygon'), self.ohsome)
 
-        invalid_line = ~line_paths_buffered.is_valid
-        line_paths_buffered.loc[invalid_line, 'geometry'] = line_paths_buffered.loc[invalid_line, 'geometry'].apply(
-            make_valid
-        )
+        invalid_line = ~line_paths.is_valid
+        line_paths.loc[invalid_line, 'geometry'] = line_paths.loc[invalid_line, 'geometry'].apply(make_valid)
         invalid_polygon = ~polygon_paths.is_valid
         polygon_paths.loc[invalid_polygon, 'geometry'] = polygon_paths.loc[invalid_polygon, 'geometry'].apply(
             make_valid
         )
         log.debug('Finished extracting paths')
 
-        line_paths_buffered, polygon_paths = path_categorisation(
-            paths_line=line_paths_buffered, paths_polygon=polygon_paths
-        )
+        line_paths, polygon_paths = path_categorisation(paths_line=line_paths, paths_polygon=polygon_paths)
 
-        line_paths = gpd.clip(line_paths_buffered, aoi, keep_geom_type=True).explode(ignore_index=True)
+        line_paths = gpd.clip(line_paths, aoi, keep_geom_type=True).explode(ignore_index=True)
+        line_paths = line_paths[line_paths['geometry'].geom_type.str.contains('LineString')]
 
-        return line_paths, line_paths_buffered, polygon_paths
+        return line_paths, polygon_paths

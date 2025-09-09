@@ -1,5 +1,4 @@
 import json
-import warnings
 from functools import partial
 from unittest.mock import patch
 
@@ -90,8 +89,6 @@ def test_get_detour_factors(
             result.drop(columns='detour_factor').sort_index(),
             expected_detour_factors.drop(columns='detour_factor').sort_index(),
         )
-        # TODO why is this warning in here?
-        warnings.warn(f'{result.dtypes}, {expected_detour_factors.dtypes}')
         assert_frame_equal(
             result.drop(columns='geometry').sort_index(),
             expected_detour_factors.drop(columns='geometry').sort_index(),
@@ -425,7 +422,7 @@ def mock_sleep():
 
 def test_ors_request_fail(ors_directions_request_fail, mock_sleep):
     coordinates = [[1.0, 1.0], [1.1, 1.1]]
-    ors_settings = ORSSettings(client=openrouteservice.Client(base_url=''))
+    ors_settings = ORSSettings(client=openrouteservice.Client(base_url='', retry_timeout=1, timeout=1))
     with pytest.raises(ApiError):
         ors_request(ors_settings, coordinates)
 

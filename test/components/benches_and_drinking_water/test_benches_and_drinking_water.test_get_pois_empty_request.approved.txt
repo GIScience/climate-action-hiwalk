@@ -1,0 +1,2 @@
+,category,rating,@other_tags,geometry,value
+0,PathCategory.DESIGNATED,1.0,{},"LINESTRING (12.3 48.22, 12.3 48.2205, 12.3005 48.22)",

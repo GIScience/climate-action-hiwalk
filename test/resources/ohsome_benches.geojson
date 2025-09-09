@@ -1,0 +1,23 @@
+{
+  "attribution" : {
+    "url" : "https://ohsome.org/copyrights",
+    "text" : "© OpenStreetMap contributors"
+  },
+  "apiVersion" : "1.10.4",
+  "type" : "FeatureCollection",
+  "features" : [{
+    "type" : "Feature",
+    "geometry" : {
+      "type" : "Point",
+      "coordinates" : [
+        12.3,
+        4.22
+      ]
+    },
+    "properties" : {
+      "@osmId" : "way/1026096229",
+      "@snapshotTimestamp" : "2025-01-01T00:00:00Z",
+      "access" : "yes"
+    }
+  }]
+}
