@@ -13,6 +13,10 @@ and this project mostly adheres to [Semantic Versioning](https://semver.org/spec
 - Remove Kaniko from bulid process ([#237](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/237))
 - Add teaser to the plugin and restore the previous purpose
 
+## Added
+- An indicator mapping out the locations and walking distances to benches ([#30](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/30))
+- An indicator mapping out the locations and walking distances to drinking water fountains ([#238](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/238))
+
 ## [2.1.1](https://gitlab.heigit.org/climate-action/plugins/walkability/-/releases/2.1.1) - 2025-06-04
 
 ### Changed

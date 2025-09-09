@@ -8,6 +8,7 @@ class WalkabilityIndicators(Enum):
     SLOPE = 'Slope'
     NATURALNESS = 'Greenness'
     DETOURS = 'Detour Factor'
+    WELLNESS = 'Wellness Factor'
 
 
 class WalkingSpeed(Enum):
@@ -24,8 +25,8 @@ class ComputeInputWalkability(BaseModel):
         title='Optional indicators',
         description='Computing these indicators for large areas may exceed '
         'the time limit for individual assessments in the Climate Action Navigator.',
-        examples=[],
-        default=[],
+        examples=[set()],
+        default=set(),
     )
 
     @property

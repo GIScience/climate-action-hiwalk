@@ -13,3 +13,6 @@ class ORSSettings:
 
     directions_rate_limit: int = 40
     directions_waypoint_limit: int = 50
+
+    coordinate_precision: float = 0.000001
+    isochrone_max_batch_size: int = 5

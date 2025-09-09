@@ -5,6 +5,7 @@ from unittest.mock import patch
 from urllib.parse import parse_qsl
 
 import geopandas as gpd
+import openrouteservice
 import pandas as pd
 import pytest
 import responses
@@ -17,6 +18,8 @@ from responses import matchers
 from shapely.geometry import LineString
 
 from walkability.components.utils.misc import PathCategory
+from walkability.components.utils.ors_settings import ORSSettings
+from walkability.components.wellness.benches_and_drinking_water import PointsOfInterest
 from walkability.core.input import ComputeInputWalkability
 from walkability.core.operator_worker import OperatorWalkability
 
@@ -80,6 +83,11 @@ def ordered_responses_mock():
 @pytest.fixture
 def operator(naturalness_utility_mock) -> OperatorWalkability:
     return OperatorWalkability(naturalness_utility_mock, ors_api_key='test-key')
+
+
+@pytest.fixture
+def default_ors_settings() -> ORSSettings:
+    return ORSSettings(client=openrouteservice.Client(key='test-key'))
 
 
 @pytest.fixture
@@ -177,6 +185,14 @@ def ors_elevation_api(responses_mock):
 
 
 @pytest.fixture
+def ors_isochrone_api(responses_mock):
+    with open('test/resources/ors_isochrones.geojson', 'r') as isochrones:
+        isochrones_body = isochrones.read()
+
+    responses_mock.post('https://api.openrouteservice.org/v2/isochrones/foot-walking/geojson', body=isochrones_body)
+
+
+@pytest.fixture
 def large_mock_ors_snapping_api(ordered_responses_mock, snapping_response):
     ordered_responses_mock.add(
         method='POST', url='https://api.openrouteservice.org/v2/snap/foot-walking', json=snapping_response
@@ -249,3 +265,20 @@ def filter_start_matcher(filter_start: str) -> Callable[..., Any]:
             return (True, '') if valid else (False, f'The filter parameter does not start with {filter_start}')
 
     return match
+
+
+@pytest.fixture
+def empty_pois(default_path):
+    with patch('walkability.components.wellness.benches_and_drinking_water.request_pois') as mock:
+        mock.return_value = gpd.GeoDataFrame()
+        yield mock
+
+
+@pytest.fixture
+def default_max_walking_distance_map() -> dict[PointsOfInterest, float]:
+    m_per_minute = 66.666
+    return {
+        PointsOfInterest.DRINKING_WATER: m_per_minute * 10,
+        PointsOfInterest.SEATING: m_per_minute * 5,
+        PointsOfInterest.REMAINDER: m_per_minute * 15,
+    }

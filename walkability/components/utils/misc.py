@@ -151,7 +151,11 @@ def get_surface_type_legend() -> Dict[str, Color]:
 
 
 def generate_colors(
-    color_by: pd.Series, cmap_name: str, min_value: number | None = None, max_value: number | None = None
+    color_by: pd.Series,
+    cmap_name: str,
+    min_value: number | None = None,
+    max_value: number | None = None,
+    bad_color='#808080',
 ) -> list[Color]:
     """
     Function to generate a list of colors based on a linear normalization for each element in `color_by`.
@@ -171,7 +175,7 @@ def generate_colors(
 
     norm = mpl.colors.Normalize(vmin=min_value, vmax=max_value)
     cmap = mpl.colormaps[cmap_name]
-    cmap.set_bad(color='#808080')
+    cmap.set_bad(color=bad_color)
 
     mapped_colors = [Color(mpl.colors.to_hex(cmap(norm(val)))) for val in color_by]
     return mapped_colors
@@ -211,7 +215,6 @@ def safe_string_to_float(potential_number: str | float) -> float:
         return -1
 
 
-# TODO replace me when multicolumn functionality is present in climatoology 7.0.0
 def create_multicolumn_geojson_artifact(
     features: gpd.GeoSeries,
     layer_name: str,

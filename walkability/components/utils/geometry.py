@@ -4,7 +4,6 @@ from pyproj import CRS, Transformer
 from shapely.ops import transform
 
 WGS84 = CRS('EPSG:4326')
-ORS_COORDINATE_PRECISION = 0.000001
 
 
 def get_buffered_aoi(aoi: shapely.MultiPolygon, distance: float) -> shapely.MultiPolygon:
