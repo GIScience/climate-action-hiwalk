@@ -17,7 +17,7 @@ interactions:
       User-Agent:
       - ORSClientPython.v2.2.2
     method: POST
-    uri: https://api.openrouteservice.org/v2/directions/foot-walking/json
+    uri: http://localhost:8080/ors/v2/directions/foot-walking/json
   response:
     body:
       string: "{\"bbox\":[8.772968,49.376011,8.773085,49.376161],\"routes\":[{\"summary\":{\"distance\":18.7,\"duration\":13.5},\"segments\":[{\"distance\":18.7,\"duration\":13.5,\"steps\":[{\"distance\":18.7,\"duration\":13.5,\"type\":11,\"instruction\":\"Head

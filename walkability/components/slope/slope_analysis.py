@@ -11,7 +11,7 @@ from climatoology.base.computation import ComputationResources
 
 from walkability.components.slope.slope_artifacts import build_slope_artifact
 from walkability.components.utils.geometry import get_utm_zone
-from walkability.components.utils.ors_settings import ORSSettings
+from walkability.core.settings import ORSSettings
 
 log = logging.getLogger(__name__)
 
@@ -68,9 +68,11 @@ def get_slope(
             ele = coord[2]
 
             start_point_match = paths['start_point'].geom_equals_exact(
-                point, tolerance=ors_settings.coordinate_precision
+                point, tolerance=ors_settings.ors_coordinate_precision
             )
-            end_point_match = paths['end_point'].geom_equals_exact(point, tolerance=ors_settings.coordinate_precision)
+            end_point_match = paths['end_point'].geom_equals_exact(
+                point, tolerance=ors_settings.ors_coordinate_precision
+            )
 
             paths.loc[start_point_match, 'start_ele'] = ele
             paths.loc[end_point_match, 'end_ele'] = ele

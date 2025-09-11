@@ -6,7 +6,6 @@ import geopandas as gpd
 import h3
 import h3pandas
 import numpy as np
-import openrouteservice
 import pandas as pd
 import pytest
 import responses
@@ -35,7 +34,7 @@ from walkability.components.network_analyses.detour_analysis import (
     snap_batched_records,
     snap_destinations,
 )
-from walkability.components.utils.ors_settings import ORSSettings
+from walkability.core.settings import ORSSettings
 
 
 @pytest.fixture(autouse=True)
@@ -47,6 +46,7 @@ def test_get_detour_factors(
     small_aoi,
     expected_detour_factors,
     snapping_response,
+    default_ors_settings,
     ors_directions_responses,
 ):
     assert h3pandas.version is not None
@@ -73,16 +73,17 @@ def test_get_detour_factors(
     request_call_back = partial(request_handling, directions=ors_directions_responses['responses'])
 
     with responses.RequestsMock() as rsps:
-        rsps.add(method='POST', url='https://api.openrouteservice.org/v2/snap/foot-walking', json=snapping_response)
+        rsps.add(method='POST', url='http://localhost:8080/ors/v2/snap/foot-walking', json=snapping_response)
 
         rsps.add_callback(
             method='POST',
-            url='https://api.openrouteservice.org/v2/directions/foot-walking/json',
+            url='http://localhost:8080/ors/v2/directions/foot-walking/json',
             callback=request_call_back,
         )
 
         result = get_detour_factors(
-            aoi=small_aoi, ors_settings=ORSSettings(openrouteservice.Client(key=''), directions_rate_limit=1000)
+            aoi=small_aoi,
+            ors_settings=default_ors_settings,
         )
 
         assert_geodataframe_equal(
@@ -297,7 +298,7 @@ def small_ors_snapping_response():
 
 
 @use_cassette
-def test_snap_destinations():
+def test_snap_destinations(default_ors_settings):
     destinations = pd.DataFrame(
         data={
             'id': ['8a1faad6992ffff', '8a1faad69927fff', '8a1faad69927fff', '8a1faad6992ffff'],
@@ -311,17 +312,18 @@ def test_snap_destinations():
         index=['8a1faad69927fff', '8a1faad6992ffff'],
     ).rename_axis('id')
 
+    settings = default_ors_settings.model_copy(deep=True)
+    settings.ors_snapping_request_size_limit = 1
+
     results = snap_destinations(
         destinations,
-        ors_settings=ORSSettings(
-            openrouteservice.Client(base_url='http://localhost:8080/ors'), snapping_request_size_limit=1
-        ),
+        ors_settings=settings,
     )
 
     assert_frame_equal(results, expected_results)
 
 
-def test_snap_batched_records(small_ors_snapping_response):
+def test_snap_batched_records(small_ors_snapping_response, default_ors_settings):
     locations = [
         gpd.GeoSeries(
             index=['8a1faad6992ffff', '8a1faad69927fff'],
@@ -341,12 +343,12 @@ def test_snap_batched_records(small_ors_snapping_response):
     with responses.RequestsMock() as rsps:
         rsps.add(
             method='POST',
-            url='https://api.openrouteservice.org/v2/snap/foot-walking',
+            url='http://localhost:8080/ors/v2/snap/foot-walking',
             json={'locations': [None, small_ors_snapping_response[1]['locations'][0]]},
         )
 
         result = snap_batched_records(
-            ors_settings=ORSSettings(openrouteservice.Client(key='')),
+            ors_settings=default_ors_settings,
             batched_locations=locations,
         )
 
@@ -354,19 +356,17 @@ def test_snap_batched_records(small_ors_snapping_response):
 
 
 @use_cassette
-def test_snapping_request_fail_bad_gateway():
+def test_snapping_request_fail_bad_gateway(default_ors_settings):
     coordinates = [gpd.GeoSeries([shapely.Point(1.0, 1.0), shapely.Point(1.1, 1.1)], crs='EPSG:4326')]
-    ors_settings = ORSSettings(client=openrouteservice.Client(key='test-key'))
     with pytest.raises(RetryError):
-        snap_batched_records(ors_settings, batched_locations=coordinates)
+        snap_batched_records(default_ors_settings, batched_locations=coordinates)
 
 
 @use_cassette
-def test_snapping_request_fail_forbidden():
+def test_snapping_request_fail_forbidden(default_ors_settings):
     coordinates = [gpd.GeoSeries([shapely.Point(1.0, 1.0), shapely.Point(1.1, 1.1)], crs='EPSG:4326')]
-    ors_settings = ORSSettings(client=openrouteservice.Client(key='test-key'))
     with pytest.raises(HTTPError):
-        snap_batched_records(ors_settings, batched_locations=coordinates)
+        snap_batched_records(default_ors_settings, batched_locations=coordinates)
 
 
 def test_batching():
@@ -382,7 +382,7 @@ def test_batching():
 
 
 @use_cassette
-def test_get_ors_walking_distances():
+def test_get_ors_walking_distances(default_ors_settings):
     destinations = pd.DataFrame(
         data={
             'id': ['8a1faad6992ffff', '8a1faad69927fff'],
@@ -393,7 +393,7 @@ def test_get_ors_walking_distances():
         },
     )
     result = get_ors_walking_distances(
-        ors_settings=ORSSettings(openrouteservice.Client(base_url='http://localhost:8080/ors')),
+        ors_settings=default_ors_settings,
         cell_distance=150,
         destinations_with_snapping=destinations,
     )
@@ -420,20 +420,19 @@ def mock_sleep():
         mock.return_value = None
 
 
-def test_ors_request_fail(ors_directions_request_fail, mock_sleep):
+def test_ors_request_fail(ors_directions_request_fail, mock_sleep, default_ors_settings):
     coordinates = [[1.0, 1.0], [1.1, 1.1]]
-    ors_settings = ORSSettings(client=openrouteservice.Client(base_url='', retry_timeout=1, timeout=1))
     with pytest.raises(ApiError):
-        ors_request(ors_settings, coordinates)
+        ors_request(default_ors_settings, coordinates)
 
     ors_directions_request_fail.assert_called()
     assert ors_directions_request_fail.call_count == 5
 
 
 @use_cassette
-def test_ors_request():
+def test_ors_request(default_ors_settings):
     result, start_time = ors_request(
-        ors_settings=ORSSettings(client=openrouteservice.Client(key='')),
+        ors_settings=default_ors_settings,
         coordinates=[[8.773, 49.376], [8.773085, 49.376161]],
     )
     assert isinstance(start_time, float)

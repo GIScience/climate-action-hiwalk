@@ -6,7 +6,7 @@ import pandas as pd
 import shapely
 from ohsome import OhsomeClient
 
-from walkability.components.utils.ors_settings import ORSSettings
+from walkability.core.settings import ORSSettings
 
 log = logging.getLogger(__name__)
 
@@ -17,41 +17,27 @@ class PointsOfInterest(Enum):
     REMAINDER = 'remainder'
 
 
-def get_pois(
+def distance_enrich_paths(
     paths: gpd.GeoDataFrame,
     aoi: shapely.MultiPolygon,
-    poi: PointsOfInterest,
+    poi_type: PointsOfInterest,
     bins: list[int],
     ohsome_client: OhsomeClient,
     ors_settings: ORSSettings,
 ) -> gpd.GeoDataFrame:
-    log.debug(f'Requesting {poi} from ohsome')
-    pois = request_pois(aoi, poi, ohsome_client)
+    log.debug(f'Requesting {poi_type} from ohsome')
+    pois = request_pois(aoi, poi_type, ohsome_client)
     if pois.empty:
         paths = paths.copy(deep=True)
         paths['value'] = None
+
+        log.debug(f'No POIs of {poi_type} in this area, returning paths unchanged')
         return paths
     pois['value'] = 0.0
 
-    log.debug('Requesting isochrones from openrouteservice')
-    ors_client = ors_settings.client
-    locations = list(zip(pois.geometry.x, pois.geometry.y))
-    iso_list = []
-    for i in range(0, len(locations), ors_settings.isochrone_max_batch_size):
-        log.debug(f'Requesting batch {i} of {len(locations)}')
-        batch = locations[i : i + ors_settings.isochrone_max_batch_size]
+    isochrones = generate_isochrones(pois.geometry, bins, ors_settings)
 
-        isochrones = ors_client.isochrones(
-            locations=batch,
-            profile='foot-walking',
-            range_type='distance',
-            range=bins,
-        )
-        iso = gpd.GeoDataFrame.from_features(isochrones, crs=4326)
-        iso_list.append(iso)
-    iso: gpd.GeoDataFrame = pd.concat(iso_list)
-
-    poi_enriched_paths = isochrone_polys_to_isochrone_paths(iso, paths, precision=ors_settings.coordinate_precision)
+    poi_enriched_paths = apply_isochrones_to_paths(isochrones, paths)
 
     result: gpd.GeoDataFrame = pd.concat([poi_enriched_paths, pois], ignore_index=True)
 
@@ -85,23 +71,74 @@ def get_ohsome_filter(poi: PointsOfInterest):
             raise NotImplementedError('POI type has no ohsome filter')
 
 
-def isochrone_polys_to_isochrone_paths(
-    iso: gpd.GeoDataFrame, paths: gpd.GeoDataFrame, precision: float
-) -> gpd.GeoDataFrame:
-    log.debug('Creating linear Voronoi isochrones')
-    # The following would better be implemented on ORS side, https://github.com/GIScience/openrouteservice/issues/2122
-    # and https://github.com/GIScience/openrouteservice/issues/2123 were raised
-    unique_areas = gpd.GeoDataFrame(geometry=iso.boundary.polygonize())
+def generate_isochrones(pois: gpd.GeoSeries, bins: list[int], ors_settings: ORSSettings = None) -> gpd.GeoDataFrame:
+    num_pois = len(pois)
+    log.debug(f'Generating isochrones for {num_pois} POIs')
 
-    iso.geometry = iso.set_precision(precision)
-    unique_areas.geometry = unique_areas.set_precision(precision)
-    enriched_areas = gpd.sjoin(unique_areas, iso, predicate='covered_by')
-    enriched_areas = enriched_areas.reset_index(names=['unique_area_id'])
+    if num_pois > ors_settings.ors_isochrone_max_request_number:
+        iso_list = approximate_isochrones(pois, bins)
+    else:
+        iso_list = real_isochrones(pois, bins, ors_settings)
 
-    iso_locations = enriched_areas.sort_values('value', ascending=True).drop_duplicates(
-        subset=['unique_area_id'], keep='first'
-    )
-    poi_enriched_paths = paths.overlay(iso_locations, how='union').explode()
+    iso: gpd.GeoDataFrame = pd.concat(iso_list)
+    iso.to_crs(4326, inplace=True)
 
-    log.debug('Completed Voronoi computation')
-    return poi_enriched_paths[['value', 'geometry']]
+    log.debug('Isochrones generated')
+
+    return iso
+
+
+def approximate_isochrones(pois: gpd.GeoSeries, bins: list[int]) -> list[gpd.GeoDataFrame]:
+    log.debug('Using naive buffers')
+    iso_list = []
+    local_pois = pois.copy(deep=True).to_crs(pois.estimate_utm_crs())
+    for curr_bin in bins:
+        iso = local_pois.buffer(curr_bin).to_frame(name='geometry')
+        iso['value'] = curr_bin
+        iso_list.append(iso)
+    return iso_list
+
+
+def real_isochrones(pois: gpd.GeoSeries, bins: list[int], ors_settings: ORSSettings | None) -> list[gpd.GeoDataFrame]:
+    log.debug('Requesting isochrones from openrouteservice')
+
+    iso_list = []
+    locations = list(zip(pois.geometry.x, pois.geometry.y))
+    for batch_start in range(0, len(locations), ors_settings.ors_isochrone_max_batch_size):
+        batch_end = batch_start + ors_settings.ors_isochrone_max_batch_size
+        log.debug(f'Requesting POIs {batch_start} to {batch_end} of {len(locations)}')
+        batch = locations[batch_start:batch_end]
+
+        isochrones = ors_settings.client.isochrones(
+            locations=batch,
+            profile='foot-walking',
+            range_type='distance',
+            range=bins,
+        )
+        iso = gpd.GeoDataFrame.from_features(isochrones, crs=4326)
+        iso_list.append(iso)
+
+    return iso_list
+
+
+def apply_isochrones_to_paths(iso: gpd.GeoDataFrame, paths: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
+    log.debug('Applying isochrones to paths')
+
+    grouped_iso = iso.dissolve(by=['value'])
+
+    path_list = []
+    remaining_paths = paths.geometry.copy(deep=True)
+    for value, geometry in grouped_iso.geometry.items():
+        value_paths = remaining_paths.clip(geometry, keep_geom_type=True).to_frame()
+        value_paths['value'] = value
+        path_list.append(value_paths)
+
+        remaining_paths = remaining_paths.difference(geometry).rename('geometry')
+        remaining_paths = remaining_paths[~remaining_paths.geometry.is_empty]
+
+    path_list.append(remaining_paths.to_frame())
+    paths: gpd.GeoDataFrame = pd.concat(path_list, ignore_index=True)
+    paths = paths.explode()
+
+    log.debug('Completed "Voronoi" computation')
+    return paths[['value', 'geometry']]

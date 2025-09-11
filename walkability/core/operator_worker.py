@@ -1,7 +1,6 @@
 import logging
 
 import geopandas as gpd
-import openrouteservice
 import shapely.ops
 from climatoology.base.baseoperator import AoiProperties, BaseOperator, _Artifact
 from climatoology.base.computation import ComputationResources
@@ -38,44 +37,24 @@ from walkability.components.utils.misc import (
     fetch_osm_data,
     ohsome_filter,
 )
-from walkability.components.utils.ors_settings import ORSSettings
 from walkability.components.wellness.benches_and_drinking_water import PointsOfInterest
 from walkability.components.wellness.wellness_artifacts import (
     compute_wellness_artifacts,
 )
 from walkability.core.info import get_info
 from walkability.core.input import WALKING_SPEED_MAP, ComputeInputWalkability, WalkabilityIndicators, WalkingSpeed
+from walkability.core.settings import ORSSettings
 
 log = logging.getLogger(__name__)
 
 
 class OperatorWalkability(BaseOperator[ComputeInputWalkability]):
-    def __init__(
-        self,
-        naturalness_utility: NaturalnessUtility,
-        ors_api_key: str,
-        ors_snapping_rate_limit: int = 100,
-        ors_snapping_request_size_limit: int = 4999,
-        ors_directions_rate_limit: int = 40,
-        ors_directions_waypoint_limit: int = 50,
-        ors_base_url: str | None = None,
-    ):
+    def __init__(self, naturalness_utility: NaturalnessUtility, ors_settings: ORSSettings):
         super().__init__()
         self.naturalness_utility = naturalness_utility
         self.ohsome = OhsomeClient(user_agent='CA Plugin Walkability')
 
-        if ors_base_url is None:
-            ors_client = openrouteservice.Client(key=ors_api_key)
-        else:
-            ors_client = openrouteservice.Client(key=ors_api_key, base_url=ors_base_url)
-
-        self.ors_settings = ORSSettings(
-            client=ors_client,
-            snapping_rate_limit=ors_snapping_rate_limit,
-            snapping_request_size_limit=ors_snapping_request_size_limit,
-            directions_rate_limit=ors_directions_rate_limit,
-            directions_waypoint_limit=ors_directions_waypoint_limit,
-        )
+        self.ors_settings = ors_settings
         self.admin_level = 1
 
         m_per_minute = (1000 / 60) * WALKING_SPEED_MAP[WalkingSpeed.MEDIUM]
