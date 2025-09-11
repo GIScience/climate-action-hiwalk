@@ -1,5 +1,6 @@
 .env
 .env.base
+.env.ors
 .idea/
 __pycache__/
 .pytest_cache/

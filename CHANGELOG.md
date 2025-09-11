@@ -12,6 +12,7 @@ and this project mostly adheres to [Semantic Versioning](https://semver.org/spec
 - Path artifacts now contain OSM ids in their downloadable file ([#236](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/236))
 - Remove Kaniko from bulid process ([#237](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/237))
 - Add teaser to the plugin and restore the previous purpose
+- Moved out settings for the openrouteservice to a settings file at `.env.ors`. See `.env.ors_template`
 
 ## Added
 - An indicator mapping out the locations and walking distances to benches ([#30](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/30))

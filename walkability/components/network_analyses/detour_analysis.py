@@ -25,7 +25,7 @@ from requests_ratelimiter import LimiterSession
 from urllib3.util import Retry
 
 from walkability.components.utils.misc import generate_colors
-from walkability.components.utils.ors_settings import ORSSettings
+from walkability.core.settings import ORSSettings
 
 log = logging.getLogger(__name__)
 
@@ -44,7 +44,7 @@ def detour_factor_analysis(
 def get_detour_factors(aoi: shapely.MultiPolygon, ors_settings: ORSSettings) -> gpd.GeoDataFrame:
     log.info('Computing detour factors')
 
-    destinations = create_destinations(aoi, max_waypoint_number=ors_settings.directions_waypoint_limit)
+    destinations = create_destinations(aoi, max_waypoint_number=ors_settings.ors_directions_waypoint_limit)
     distance_between_cells = get_cell_distance(destinations)
 
     # This following calculation gives the distance from the cell center point to one of the corners.
@@ -308,7 +308,7 @@ def snap_destinations(
     unique_destinations_gdf = unique_destinations.h3.h3_to_geo().drop(columns=['spur_id', 'ordinal'])
 
     batched_destinations = batching(
-        series=unique_destinations_gdf.geometry, batch_size=ors_settings.snapping_request_size_limit
+        series=unique_destinations_gdf.geometry, batch_size=ors_settings.ors_snapping_request_size_limit
     )
 
     snapped_records = snap_batched_records(ors_settings, batched_destinations, snapping_radius=snapping_radius)
@@ -336,9 +336,10 @@ def snap_batched_records(
         allowed_methods={'POST'},
     )
 
-    request_session = LimiterSession(per_minute=ors_settings.snapping_rate_limit)
+    request_session = LimiterSession(per_minute=ors_settings.ors_snapping_rate_limit)
 
     request_session.mount('https://', HTTPAdapter(max_retries=retries))
+    request_session.mount('http://', HTTPAdapter(max_retries=retries))
 
     snapped_df_list = []
     for i, batch in enumerate(batched_locations):
@@ -387,7 +388,7 @@ def get_ors_walking_distances(
 ) -> pd.DataFrame:
     """Route between destinations of adjacent cells using ORS."""
     log.debug('Requesting direction from the ors')
-    sleep_time = 60 / ors_settings.directions_rate_limit
+    sleep_time = 60 / ors_settings.ors_directions_rate_limit
     spur_ids: set[str] = set(destinations_with_snapping['spur_id'].to_list())
 
     list_of_df: list[pd.DataFrame] = []

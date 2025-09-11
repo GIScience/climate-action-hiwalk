@@ -10,7 +10,7 @@ from walkability.components.slope.slope_analysis import get_slope
 
 def test_get_slope(global_aoi, responses_mock, default_ors_settings):
     responses_mock.post(
-        'https://api.openrouteservice.org/elevation/line',
+        'http://localhost:8080/ors/elevation/line',
         json={
             'attribution': 'service by https://openrouteservice.org | data by https://srtm.csi.cgiar.org',
             'geometry': [
@@ -57,7 +57,7 @@ def test_get_slope(global_aoi, responses_mock, default_ors_settings):
 
 def test_get_negative_slope(global_aoi, responses_mock, default_ors_settings):
     responses_mock.post(
-        'https://api.openrouteservice.org/elevation/line',
+        'http://localhost:8080/ors/elevation/line',
         json={
             'attribution': 'service by https://openrouteservice.org | data by https://srtm.csi.cgiar.org',
             'geometry': [
@@ -108,7 +108,7 @@ def test_get_negative_slope(global_aoi, responses_mock, default_ors_settings):
 
 def test_get_duplicate_slope(global_aoi, responses_mock, default_ors_settings):
     responses_mock.post(
-        'https://api.openrouteservice.org/elevation/line',
+        'http://localhost:8080/ors/elevation/line',
         json={
             'attribution': 'service by https://openrouteservice.org | data by https://srtm.csi.cgiar.org',
             'geometry': [
@@ -158,7 +158,7 @@ def test_get_duplicate_slope(global_aoi, responses_mock, default_ors_settings):
 
 def test_slope_matching_according_to_ors_precision(responses_mock, global_aoi, default_ors_settings):
     responses_mock.post(
-        'https://api.openrouteservice.org/elevation/line',
+        'http://localhost:8080/ors/elevation/line',
         json={
             'attribution': 'service by https://openrouteservice.org | data by https://srtm.csi.cgiar.org',
             'geometry': [
@@ -205,7 +205,7 @@ def test_slope_matching_according_to_ors_precision(responses_mock, global_aoi, d
 
 def test_get_large_amount_of_slopes(global_aoi, responses_mock, default_ors_settings):
     responses_mock.post(
-        'https://api.openrouteservice.org/elevation/line',
+        'http://localhost:8080/ors/elevation/line',
         json={
             'attribution': 'service by https://openrouteservice.org | data by https://srtm.csi.cgiar.org',
             'geometry': [[0.0, 0.0, 1.0], [1.0, 1.0, 1.0]],
@@ -225,7 +225,7 @@ def test_get_large_amount_of_slopes(global_aoi, responses_mock, default_ors_sett
         ],
     )
     responses_mock.post(
-        'https://api.openrouteservice.org/elevation/line',
+        'http://localhost:8080/ors/elevation/line',
         json={
             'attribution': 'service by https://openrouteservice.org | data by https://srtm.csi.cgiar.org',
             'geometry': [[2.0, 2.0, 1.0]],
@@ -260,7 +260,7 @@ def test_get_large_amount_of_slopes(global_aoi, responses_mock, default_ors_sett
 
 def test_slope_for_multipart_geom(responses_mock, global_aoi, default_ors_settings):
     responses_mock.post(
-        'https://api.openrouteservice.org/elevation/line',
+        'http://localhost:8080/ors/elevation/line',
         json={
             'attribution': 'service by https://openrouteservice.org | data by https://srtm.csi.cgiar.org',
             'geometry': [

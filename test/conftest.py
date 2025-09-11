@@ -5,7 +5,6 @@ from unittest.mock import patch
 from urllib.parse import parse_qsl
 
 import geopandas as gpd
-import openrouteservice
 import pandas as pd
 import pytest
 import responses
@@ -18,10 +17,10 @@ from responses import matchers
 from shapely.geometry import LineString
 
 from walkability.components.utils.misc import PathCategory
-from walkability.components.utils.ors_settings import ORSSettings
 from walkability.components.wellness.benches_and_drinking_water import PointsOfInterest
 from walkability.core.input import ComputeInputWalkability
 from walkability.core.operator_worker import OperatorWalkability
+from walkability.core.settings import ORSSettings
 
 
 @pytest.fixture
@@ -81,13 +80,13 @@ def ordered_responses_mock():
 
 
 @pytest.fixture
-def operator(naturalness_utility_mock) -> OperatorWalkability:
-    return OperatorWalkability(naturalness_utility_mock, ors_api_key='test-key')
+def operator(naturalness_utility_mock, default_ors_settings) -> OperatorWalkability:
+    return OperatorWalkability(naturalness_utility_mock, default_ors_settings)
 
 
 @pytest.fixture
 def default_ors_settings() -> ORSSettings:
-    return ORSSettings(client=openrouteservice.Client(key='test-key'))
+    return ORSSettings(ors_base_url='http://localhost:8080/ors', ors_api_key='test-key')
 
 
 @pytest.fixture
@@ -189,13 +188,13 @@ def ors_isochrone_api(responses_mock):
     with open('test/resources/ors_isochrones.geojson', 'r') as isochrones:
         isochrones_body = isochrones.read()
 
-    responses_mock.post('https://api.openrouteservice.org/v2/isochrones/foot-walking/geojson', body=isochrones_body)
+    responses_mock.post('http://localhost:8080/ors/v2/isochrones/foot-walking/geojson', body=isochrones_body)
 
 
 @pytest.fixture
 def large_mock_ors_snapping_api(ordered_responses_mock, snapping_response):
     ordered_responses_mock.add(
-        method='POST', url='https://api.openrouteservice.org/v2/snap/foot-walking', json=snapping_response
+        method='POST', url='http://localhost:8080/ors/v2/snap/foot-walking', json=snapping_response
     )
 
 

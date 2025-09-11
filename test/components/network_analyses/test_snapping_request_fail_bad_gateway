@@ -17,7 +17,7 @@ interactions:
       User-Agent:
       - python-requests/2.32.3
     method: POST
-    uri: https://api.openrouteservice.org/v2/snap/foot-walking
+    uri: http://localhost:8080/ors/v2/snap/foot-walking
   response:
     body:
       string: "{\n    \"error\": \"Access to this API has been disallowed\"\n}"
@@ -55,7 +55,7 @@ interactions:
       User-Agent:
       - python-requests/2.32.3
     method: POST
-    uri: https://api.openrouteservice.org/v2/snap/foot-walking
+    uri: http://localhost:8080/ors/v2/snap/foot-walking
   response:
     body:
       string: "{\n    \"error\": \"Access to this API has been disallowed\"\n}"
@@ -93,7 +93,7 @@ interactions:
       User-Agent:
       - python-requests/2.32.3
     method: POST
-    uri: https://api.openrouteservice.org/v2/snap/foot-walking
+    uri: http://localhost:8080/ors/v2/snap/foot-walking
   response:
     body:
       string: "{\n    \"error\": \"Access to this API has been disallowed\"\n}"
@@ -131,7 +131,7 @@ interactions:
       User-Agent:
       - python-requests/2.32.3
     method: POST
-    uri: https://api.openrouteservice.org/v2/snap/foot-walking
+    uri: http://localhost:8080/ors/v2/snap/foot-walking
   response:
     body:
       string: "{\n    \"error\": \"Access to this API has been disallowed\"\n}"
