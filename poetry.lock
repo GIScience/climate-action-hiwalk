@@ -72,31 +72,31 @@ files = [
 
 [[package]]
 name = "approval-utilities"
-version = "15.0.0"
+version = "15.3.2"
 description = "Utilities for your production code that work well with approvaltests"
 optional = false
 python-versions = ">=3.8"
 groups = ["test"]
 files = [
-    {file = "approval_utilities-15.0.0-py3-none-any.whl", hash = "sha256:b8bd98961464c24d5048c8d106863726e32ff3d5624fb971a50bdacc3ac738a9"},
-    {file = "approval_utilities-15.0.0.tar.gz", hash = "sha256:ff4bc9d2907a21bf914f1d86621f06c3a3317c79a385c5284b2eb7a7f21f76c7"},
+    {file = "approval_utilities-15.3.2-py3-none-any.whl", hash = "sha256:f56bf63c8b048586547354d3320ea71718f9f9acf4e0c622113bf86f99b7ba72"},
+    {file = "approval_utilities-15.3.2.tar.gz", hash = "sha256:e783163e1ad8fb784ee41eaf6b335585843fa531ddb80fc426eaad47cd3e2861"},
 ]
 
 [[package]]
 name = "approvaltests"
-version = "15.0.0"
+version = "15.3.2"
 description = "Assertion/verification library to aid testing"
 optional = false
 python-versions = ">=3.8"
 groups = ["test"]
 files = [
-    {file = "approvaltests-15.0.0-py3-none-any.whl", hash = "sha256:f1967255f18541cd60a6ce3e0aa630e8eff74107a22e9e29786945428a386ae7"},
-    {file = "approvaltests-15.0.0.tar.gz", hash = "sha256:8ac15bad2b63c0b645207672046c3f7e71ed552b87c736d5cfa18d1ed85f76ba"},
+    {file = "approvaltests-15.3.2-py3-none-any.whl", hash = "sha256:ac9e2da587b1f1c3f72b1199afd8d03ea651fd7855de389b167988bc9a97e1fa"},
+    {file = "approvaltests-15.3.2.tar.gz", hash = "sha256:e5bd42517f9b93f371497049af44f11bf5669edadeb31fa7675aa9917697cf15"},
 ]
 
 [package.dependencies]
 allpairspy = ">=2.1.0"
-approval_utilities = "15.0.0"
+approval_utilities = "15.3.2"
 beautifulsoup4 = ">=4.4.0"
 empty-files = ">=0.0.3"
 mock = ">=5.1.0"
@@ -2034,14 +2034,14 @@ testing = ["pytest", "pytest-benchmark"]
 
 [[package]]
 name = "pre-commit"
-version = "4.2.0"
+version = "4.3.0"
 description = "A framework for managing and maintaining multi-language pre-commit hooks."
 optional = false
 python-versions = ">=3.9"
 groups = ["dev"]
 files = [
-    {file = "pre_commit-4.2.0-py2.py3-none-any.whl", hash = "sha256:a009ca7205f1eb497d10b845e52c838a98b6cdd2102a6c8e4540e94ee75c58bd"},
-    {file = "pre_commit-4.2.0.tar.gz", hash = "sha256:601283b9757afd87d40c4c4a9b2b5de9637a8ea02eaff7adc2d0fb4e04841146"},
+    {file = "pre_commit-4.3.0-py2.py3-none-any.whl", hash = "sha256:2b0747ad7e6e967169136edffee14c16e148a778a54e4f967921aa1ebf2308d8"},
+    {file = "pre_commit-4.3.0.tar.gz", hash = "sha256:499fe450cc9d42e9d58e606262795ecb64dd05438943c62b66f6a8673da30b16"},
 ]
 
 [package.dependencies]
@@ -2681,14 +2681,14 @@ pytest = ">=7.0.1"
 
 [[package]]
 name = "pytest-cov"
-version = "6.2.1"
+version = "6.3.0"
 description = "Pytest plugin for measuring coverage."
 optional = false
 python-versions = ">=3.9"
 groups = ["test"]
 files = [
-    {file = "pytest_cov-6.2.1-py3-none-any.whl", hash = "sha256:f5bc4c23f42f1cdd23c70b1dab1bbaef4fc505ba950d53e0081d0730dd7e86d5"},
-    {file = "pytest_cov-6.2.1.tar.gz", hash = "sha256:25cc6cc0a5358204b8108ecedc51a9b57b34cc6b8c967cc2c01a4e00d8a67da2"},
+    {file = "pytest_cov-6.3.0-py3-none-any.whl", hash = "sha256:440db28156d2468cafc0415b4f8e50856a0d11faefa38f30906048fe490f1749"},
+    {file = "pytest_cov-6.3.0.tar.gz", hash = "sha256:35c580e7800f87ce892e687461166e1ac2bcb8fb9e13aea79032518d6e503ff2"},
 ]
 
 [package.dependencies]
