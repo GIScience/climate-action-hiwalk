@@ -18,6 +18,7 @@ pytest = "^8.3.4"
 openrouteservice = "^2.3.3"
 h3pandas = "^0.3.0"
 requests-ratelimiter = "^0.7.0"
+numpy = "^2.3.3"
 
 
 [tool.poetry.group.test.dependencies]

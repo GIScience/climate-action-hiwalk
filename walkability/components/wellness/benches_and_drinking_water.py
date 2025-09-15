@@ -2,6 +2,7 @@ import logging
 from enum import Enum
 
 import geopandas as gpd
+import numpy
 import pandas as pd
 import shapely
 from ohsome import OhsomeClient
@@ -29,7 +30,7 @@ def distance_enrich_paths(
     pois = request_pois(aoi, poi_type, ohsome_client)
     if pois.empty:
         paths = paths.copy(deep=True)
-        paths['value'] = None
+        paths['value'] = numpy.nan
 
         log.debug(f'No POIs of {poi_type} in this area, returning paths unchanged')
         return paths
