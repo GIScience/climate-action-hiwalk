@@ -8,7 +8,6 @@ from climatoology.base.info import _Info
 from climatoology.utility.exception import ClimatoologyUserError
 from climatoology.utility.Naturalness import NaturalnessIndex, NaturalnessUtility
 from ohsome import OhsomeClient
-from shapely import make_valid
 
 from walkability.components.categorise_paths.path_categorisation import path_categorisation, subset_walkable_paths
 from walkability.components.categorise_paths.path_categorisation_artifacts import build_path_categorisation_artifact
@@ -188,17 +187,17 @@ class OperatorWalkability(BaseOperator[ComputeInputWalkability]):
         line_paths = fetch_osm_data(aoi, ohsome_filter('line'), self.ohsome)
         polygon_paths = fetch_osm_data(aoi, ohsome_filter('polygon'), self.ohsome)
 
-        invalid_line = ~line_paths.is_valid
-        line_paths.loc[invalid_line, 'geometry'] = line_paths.loc[invalid_line, 'geometry'].apply(make_valid)
-        invalid_polygon = ~polygon_paths.is_valid
-        polygon_paths.loc[invalid_polygon, 'geometry'] = polygon_paths.loc[invalid_polygon, 'geometry'].apply(
-            make_valid
-        )
+        line_paths = line_paths.explode(ignore_index=True)
+        line_paths['geometry'] = line_paths.make_valid()
+        line_paths = gpd.clip(line_paths, aoi, keep_geom_type=True).explode(ignore_index=True)
+        line_paths = line_paths[line_paths['geometry'].geom_type.str.contains('LineString')]
+
+        polygon_paths = polygon_paths.explode()
+        polygon_paths['geometry'] = polygon_paths.make_valid()
+        polygon_paths = polygon_paths[polygon_paths.geom_type.str.contains('Polygon')]
+
         log.debug('Finished extracting paths')
 
         line_paths, polygon_paths = path_categorisation(paths_line=line_paths, paths_polygon=polygon_paths)
-
-        line_paths = gpd.clip(line_paths, aoi, keep_geom_type=True).explode(ignore_index=True)
-        line_paths = line_paths[line_paths['geometry'].geom_type.str.contains('LineString')]
 
         return line_paths, polygon_paths
