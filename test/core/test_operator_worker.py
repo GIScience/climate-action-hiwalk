@@ -85,5 +85,32 @@ def test_get_polygon_paths(operator, default_aoi, ohsome_api):
         expected_polygons,
         check_like=True,
         check_geom_type=True,
-        check_less_precise=True,
     )
+
+
+def test_get_paths_with_erroneous_clipping(operator, responses_mock):
+    with (
+        open('test/resources/ohsome_erroneous_clipping.geojson', 'r') as point_instead_of_line,
+    ):
+        body = point_instead_of_line.read()
+
+    responses_mock.post('https://api.ohsome.org/v1/elements/geometry', body=body)
+
+    computed_lines, computed_polygons = operator._get_paths(
+        aoi=shapely.MultiPolygon(
+            polygons=[
+                [
+                    [
+                        [8.676042, 49.418866],
+                        [8.676042, 49.4190311],
+                        [8.6765357, 49.4190311],
+                        [8.6765357, 49.418866],
+                        [8.676042, 49.418866],
+                    ]
+                ]
+            ]
+        )
+    )
+
+    assert computed_lines.empty
+    assert computed_polygons.empty

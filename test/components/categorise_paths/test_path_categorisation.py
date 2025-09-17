@@ -28,8 +28,10 @@ validation_objects = {
         'way/27797959',  # https://www.openstreetmap.org/way/27797959 railway=platform
         'way/98453212',  # https://www.openstreetmap.org/way/98453212 foot=designated
         'way/184725322',  # https://www.openstreetmap.org/way/184725322 sidewalk:right=right and sidewalk:left=separate
-        'way/118975501',  # https://www.openstreetmap.org/way/118975501 foot=designated and bicycle=designated and segregated=yes
-        'way/148612595',  # https://www.openstreetmap.org/way/148612595/history/16 highway=residential & sidewalk=both and bicycle=yes (which refers to the street not the sidewalk)
+        'way/118975501',
+        # https://www.openstreetmap.org/way/118975501 foot=designated and bicycle=designated and segregated=yes
+        'way/148612595',
+        # https://www.openstreetmap.org/way/148612595/history/16 highway=residential & sidewalk=both and bicycle=yes (which refers to the street not the sidewalk)
     },
     PathCategory.DESIGNATED_SHARED_WITH_BIKES: {
         'way/25806383',  # https://www.openstreetmap.org/way/25806383 bicycle=designated & foot=designated
@@ -45,12 +47,14 @@ validation_objects = {
     },
     PathCategory.SHARED_WITH_MOTORIZED_TRAFFIC_MEDIUM_SPEED: {
         'way/715905259',  # https://www.openstreetmap.org/way/715905259 highway=track
-        'way/28890081',  # https://www.openstreetmap.org/way/28890081 highway=residential and sidewalk=no and maxspeed=30
+        'way/28890081',
+        # https://www.openstreetmap.org/way/28890081 highway=residential and sidewalk=no and maxspeed=30
         'way/109096915',  # faked: highway=residential and sidewalk=no and maxspeed=20
         'way/64390823',  # semi-faked https://www.openstreetmap.org/way/64390823 highway=service & maxspeed = 30
     },
     PathCategory.SHARED_WITH_MOTORIZED_TRAFFIC_HIGH_SPEED: {
-        'way/25340617',  # https://www.openstreetmap.org/way/25340617 highway=residential and sidewalk=no and maxspeed=50
+        'way/25340617',
+        # https://www.openstreetmap.org/way/25340617 highway=residential and sidewalk=no and maxspeed=50
         'way/258562284',  # https://www.openstreetmap.org/way/258562284 highway=tertiary and sidewalk=no and maxspeed=50
         'way/721931269',  # semi-faked: highway=residential and sidewalk=no and zone:maxspeed=DE:urban
     },
@@ -85,51 +89,82 @@ def ohsome_test_data_categorisation(global_aoi, responses_mock) -> pd.DataFrame:
     return osm_data
 
 
-def test_path_categorisation_only_line_paths():
-    line_geom = shapely.LineString([(12.3, 48.22), (12.3, 48.2205), (12.3005, 48.22)])
-    line_paths = gpd.GeoDataFrame(
-        data={'@osmId': ['way/171574582'], 'geometry': [line_geom], '@other_tags': [{'highway': 'pedestrian'}]},
+def test_path_categorisation():
+    input_test_data = gpd.GeoDataFrame(
+        [
+            {
+                '@osmId': 'way/25805784',
+                'geometry': shapely.LineString(
+                    [
+                        (8.6767752, 49.4190372),
+                        (8.6766298, 49.4190298),
+                        (8.6765357, 49.4190311),
+                    ]
+                ),
+                '@other_tags': {
+                    'bicycle': 'yes',
+                    'highway': 'footway',
+                    'lit': 'yes',
+                    'surface': 'paving_stones',
+                },
+            }
+        ],
         crs='EPSG:4326',
     )
-    polygon_paths = gpd.GeoDataFrame(
-        data={'@osmId': [], 'geometry': [], '@other_tags': []},
+
+    expected_output = gpd.GeoDataFrame(
+        [
+            {
+                '@osmId': 'way/25805784',
+                'geometry': shapely.LineString(
+                    [
+                        (8.6767752, 49.4190372),
+                        (8.6766298, 49.4190298),
+                        (8.6765357, 49.4190311),
+                    ]
+                ),
+                '@other_tags': {
+                    'bicycle': 'yes',
+                    'highway': 'footway',
+                    'lit': 'yes',
+                    'surface': 'paving_stones',
+                },
+                'category': PathCategory.DESIGNATED_SHARED_WITH_BIKES,
+                'quality': PavementQuality.POTENTIALLY_GOOD,
+                'smoothness': SmoothnessCategory.UNKNOWN,
+                'surface': SurfaceType.MODULAR_PAVEMENT,
+                'rating': 0.8,
+                'quality_rating': 0.8,
+                'smoothness_rating': None,
+                'surface_rating': 0.85,
+            }
+        ],
         crs='EPSG:4326',
     )
-    expected_paths_line = gpd.GeoDataFrame(
-        data={
-            '@osmId': ['way/171574582'],
-            'geometry': [line_geom],
-            '@other_tags': [{'highway': 'pedestrian'}],
-            'category': [PathCategory.DESIGNATED],
-            'quality': [PavementQuality.UNKNOWN],
-            'smoothness': [SmoothnessCategory.UNKNOWN],
-            'surface': [SurfaceType.UNKNOWN],
-            'rating': [1.0],
-            'quality_rating': [None],
-            'smoothness_rating': [None],
-            'surface_rating': [None],
-        },
+    categorized_output = path_categorisation(input_test_data)
+    pd.testing.assert_frame_equal(expected_output, categorized_output)
+
+
+def test_path_categorisation_empty_input():
+    empty_input = gpd.GeoDataFrame(columns=['@osmId', 'geometry', '@other_tags'], crs='EPSG:4326')
+    expected_empty_output = gpd.GeoDataFrame(
+        columns=[
+            '@osmId',
+            'geometry',
+            '@other_tags',
+            'category',
+            'quality',
+            'smoothness',
+            'surface',
+            'rating',
+            'quality_rating',
+            'smoothness_rating',
+            'surface_rating',
+        ],
         crs='EPSG:4326',
     )
-    expected_polygon_paths = gpd.GeoDataFrame(
-        data={
-            '@osmId': [],
-            'geometry': [],
-            '@other_tags': [],
-            'category': [],
-            'quality': [],
-            'smoothness': [],
-            'surface': [],
-            'rating': [],
-            'quality_rating': [],
-            'smoothness_rating': [],
-            'surface_rating': [],
-        },
-        crs='EPSG:4326',
-    )
-    line_paths_categorised, polygon_paths_categorised = path_categorisation(line_paths, polygon_paths)
-    pd.testing.assert_frame_equal(expected_paths_line, line_paths_categorised)
-    pd.testing.assert_frame_equal(expected_polygon_paths, polygon_paths_categorised, check_dtype=False)
+    categorized_output = path_categorisation(empty_input)
+    pd.testing.assert_frame_equal(expected_empty_output, categorized_output, check_dtype=False)
 
 
 @pytest.mark.parametrize('category', validation_objects)
