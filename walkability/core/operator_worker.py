@@ -187,17 +187,20 @@ class OperatorWalkability(BaseOperator[ComputeInputWalkability]):
         line_paths = fetch_osm_data(aoi, ohsome_filter('line'), self.ohsome)
         polygon_paths = fetch_osm_data(aoi, ohsome_filter('polygon'), self.ohsome)
 
-        line_paths = line_paths.explode(ignore_index=True)
-        line_paths['geometry'] = line_paths.make_valid()
-        line_paths = gpd.clip(line_paths, aoi, keep_geom_type=True).explode(ignore_index=True)
-        line_paths = line_paths[line_paths['geometry'].geom_type.str.contains('LineString')]
-
-        polygon_paths = polygon_paths.explode()
-        polygon_paths['geometry'] = polygon_paths.make_valid()
-        polygon_paths = polygon_paths[polygon_paths.geom_type.str.contains('Polygon')]
+        line_paths = self.clean_geometries(aoi, line_paths, 'LineString')
+        polygon_paths = self.clean_geometries(aoi, polygon_paths, 'Polygon')
 
         log.debug('Finished extracting paths')
 
-        line_paths, polygon_paths = path_categorisation(paths_line=line_paths, paths_polygon=polygon_paths)
+        line_paths = path_categorisation(geometries=line_paths)
+        polygon_paths = path_categorisation(geometries=polygon_paths)
 
         return line_paths, polygon_paths
+
+    def clean_geometries(self, aoi: shapely.MultiPolygon, geometries: gpd.GeoDataFrame, geom_name: str):
+        geometries = geometries.explode(ignore_index=True)
+        geometries['geometry'] = geometries.make_valid()
+        geometries = gpd.clip(geometries, aoi, keep_geom_type=True).explode(ignore_index=True)
+        geometries = geometries[geometries['geometry'].geom_type.str.contains(geom_name)]
+        geometries['geometry'] = geometries.set_precision(grid_size=0.0000001)
+        return geometries

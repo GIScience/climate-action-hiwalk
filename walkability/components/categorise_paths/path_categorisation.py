@@ -1,4 +1,5 @@
-from typing import Dict, Generator, List, Set, Tuple
+import logging
+from typing import Dict, Generator, List, Set
 
 import geopandas as gpd
 import pandas as pd
@@ -17,58 +18,37 @@ from walkability.components.utils.misc import (
     get_first_match,
 )
 
+log = logging.getLogger(__name__)
+
 
 def path_categorisation(
-    paths_line: gpd.GeoDataFrame,
-    paths_polygon: gpd.GeoDataFrame,
-) -> Tuple[gpd.GeoDataFrame, gpd.GeoDataFrame]:
+    geometries: gpd.GeoDataFrame,
+) -> gpd.GeoDataFrame:
+    log.debug('Categorizing geometries')
     rankings = read_pavement_quality_rankings()
     keys = get_flat_key_combinations()
 
-    paths_line['category'] = paths_line.apply(apply_path_category_filters, axis=1)
-    paths_line['quality'] = paths_line.apply(lambda row: evaluate_quality(row, keys, rankings), axis=1)
-    paths_line['smoothness'] = paths_line.apply(apply_path_smoothness_filters, axis=1)
-    paths_line['surface'] = paths_line.apply(apply_path_surface_filters, axis=1)
+    geometries['category'] = geometries.apply(apply_path_category_filters, axis=1, result_type='reduce')
+    geometries['quality'] = geometries.apply(
+        lambda row: evaluate_quality(row, keys, rankings), axis=1, result_type='reduce'
+    )
+    geometries['smoothness'] = geometries.apply(apply_path_smoothness_filters, axis=1, result_type='reduce')
+    geometries['surface'] = geometries.apply(apply_path_surface_filters, axis=1, result_type='reduce')
 
-    if paths_polygon.empty:
-        paths_polygon['category'] = pd.Series()
-        paths_polygon['quality'] = pd.Series()
-        paths_polygon['smoothness'] = pd.Series()
-        paths_polygon['surface'] = pd.Series()
-    else:
-        paths_polygon['category'] = paths_polygon.apply(apply_path_category_filters, axis=1)
-        paths_polygon['quality'] = paths_polygon.apply(lambda row: evaluate_quality(row, keys, rankings), axis=1)
-        paths_polygon['smoothness'] = paths_polygon.apply(apply_path_smoothness_filters, axis=1)
-        paths_polygon['surface'] = paths_polygon.apply(apply_path_surface_filters, axis=1)
+    visible_geometries = geometries[geometries.category.isin(PathCategory.get_visible())]
+    visible_geometries['rating'] = visible_geometries.category.apply(lambda category: PATH_RATING_MAP[category])
 
-    paths_line_visible = paths_line[paths_line.category.isin(PathCategory.get_visible())]
-    paths_polygon_visible = paths_polygon[paths_polygon.category.isin(PathCategory.get_visible())]
-
-    paths_line_visible['rating'] = paths_line_visible.category.apply(lambda category: PATH_RATING_MAP[category])
-    paths_polygon_visible['rating'] = paths_polygon_visible.category.apply(lambda category: PATH_RATING_MAP[category])
-
-    paths_line_visible['quality_rating'] = paths_line_visible.quality.apply(
+    visible_geometries['quality_rating'] = visible_geometries.quality.apply(
         lambda quality: PAVEMENT_QUALITY_RATING_MAP[quality]
     )
-    paths_polygon_visible['quality_rating'] = paths_polygon_visible.quality.apply(
-        lambda quality: PAVEMENT_QUALITY_RATING_MAP[quality]
-    )
-
-    paths_line_visible['smoothness_rating'] = paths_line_visible.smoothness.apply(
+    visible_geometries['smoothness_rating'] = visible_geometries.smoothness.apply(
         lambda smoothness: SMOOTHNESS_CATEGORY_RATING_MAP[smoothness]
     )
-    paths_polygon_visible['smoothness_rating'] = paths_polygon_visible.smoothness.apply(
-        lambda smoothness: SMOOTHNESS_CATEGORY_RATING_MAP[smoothness]
-    )
-
-    paths_line_visible['surface_rating'] = paths_line_visible.surface.apply(
-        lambda surface: SURFACE_TYPE_RATING_MAP[surface]
-    )
-    paths_polygon_visible['surface_rating'] = paths_polygon_visible.surface.apply(
+    visible_geometries['surface_rating'] = visible_geometries.surface.apply(
         lambda surface: SURFACE_TYPE_RATING_MAP[surface]
     )
 
-    return paths_line_visible, paths_polygon_visible
+    return visible_geometries
 
 
 def apply_path_category_filters(row: pd.Series) -> PathCategory:
