@@ -11,15 +11,6 @@ class WalkabilityIndicators(Enum):
     COMFORT = 'Comfort Factor'
 
 
-class WalkingSpeed(Enum):
-    SLOW = 'slow'
-    MEDIUM = 'medium'
-    FAST = 'fast'
-
-
-WALKING_SPEED_MAP = {WalkingSpeed.SLOW: 2, WalkingSpeed.MEDIUM: 4, WalkingSpeed.FAST: 6}
-
-
 class ComputeInputWalkability(BaseModel):
     optional_indicators: Set[WalkabilityIndicators] = Field(
         title='Optional indicators',
@@ -28,8 +19,3 @@ class ComputeInputWalkability(BaseModel):
         examples=[set()],
         default=set(),
     )
-
-    @property
-    def max_walking_distance(self) -> float:
-        """Calculate the maximum walking distance in m."""
-        return (1000 / 60) * WALKING_SPEED_MAP[WalkingSpeed.MEDIUM] * 15
