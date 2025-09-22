@@ -168,16 +168,12 @@ def generate_colors(
     :return:`mapped_colors`: list of colors matching values of `color_by`
     """
     color_by = color_by.astype(float)
-    if min_value is None:
-        min_value = color_by.min()
-    if max_value is None:
-        max_value = color_by.max()
 
     norm = mpl.colors.Normalize(vmin=min_value, vmax=max_value)
     cmap = mpl.colormaps[cmap_name]
     cmap.set_bad(color=bad_color)
 
-    mapped_colors = [Color(mpl.colors.to_hex(cmap(norm(val)))) for val in color_by]
+    mapped_colors = [Color(mpl.colors.to_hex(col)) for col in cmap(norm(color_by))]
     return mapped_colors
 
 
