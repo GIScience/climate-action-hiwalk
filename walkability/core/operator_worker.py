@@ -155,7 +155,8 @@ class OperatorWalkability(BaseOperator[ComputeInputWalkability]):
                 )
                 artifacts.extend([naturalness_artifact, naturalness_summary_bar_artifact])
 
-        if WalkabilityIndicators.SLOPE in params.optional_indicators:
+        # disabled for now to no show silly results until we manage to build a proper utility for it
+        if False in params.optional_indicators:
             with self.catch_exceptions(indicator_name='Slope', resources=resources):
                 slope_artifact, line_paths_slope = slope_analysis(
                     line_paths=line_paths, aoi=aoi, ors_settings=self.ors_settings, resources=resources

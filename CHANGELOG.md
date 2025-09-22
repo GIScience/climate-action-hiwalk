@@ -21,6 +21,9 @@ and this project mostly adheres to [Semantic Versioning](https://semver.org/spec
 ### Fixed
 - polygon and line paths with invalid line geometries get fixed properly now after the geometries get exploded to catch clipping issues ([#236](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/238))
 
+### Removed
+- Disabled Slope indicator as results did not prove sensible based on SRTM data ([#252](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/252))
+
 ## [2.1.1](https://gitlab.heigit.org/climate-action/plugins/walkability/-/releases/2.1.1) - 2025-06-04
 
 ### Changed

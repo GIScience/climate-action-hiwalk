@@ -5,7 +5,7 @@ from pydantic import BaseModel, Field
 
 
 class WalkabilityIndicators(Enum):
-    SLOPE = 'Slope'
+    # SLOPE = 'Slope'
     NATURALNESS = 'Greenness'
     DETOURS = 'Detour Factor'
     COMFORT = 'Comfort Factor'
