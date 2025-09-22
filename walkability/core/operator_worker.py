@@ -41,7 +41,7 @@ from walkability.components.utils.misc import (
     ohsome_filter,
 )
 from walkability.core.info import get_info
-from walkability.core.input import WALKING_SPEED_MAP, ComputeInputWalkability, WalkabilityIndicators, WalkingSpeed
+from walkability.core.input import ComputeInputWalkability, WalkabilityIndicators
 from walkability.core.settings import ORSSettings
 
 log = logging.getLogger(__name__)
@@ -56,11 +56,10 @@ class OperatorWalkability(BaseOperator[ComputeInputWalkability]):
         self.ors_settings = ors_settings
         self.admin_level = 1
 
-        m_per_minute = (1000 / 60) * WALKING_SPEED_MAP[WalkingSpeed.MEDIUM]
         max_walking_distance_map = {
-            PointsOfInterest.DRINKING_WATER: m_per_minute * 10,
-            PointsOfInterest.SEATING: m_per_minute * 5,
-            PointsOfInterest.REMAINDER: m_per_minute * 15,
+            PointsOfInterest.DRINKING_WATER: 200,
+            PointsOfInterest.SEATING: 200,
+            PointsOfInterest.REMAINDER: 1000,
         }
         self.max_walking_distance_map = {k: round(v, -1) for k, v in max_walking_distance_map.items()}
 
