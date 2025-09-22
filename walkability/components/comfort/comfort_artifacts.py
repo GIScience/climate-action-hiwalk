@@ -9,16 +9,16 @@ from climatoology.base.computation import ComputationResources
 from ohsome import OhsomeClient
 from pydantic_extra_types.color import Color
 
+from walkability.components.comfort.benches_and_drinking_water import PointsOfInterest, distance_enrich_paths
 from walkability.components.utils.geometry import get_buffered_aoi
 from walkability.components.utils.misc import generate_colors
-from walkability.components.wellness.benches_and_drinking_water import PointsOfInterest, distance_enrich_paths
 from walkability.core.settings import ORSSettings
 
 log = logging.getLogger(__name__)
 N_BINS = 5
 
 
-def compute_wellness_artifacts(
+def compute_comfort_artifacts(
     paths: gpd.GeoDataFrame,
     aoi: shapely.MultiPolygon,
     max_walking_distance_map: dict[PointsOfInterest, float],
@@ -28,7 +28,7 @@ def compute_wellness_artifacts(
 ) -> list[_Artifact]:
     artifacts = []
     for poi_type in [PointsOfInterest.DRINKING_WATER, PointsOfInterest.SEATING]:
-        log.debug(f'Computing Wellness for {poi_type}')
+        log.debug(f'Computing Comfort for {poi_type}')
         max_walking_distance = max_walking_distance_map[poi_type]
         bin_size = int(max_walking_distance / N_BINS)
         bins = [x for x in range(bin_size, int(max_walking_distance) + 1, bin_size)]

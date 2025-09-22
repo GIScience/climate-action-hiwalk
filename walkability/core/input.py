@@ -8,7 +8,7 @@ class WalkabilityIndicators(Enum):
     SLOPE = 'Slope'
     NATURALNESS = 'Greenness'
     DETOURS = 'Detour Factor'
-    WELLNESS = 'Wellness Factor'
+    COMFORT = 'Comfort Factor'
 
 
 class WalkingSpeed(Enum):

@@ -5,7 +5,7 @@ from geopandas.testing import assert_geodataframe_equal
 from ohsome import OhsomeClient
 from shapely import LineString, Point
 
-from walkability.components.wellness.benches_and_drinking_water import (
+from walkability.components.comfort.benches_and_drinking_water import (
     PointsOfInterest,
     apply_isochrones_to_paths,
     distance_enrich_paths,
