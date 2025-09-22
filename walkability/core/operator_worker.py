@@ -18,6 +18,10 @@ from walkability.components.categorise_paths.path_summarisation import (
     summarise_naturalness,
     summarise_slope,
 )
+from walkability.components.comfort.benches_and_drinking_water import PointsOfInterest
+from walkability.components.comfort.comfort_artifacts import (
+    compute_comfort_artifacts,
+)
 from walkability.components.naturalness.naturalness_analysis import naturalness_analysis
 from walkability.components.naturalness.naturalness_artifacts import (
     build_naturalness_summary_bar_artifact,
@@ -35,10 +39,6 @@ from walkability.components.utils.misc import (
     WALKABLE_CATEGORIES,
     fetch_osm_data,
     ohsome_filter,
-)
-from walkability.components.wellness.benches_and_drinking_water import PointsOfInterest
-from walkability.components.wellness.wellness_artifacts import (
-    compute_wellness_artifacts,
 )
 from walkability.core.info import get_info
 from walkability.core.input import WALKING_SPEED_MAP, ComputeInputWalkability, WalkabilityIndicators, WalkingSpeed
@@ -167,9 +167,9 @@ class OperatorWalkability(BaseOperator[ComputeInputWalkability]):
                 )
                 artifacts.extend([slope_artifact, slope_summary_bar_artifact])
 
-        if WalkabilityIndicators.WELLNESS in params.optional_indicators:
-            log.info('Computing Wellness Indicators')
-            wellness_artifacts = compute_wellness_artifacts(
+        if WalkabilityIndicators.COMFORT in params.optional_indicators:
+            log.info('Computing Comfort Indicators')
+            comfort_artifacts = compute_comfort_artifacts(
                 paths=line_paths,
                 aoi=aoi,
                 max_walking_distance_map=self.max_walking_distance_map,
@@ -177,8 +177,8 @@ class OperatorWalkability(BaseOperator[ComputeInputWalkability]):
                 ors_settings=self.ors_settings,
                 resources=resources,
             )
-            artifacts.extend(wellness_artifacts)
-            log.info('Wellness Computed')
+            artifacts.extend(comfort_artifacts)
+            log.info('Comfort Computed')
 
         return artifacts
 
