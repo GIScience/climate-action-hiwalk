@@ -13,7 +13,7 @@ log = logging.getLogger(__name__)
 
 
 class PointsOfInterest(Enum):
-    DRINKING_WATER = 'drinking water sources'
+    DRINKING_WATER = 'drinking water locations'
     SEATING = 'benches'
     REMAINDER = 'remainder'
 
