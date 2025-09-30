@@ -79,10 +79,8 @@ def build_isodistance_artifact(
         features=data.geometry,
         layer_name=f'Distance to {poi_type.value.title()}',
         caption=f'How far is it to {poi_type.value.capitalize()}?',
-        description=f'Note that the distance to {poi_type.value.title()} will be estimated based on euclidean distance if '
-        f'more than {max_isochrone_request} {poi_type.value.title()} exist in the area of interest. Otherwise '
-        f'more precise isochrones will be used, that reflect the real walking distance. Therefore, to '
-        f'ensure isochrone usage, make sure to use a consice area of interest.',
+        description=f'If there are fewer than {max_isochrone_request} {poi_type.value.title()} in the area of interest,'
+        f'actual walking distances are computed. Otherwise, straight line distances are used.',
         color=cleaned_data['color'].to_list(),
         label=cleaned_data['label'].to_list(),
         legend_data=legend,
