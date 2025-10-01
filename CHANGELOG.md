@@ -7,6 +7,9 @@ and this project mostly adheres to [Semantic Versioning](https://semver.org/spec
 
 ## [Unreleased](https://gitlab.heigit.org/climate-action/plugins/walkability/-/compare/3.0.0...main)
 
+### Changed
+- aoi limit check now happens based on ohsome count endpoint instead of downloading all data first ([#258](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/258))
+
 ## [3.0.0](https://gitlab.heigit.org/climate-action/plugins/walkability/-/releases/3.0.0)
 
 ### Changed

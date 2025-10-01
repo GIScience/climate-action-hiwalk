@@ -21,7 +21,9 @@ def mock_detour_factor_calculation(expected_detour_factors):
         yield detour_factors
 
 
-def test_plugin_compute_request_minimal(operator, default_aoi, default_aoi_properties, compute_resources, ohsome_api):
+def test_plugin_compute_request_minimal(
+    operator, default_aoi, default_aoi_properties, compute_resources, ohsome_api, ohsome_api_count
+):
     computed_artifacts = operator.compute(
         resources=compute_resources,
         aoi=default_aoi,
@@ -41,6 +43,7 @@ def test_plugin_compute_request_all_optionals(
     default_aoi_properties,
     compute_resources,
     ohsome_api,
+    ohsome_api_count,
     ors_isochrone_api,
 ):
     with (

@@ -9,6 +9,7 @@ import pandas as pd
 import pytest
 import responses
 import shapely
+from approvaltests import DiffReporter, set_default_reporter
 from climatoology.base.baseoperator import AoiProperties
 from climatoology.base.computation import ComputationScope
 from pyproj import CRS
@@ -137,6 +138,24 @@ def ohsome_api(responses_mock):
         match=[filter_start_matcher('geometry:polygon')],
     )
     return responses_mock
+
+
+@pytest.fixture
+def ohsome_api_count(responses_mock):
+    with open('test/resources/ohsome_count_response.json', 'rb') as paths_count_file:
+        paths_count_body = paths_count_file.read()
+
+    responses_mock.post(
+        'https://api.ohsome.org/v1/elements/count',
+        body=paths_count_body,
+    )
+
+    return responses_mock
+
+
+@pytest.fixture(autouse=True)
+def configure_approvaltests():
+    set_default_reporter(DiffReporter())
 
 
 @pytest.fixture

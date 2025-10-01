@@ -5,10 +5,11 @@ import pytest
 import shapely
 from approvaltests import verify
 from approvaltests.namer import NamerFactory
+from climatoology.utility.exception import ClimatoologyUserError
 from ohsome import OhsomeClient
 from pydantic_extra_types.color import Color
 
-from walkability.components.utils.misc import fetch_osm_data, generate_colors, ohsome_filter
+from walkability.components.utils.misc import check_paths_count_limit, fetch_osm_data, generate_colors, ohsome_filter
 
 
 def test_fetch_osm_data(expected_compute_input, default_aoi, responses_mock):
@@ -42,3 +43,15 @@ def test_generate_colors():
 @pytest.mark.parametrize('geometry_type', ['line', 'polygon'])
 def test_ohsome_filter(geometry_type):
     verify(ohsome_filter(geometry_type), options=NamerFactory.with_parameters(geometry_type))
+
+
+def test_check_paths_count_limit(default_aoi, responses_mock):
+    with open('test/resources/ohsome_count_response.json', 'r') as paths_count:
+        responses_mock.post(
+            'https://api.ohsome.org/v1/elements/count',
+            body=paths_count.read(),
+        )
+
+    # test false situation
+    with pytest.raises(ClimatoologyUserError):
+        check_paths_count_limit(default_aoi, OhsomeClient(), 5000)
