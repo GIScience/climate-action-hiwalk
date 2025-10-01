@@ -10,6 +10,7 @@ import shapely
 from climatoology.base.artifact import Attachments, ContinuousLegendData, Legend
 from climatoology.base.baseoperator import ArtifactModality, _Artifact
 from climatoology.base.computation import ComputationResources
+from climatoology.utility.exception import ClimatoologyUserError
 from numpy import number
 from ohsome import OhsomeClient
 from pydantic_extra_types.color import Color
@@ -302,3 +303,19 @@ def create_multicolumn_geojson_artifact(
     log.debug(f'Returning Artifact: {result.model_dump()}.')
 
     return result
+
+
+def check_paths_count_limit(aoi: shapely.MultiPolygon, ohsome: OhsomeClient, count_limit: int) -> None:
+    """
+    Check whether paths count is over than limit. (NOTE: just check path_lines)
+    """
+
+    ohsome_responses = ohsome.elements.count.post(bpolys=aoi, filter=ohsome_filter('line')).data
+    path_lines_count = sum([response['value'] for response in ohsome_responses['result']])
+    log.info(f'There are {path_lines_count} are selected.')
+    if path_lines_count > count_limit:
+        raise ClimatoologyUserError(
+            f'There are too many path segments in the selected area: {path_lines_count} path segments. '
+            f'Currently, only areas with a maximum of {count_limit} path segments are allowed. '
+            f'Please select a smaller area or a sub-region of your selected area.'
+        )

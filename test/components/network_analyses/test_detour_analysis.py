@@ -11,7 +11,7 @@ import pytest
 import responses
 import responses.matchers
 import shapely
-from approvaltests import DiffReporter, set_default_reporter, verify
+from approvaltests import verify
 from geopandas.testing import assert_geodataframe_equal
 from openrouteservice.exceptions import ApiError
 from pandas.testing import assert_frame_equal, assert_series_equal
@@ -35,11 +35,6 @@ from walkability.components.network_analyses.detour_analysis import (
     snap_destinations,
 )
 from walkability.core.settings import ORSSettings
-
-
-@pytest.fixture(autouse=True)
-def configure_approvaltests():
-    set_default_reporter(DiffReporter())
 
 
 def test_get_detour_factors(

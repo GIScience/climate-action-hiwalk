@@ -5,7 +5,6 @@ import shapely.ops
 from climatoology.base.baseoperator import AoiProperties, BaseOperator, _Artifact
 from climatoology.base.computation import ComputationResources
 from climatoology.base.info import _Info
-from climatoology.utility.exception import ClimatoologyUserError
 from climatoology.utility.Naturalness import NaturalnessIndex, NaturalnessUtility
 from ohsome import OhsomeClient
 
@@ -37,6 +36,7 @@ from walkability.components.slope.slope_artifacts import (
 from walkability.components.utils.geometry import get_utm_zone
 from walkability.components.utils.misc import (
     WALKABLE_CATEGORIES,
+    check_paths_count_limit,
     fetch_osm_data,
     ohsome_filter,
 )
@@ -79,13 +79,9 @@ class OperatorWalkability(BaseOperator[ComputeInputWalkability]):
 
         artifacts = []
 
+        check_paths_count_limit(aoi=aoi, ohsome=self.ohsome, count_limit=100000)
+
         line_paths, polygon_paths = self._get_paths(aoi=aoi)
-        number_of_paths = len(line_paths)
-        max_paths = 100000
-        if number_of_paths > max_paths:
-            raise ClimatoologyUserError(
-                f'There are too many path segments in the selected area: {number_of_paths} path segments. Currently, only areas with a maximum of {max_paths} path segments are allowed. Please select a smaller area or a sub-region of your selected area'
-            )
 
         with self.catch_exceptions(indicator_name='Sub-district areal summary charts', resources=resources):
             areal_summaries = dict()  # Empty dict in case summaries fail
