@@ -135,4 +135,10 @@ deploy_staging:
     - !reference [ build_staging, rules ]
   image: repo.heigit.org/heigit/argocd-cli:latest
   script:
-    - argocd app actions run argocd/${ARGOCD_STAGING_APPLICATION_NAME} restart --kind Deployment --server ${ARGOCD_SERVER} --auth-token ${ARGOCD_AUTH_TOKEN} --resource-name can-${walkability}
+    - |
+      argocd app actions \
+        run argocd/${ARGOCD_STAGING_APPLICATION_NAME} \
+        restart --kind Deployment \
+        --server ${ARGOCD_SERVER} \
+        --auth-token ${ARGOCD_AUTH_TOKEN}\
+        --resource-name can-${CI_PROJECT_NAME}
