@@ -281,3 +281,17 @@ def test_summarise_detour(default_polygon_geometry):
 
     assert isinstance(chart, Figure)
     np.testing.assert_array_equal(chart['data'][0]['x'], ([0, 3, 6, 10]))
+
+
+def test_summarise_detour_inf(default_polygon_geometry):
+    input_hexgrid = gpd.GeoDataFrame(
+        data={
+            'detour_factor': [0, 3, 6, np.inf],
+            'geometry': 4 * [default_polygon_geometry],
+        },
+        crs='EPSG:4326',
+    )
+    chart = summarise_detour(hexgrid=input_hexgrid, projected_crs=CRS.from_user_input(32632))
+
+    assert isinstance(chart, Figure)
+    np.testing.assert_array_equal(chart['data'][0]['x'], ([0, 3, 6, np.inf]))
