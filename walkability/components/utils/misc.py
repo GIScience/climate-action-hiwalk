@@ -173,6 +173,7 @@ def generate_colors(
     norm = mpl.colors.Normalize(vmin=min_value, vmax=max_value)
     cmap = mpl.colormaps[cmap_name]
     cmap.set_bad(color=bad_color)
+    cmap.set_over(color=bad_color)
 
     mapped_colors = [Color(mpl.colors.to_hex(col)) for col in cmap(norm(color_by))]
     return mapped_colors

@@ -12,15 +12,22 @@ import responses
 import responses.matchers
 import shapely
 from approvaltests import verify
+from climatoology.base.artifact import ContinuousLegendData
 from geopandas.testing import assert_geodataframe_equal
 from openrouteservice.exceptions import ApiError
 from pandas.testing import assert_frame_equal, assert_series_equal
+from pydantic_extra_types.color import Color
+from pyproj import CRS
 from requests.exceptions import HTTPError, RetryError
+from shapely import Point
 from vcr import use_cassette
 
+from walkability.components.categorise_paths.path_summarisation import summarise_detour
 from walkability.components.network_analyses.detour_analysis import (
     batch_and_filter_spurs,
     batching,
+    build_detour_factor_artifact,
+    build_detour_summary_artifact,
     check_contains_cell,
     create_destinations,
     generate_waypoint_pairs,
@@ -396,6 +403,32 @@ def test_get_ors_walking_distances(default_ors_settings):
     verify(result)
 
 
+@use_cassette
+def test_get_ors_walking_distances_breaking_route(default_ors_settings):
+    destinations = pd.DataFrame(
+        data={
+            'id': ['a', 'b', 'c', 'd', 'e'],
+            'spur_id': ['a'] * 5,
+            'ordinal': [0, 1, 2, 3, 4],
+            'snapped_location': [
+                [8.655924, 53.135569],
+                [8.656426, 53.136326],
+                [8.656937, 53.134469],
+                [8.656426, 53.136326],
+                [8.655924, 53.135569],
+            ],
+            'snapped_distance': [0] * 5,
+        },
+    )
+    result = get_ors_walking_distances(
+        ors_settings=default_ors_settings,
+        cell_distance=150,
+        destinations_with_snapping=destinations,
+    )
+
+    verify(result)
+
+
 @pytest.fixture
 def ors_directions_request_fail():
     with patch('openrouteservice.directions.directions') as mock:
@@ -431,7 +464,60 @@ def test_ors_request(default_ors_settings):
         coordinates=[[8.773, 49.376], [8.773085, 49.376161]],
     )
     assert isinstance(start_time, float)
-    verify(result)
+    assert result == [18.7]
+
+
+@use_cassette
+def test_ors_request_route_not_found(default_ors_settings):
+    result, start_time = ors_request(
+        ors_settings=default_ors_settings,
+        coordinates=[(8.6897870, 53.1485750), (8.6886660, 53.1479170)],
+        sleep_time=8.1,
+    )
+
+    assert result == [None]
+
+
+@use_cassette
+def test_ors_request_route_not_found_start_of_line(default_ors_settings):
+    result, start_time = ors_request(
+        ors_settings=default_ors_settings,
+        coordinates=[[8.656937, 53.134469], [8.655924, 53.135569], [8.656426, 53.136326]],
+        sleep_time=8.1,
+    )
+
+    assert result == [None, 90.6]
+
+
+@use_cassette
+def test_ors_request_route_not_found_end_of_line(default_ors_settings):
+    result, start_time = ors_request(
+        ors_settings=default_ors_settings,
+        coordinates=[[8.655924, 53.135569], [8.656426, 53.136326], [8.656937, 53.134469]],
+        sleep_time=8.1,
+    )
+
+    assert result == [90.6, None]
+
+
+@use_cassette
+def test_ors_request_route_not_found_middle_of_line_multiple(default_ors_settings):
+    result, start_time = ors_request(
+        ors_settings=default_ors_settings,
+        coordinates=[
+            [8.655924, 53.135569],
+            [8.656426, 53.136326],
+            [8.656937, 53.134469],
+            [8.656426, 53.136326],
+            [8.655924, 53.135569],
+        ],
+        sleep_time=8.1,
+    )
+
+    assert result == [90.6, None, None, 90.6]
+
+
+# TODO: test middle of line with just one breaking segment
 
 
 def test_match_ors_distance_to_cells():
@@ -492,3 +578,43 @@ def test_generate_waypoint_pairs():
     result = generate_waypoint_pairs(spur)
 
     assert result == expected_result
+
+
+def test_build_detour_factor_artifact_inf(compute_resources):
+    detour_factor_data = gpd.GeoDataFrame(data={'detour_factor': [0, 1, np.inf]}, geometry=[Point()] * 3, crs=4326)
+
+    computed_artifact = build_detour_factor_artifact(
+        detour_factor_data=detour_factor_data, resources=compute_resources, cmap_name='YlOrRd'
+    )
+
+    computed_gdf = gpd.GeoDataFrame.from_file(computed_artifact.file_path)
+    assert computed_gdf.color.to_list() == ['#ffc', '#800026', Color('gray').as_hex()]
+    assert computed_artifact.attachments.legend.legend_data == ContinuousLegendData(
+        cmap_name='YlOrRd', ticks={'0.0': 0, '1.0': 1}
+    )
+
+
+def test_build_detour_factor_artifact_inf_has_label(compute_resources):
+    detour_factor_data = gpd.GeoDataFrame(data={'detour_factor': [0, 1, np.inf]}, geometry=[Point()] * 3, crs=4326)
+
+    computed_artifact = build_detour_factor_artifact(
+        detour_factor_data=detour_factor_data, resources=compute_resources, cmap_name='YlOrRd'
+    )
+
+    computed_gdf = gpd.GeoDataFrame.from_file(computed_artifact.file_path)
+    assert not computed_gdf['label'].isna().any()
+
+
+def test_build_detour_summary_artifact_inf(compute_resources, default_polygon_geometry):
+    input_hexgrid = gpd.GeoDataFrame(
+        data={
+            'detour_factor': [0, 3, 6, np.inf],
+            'geometry': 4 * [default_polygon_geometry],
+        },
+        crs='EPSG:4326',
+    )
+    chart = summarise_detour(hexgrid=input_hexgrid, projected_crs=CRS.from_user_input(32632))
+
+    artifact = build_detour_summary_artifact(aoi_aggregate=chart, resources=compute_resources)
+    # TODO: use singular for one
+    assert 'The area contains 1 (partly) unreachable hexagons.' in artifact.description

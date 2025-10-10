@@ -1,5 +1,6 @@
 import logging
 import math
+import re
 import time
 from pathlib import Path
 
@@ -22,6 +23,7 @@ from climatoology.base.computation import ComputationResources
 from plotly.graph_objects import Figure
 from requests.adapters import HTTPAdapter
 from requests_ratelimiter import LimiterSession
+from tqdm import tqdm
 from urllib3.util import Retry
 
 from walkability.components.utils.misc import generate_colors
@@ -387,29 +389,32 @@ def get_ors_walking_distances(
     ors_settings: ORSSettings, cell_distance: float, destinations_with_snapping: pd.DataFrame
 ) -> pd.DataFrame:
     """Route between destinations of adjacent cells using ORS."""
+    # TODO: it looks like the test of this function does live calls which is to be avoided
     log.debug('Requesting direction from the ors')
     sleep_time = 60 / ors_settings.ors_directions_rate_limit
     spur_ids: set[str] = set(destinations_with_snapping['spur_id'].to_list())
 
     list_of_df: list[pd.DataFrame] = []
-    for spur_id in spur_ids:
+    for spur_id in tqdm(spur_ids):
         spur = (
             destinations_with_snapping[destinations_with_snapping['spur_id'] == spur_id]
             .set_index('ordinal')
             .sort_index()
             .reset_index()
         )
-        coordinates: list[list[float]] = list(filter(lambda x: x is not None, spur['snapped_location'].to_list()))
+        coordinates: list[tuple[float, float]] = list(
+            filter(lambda x: x is not None, spur['snapped_location'].to_list())
+        )
         if len(coordinates) < 2:
             continue
-        json_result, start_time = ors_request(ors_settings, coordinates)
+        distances, start_time = ors_request(ors_settings, coordinates)
 
-        distances = [segment['distance'] for segment in json_result['routes'][0]['segments']]
-
+        # TODO: there are a lot of IDs flying around here that are not human readable
         walking_distances = match_ors_distance_to_cells(spur, distances)
 
         list_of_df.append(walking_distances)
 
+        # TODO: this should be a function to make it more readable
         time_remaining = sleep_time - (time.time() - start_time)
         if time_remaining > 0:
             time.sleep(time_remaining)
@@ -425,12 +430,16 @@ def get_ors_walking_distances(
 
 def ors_request(
     ors_settings: ORSSettings, coordinates: list[list[float]], sleep_time: float = 0.0
-) -> tuple[dict, float]:
+) -> tuple[list[float], float]:
     time.sleep(sleep_time)
+    # TODO: this could be refactored, if the statement was last in the call, the first check could be prevented
     if sleep_time == 0.0:
         sleep_time += 2.0
     else:
         sleep_time *= 2.0
+
+    # TODO: this is a manual implementation of the `requests` `Retry` functionality. The client should be adapted rather then implementing it here
+
     try:
         json_result = openrouteservice.directions.directions(
             client=ors_settings.client, coordinates=coordinates, profile='foot-walking', geometry=False
@@ -440,13 +449,52 @@ def ors_request(
         openrouteservice.exceptions.Timeout,
         openrouteservice.exceptions.HTTPError,
     ) as e:
+        error_message = (e.message or {}).get('error', {})
+        # TODO: the following could also be a feature on ORS side!
+        if error_message.get('code') == 2009:
+            message = error_message.get('message')
+            if message is None:
+                raise e  # TODO: do sth here
+
+            log.warning(message)
+            capture = re.search(
+                '^Route could not be found - Unable to find a route between points ([0-9]*) \(.*\) and ([0-9]*) \(.*\)\.$',
+                message,
+            )
+            # Todo: what if we don't find a group?
+            error_start_index = int(capture.group(1)) - 1
+            error_end_index = int(capture.group(2)) - 1
+
+            # TODO the following is a bit complicated because of the custom back-off implementation (see other todos)
+            route_to_error_start = coordinates[: error_start_index + 1]
+            # TODO: if clauses need refactoring to function?
+            if len(route_to_error_start) > 1:
+                distances_to_error, _ = ors_request(ors_settings, route_to_error_start, sleep_time)
+            else:
+                distances_to_error = []
+
+            route_from_error_end = coordinates[error_end_index:]
+            if len(route_from_error_end) > 1:
+                distances_from_error, _ = ors_request(ors_settings, coordinates[error_end_index:], sleep_time)
+            else:
+                distances_from_error = []
+
+            distances = distances_to_error + [None] + distances_from_error
+
+            return distances, time.time()
+
+        # TODO: the type of error is not checked. We also retry on 404 or 500 errors where a retry is futile
         if sleep_time > 16.0:
             raise e
         log.debug(f'OpenRouteService request failed with {e}. Retrying once in 1 second.')
         json_result, _ = ors_request(ors_settings, coordinates, sleep_time)
-    finally:
-        start = time.time()
-    return json_result, start
+
+    segments = json_result['routes'][0]['segments']
+    distances = [segment['distance'] for segment in segments]
+
+    start = time.time()  # TODO: this call is not reasonable as it is basically a constant for all calls
+
+    return distances, start
 
 
 def match_ors_distance_to_cells(spur: pd.DataFrame, distances: list[float]) -> pd.DataFrame:
@@ -464,7 +512,9 @@ def match_ors_distance_to_cells(spur: pd.DataFrame, distances: list[float]) -> p
         cell_id_destination = spur_by_ordinal.loc[destination_ordinal, 'id']
 
         actual_distance = (
-            distance
+            (
+                distance or np.inf
+            )  # TODO this is incorrect, we need a fixed max value or we should ignore or otherwise handle the offending cell (expert discussion)
             + spur_by_ordinal.loc[origin_ordinal, 'snapped_distance']  # type: ignore
             + spur_by_ordinal.loc[destination_ordinal, 'snapped_distance']
         )  # type: ignore
@@ -498,10 +548,18 @@ def build_detour_factor_artifact(
     """Artifact containing a GeoJSON with hex-grid cells and the Detour Factor."""
     detour_factor_data_no_na = detour_factor_data.dropna()
     detour = detour_factor_data_no_na.detour_factor
-    color = generate_colors(color_by=detour, cmap_name=cmap_name)
+
+    min_value = detour.min()
+    max_value = detour.loc[detour != np.inf].max()  # TODO: change if inf is no longer the invalid output
+    color = generate_colors(color_by=detour, cmap_name=cmap_name, min_value=min_value, max_value=max_value)
+
     legend = ContinuousLegendData(
-        cmap_name=cmap_name, ticks={f'{round(detour.min(), ndigits=2)}': 0, f'{round(detour.max(), ndigits=2)}': 1}
+        cmap_name=cmap_name, ticks={f'{round(min_value, ndigits=2)}': 0, f'{round(max_value, ndigits=2)}': 1}
     )
+
+    label = detour_factor_data_no_na.detour_factor.round(2)
+    label = label.replace(np.inf, '(partly) unreachable cell')  # TODO: remove if cells are no longer inf
+    # TODO: create issue in FE: the FE on staging does not display labels for polygons
 
     return create_geojson_artifact(
         features=detour_factor_data_no_na.geometry,
@@ -509,7 +567,7 @@ def build_detour_factor_artifact(
         filename='hexgrid_detours',
         caption=Path('resources/components/network_analyses/detour_factor/caption.md').read_text(),
         description=Path('resources/components/network_analyses/detour_factor/description.md').read_text(),
-        label=detour_factor_data_no_na.detour_factor.round(2).to_list(),
+        label=label.to_list(),
         color=color,
         legend_data=legend,
         resources=resources,
@@ -517,10 +575,12 @@ def build_detour_factor_artifact(
 
 
 def build_detour_summary_artifact(aoi_aggregate: Figure, resources: ComputationResources) -> _Artifact:
+    n_inf = sum(np.isinf(aoi_aggregate['data'][0]['x']))
     return create_plotly_chart_artifact(
         figure=aoi_aggregate,
         title='Histogram of Detour Factors',
         caption='How are detour factor values distributed?',
+        description=f'The area contains {n_inf} (partly) unreachable hexagons.',
         resources=resources,
         filename='aggregation_aoi_detour',
         primary=True,

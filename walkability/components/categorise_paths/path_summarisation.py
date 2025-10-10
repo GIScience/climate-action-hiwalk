@@ -335,9 +335,13 @@ def summarise_detour(
 ) -> Figure:
     log.info('Summarising detour factor stats')
     stats = hexgrid.dropna(how='any')
+    # TODO: why are we projecting? Why do we even have geometries?
     stats = stats.to_crs(projected_crs)
 
-    counts, bin_edges = np.histogram(stats['detour_factor'], bins=30)
+    min_value = stats['detour_factor'].min()
+    max_value = stats.loc[stats['detour_factor'] != np.inf, 'detour_factor'].max()
+    counts, bin_edges = np.histogram(stats['detour_factor'], bins=30, range=(min_value, max_value))
+
     cmap = pyplt.get_cmap('YlOrRd', len(counts))
     colors = [mcolors.to_hex(cmap(i)) for i in range(len(counts))]
 
@@ -349,6 +353,7 @@ def summarise_detour(
         hovertemplate='Range: %{x}<br>Percentage: %{y:.2f}%<extra></extra>',
     )
 
+    # TODO: Figure is already imported above, use consistent importing style!
     detour_fig = go.Figure(data=[histogram])
 
     detour_fig.update_layout(
