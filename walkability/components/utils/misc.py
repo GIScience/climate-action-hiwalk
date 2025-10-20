@@ -18,6 +18,16 @@ from pydantic_extra_types.color import Color
 log = logging.getLogger(__name__)
 
 
+class Topics(StrEnum):
+    TRAFFIC = 'traffic'
+    SURFACE = 'surface'
+    SUMMARY = 'summary'
+    CONNECTIVITY = 'connectivity'
+    BARRIERS = 'barriers'
+    GREENNESS = 'greenness'
+    COMFORT = 'comfort'
+
+
 class PathCategory(Enum):
     DESIGNATED = 'Designated'
     DESIGNATED_SHARED_WITH_BIKES = 'Shared with bikes'
@@ -172,8 +182,8 @@ def generate_colors(
 
     norm = mpl.colors.Normalize(vmin=min_value, vmax=max_value)
     cmap = mpl.colormaps[cmap_name]
-    cmap.set_bad(color=bad_color)
-    cmap.set_over(color=bad_color)
+
+    cmap.set_extremes(bad=bad_color, under=bad_color, over=bad_color)
 
     mapped_colors = [Color(mpl.colors.to_hex(col)) for col in cmap(norm(color_by))]
     return mapped_colors
@@ -313,7 +323,7 @@ def check_paths_count_limit(aoi: shapely.MultiPolygon, ohsome: OhsomeClient, cou
 
     ohsome_responses = ohsome.elements.count.post(bpolys=aoi, filter=ohsome_filter('line')).data
     path_lines_count = sum([response['value'] for response in ohsome_responses['result']])
-    log.info(f'There are {path_lines_count} are selected.')
+    log.info(f'There are {path_lines_count} paths selected.')
     if path_lines_count > count_limit:
         raise ClimatoologyUserError(
             f'There are too many path segments in the selected area: {path_lines_count} path segments. '

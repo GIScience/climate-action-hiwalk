@@ -3,6 +3,7 @@ from pathlib import Path
 import geopandas as gpd
 import matplotlib
 import pandas as pd
+import plotly.graph_objects as go
 from climatoology.base.artifact import (
     ContinuousLegendData,
     create_markdown_artifact,
@@ -11,10 +12,9 @@ from climatoology.base.artifact import (
 from climatoology.base.baseoperator import _Artifact
 from climatoology.base.computation import ComputationResources
 from matplotlib.colors import to_hex
-from plotly.graph_objects import Figure
 from pydantic_extra_types.color import Color
 
-from walkability.components.utils.misc import create_multicolumn_geojson_artifact
+from walkability.components.utils.misc import Topics, create_multicolumn_geojson_artifact
 
 
 def build_naturalness_artifact(
@@ -65,10 +65,11 @@ def build_naturalness_artifact(
         legend_data=legend,
         resources=resources,
         filename='path_greenness',
+        tags={Topics.GREENNESS, Topics.COMFORT},
     )
 
 
-def build_naturalness_summary_bar_artifact(aoi_aggregate: Figure, resources: ComputationResources) -> _Artifact:
+def build_naturalness_summary_bar_artifact(aoi_aggregate: go.Figure, resources: ComputationResources) -> _Artifact:
     return create_plotly_chart_artifact(
         figure=aoi_aggregate,
         title='Distribution of Greenness',
@@ -76,4 +77,5 @@ def build_naturalness_summary_bar_artifact(aoi_aggregate: Figure, resources: Com
         resources=resources,
         filename='aggregation_aoi_naturalness_bar',
         primary=True,
+        tags={Topics.GREENNESS, Topics.COMFORT, Topics.SUMMARY},
     )

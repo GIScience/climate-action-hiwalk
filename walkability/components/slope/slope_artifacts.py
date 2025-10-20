@@ -4,6 +4,7 @@ from typing import Tuple
 import geopandas as gpd
 import matplotlib
 import pandas as pd
+import plotly.graph_objects as go
 from climatoology.base.artifact import (
     ContinuousLegendData,
     create_markdown_artifact,
@@ -12,7 +13,6 @@ from climatoology.base.artifact import (
 from climatoology.base.baseoperator import _Artifact
 from climatoology.base.computation import ComputationResources
 from matplotlib.colors import to_hex
-from plotly.graph_objects import Figure
 from pydantic_extra_types.color import Color
 
 from walkability.components.utils.misc import create_multicolumn_geojson_artifact
@@ -73,7 +73,7 @@ def build_slope_artifact(
     )
 
 
-def build_slope_summary_bar_artifact(aoi_aggregate: Figure, resources: ComputationResources) -> _Artifact:
+def build_slope_summary_bar_artifact(aoi_aggregate: go.Figure, resources: ComputationResources) -> _Artifact:
     return create_plotly_chart_artifact(
         figure=aoi_aggregate,
         title='Distribution of Slope Categories',

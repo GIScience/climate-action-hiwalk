@@ -1,1 +1,0 @@
-Can I reach my surroundings without big detours?

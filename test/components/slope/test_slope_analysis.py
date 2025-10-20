@@ -1,11 +1,12 @@
 import geopandas as gpd
+import plotly.graph_objects as go
 from geopandas.testing import assert_geodataframe_equal
 from pyproj import CRS
 from responses import matchers
 from shapely.geometry.linestring import LineString
 from shapely.geometry.multilinestring import MultiLineString
 
-from walkability.components.slope.slope_analysis import get_slope
+from walkability.components.slope.slope_analysis import get_slope, summarise_slope
 
 
 def test_get_slope(global_aoi, responses_mock, default_ors_settings):
@@ -303,3 +304,18 @@ def test_slope_for_multipart_geom(responses_mock, global_aoi, default_ors_settin
     )
 
     assert_geodataframe_equal(computed_slope, expected_naturalness, check_like=True)
+
+
+def test_summarise_slope(default_path_geometry, default_polygon_geometry):
+    input_paths = gpd.GeoDataFrame(
+        data={
+            'slope': [0.4, 0.6],
+            'geometry': [default_path_geometry] + [default_polygon_geometry],
+        },
+        crs='EPSG:4326',
+    )
+    bar_chart = summarise_slope(paths=input_paths, projected_crs=CRS.from_user_input(32632))
+
+    assert isinstance(bar_chart, go.Figure)
+    assert bar_chart['data'][0]['x'] == ('Gentle slope (0-4%)',)
+    assert bar_chart['data'][0]['y'] == (0.12,)
