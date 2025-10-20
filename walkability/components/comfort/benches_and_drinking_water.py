@@ -5,9 +5,8 @@ import geopandas as gpd
 import numpy
 import pandas as pd
 import shapely
+from mobility_tools.ors_settings import ORSSettings
 from ohsome import OhsomeClient
-
-from walkability.core.settings import ORSSettings
 
 log = logging.getLogger(__name__)
 

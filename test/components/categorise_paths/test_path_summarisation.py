@@ -1,16 +1,12 @@
 import geopandas as gpd
-import numpy as np
+import plotly.graph_objects as go
 import shapely
-from plotly.graph_objects import Figure
 from pyproj import CRS
 
 from test.conftest import filter_start_matcher
 from walkability.components.categorise_paths.path_summarisation import (
     summarise_aoi,
     summarise_by_area,
-    summarise_detour,
-    summarise_naturalness,
-    summarise_slope,
 )
 from walkability.components.utils.misc import PathCategory, PavementQuality
 
@@ -42,7 +38,7 @@ def test_summarise_by_area(operator, default_aoi, responses_mock, default_path_g
 
     assert isinstance(computed_charts, dict)
     assert all(
-        isinstance(chart, Figure) and city in ['Bergheim', 'Südstadt'] for city, chart in computed_charts.items()
+        isinstance(chart, go.Figure) and city in ['Bergheim', 'Südstadt'] for city, chart in computed_charts.items()
     )
     assert computed_charts['Bergheim']['data'][0]['x'] == (100,)
     assert computed_charts['Südstadt']['data'][0]['x'] == (100,)
@@ -108,7 +104,7 @@ def test_summarise_by_area_mixed_geometry_boundaries(operator, default_aoi, resp
     )
 
     assert len(computed_charts.items()) == 1
-    assert isinstance(computed_charts['Innenstadt West'], Figure)
+    assert isinstance(computed_charts['Innenstadt West'], go.Figure)
 
 
 def test_summarise_by_area_boundaries_no_name(operator, default_aoi, responses_mock, default_path_geometry):
@@ -210,8 +206,8 @@ def test_summarise_aoi(default_path_geometry, default_polygon_geometry):
         quality_stacked_bar_chart,
     ) = summarise_aoi(paths=input_paths, projected_crs=CRS.from_user_input(32632))
 
-    assert isinstance(category_stacked_bar_chart, Figure)
-    assert isinstance(quality_stacked_bar_chart, Figure)
+    assert isinstance(category_stacked_bar_chart, go.Figure)
+    assert isinstance(quality_stacked_bar_chart, go.Figure)
     assert category_stacked_bar_chart['data'][0]['y'] == ('Path Types',)
     assert category_stacked_bar_chart['data'][0]['x'] == (100,)
     assert quality_stacked_bar_chart['data'][0]['y'] == ('Surface Quality Types',)
@@ -231,67 +227,9 @@ def test_summarise_aoi_unknown(default_path_geometry):
         paths=input_paths, projected_crs=CRS.from_user_input(32632)
     )
 
-    assert isinstance(category_stacked_bar_chart, Figure)
-    assert isinstance(quality_stacked_bar_chart, Figure)
+    assert isinstance(category_stacked_bar_chart, go.Figure)
+    assert isinstance(quality_stacked_bar_chart, go.Figure)
     assert category_stacked_bar_chart['data'][0]['y'] == ('Path Types',)
     assert category_stacked_bar_chart['data'][0]['x'] == (50,)
     assert quality_stacked_bar_chart['data'][0]['y'] == ('Surface Quality Types',)
     assert quality_stacked_bar_chart['data'][0]['x'] == (50,)
-
-
-def test_summarise_naturalness(default_path_geometry, default_polygon_geometry):
-    input_paths = gpd.GeoDataFrame(
-        data={
-            'naturalness': [0.4, 0.6],
-            'geometry': [default_path_geometry] + [default_polygon_geometry],
-        },
-        crs='EPSG:4326',
-    )
-    bar_chart = summarise_naturalness(paths=input_paths, projected_crs=CRS.from_user_input(32632))
-
-    assert isinstance(bar_chart, Figure)
-    assert bar_chart['data'][0]['x'] == ('Medium (0.3 to 0.6)',)
-    assert bar_chart['data'][0]['y'] == (0.12,)
-
-
-def test_summarise_slope(default_path_geometry, default_polygon_geometry):
-    input_paths = gpd.GeoDataFrame(
-        data={
-            'slope': [0.4, 0.6],
-            'geometry': [default_path_geometry] + [default_polygon_geometry],
-        },
-        crs='EPSG:4326',
-    )
-    bar_chart = summarise_slope(paths=input_paths, projected_crs=CRS.from_user_input(32632))
-
-    assert isinstance(bar_chart, Figure)
-    assert bar_chart['data'][0]['x'] == ('Gentle slope (0-4%)',)
-    assert bar_chart['data'][0]['y'] == (0.12,)
-
-
-def test_summarise_detour(default_polygon_geometry):
-    input_hexgrid = gpd.GeoDataFrame(
-        data={
-            'detour_factor': [0, 3, 6, 10],
-            'geometry': 4 * [default_polygon_geometry],
-        },
-        crs='EPSG:4326',
-    )
-    chart = summarise_detour(hexgrid=input_hexgrid, projected_crs=CRS.from_user_input(32632))
-
-    assert isinstance(chart, Figure)
-    np.testing.assert_array_equal(chart['data'][0]['x'], ([0, 3, 6, 10]))
-
-
-def test_summarise_detour_inf(default_polygon_geometry):
-    input_hexgrid = gpd.GeoDataFrame(
-        data={
-            'detour_factor': [0, 3, 6, np.inf],
-            'geometry': 4 * [default_polygon_geometry],
-        },
-        crs='EPSG:4326',
-    )
-    chart = summarise_detour(hexgrid=input_hexgrid, projected_crs=CRS.from_user_input(32632))
-
-    assert isinstance(chart, Figure)
-    np.testing.assert_array_equal(chart['data'][0]['x'], ([0, 3, 6, np.inf]))

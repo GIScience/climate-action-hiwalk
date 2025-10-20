@@ -6,13 +6,13 @@ import pandas as pd
 import shapely
 from climatoology.base.artifact import _Artifact, create_geojson_artifact
 from climatoology.base.computation import ComputationResources
+from mobility_tools.ors_settings import ORSSettings
 from ohsome import OhsomeClient
 from pydantic_extra_types.color import Color
 
 from walkability.components.comfort.benches_and_drinking_water import PointsOfInterest, distance_enrich_paths
 from walkability.components.utils.geometry import get_buffered_aoi
-from walkability.components.utils.misc import generate_colors
-from walkability.core.settings import ORSSettings
+from walkability.components.utils.misc import Topics, generate_colors
 
 log = logging.getLogger(__name__)
 N_BINS = 5
@@ -86,6 +86,7 @@ def build_isodistance_artifact(
         legend_data=legend,
         resources=resources,
         filename=f'isodistance_{poi_type.value.replace(" ", "_")}',
+        tags={Topics.COMFORT},
     )
 
 

@@ -19,6 +19,7 @@ openrouteservice = "^2.3.3"
 h3pandas = "^0.3.0"
 requests-ratelimiter = "^0.7.0"
 numpy = "^2.3.3"
+mobility-tools = {git = "ssh://git@gitlab.heigit.org:2022/climate-action/utilities/mobility-tools.git", rev = "1.0.3"}
 
 
 [tool.poetry.group.test.dependencies]

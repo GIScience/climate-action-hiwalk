@@ -12,6 +12,7 @@ import shapely
 from approvaltests import DiffReporter, set_default_reporter
 from climatoology.base.baseoperator import AoiProperties
 from climatoology.base.computation import ComputationScope
+from mobility_tools.ors_settings import ORSSettings
 from pyproj import CRS
 from requests import PreparedRequest
 from responses import matchers
@@ -21,7 +22,6 @@ from walkability.components.comfort.benches_and_drinking_water import PointsOfIn
 from walkability.components.utils.misc import PathCategory
 from walkability.core.input import ComputeInputWalkability
 from walkability.core.operator_worker import OperatorWalkability
-from walkability.core.settings import ORSSettings
 
 
 @pytest.fixture
@@ -151,11 +151,6 @@ def ohsome_api_count(responses_mock):
     )
 
     return responses_mock
-
-
-@pytest.fixture(autouse=True)
-def configure_approvaltests():
-    set_default_reporter(DiffReporter())
 
 
 @pytest.fixture
@@ -300,3 +295,8 @@ def default_max_walking_distance_map() -> dict[PointsOfInterest, float]:
         PointsOfInterest.SEATING: m_per_minute * 5,
         PointsOfInterest.REMAINDER: m_per_minute * 15,
     }
+
+
+@pytest.fixture(autouse=True)
+def configure_approvaltests():
+    set_default_reporter(DiffReporter())

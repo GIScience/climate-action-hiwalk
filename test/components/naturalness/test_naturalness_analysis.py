@@ -1,11 +1,16 @@
 import geopandas as gpd
+import plotly.graph_objects as go
 import shapely
 from climatoology.utility.api import TimeRange
 from climatoology.utility.Naturalness import NaturalnessIndex
 from pyproj import CRS
 from shapely import LineString, MultiLineString
 
-from walkability.components.naturalness.naturalness_analysis import fetch_naturalness_by_vector, get_naturalness
+from walkability.components.naturalness.naturalness_analysis import (
+    fetch_naturalness_by_vector,
+    get_naturalness,
+    summarise_naturalness,
+)
 
 
 def test_get_naturalness(operator, naturalness_utility_mock):
@@ -71,3 +76,18 @@ def test_fetch_naturalness_polygon(naturalness_utility_mock):
     )
     assert isinstance(greenness_gdf, gpd.GeoDataFrame)
     assert 'naturalness' in greenness_gdf.columns
+
+
+def test_summarise_naturalness(default_path_geometry, default_polygon_geometry):
+    input_paths = gpd.GeoDataFrame(
+        data={
+            'naturalness': [0.4, 0.6],
+            'geometry': [default_path_geometry] + [default_polygon_geometry],
+        },
+        crs='EPSG:4326',
+    )
+    bar_chart = summarise_naturalness(paths=input_paths)
+
+    assert isinstance(bar_chart, go.Figure)
+    assert bar_chart['data'][0]['x'] == ('Medium (0.3 to 0.6)',)
+    assert bar_chart['data'][0]['y'] == (0.12,)

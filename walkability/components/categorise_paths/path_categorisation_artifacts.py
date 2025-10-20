@@ -1,15 +1,14 @@
 import logging
 from pathlib import Path
-from typing import Dict, List, Optional, Set
 
 import geopandas as gpd
 import pandas as pd
+import plotly.graph_objects as go
 from climatoology.base.artifact import (
     create_plotly_chart_artifact,
 )
 from climatoology.base.baseoperator import _Artifact
 from climatoology.base.computation import ComputationResources
-from plotly.graph_objects import Figure
 
 from walkability.components.categorise_paths.path_categorisation import (
     read_pavement_quality_rankings,
@@ -17,6 +16,7 @@ from walkability.components.categorise_paths.path_categorisation import (
 )
 from walkability.components.utils.misc import (
     PathCategory,
+    Topics,
     create_multicolumn_geojson_artifact,
     generate_colors,
     get_path_rating_legend,
@@ -29,12 +29,12 @@ from walkability.components.utils.misc import (
 def build_path_categorisation_artifact(
     paths_line: gpd.GeoDataFrame,
     paths_polygon: gpd.GeoDataFrame,
-    areal_summaries: Dict[str, Figure],
-    aoi_summary_category_stacked_bar: Figure,
-    aoi_summary_quality_stacked_bar: Figure,
-    walkable_categories: Set[PathCategory],
+    areal_summaries: dict[str, go.Figure],
+    aoi_summary_category_stacked_bar: go.Figure,
+    aoi_summary_quality_stacked_bar: go.Figure,
+    walkable_categories: set[PathCategory],
     resources: ComputationResources,
-) -> List[_Artifact]:
+) -> list[_Artifact]:
     logging.debug('Building paths artifacts')
 
     walkable_paths = build_walkable_paths_artifact(
@@ -94,6 +94,7 @@ def build_walkable_paths_artifact(
         legend_data=get_path_rating_legend(),
         resources=resources,
         filename='walkable',
+        tags={Topics.TRAFFIC},
     )
 
 
@@ -112,9 +113,9 @@ def generate_detailed_pavement_quality_mapping_info() -> str:
 def build_surface_quality_artifact(
     paths_line: gpd.GeoDataFrame,
     paths_polygon: gpd.GeoDataFrame,
-    walkable_categories: Set[PathCategory],
+    walkable_categories: set[PathCategory],
     resources: ComputationResources,
-) -> Optional[_Artifact]:
+) -> _Artifact | None:
     paths_line = next(subset_walkable_paths(paths_line, walkable_categories=walkable_categories))
     surface_quality_locations = pd.concat([paths_line, paths_polygon], ignore_index=True)
     if surface_quality_locations.empty:
@@ -134,6 +135,7 @@ def build_surface_quality_artifact(
         legend_data=get_surface_quality_legend(),
         resources=resources,
         filename='pavement_quality',
+        tags={Topics.SURFACE},
     )
 
 
@@ -156,6 +158,7 @@ def build_smoothness_artifact(
         resources=resources,
         filename='smoothness',
         primary=False,
+        tags={Topics.SURFACE},
     )
 
 
@@ -178,12 +181,13 @@ def build_surface_artifact(
         resources=resources,
         filename='surface_type',
         primary=False,
+        tags={Topics.SURFACE},
     )
 
 
 def build_areal_summary_artifacts(
-    regional_aggregates: Dict[str, Figure], resources: ComputationResources
-) -> List[_Artifact]:
+    regional_aggregates: dict[str, go.Figure], resources: ComputationResources
+) -> list[_Artifact]:
     chart_artifacts = []
     for region, figure in regional_aggregates.items():
         sanitised_region = region.translate({ord(character): None for character in '/<>|:&'})
@@ -194,13 +198,14 @@ def build_areal_summary_artifacts(
             resources=resources,
             filename=f'aggregation_{sanitised_region}',
             primary=False,
+            tags={Topics.SUMMARY, Topics.TRAFFIC},
         )
         chart_artifacts.append(chart_artifact)
     return chart_artifacts
 
 
 def build_aoi_summary_category_stacked_bar_artifact(
-    aoi_aggregate: Figure, resources: ComputationResources
+    aoi_aggregate: go.Figure, resources: ComputationResources
 ) -> _Artifact:
     return create_plotly_chart_artifact(
         figure=aoi_aggregate,
@@ -209,10 +214,13 @@ def build_aoi_summary_category_stacked_bar_artifact(
         resources=resources,
         filename='aggregation_aoi_category_stacked_bar',
         primary=True,
+        tags={Topics.SUMMARY, Topics.TRAFFIC},
     )
 
 
-def build_aoi_summary_quality_stacked_bar_artifact(aoi_aggregate: Figure, resources: ComputationResources) -> _Artifact:
+def build_aoi_summary_quality_stacked_bar_artifact(
+    aoi_aggregate: go.Figure, resources: ComputationResources
+) -> _Artifact:
     return create_plotly_chart_artifact(
         figure=aoi_aggregate,
         title='Distribution of Surface Quality',
@@ -220,4 +228,5 @@ def build_aoi_summary_quality_stacked_bar_artifact(aoi_aggregate: Figure, resour
         resources=resources,
         filename='aggregation_aoi_quality_stacked_bar',
         primary=True,
+        tags={Topics.SUMMARY, Topics.SURFACE},
     )

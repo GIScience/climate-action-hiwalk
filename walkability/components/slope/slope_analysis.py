@@ -5,13 +5,16 @@ from typing import Tuple
 import geopandas as gpd
 import numpy as np
 import pandas as pd
+import plotly.graph_objects as go
 import shapely
 from climatoology.base.baseoperator import _Artifact
 from climatoology.base.computation import ComputationResources
+from mobility_tools.ors_settings import ORSSettings
+from pyproj import CRS
 
 from walkability.components.slope.slope_artifacts import build_slope_artifact
-from walkability.components.utils.geometry import get_utm_zone
-from walkability.core.settings import ORSSettings
+from walkability.components.utils.geometry import calculate_length, get_utm_zone
+from walkability.components.utils.misc import generate_colors
 
 log = logging.getLogger(__name__)
 
@@ -81,3 +84,57 @@ def get_slope(
     paths.slope = paths.slope.round(2)
 
     return paths[['@osmId', 'slope', 'geometry']]
+
+
+def summarise_slope(
+    paths: gpd.GeoDataFrame,
+    projected_crs: CRS,
+    length_resolution_m: int = 1000,
+) -> go.Figure:
+    log.info('Summarising slope stats')
+    stats = calculate_length(length_resolution_m, paths, projected_crs)
+
+    # Categorize slope values
+    slope_categories = [
+        stats['slope'] == 0,
+        (stats['slope'] > 0) & (stats['slope'] <= 4),
+        (stats['slope'] > 4) & (stats['slope'] <= 8),
+        (stats['slope'] > 8) & (stats['slope'] <= 12),
+        stats['slope'] > 12,
+    ]
+    slope_ratings = [0, 0.25, 0.5, 0.75, 1]
+    stats['slope_rating'] = np.select(slope_categories, slope_ratings)
+
+    # Add slope categories for labels
+    slope_map = {
+        0: 'Flat (0%)',
+        0.25: 'Gentle slope (0-4%)',
+        0.5: 'Moderate slope (4-8%)',
+        0.75: 'Considerable slope (8-12%)',
+        1: 'Steep (>12%)',
+    }
+    stats['slope_category'] = stats['slope_rating'].map(slope_map)
+
+    stats = stats.sort_values(by=['slope_rating'])
+
+    summary = stats.groupby(['slope_rating', 'slope_category'], sort=True)['length'].sum().reset_index()
+
+    bar_colors = generate_colors(color_by=summary.slope_rating, min_value=0.0, max_value=1.0, cmap_name='coolwarm')
+
+    bar_fig = go.Figure(
+        data=go.Bar(
+            x=summary['slope_category'],
+            y=summary['length'],
+            marker_color=[c.as_hex() for c in bar_colors],
+            hovertemplate='%{x}: %{y} km <extra></extra>',
+        )
+    )
+    bar_fig.update_layout(
+        title=dict(
+            subtitle=dict(text='Length (km)', font=dict(size=14)),
+        ),
+        xaxis_title=f'Proportionate length of the {round(sum(summary["length"]), 2)} km of paths in each slope category',
+        yaxis_title=None,
+        margin=dict(t=30, b=60, l=80, r=30),
+    )
+    return bar_fig

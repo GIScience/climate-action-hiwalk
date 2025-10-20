@@ -7,6 +7,13 @@ and this project mostly adheres to [Semantic Versioning](https://semver.org/spec
 
 ## [Unreleased](https://gitlab.heigit.org/climate-action/plugins/walkability/-/compare/3.0.2...main)
 
+### Added
+- All frontend-accessible artifacts are now tagged
+
+### Changed
+- Detour Factors are now calculated from the mobility-tools library
+- Detour Factors now only display bad areas ([#253](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/253))
+
 ## [3.0.2](https://gitlab.heigit.org/climate-action/plugins/walkability/-/releases/3.0.2) - 2025-10-10
 
 ### Fix
@@ -17,6 +24,8 @@ and this project mostly adheres to [Semantic Versioning](https://semver.org/spec
 ### Changed
 
 - updated `climatoology` to 6.4.4 containing a fix for naturalness bbox splitting
+- Detour factors are now imported from the library [mobility-tools](https://gitlab.heigit.org/climate-action/utilities/mobility-tools)
+- Detour artifacts are now categorised rather than continuous values.
 
 ## [3.0.1](https://gitlab.heigit.org/climate-action/plugins/walkability/-/releases/3.0.1) - 2025-10-01
 

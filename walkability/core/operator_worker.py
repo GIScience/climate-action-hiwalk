@@ -6,6 +6,7 @@ from climatoology.base.baseoperator import AoiProperties, BaseOperator, _Artifac
 from climatoology.base.computation import ComputationResources
 from climatoology.base.info import _Info
 from climatoology.utility.Naturalness import NaturalnessIndex, NaturalnessUtility
+from mobility_tools.ors_settings import ORSSettings
 from ohsome import OhsomeClient
 
 from walkability.components.categorise_paths.path_categorisation import path_categorisation, subset_walkable_paths
@@ -13,23 +14,16 @@ from walkability.components.categorise_paths.path_categorisation_artifacts impor
 from walkability.components.categorise_paths.path_summarisation import (
     summarise_aoi,
     summarise_by_area,
-    summarise_detour,
-    summarise_naturalness,
-    summarise_slope,
 )
 from walkability.components.comfort.benches_and_drinking_water import PointsOfInterest
 from walkability.components.comfort.comfort_artifacts import (
     compute_comfort_artifacts,
 )
 from walkability.components.naturalness.naturalness_analysis import naturalness_analysis
-from walkability.components.naturalness.naturalness_artifacts import (
-    build_naturalness_summary_bar_artifact,
-)
 from walkability.components.network_analyses.detour_analysis import (
-    build_detour_summary_artifact,
     detour_factor_analysis,
 )
-from walkability.components.slope.slope_analysis import slope_analysis
+from walkability.components.slope.slope_analysis import slope_analysis, summarise_slope
 from walkability.components.slope.slope_artifacts import (
     build_slope_summary_bar_artifact,
 )
@@ -42,7 +36,6 @@ from walkability.components.utils.misc import (
 )
 from walkability.core.info import get_info
 from walkability.core.input import ComputeInputWalkability, WalkabilityIndicators
-from walkability.core.settings import ORSSettings
 
 log = logging.getLogger(__name__)
 
@@ -123,33 +116,26 @@ class OperatorWalkability(BaseOperator[ComputeInputWalkability]):
 
         if WalkabilityIndicators.DETOURS in params.optional_indicators:
             with self.catch_exceptions(indicator_name='Detour Factors', resources=resources):
-                detour_artifact, hexgrid_detour = detour_factor_analysis(
+                detour_artifacts = detour_factor_analysis(
                     aoi=aoi,
+                    paths=line_paths,
                     ors_settings=self.ors_settings,
                     resources=resources,
                 )
-                detour_summary = summarise_detour(hexgrid=hexgrid_detour, projected_crs=get_utm_zone(aoi))
-                detour_summary_artifact = build_detour_summary_artifact(
-                    aoi_aggregate=detour_summary, resources=resources
-                )
-                artifacts.extend([detour_artifact, detour_summary_artifact])
+
+                artifacts.extend(detour_artifacts)
 
         if WalkabilityIndicators.NATURALNESS in params.optional_indicators:
             with self.catch_exceptions(indicator_name='Greenness', resources=resources):
-                naturalness_artifact, line_paths_naturalness = naturalness_analysis(
+                naturalness_artifacts = naturalness_analysis(
                     line_paths=line_paths,
                     polygon_paths=polygon_paths,
                     index=NaturalnessIndex.NDVI,
                     resources=resources,
                     naturalness_utility=self.naturalness_utility,
                 )
-                naturalness_summary_bar = summarise_naturalness(
-                    paths=line_paths_naturalness, projected_crs=get_utm_zone(aoi)
-                )
-                naturalness_summary_bar_artifact = build_naturalness_summary_bar_artifact(
-                    aoi_aggregate=naturalness_summary_bar, resources=resources
-                )
-                artifacts.extend([naturalness_artifact, naturalness_summary_bar_artifact])
+
+                artifacts.extend(naturalness_artifacts)
 
         # disabled for now to no show silly results until we manage to build a proper utility for it
         if False in params.optional_indicators:
