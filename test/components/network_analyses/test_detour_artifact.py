@@ -30,7 +30,7 @@ def test_build_detour_factor_artifact(default_polygon_geometry, compute_resource
     assert isinstance(artifact, _Artifact)
 
 
-def test_create_detour_rating(default_polygon_geometry):
+def test_apply_detour_color_and_label(default_polygon_geometry):
     test_detour_df = gpd.GeoDataFrame(
         {'detour_factor': [1.0, 2.5, 3.5, np.nan]},
         geometry=[
