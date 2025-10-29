@@ -5,7 +5,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project mostly adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://gitlab.heigit.org/climate-action/plugins/walkability/-/compare/3.0.2...main)
+## [Unreleased](https://gitlab.heigit.org/climate-action/plugins/walkability/-/compare/3.0.3...main)
+
+## [3.0.3](https://gitlab.heigit.org/climate-action/plugins/walkability/-/releases/3.0.3) - 2025-10-29
 
 ### Added
 - All frontend-accessible artifacts are now tagged
@@ -13,6 +15,9 @@ and this project mostly adheres to [Semantic Versioning](https://semver.org/spec
 ### Changed
 - Detour Factors are now calculated from the mobility-tools library
 - Detour Factors now only display bad areas ([#253](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/253))
+
+### Fixed
+- Fail Comfort Factors without failing the complete plugin ([#269](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/269))
 
 ## [3.0.2](https://gitlab.heigit.org/climate-action/plugins/walkability/-/releases/3.0.2) - 2025-10-10
 
