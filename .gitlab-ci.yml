@@ -98,6 +98,7 @@ build_staging:
         buildx build \
         --builder=kube \
         --secret id=CI_JOB_TOKEN \
+        --build-arg "CI_COMMIT_SHORT_SHA=${CI_COMMIT_SHORT_SHA}" \
         --cache-from=type=registry,ref=${REGISTRY_URL}/${GROUP_NAME}/${CI_PROJECT_NAME}:buildcache \
         --cache-to=type=registry,ref=${REGISTRY_URL}/${GROUP_NAME}/${CI_PROJECT_NAME}:buildcache,mode=max \
         --tag ${REGISTRY_URL}/${GROUP_NAME}/${CI_PROJECT_NAME}:devel \
