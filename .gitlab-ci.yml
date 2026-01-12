@@ -10,7 +10,7 @@ unit_tests:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
     - if: $CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == 'push'
   image:
-    name: python:3.11.5
+    name: python:3.13.5
   variables:
     PRE_COMMIT_HOME: "$CI_PROJECT_DIR/.cache/pre-commit"
   cache:
@@ -22,7 +22,7 @@ unit_tests:
     - git config --global url."https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.heigit.org".insteadOf "ssh://git@gitlab.heigit.org:2022"
     - python3 -m venv .venv
     - source .venv/bin/activate
-    - pip install poetry==1.7.1
+    - pip install poetry==2.1.2
     - poetry config virtualenvs.in-project true
     - poetry install --with test,dev
   script:
@@ -46,7 +46,7 @@ test_coverage_threshold:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
     - if: $CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == 'push'
   image:
-    name: python:3.11.5
+    name: python:3.13.5
   before_script:
     - apt-get update && apt-get install -y bc
   script:
@@ -65,7 +65,7 @@ optional_linting:
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
   image:
-    name: python:3.11.5
+    name: python:3.13.5
   variables:
     PRE_COMMIT_HOME: "$CI_PROJECT_DIR/.cache/pre-commit"
   cache:
@@ -131,7 +131,7 @@ build_release:
 
 deploy_staging:
   stage: deploy
-  tags: [ k8s ]
+  tags: [ k8s-kta ]
   needs:
     - build_staging
   rules:
@@ -140,7 +140,7 @@ deploy_staging:
   script:
     - |
       argocd app actions \
-        run argocd/${ARGOCD_STAGING_APPLICATION_NAME} \
+        run ca-staging/${ARGOCD_STAGING_APPLICATION_NAME} \
         restart --kind Deployment \
         --server ${ARGOCD_SERVER} \
         --auth-token ${ARGOCD_AUTH_TOKEN}\

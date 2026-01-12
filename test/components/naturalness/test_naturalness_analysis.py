@@ -2,7 +2,7 @@ import geopandas as gpd
 import plotly.graph_objects as go
 import shapely
 from climatoology.utility.api import TimeRange
-from climatoology.utility.Naturalness import NaturalnessIndex
+from climatoology.utility.naturalness import NaturalnessIndex
 from pyproj import CRS
 from shapely import LineString, MultiLineString
 

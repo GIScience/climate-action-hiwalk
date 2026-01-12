@@ -155,7 +155,7 @@ def ohsome_api_count(responses_mock):
 
 @pytest.fixture
 def naturalness_utility_mock():
-    with patch('climatoology.utility.Naturalness.NaturalnessUtility') as naturalness_utility:
+    with patch('climatoology.utility.naturalness.NaturalnessUtility') as naturalness_utility:
         vectors = gpd.GeoSeries(
             index=[1, 2],
             data=[

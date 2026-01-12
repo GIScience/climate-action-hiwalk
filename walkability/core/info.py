@@ -1,18 +1,15 @@
-import importlib
-import importlib.metadata
 import logging
 from datetime import timedelta
 from pathlib import Path
 
-from climatoology.base.info import Concern, PluginAuthor, _Info, generate_plugin_info
-from semver import Version
+from climatoology.base.plugin_info import Concern, PluginAuthor, PluginInfo, generate_plugin_info
 
 from walkability.core.input import ComputeInputWalkability
 
 log = logging.getLogger(__name__)
 
 
-def get_info() -> _Info:
+def get_info() -> PluginInfo:
     info = generate_plugin_info(
         name='hiWalk',
         icon=Path('resources/info/walk.jpeg'),
@@ -63,7 +60,6 @@ def get_info() -> _Info:
                 website='https://heigit.org/heigit-team/',
             ),
         ],
-        version=Version.parse(importlib.metadata.version('walkability')),
         concerns={Concern.MOBILITY_PEDESTRIAN},
         purpose=Path('resources/info/purpose.md'),
         teaser='Assess the safety, comfort, and quality of walkable infrastructure in an area of interest.',
