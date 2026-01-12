@@ -5,11 +5,18 @@ import pytest
 import shapely
 from approvaltests import verify
 from approvaltests.namer import NamerFactory
-from climatoology.utility.exception import ClimatoologyUserError
+from climatoology.base.exception import ClimatoologyUserError
 from ohsome import OhsomeClient
+from pandas.testing import assert_series_equal
 from pydantic_extra_types.color import Color
 
-from walkability.components.utils.misc import check_paths_count_limit, fetch_osm_data, generate_colors, ohsome_filter
+from walkability.components.utils.misc import (
+    check_paths_count_limit,
+    fetch_osm_data,
+    generate_colors,
+    ohsome_filter,
+    sanitize_filenames,
+)
 
 
 def test_fetch_osm_data(expected_compute_input, default_aoi, responses_mock):
@@ -32,12 +39,12 @@ def test_fetch_osm_data(expected_compute_input, default_aoi, responses_mock):
 
 
 def test_generate_colors():
-    expected_output = [Color('#3b4cc0'), Color('#dcdddd'), Color('#b40426')]
+    expected_output = pd.Series(data=[Color('#3b4cc0'), Color('#dcdddd'), Color('#b40426')])
 
     expected_input = pd.Series([1.0, 0.5, 0.0])
     computed_output = generate_colors(expected_input, min_value=0, max_value=1, cmap_name='coolwarm_r')
 
-    assert computed_output == expected_output
+    assert_series_equal(computed_output, expected_output)
 
 
 @pytest.mark.parametrize('geometry_type', ['line', 'polygon'])
@@ -55,3 +62,11 @@ def test_check_paths_count_limit(default_aoi, responses_mock):
     # test false situation
     with pytest.raises(ClimatoologyUserError):
         check_paths_count_limit(default_aoi, OhsomeClient(), 5000)
+
+
+def test_sanitize_filenames():
+    unsanitized_filename = 'West/Südost-Stadt'
+    expected = 'WestSdost-Stadt'
+    recieved = sanitize_filenames(unsanitized_filename)
+
+    assert recieved == expected

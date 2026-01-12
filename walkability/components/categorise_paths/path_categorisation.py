@@ -53,6 +53,7 @@ def path_categorisation(
 
 def apply_path_category_filters(row: pd.Series) -> PathCategory:
     tags = row['@other_tags']
+    # TODO This reinstantiates a class again and again in the apply call, maybe think about storing the contained data in a better way.
     filters = PathCategoryFilters(tags=tags)
     match tags:
         case x if filters.inaccessible(x):

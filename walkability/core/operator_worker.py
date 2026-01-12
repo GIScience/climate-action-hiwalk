@@ -2,10 +2,10 @@ import logging
 
 import geopandas as gpd
 import shapely.ops
-from climatoology.base.baseoperator import AoiProperties, BaseOperator, _Artifact
+from climatoology.base.baseoperator import AoiProperties, Artifact, BaseOperator
 from climatoology.base.computation import ComputationResources
-from climatoology.base.info import _Info
-from climatoology.utility.Naturalness import NaturalnessIndex, NaturalnessUtility
+from climatoology.base.plugin_info import PluginInfo
+from climatoology.utility.naturalness import NaturalnessIndex, NaturalnessUtility
 from mobility_tools.ors_settings import ORSSettings
 from ohsome import OhsomeClient
 
@@ -58,7 +58,7 @@ class OperatorWalkability(BaseOperator[ComputeInputWalkability]):
 
         log.debug('Initialised walkability operator with ohsome client and Naturalness Utility')
 
-    def info(self) -> _Info:
+    def info(self) -> PluginInfo:
         return get_info()
 
     def compute(  # dead: disable
@@ -67,7 +67,7 @@ class OperatorWalkability(BaseOperator[ComputeInputWalkability]):
         aoi: shapely.MultiPolygon,
         aoi_properties: AoiProperties,
         params: ComputeInputWalkability,
-    ) -> list[_Artifact]:
+    ) -> list[Artifact]:
         log.info(f'Handling compute request: {params.model_dump()} in context: {resources}')
 
         artifacts = []

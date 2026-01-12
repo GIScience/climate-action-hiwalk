@@ -1,4 +1,4 @@
-FROM python:3.11.5-bookworm
+FROM python:3.13.5-bookworm
 SHELL ["/bin/bash", "-c"]
 
 ENV PACKAGE_NAME='walkability'

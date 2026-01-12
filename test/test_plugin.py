@@ -1,15 +1,15 @@
 from unittest.mock import patch
 
 import pytest
-from climatoology.base.baseoperator import _Artifact
-from climatoology.base.info import _Info
+from climatoology.base.baseoperator import Artifact
+from climatoology.base.plugin_info import PluginInfo
 
 from test.conftest import filter_start_matcher
 from walkability.core.input import ComputeInputWalkability, WalkabilityIndicators
 
 
 def test_plugin_info_request(operator):
-    assert isinstance(operator.info(), _Info)
+    assert isinstance(operator.info(), PluginInfo)
 
 
 @pytest.fixture
@@ -33,7 +33,7 @@ def test_plugin_compute_request_minimal(
 
     assert len(computed_artifacts) == 6
     for artifact in computed_artifacts:
-        assert isinstance(artifact, _Artifact)
+        assert isinstance(artifact, Artifact)
 
 
 def test_plugin_compute_request_all_optionals(
@@ -73,4 +73,4 @@ def test_plugin_compute_request_all_optionals(
 
     assert len(computed_artifacts) == 12
     for artifact in computed_artifacts:
-        assert isinstance(artifact, _Artifact)
+        assert isinstance(artifact, Artifact)

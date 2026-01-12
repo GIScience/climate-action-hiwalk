@@ -5,17 +5,16 @@ import geopandas as gpd
 import matplotlib
 import pandas as pd
 import plotly.graph_objects as go
-from climatoology.base.artifact import (
-    ContinuousLegendData,
-    create_markdown_artifact,
+from climatoology.base.artifact import ArtifactMetadata, ContinuousLegendData, Legend
+from climatoology.base.artifact_creators import (
     create_plotly_chart_artifact,
+    create_vector_artifact,
 )
-from climatoology.base.baseoperator import _Artifact
+from climatoology.base.baseoperator import Artifact
 from climatoology.base.computation import ComputationResources
+from climatoology.base.exception import ClimatoologyUserError
 from matplotlib.colors import to_hex
 from pydantic_extra_types.color import Color
-
-from walkability.components.utils.misc import create_multicolumn_geojson_artifact
 
 
 def clean_slope_data(slope: pd.Series) -> Tuple[pd.Series, pd.Series]:
@@ -31,22 +30,16 @@ def clean_slope_data(slope: pd.Series) -> Tuple[pd.Series, pd.Series]:
 
 def build_slope_artifact(
     slope: gpd.GeoDataFrame, resources: ComputationResources, cmap_name: str = 'coolwarm'
-) -> _Artifact:
+) -> Artifact:
     if slope.slope.isna().all():
-        text = 'There was an error calculating slope in this computation. Contact the developers for more information.'
-        return create_markdown_artifact(
-            text=text,
-            name='Slope (Error)',
-            tl_dr=text,
-            filename='slope',
-            resources=resources,
-        )
+        raise ClimatoologyUserError('There was an error calculating slope.')
     slope_values, slope_color_values = clean_slope_data(slope.slope)
+    slope['slope_value'] = slope_values
 
     # Define colors and legend
     cmap = matplotlib.colormaps.get(cmap_name)
     cmap.set_under('#808080')
-    color = slope_color_values.apply(lambda v: Color(to_hex(cmap(v))))
+    slope['color'] = slope_color_values.apply(lambda v: Color(to_hex(cmap(v))))
 
     legend = ContinuousLegendData(
         cmap_name=cmap_name,
@@ -59,26 +52,28 @@ def build_slope_artifact(
         },
     )
 
-    return create_multicolumn_geojson_artifact(
-        features=slope.geometry,
-        layer_name='Slope',
-        caption=Path('resources/components/slope/caption.md').read_text(),
-        description=Path('resources/components/slope/description.md').read_text(),
-        label=slope_values.to_list(),
-        color=color.to_list(),
-        extra_columns=[slope['@osmId']],
-        legend_data=legend,
+    return create_vector_artifact(
+        data=slope[['@osmId', 'color', 'slope_values']],
+        metadata=ArtifactMetadata(
+            name='Slope',
+            filename='slope',
+            summary=Path('resources/components/slope/caption.md').read_text(),
+            description=Path('resources/components/slope/description.md').read_text(),
+        ),
+        label='slope_values',
+        legend=Legend(legend_data=legend),
         resources=resources,
-        filename='slope',
     )
 
 
-def build_slope_summary_bar_artifact(aoi_aggregate: go.Figure, resources: ComputationResources) -> _Artifact:
+def build_slope_summary_bar_artifact(aoi_aggregate: go.Figure, resources: ComputationResources) -> Artifact:
     return create_plotly_chart_artifact(
         figure=aoi_aggregate,
-        title='Distribution of Slope Categories',
-        caption='How is the total length of paths distributed across the slope categories?',
+        metadata=ArtifactMetadata(
+            name='Distribution of Slope Categories',
+            summary='How is the total length of paths distributed across the slope categories?',
+            filename='aggregation_aoi_slope_bar',
+            primary=True,
+        ),
         resources=resources,
-        filename='aggregation_aoi_slope_bar',
-        primary=True,
     )

@@ -4,10 +4,10 @@ from typing import List, Tuple
 
 import geopandas as gpd
 import plotly.graph_objects as go
-from climatoology.base.baseoperator import _Artifact
+from climatoology.base.baseoperator import Artifact
 from climatoology.base.computation import ComputationResources
 from climatoology.utility.api import TimeRange
-from climatoology.utility.Naturalness import NaturalnessIndex, NaturalnessUtility
+from climatoology.utility.naturalness import NaturalnessIndex, NaturalnessUtility
 
 from walkability.components.naturalness.naturalness_artifacts import (
     build_naturalness_artifact,
@@ -25,7 +25,7 @@ def naturalness_analysis(
     index: NaturalnessIndex,
     resources: ComputationResources,
     naturalness_utility: NaturalnessUtility,
-) -> list[_Artifact]:
+) -> list[Artifact]:
     log.info('Computing naturalness')
     naturalness_of_paths, naturalness_of_polygons = get_naturalness(
         paths=line_paths, polygons=polygon_paths, index=index, naturalness_utility=naturalness_utility

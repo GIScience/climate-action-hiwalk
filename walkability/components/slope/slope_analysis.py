@@ -7,7 +7,7 @@ import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
 import shapely
-from climatoology.base.baseoperator import _Artifact
+from climatoology.base.baseoperator import Artifact
 from climatoology.base.computation import ComputationResources
 from mobility_tools.ors_settings import ORSSettings
 from pyproj import CRS
@@ -24,7 +24,7 @@ def slope_analysis(
     aoi: shapely.MultiPolygon,
     ors_settings: ORSSettings,
     resources: ComputationResources,
-) -> Tuple[_Artifact, gpd.GeoDataFrame]:
+) -> Tuple[Artifact, gpd.GeoDataFrame]:
     log.info('Computing slope')
     slope = get_slope(paths=line_paths, aoi=aoi, ors_settings=ors_settings)
     slope_artifact = build_slope_artifact(slope=slope, resources=resources)

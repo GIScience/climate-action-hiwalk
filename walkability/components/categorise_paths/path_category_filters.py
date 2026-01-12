@@ -4,6 +4,7 @@ from walkability.components.utils.misc import safe_string_to_float
 
 
 class PathCategoryFilters:
+    # TODO instantiating this class over and over for filtering in an apply is a bad idea, think about how to store the necessary data without re-instantiating it on every check
     def __init__(self, tags: dict, speed_category_max: Dict[str, float] = None):
         # Potential: potentially walkable features (to be restricted by AND queries)
         self._potential_highway_values = (

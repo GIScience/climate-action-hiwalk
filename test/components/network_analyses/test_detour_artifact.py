@@ -2,7 +2,7 @@ import geopandas as gpd
 import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
-from climatoology.base.artifact import _Artifact
+from climatoology.base.artifact_creators import Artifact
 from pydantic_extra_types.color import Color
 
 from walkability.components.network_analyses.detour_analysis import (
@@ -27,7 +27,7 @@ def test_build_detour_factor_artifact(default_polygon_geometry, compute_resource
 
     artifact = build_detour_factor_artifact(test_detour_df, compute_resources)
 
-    assert isinstance(artifact, _Artifact)
+    assert isinstance(artifact, Artifact)
 
 
 def test_apply_detour_color_and_label(default_polygon_geometry):

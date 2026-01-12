@@ -4,7 +4,7 @@ import geopandas as gpd
 import numpy as np
 import pandas as pd
 import shapely
-from climatoology.base.artifact import _Artifact, create_geojson_artifact
+from climatoology.base.artifact_creators import Artifact, ArtifactMetadata, Legend, create_vector_artifact
 from climatoology.base.computation import ComputationResources
 from mobility_tools.ors_settings import ORSSettings
 from ohsome import OhsomeClient
@@ -25,7 +25,7 @@ def compute_comfort_artifacts(
     ohsome_client: OhsomeClient,
     ors_settings: ORSSettings,
     resources: ComputationResources,
-) -> list[_Artifact]:
+) -> list[Artifact]:
     artifacts = []
     for poi_type in [PointsOfInterest.DRINKING_WATER, PointsOfInterest.SEATING]:
         log.debug(f'Computing Comfort for {poi_type}')
@@ -59,13 +59,14 @@ def compute_comfort_artifacts(
 
 
 def build_isodistance_artifact(
+    # TODO write test for this function
     resources: ComputationResources,
     data: gpd.GeoDataFrame,
     poi_type: PointsOfInterest,
     bins: list[int],
     max_walking_distance: float,
     max_isochrone_request: int,
-) -> _Artifact:
+) -> Artifact:
     log.debug('Building isodistance artifact')
     cleaned_data = clean_data(data, max_walking_distance, min_value=min(bins), poi_type=poi_type)
 
@@ -75,18 +76,20 @@ def build_isodistance_artifact(
         legend_color = cleaned_data.loc[cleaned_data['label'] == label, 'color'].mode().loc[0]
         legend.update({label: legend_color})
 
-    return create_geojson_artifact(
-        features=data.geometry,
-        layer_name=f'Distance to {poi_type.value.title()}',
-        caption=f'How far is it to {poi_type.value.capitalize()}?',
-        description=f'If there are fewer than {max_isochrone_request} {poi_type.value.title()} in the area of interest,'
-        f'actual walking distances are computed. Otherwise, straight line distances are used.',
-        color=cleaned_data['color'].to_list(),
-        label=cleaned_data['label'].to_list(),
-        legend_data=legend,
+    return create_vector_artifact(
+        data=cleaned_data,
+        metadata=ArtifactMetadata(
+            name=f'Distance to {poi_type.value.title()}',
+            summary=f'How far is it to {poi_type.value.capitalize()}?',
+            description=f'If there are fewer than {max_isochrone_request} {poi_type.value.title()} in the area of interest,'
+            f'actual walking distances are computed. Otherwise, straight line distances are used.',
+            filename=f'isodistance_{poi_type.value.replace(" ", "_")}',
+            tags={Topics.COMFORT},
+        ),
         resources=resources,
-        filename=f'isodistance_{poi_type.value.replace(" ", "_")}',
-        tags={Topics.COMFORT},
+        legend=Legend(
+            legend_data=legend,
+        ),
     )
 
 

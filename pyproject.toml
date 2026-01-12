@@ -1,13 +1,16 @@
-[tool.poetry]
+[project]
 name = "walkability"
 version = "3.0.3"
 description = "The Walkability plugin"
-authors = ["Moritz Schott <moritz.schott@heigit.org>", "Maciej Adamiak <maciej.adamiak@heigit.org>"]
+authors = [{name="Moritz Schott", email="moritz.schott@heigit.org"}, {name="Maciej Adamiak", email="maciej.adamiak@heigit.org"}, {name="Emily C. Wilke", email="emily.wilke@heigit.org"}]
 readme = "README.md"
 
+[project.urls]
+repository = "https://gitlab.heigit.org/climate-action/plugins/bikeability"
+
 [tool.poetry.dependencies]
-python = "~3.11.5"
-climatoology = { git = "ssh://git@gitlab.heigit.org:2022/climate-action/climatoology.git", tag = "6.4.4" }
+python = "~3.13.5"
+climatoology = {git = "ssh://git@gitlab.heigit.org:2022/climate-action/climatoology.git", rev = "7.0.0"}
 pydantic = "2.12.5"
 pydantic-settings = "^2.1.0"
 shapely = "^2.0.2"
