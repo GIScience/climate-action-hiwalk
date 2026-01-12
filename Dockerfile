@@ -3,7 +3,7 @@ SHELL ["/bin/bash", "-c"]
 
 ENV PACKAGE_NAME='walkability'
 
-RUN pip install --no-cache-dir poetry==1.8.2
+RUN pip install --no-cache-dir poetry==2.1.2
 
 COPY pyproject.toml poetry.lock ./
 
