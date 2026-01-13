@@ -12,7 +12,7 @@ log = logging.getLogger(__name__)
 
 def init_plugin(initialised_settings: Settings, initialised_ors_settings: ORSSettings) -> int | None:
     naturalness_utility = NaturalnessUtility(
-        base_url=f'http://{initialised_settings.naturalness_host}{initialised_settings.naturalness_path}',
+        base_url=f'http://{initialised_settings.naturalness_host}:{initialised_settings.naturalness_port}{initialised_settings.naturalness_path}',
     )
 
     operator = OperatorWalkability(naturalness_utility=naturalness_utility, ors_settings=initialised_ors_settings)
