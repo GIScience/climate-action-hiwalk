@@ -19,7 +19,7 @@ def test_assign_color(default_max_walking_distance_map):
     )
     received = assign_color(data, poi_type=poi, max_walking_distance=max_walking_distance, min_value=0.0)
 
-    assert received['color'].to_list() == [Color('brown'), Color('#f2cbb7'), Color('red')]
+    assert received['color'].to_list() == [Color('black'), Color('#f2cbb7'), Color('red')]
 
 
 def test_assign_label(default_max_walking_distance_map):
