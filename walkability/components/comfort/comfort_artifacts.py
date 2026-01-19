@@ -111,7 +111,7 @@ def assign_color(
     )
     match poi_type:
         case PointsOfInterest.SEATING:
-            point_color = Color('brown')
+            point_color = Color('black')
         case PointsOfInterest.DRINKING_WATER:
             point_color = Color('darkblue')
         case _:
