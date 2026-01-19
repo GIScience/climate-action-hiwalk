@@ -7,6 +7,9 @@ and this project mostly adheres to [Semantic Versioning](https://semver.org/spec
 
 ## [Unreleased](https://gitlab.heigit.org/climate-action/plugins/walkability/-/compare/3.0.3...main)
 
+### Changed
+- Naturalness vector artifact is renamed to "Path Greenness" ([#283](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/283))
+
 ## [3.0.3](https://gitlab.heigit.org/climate-action/plugins/walkability/-/releases/3.0.3) - 2025-10-29
 
 ### Added
