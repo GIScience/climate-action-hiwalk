@@ -54,7 +54,7 @@ def build_naturalness_artifact(
     return create_vector_artifact(
         data=naturalness_locations,
         metadata=ArtifactMetadata(
-            name='Greenness',
+            name='Path Greenness',
             summary=Path('resources/components/naturalness/caption.md').read_text(),
             description=Path('resources/components/naturalness/description.md').read_text(),
             filename='path_greenness',
