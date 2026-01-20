@@ -32,7 +32,7 @@ def distance_enrich_paths(
         paths['value'] = numpy.nan
 
         log.debug(f'No POIs of {poi_type} in this area, returning paths unchanged')
-        return paths
+        return paths[['@osmId', '@other_tags', 'value', 'geometry']]
     pois['value'] = 0.0
 
     isochrones = generate_isochrones(pois.geometry, bins, ors_settings)
