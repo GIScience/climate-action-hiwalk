@@ -255,6 +255,7 @@ def default_polygon_geometry() -> shapely.Polygon:
 def default_path(default_path_geometry) -> gpd.GeoDataFrame:
     return gpd.GeoDataFrame(
         data={
+            '@osmId': ['test'],
             'category': [PathCategory.DESIGNATED],
             'rating': [1.0],
             '@other_tags': [{}],
