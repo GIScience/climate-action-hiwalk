@@ -2,7 +2,6 @@ from pathlib import Path
 
 import geopandas as gpd
 import matplotlib
-import pandas as pd
 import plotly.graph_objects as go
 from climatoology.base.artifact import ContinuousLegendData
 from climatoology.base.artifact_creators import (
@@ -21,12 +20,10 @@ from walkability.components.utils.misc import Topics
 
 
 def build_naturalness_artifact(
-    naturalness_line_paths: gpd.GeoDataFrame,
-    naturalness_polygon_paths: gpd.GeoDataFrame,
+    naturalness_locations: gpd.GeoDataFrame,
     resources: ComputationResources,
     cmap_name: str = 'YlGn',
 ) -> Artifact:
-    naturalness_locations = pd.concat([naturalness_line_paths, naturalness_polygon_paths], ignore_index=True)
     # If no good data is returned (e.g. due to an error), return a text artifact with a simple message
     if naturalness_locations['naturalness'].isna().all():
         raise ClimatoologyUserError(
