@@ -31,6 +31,10 @@ def test_get_naturalness(operator, naturalness_utility_mock):
     computed_naturalness = get_naturalness(
         paths=paths, polygons=polygons, index=NaturalnessIndex.NDVI, naturalness_utility=operator.naturalness_utility
     )
+    computed_paths = computed_naturalness.loc[computed_naturalness.geometry.type == 'LineString'].drop_duplicates(
+        subset='geometry'
+    )
+
     expected_naturalness = gpd.GeoDataFrame(
         index=[1, 2],
         geometry=[
@@ -41,7 +45,9 @@ def test_get_naturalness(operator, naturalness_utility_mock):
         crs=CRS.from_epsg(4326),
     )
 
-    gpd.testing.assert_geodataframe_equal(computed_naturalness[0], expected_naturalness, check_like=True)
+    gpd.testing.assert_geodataframe_equal(
+        computed_paths.reset_index(drop=True), expected_naturalness.reset_index(drop=True), check_like=True
+    )
 
 
 def test_fetch_naturalness_vectordata(naturalness_utility_mock):
@@ -86,7 +92,7 @@ def test_summarise_naturalness(default_path_geometry, default_polygon_geometry):
         },
         crs='EPSG:4326',
     )
-    bar_chart = summarise_naturalness(paths=input_paths)
+    bar_chart = summarise_naturalness(naturalness=input_paths)
 
     assert isinstance(bar_chart, go.Figure)
     assert bar_chart['data'][0]['x'] == ('Medium (0.3 to 0.6)',)

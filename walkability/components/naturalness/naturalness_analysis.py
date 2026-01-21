@@ -1,8 +1,9 @@
 import datetime as dt
 import logging
-from typing import List, Tuple
+from typing import List
 
 import geopandas as gpd
+import pandas as pd
 import plotly.graph_objects as go
 from climatoology.base.baseoperator import Artifact
 from climatoology.base.computation import ComputationResources
@@ -27,13 +28,13 @@ def naturalness_analysis(
     naturalness_utility: NaturalnessUtility,
 ) -> list[Artifact]:
     log.info('Computing naturalness')
-    naturalness_of_paths, naturalness_of_polygons = get_naturalness(
+    naturalness = get_naturalness(
         paths=line_paths, polygons=polygon_paths, index=index, naturalness_utility=naturalness_utility
     )
-    naturalness_artifact = build_naturalness_artifact(naturalness_of_paths, naturalness_of_polygons, resources)
+    naturalness_artifact = build_naturalness_artifact(naturalness, resources)
     log.info('Finished computing Naturalness')
 
-    naturalness_summary_bar = summarise_naturalness(paths=naturalness_of_paths)
+    naturalness_summary_bar = summarise_naturalness(naturalness)
     naturalness_summary_bar_artifact = build_naturalness_summary_bar_artifact(
         aoi_aggregate=naturalness_summary_bar, resources=resources
     )
@@ -45,7 +46,7 @@ def get_naturalness(
     polygons: gpd.GeoDataFrame,
     index: NaturalnessIndex,
     naturalness_utility: NaturalnessUtility,
-) -> Tuple[gpd.GeoDataFrame, gpd.GeoDataFrame]:
+) -> gpd.GeoDataFrame:
     """
     Get NDVI along street within the AOI.
 
@@ -54,19 +55,26 @@ def get_naturalness(
     :param paths:
     :return: RasterInfo objects with NDVI values along streets and places
     """
-    paths_ndvi = fetch_naturalness_by_vector(
-        naturalness_utility=naturalness_utility,
-        time_range=TimeRange(end_date=dt.datetime.now().replace(day=1).date()),
-        vectors=[paths.geometry],
-        index=index,
-    )
-    polygons_ndvi = fetch_naturalness_by_vector(
-        naturalness_utility=naturalness_utility,
-        time_range=TimeRange(end_date=dt.datetime.now().replace(day=1).date()),
-        vectors=[polygons.geometry],
-        index=index,
-    )
-    return paths_ndvi, polygons_ndvi
+    naturalness = []
+    if not paths.empty:
+        paths_ndvi = fetch_naturalness_by_vector(
+            naturalness_utility=naturalness_utility,
+            time_range=TimeRange(end_date=dt.datetime.now().replace(day=1).date()),
+            vectors=[paths.geometry],
+            index=index,
+        )
+        naturalness.append(paths_ndvi)
+
+    if not polygons.empty:
+        polygons_ndvi = fetch_naturalness_by_vector(
+            naturalness_utility=naturalness_utility,
+            time_range=TimeRange(end_date=dt.datetime.now().replace(day=1).date()),
+            vectors=[polygons.geometry],
+            index=index,
+        )
+        naturalness.append(polygons_ndvi)
+    naturalness_all: gpd.GeoDataFrame = pd.concat(naturalness)
+    return naturalness_all
 
 
 def fetch_naturalness_by_vector(
@@ -90,10 +98,11 @@ def fetch_naturalness_by_vector(
 
 
 def summarise_naturalness(
-    paths: gpd.GeoDataFrame,
+    naturalness: gpd.GeoDataFrame,
     length_resolution_m: int = 1000,
 ) -> go.Figure:
     log.info('Summarising naturalness stats')
+    paths = naturalness[naturalness.geometry.geom_type == 'LineString']
     stats = calculate_length(length_resolution_m, paths, paths.estimate_utm_crs())
 
     # Categorize naturalness values and set negative values (e.g. water) to 0

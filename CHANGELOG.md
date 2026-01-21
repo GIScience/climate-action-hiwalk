@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project mostly adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased](https://gitlab.heigit.org/climate-action/plugins/walkability/-/compare/3.0.3...main)
+- Skip naturalness request for data with empty geometries ([#280](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/280))
 
 ### Changed
 - Naturalness vector artifact is renamed to "Path Greenness" ([#283](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/283))
