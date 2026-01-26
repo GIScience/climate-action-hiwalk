@@ -25,13 +25,13 @@ class Topics(StrEnum):
 
 
 class PathCategory(Enum):
-    DESIGNATED = 'Designated'
-    DESIGNATED_SHARED_WITH_BIKES = 'Shared with bikes'
-    SHARED_WITH_MOTORIZED_TRAFFIC_LOW_SPEED = 'Shared with cars up to 15 km/h'
-    SHARED_WITH_MOTORIZED_TRAFFIC_MEDIUM_SPEED = 'Shared with cars up to 30 km/h'
-    SHARED_WITH_MOTORIZED_TRAFFIC_HIGH_SPEED = 'Shared with cars up to 50 km/h'
-    SHARED_WITH_MOTORIZED_TRAFFIC_VERY_HIGH_SPEED = 'Shared with cars above 50 km/h'
-    SHARED_WITH_MOTORIZED_TRAFFIC_UNKNOWN_SPEED = 'Shared with cars of unknown speed'
+    DESIGNATED = 'Pedestrians Exclusive'
+    DESIGNATED_SHARED_WITH_BIKES = 'Bikes'
+    SHARED_WITH_MOTORIZED_TRAFFIC_LOW_SPEED = 'Cars up to 15 km/h'
+    SHARED_WITH_MOTORIZED_TRAFFIC_MEDIUM_SPEED = 'Cars up to 30 km/h'
+    SHARED_WITH_MOTORIZED_TRAFFIC_HIGH_SPEED = 'Cars up to 50 km/h'
+    SHARED_WITH_MOTORIZED_TRAFFIC_VERY_HIGH_SPEED = 'Cars above 50 km/h'
+    SHARED_WITH_MOTORIZED_TRAFFIC_UNKNOWN_SPEED = 'Cars of unknown speed'
     INACCESSIBLE = 'No access'
     UNKNOWN = 'Unknown'
 

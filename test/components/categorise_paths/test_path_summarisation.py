@@ -159,7 +159,7 @@ def test_summarise_by_area_two_types(operator, default_aoi, responses_mock, defa
         ohsome_client=operator.ohsome,
     )
 
-    assert all(chart['data'][0]['name'] == 'Designated' for _, chart in computed_charts.items())
+    assert all(chart['data'][0]['name'] == 'Pedestrians Exclusive' for _, chart in computed_charts.items())
     assert all(chart['data'][1]['name'] == 'Unknown' for _, chart in computed_charts.items())
 
 
@@ -187,8 +187,8 @@ def test_summarise_by_area_order_by_category_rating(operator, default_aoi, respo
         ohsome_client=operator.ohsome,
     )
 
-    assert all(chart['data'][0]['name'] == 'Shared with bikes' for _, chart in computed_charts.items())
-    assert all(chart['data'][1]['name'] == 'Designated' for _, chart in computed_charts.items())
+    assert all(chart['data'][0]['name'] == 'Bikes' for _, chart in computed_charts.items())
+    assert all(chart['data'][1]['name'] == 'Pedestrians Exclusive' for _, chart in computed_charts.items())
     assert all(chart['data'][2]['name'] == 'Unknown' for _, chart in computed_charts.items())
 
 
@@ -229,6 +229,7 @@ def test_summarise_aoi_unknown(default_path_geometry):
 
     assert isinstance(category_stacked_bar_chart, go.Figure)
     assert isinstance(quality_stacked_bar_chart, go.Figure)
+
     assert category_stacked_bar_chart['data'][0]['y'] == ('Path Types',)
     assert category_stacked_bar_chart['data'][0]['x'] == (50,)
     assert quality_stacked_bar_chart['data'][0]['y'] == ('Surface Quality Types',)

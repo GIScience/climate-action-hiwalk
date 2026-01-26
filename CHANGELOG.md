@@ -20,6 +20,7 @@ and this project mostly adheres to [Semantic Versioning](https://semver.org/spec
 - Detour Factors are now calculated from the mobility-tools library
 - Detour Factors now only display bad areas ([#253](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/253))
 - Updated the color of "benches" to make it more visible on the map ([#275](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/275))
+- Rename path categories and related artifact titles for better clarity, aligning with hiBike.
 
 ### Fixed
 - Fail Comfort Factors without failing the complete plugin ([#269](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/269))

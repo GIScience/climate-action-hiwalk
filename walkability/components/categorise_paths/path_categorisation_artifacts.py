@@ -90,7 +90,7 @@ def build_walkable_paths_artifact(
     return create_vector_artifact(
         data=walkable_paths[['@osmId', 'color', 'label', 'geometry']],
         metadata=ArtifactMetadata(
-            name='Path Category',
+            name='Path Categories',
             summary=Path(
                 'resources/components/categorise_paths/path_categorisation_caption.md',
             ).read_text(),
@@ -101,7 +101,7 @@ def build_walkable_paths_artifact(
             tags={Topics.TRAFFIC},
         ),
         resources=resources,
-        legend=Legend(legend_data=get_path_rating_legend()),
+        legend=Legend(title='Who Shares This Path with Me?', legend_data=get_path_rating_legend()),
     )
 
 
@@ -205,7 +205,8 @@ def build_areal_summary_artifacts(
             figure=figure,
             metadata=ArtifactMetadata(
                 name=f'Distribution of Path Categories in {region}',
-                summary=f'How is the total length of paths distributed across the path categories in {region}?',
+                summary=f'How is the total length of paths distributed across the path categories in {region}? '
+                f'Each category indicates with which other road users pedestrians share the path.',
                 primary=False,
                 filename=f'path_category_summary_{sanitized_region}',
                 tags={Topics.SUMMARY, Topics.TRAFFIC},
@@ -223,7 +224,8 @@ def build_aoi_summary_category_stacked_bar_artifact(
         figure=aoi_aggregate,
         metadata=ArtifactMetadata(
             name='Distribution of Path Categories',
-            summary='How is the total length of paths distributed across the path categories?',
+            summary='How is the total length of paths distributed across the path categories? '
+            'Each category indicates with which other road users pedestrians share the path.',
             filename='aggregation_aoi_category_stacked_bar',
             primary=True,
             tags={Topics.SUMMARY, Topics.TRAFFIC},
