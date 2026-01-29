@@ -5,25 +5,25 @@ description = "The Walkability plugin"
 authors = [{name="Moritz Schott", email="moritz.schott@heigit.org"}, {name="Maciej Adamiak", email="maciej.adamiak@heigit.org"}, {name="Emily C. Wilke", email="emily.wilke@heigit.org"}]
 readme = "README.md"
 
+requires-python = ">=3.13.5,<3.14"
+dependencies = [
+    "climatoology @ git+https://gitlab.heigit.org/climate-action/climatoology.git@7.0.2",
+    "pydantic (>=2.12.5,<3.0.0)",
+    "pydantic-settings (>=2.1.0,<3.0.0)",
+    "shapely (>=2.0.2,<3.0.0)",
+    "pyyaml (>=6.0.1,<7.0.0)",
+    "ohsome (>=0.4.0,<1.0.0)",
+    "matplotlib (>=3.8.3,<4.0.0)",
+    "pytest (>=9.0.0,<10.0.0)",
+    "openrouteservice (>=2.3.3,<3.0.0)",
+    "h3pandas (>=0.3.0,<1.0.0)",
+    "requests-ratelimiter (>=0.7.0,<1.0.0)",
+    "numpy (>=2.3.3,<3.0.0)",
+    "mobility-tools @ git+https://gitlab.heigit.org/climate-action/utilities/mobility-tools.git@1.0.3",
+]
+
 [project.urls]
 repository = "https://gitlab.heigit.org/climate-action/plugins/bikeability"
-
-[tool.poetry.dependencies]
-python = "~3.13.5"
-climatoology = {git = "ssh://git@gitlab.heigit.org:2022/climate-action/climatoology.git", rev = "7.0.0"}
-pydantic = "2.12.5"
-pydantic-settings = "^2.1.0"
-shapely = "^2.0.2"
-pyyaml = "^6.0.1"
-ohsome = "^0.4.0"
-matplotlib = "^3.8.3"
-pytest = "^9.0.0"
-openrouteservice = "^2.3.3"
-h3pandas = "^0.3.0"
-requests-ratelimiter = "^0.7.0"
-numpy = "^2.3.3"
-mobility-tools = {git = "ssh://git@gitlab.heigit.org:2022/climate-action/utilities/mobility-tools.git", rev = "1.0.3"}
-
 
 [tool.poetry.group.test.dependencies]
 approvaltests = "^16.0.0"
