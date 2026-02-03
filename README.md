@@ -77,20 +77,30 @@ If the [infrastructure](https://gitlab.heigit.org/climate-action/infrastructure)
 copy [.env.base_template](.env.base_template) to `.env.base` and then run
 
 ```shell
-docker build --secret id=CI_JOB_TOKEN . --tag heigit/ca-walkability:devel
+docker build . --tag repo.heigit.org/climate-action/walkability:devel
 docker run --env-file .env.base --network=host heigit/ca-walkability:devel
 ```
-
-Make sure your git access token is copied to the text-file named `CI_JOB_TOKEN` that is mounted to the container build
-process as secret.
 
 To deploy this plugin to the central docker repository run
 
 ```shell
-docker build --secret id=CI_JOB_TOKEN . --tag heigit/ca-walkability:devel
+docker build . --tag repo.heigit.org/climate-action/walkability:devel
 docker image push heigit/ca-walkability:devel
 ```
 
 
 To mimic the build behaviour of the CI you have to add `--build-arg CI_COMMIT_SHORT_SHA=$(git rev-parse --short HEAD)`
 to the above command.
+
+#### Canary
+
+To build a canary version update your `climatoology` dependency declaration to point to the `main` branch and update
+your lock file (`poetry update climatoology`).
+Then run
+
+```shell
+docker build . \
+  --build-arg CI_COMMIT_SHORT_SHA=$(git rev-parse --short HEAD) \
+  --tag repo.heigit.org/climate-action/walkability:canary \
+  --push
+```
