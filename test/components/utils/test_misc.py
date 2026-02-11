@@ -1,5 +1,8 @@
+from unittest.mock import patch
+
 import geopandas as gpd
 import geopandas.testing
+import ohsome
 import pandas as pd
 import pytest
 import shapely
@@ -7,6 +10,7 @@ from approvaltests import verify
 from approvaltests.namer import NamerFactory
 from climatoology.base.exception import ClimatoologyUserError
 from ohsome import OhsomeClient
+from ohsome.exceptions import OhsomeException
 from pandas.testing import assert_series_equal
 from pydantic_extra_types.color import Color
 
@@ -36,6 +40,23 @@ def test_fetch_osm_data(expected_compute_input, default_aoi, responses_mock):
     )
     computed_osm_data = fetch_osm_data(default_aoi, 'dummy=yes', OhsomeClient())
     geopandas.testing.assert_geodataframe_equal(computed_osm_data, expected_osm_data, check_like=True)
+
+
+class MockPostClient:
+    def post(self, **kwags):
+        raise OhsomeException('test: Broken Response', error_code=500)
+
+
+class MockElements:
+    @property
+    def geometry(self):
+        return MockPostClient()
+
+
+@patch.object(ohsome.OhsomeClient, attribute='elements', new=MockElements())
+def test_fetch_osm_data_ohsome_error(default_aoi):
+    with pytest.raises(ClimatoologyUserError):
+        fetch_osm_data(default_aoi, 'dummy=yes', OhsomeClient())
 
 
 def test_generate_colors():

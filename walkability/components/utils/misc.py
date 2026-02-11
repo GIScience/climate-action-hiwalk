@@ -9,6 +9,7 @@ import pandas as pd
 import shapely
 from climatoology.base.exception import ClimatoologyUserError
 from ohsome import OhsomeClient
+from ohsome.exceptions import OhsomeException
 from pydantic_extra_types.color import Color
 
 log = logging.getLogger(__name__)
@@ -127,9 +128,16 @@ SURFACE_TYPE_RATING_MAP = {
 
 
 def fetch_osm_data(aoi: shapely.MultiPolygon, osm_filter: str, ohsome: OhsomeClient) -> gpd.GeoDataFrame:
-    elements = ohsome.elements.geometry.post(
-        bpolys=aoi, clipGeometry=True, properties='tags', filter=osm_filter
-    ).as_dataframe()
+    try:
+        elements = ohsome.elements.geometry.post(
+            bpolys=aoi, clipGeometry=True, properties='tags', filter=osm_filter
+        ).as_dataframe()
+    except OhsomeException as e:
+        if e.error_code in [500, 501, 502, 503, 507]:
+            raise ClimatoologyUserError('There was an error collecting OSM data. Please try again later.')
+        else:
+            raise e
+
     elements = elements.reset_index(drop=False)
     return elements[['@osmId', 'geometry', '@other_tags']]
 
