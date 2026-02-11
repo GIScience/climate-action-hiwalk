@@ -17,7 +17,6 @@ dependencies = [
     "pytest (>=9.0.0,<10.0.0)",
     "openrouteservice (>=2.3.3,<3.0.0)",
     "h3pandas (>=0.3.0,<1.0.0)",
-    "requests-ratelimiter (>=0.7.0,<1.0.0)",
     "numpy (>=2.3.3,<3.0.0)",
     "mobility-tools @ git+https://gitlab.heigit.org/climate-action/utilities/mobility-tools.git@1.0.3",
 ]
