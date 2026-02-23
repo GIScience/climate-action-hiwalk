@@ -5,12 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project mostly adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://gitlab.heigit.org/climate-action/plugins/walkability/-/compare/3.0.3...main)
+## [Unreleased](https://gitlab.heigit.org/climate-action/plugins/walkability/-/compare/3.0.4...main)
+
+## [3.0.4](https://gitlab.heigit.org/climate-action/plugins/walkability/-/releases/3.0.4) - 2026-02-23
+
+### Fixed
 - Skip naturalness request for data with empty geometries ([#280](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/280))
 
 ### Changed
 - Naturalness vector artifact is renamed to "Path Greenness" ([#283](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/283))
 - Raise a `ClimatoologyUserError` if there's an error with Ohsome ([#287](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/287))
+- Updated climatoology to version 7.0.3
 
 ### Removed
 - all the shenanigans around accessing a private climatoology repository because that is now public
