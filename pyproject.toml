@@ -25,9 +25,9 @@ dependencies = [
 repository = "https://gitlab.heigit.org/climate-action/plugins/bikeability"
 
 [tool.poetry.group.test.dependencies]
-approvaltests = "^17.0.0"
+approvaltests = "17.2.0"
 pytest-approvaltests = "^0.2.4"
-responses = "^0.25.0"
+responses = "^0.26.0"
 pytest-cov = "^7.0.0"
 vcrpy = {version = "^8.0.0", markers = "platform_python_implementation !='PyPy'"}  # https://github.com/kevin1024/vcrpy/issues/880
 
