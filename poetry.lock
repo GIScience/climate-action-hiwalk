@@ -10,7 +10,6 @@ groups = ["main"]
 files = [
     {file = "aenum-3.1.16-py2-none-any.whl", hash = "sha256:7810cbb6b4054b7654e5a7bafbe16e9ee1d25ef8e397be699f63f2f3a5800433"},
     {file = "aenum-3.1.16-py3-none-any.whl", hash = "sha256:9035092855a98e41b66e3d0998bd7b96280e85ceb3a04cc035636138a1943eaf"},
-    {file = "aenum-3.1.16.tar.gz", hash = "sha256:bfaf9589bdb418ee3a986d85750c7318d9d2839c1b1a1d6fe8fc53ec201cf140"},
 ]
 
 [[package]]
@@ -128,31 +127,31 @@ files = [
 
 [[package]]
 name = "approval-utilities"
-version = "17.2.0"
+version = "17.2.1"
 description = "Utilities for your production code that work well with approvaltests"
 optional = false
 python-versions = ">=3.8"
 groups = ["test"]
 files = [
-    {file = "approval_utilities-17.2.0-py3-none-any.whl", hash = "sha256:5b7b4ba4ed364beb33b10425f6a8e0a75816fb1dae7e61eb6df1e43cb96c3eec"},
-    {file = "approval_utilities-17.2.0.tar.gz", hash = "sha256:c8aa6494946811a89bf5d3292f9c39ad9b4b7e66ef78e5898e57e9401a6283fb"},
+    {file = "approval_utilities-17.2.1-py3-none-any.whl", hash = "sha256:ab4717ecef9d048ec16b81e20db6d757c527fb6708112c4072773ba7703f5f54"},
+    {file = "approval_utilities-17.2.1.tar.gz", hash = "sha256:5e7bda5af11b6ed9e3828ec389c52ad57f5e9bcb928a787bade309a335b7122a"},
 ]
 
 [[package]]
 name = "approvaltests"
-version = "17.2.0"
+version = "17.2.1"
 description = "Assertion/verification library to aid testing"
 optional = false
 python-versions = ">=3.8"
 groups = ["test"]
 files = [
-    {file = "approvaltests-17.2.0-py3-none-any.whl", hash = "sha256:1f829865f0cf6d7a7d0adc9eee0fa42181408d51984ad4664e5454f5ac081be6"},
-    {file = "approvaltests-17.2.0.tar.gz", hash = "sha256:a2dc356268cfba388d188367230d7af8387925718c742374db22369ea412f163"},
+    {file = "approvaltests-17.2.1-py3-none-any.whl", hash = "sha256:50620958117a9a896ef8bece4165b433d6b922b32599d55b57d30b097e3b0aeb"},
+    {file = "approvaltests-17.2.1.tar.gz", hash = "sha256:59e35b5e3238ced7a77b440619b895b4f8cf179405ead6fbb06f9e5ac2648935"},
 ]
 
 [package.dependencies]
 allpairspy = ">=2.1.0"
-approval_utilities = "17.2.0"
+approval_utilities = "17.2.1"
 beautifulsoup4 = ">=4.4.0"
 empty-files = ">=0.0.3"
 mock = ">=5.1.0"
@@ -3744,20 +3743,23 @@ url = ["furl (>=0.4.1)"]
 
 [[package]]
 name = "testfixtures"
-version = "10.0.0"
+version = "11.0.0"
 description = "A collection of helpers and mock objects for unit tests and doc tests."
 optional = false
 python-versions = ">=3.11"
 groups = ["test"]
 files = [
-    {file = "testfixtures-10.0.0-py3-none-any.whl", hash = "sha256:c54ed5c4cd93ad271a6add94a575a5843964ea3aaf590f4c3cb4df16a261b15f"},
-    {file = "testfixtures-10.0.0.tar.gz", hash = "sha256:2b9829bf7f42f0ca8600250762e6725575da59af18d9a7f82aae2c97b14f0f66"},
+    {file = "testfixtures-11.0.0-py3-none-any.whl", hash = "sha256:371385596e87388469f2635decba00619cc416cd034671ecde8a059f6625634e"},
+    {file = "testfixtures-11.0.0.tar.gz", hash = "sha256:06dfeb3792e06c4ea7217e14114391f6c7735c36e0a57e6f4641c6ae5d790ee7"},
 ]
 
 [package.extras]
-build = ["setuptools-git", "twine", "wheel"]
-docs = ["django", "furo", "sphinx", "sybil (>=6)", "twisted"]
-test = ["django", "django-stubs", "mypy", "mypy-zope", "pytest (>=7.1)", "pytest-cov", "pytest-django", "sybil (>=6)", "twisted", "types-mock"]
+django = ["django (>=4) ; python_version < \"3.13\"", "django (>=5.1.3) ; python_version >= \"3.13\""]
+mock-backport = ["mock (>=4.0.3)"]
+sybil = ["sybil (>=6.0.3)"]
+toml = ["tomlkit (>=0.10.0)"]
+twisted = ["twisted (>=22.1)"]
+yaml = ["pyyaml (>=6.0.3)"]
 
 [[package]]
 name = "tifffile"
@@ -4141,4 +4143,4 @@ dev = ["pytest", "setuptools"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.13.5,<3.14"
-content-hash = "631250a750db49f7851afba6ed79dc6804adbfec084f77c32c5dc6a4279b6196"
+content-hash = "4a216116525808013f68068c41c3457786595d75ad111c0fe225776d9e605130"
