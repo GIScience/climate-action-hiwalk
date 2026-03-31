@@ -1,14 +1,17 @@
 import geopandas as gpd
+import responses
 import shapely
 from approvaltests import verify
 from geopandas.testing import assert_geodataframe_equal
 from ohsome import OhsomeClient
+from responses.registries import OrderedRegistry
 from shapely import LineString, Point
 
 from walkability.components.comfort.benches_and_drinking_water import (
     PointsOfInterest,
     apply_isochrones_to_paths,
     distance_enrich_paths,
+    real_isochrones,
     request_pois,
 )
 
@@ -143,3 +146,32 @@ def test_apply_isochrones_to_paths():
     received = apply_isochrones_to_paths(isos, paths=paths)
 
     assert_geodataframe_equal(received, expected_result)
+
+
+def test_real_isochrones_one_bin_failure(default_ors_settings):
+    ors_settings_low_batch = default_ors_settings.copy()
+    ors_settings_low_batch.ors_isochrone_max_batch_size = 1
+
+    pois = gpd.GeoSeries.from_xy(x=list(range(3)), y=list(range(3)), crs=4326)
+
+    with open('test/resources/test_real_isochrones.json') as file:
+        working_isochrones = file.read()
+
+    with responses.RequestsMock(registry=OrderedRegistry) as mock:
+        mock.post(
+            'http://localhost:8080/ors/v2/isochrones/foot-walking/geojson',
+            json={
+                'error': {'code': 3099, 'message': 'Unable to build an isochrone map.'},
+            },
+            status=500,
+        )
+
+        mock.post(
+            'http://localhost:8080/ors/v2/isochrones/foot-walking/geojson',
+            body=working_isochrones,
+        )
+        mock.post('http://localhost:8080/ors/v2/isochrones/foot-walking/geojson', body=working_isochrones)
+
+        received = real_isochrones(pois=pois, bins=[0, 1, 2], ors_settings=ors_settings_low_batch)
+
+        verify(received.to_json(indent=2))

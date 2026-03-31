@@ -7,6 +7,9 @@ and this project mostly adheres to [Semantic Versioning](https://semver.org/spec
 
 ## [Unreleased](https://gitlab.heigit.org/climate-action/plugins/walkability/-/compare/3.0.4...main)
 
+### Fixed
+- Introduce fall back to buffers for individual failed isochrone computations in comfort artifacts ([#293](https://gitlab.heigit.org/climate-action/plugins/walkability/-/work_items/293))
+
 ## [3.0.4](https://gitlab.heigit.org/climate-action/plugins/walkability/-/releases/3.0.4) - 2026-02-23
 
 ### Fixed
