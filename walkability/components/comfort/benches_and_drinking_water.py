@@ -1,5 +1,6 @@
 import logging
 from enum import Enum
+from itertools import batched
 
 import geopandas as gpd
 import numpy
@@ -7,6 +8,7 @@ import pandas as pd
 import shapely
 from mobility_tools.ors_settings import ORSSettings
 from ohsome import OhsomeClient
+from openrouteservice.exceptions import ApiError
 
 log = logging.getLogger(__name__)
 
@@ -71,54 +73,65 @@ def get_ohsome_filter(poi: PointsOfInterest):
             raise NotImplementedError('POI type has no ohsome filter')
 
 
-def generate_isochrones(pois: gpd.GeoSeries, bins: list[int], ors_settings: ORSSettings = None) -> gpd.GeoDataFrame:
+def generate_isochrones(
+    pois: gpd.GeoSeries, bins: list[int], ors_settings: ORSSettings | None = None
+) -> gpd.GeoDataFrame:
     num_pois = len(pois)
     log.debug(f'Generating isochrones for {num_pois} POIs')
 
     if num_pois > ors_settings.ors_isochrone_max_request_number:
-        iso_list = approximate_isochrones(pois, bins)
+        iso = approximate_isochrones(pois, bins)
     else:
-        iso_list = real_isochrones(pois, bins, ors_settings)
-
-    iso: gpd.GeoDataFrame = pd.concat(iso_list)
-    iso.to_crs(4326, inplace=True)
+        iso = real_isochrones(pois, bins, ors_settings)
 
     log.debug('Isochrones generated')
 
     return iso
 
 
-def approximate_isochrones(pois: gpd.GeoSeries, bins: list[int]) -> list[gpd.GeoDataFrame]:
+def approximate_isochrones(pois: gpd.GeoSeries, bins: list[int]) -> gpd.GeoDataFrame:
     log.debug('Using naive buffers')
     iso_list = []
-    local_pois = pois.copy(deep=True).to_crs(pois.estimate_utm_crs())
+    crs = pois.estimate_utm_crs()
+    local_pois = pois.copy(deep=True).to_crs(crs)
     for curr_bin in bins:
         iso = local_pois.buffer(curr_bin).to_frame(name='geometry')
         iso['value'] = curr_bin
         iso_list.append(iso)
-    return iso_list
+
+    iso_df: gpd.GeoDataFrame = gpd.GeoDataFrame(pd.concat(iso_list))
+    iso_df.set_crs(crs, inplace=True)
+    iso_df.to_crs(4326, inplace=True)
+
+    return iso_df
 
 
-def real_isochrones(pois: gpd.GeoSeries, bins: list[int], ors_settings: ORSSettings | None) -> list[gpd.GeoDataFrame]:
+def real_isochrones(pois: gpd.GeoSeries, bins: list[int], ors_settings: ORSSettings | None) -> gpd.GeoDataFrame:
     log.debug('Requesting isochrones from openrouteservice')
 
     iso_list = []
     locations = list(zip(pois.geometry.x, pois.geometry.y))
-    for batch_start in range(0, len(locations), ors_settings.ors_isochrone_max_batch_size):
-        batch_end = batch_start + ors_settings.ors_isochrone_max_batch_size
-        log.debug(f'Requesting POIs {batch_start} to {batch_end} of {len(locations)}')
-        batch = locations[batch_start:batch_end]
 
-        isochrones = ors_settings.client.isochrones(
-            locations=batch,
-            profile='foot-walking',
-            range_type='distance',
-            range=bins,
-        )
-        iso = gpd.GeoDataFrame.from_features(isochrones, crs=4326)
-        iso_list.append(iso)
+    for batch in batched(locations, ors_settings.ors_isochrone_max_batch_size):
+        try:
+            isochrones = ors_settings.client.isochrones(
+                locations=batch,
+                profile='foot-walking',
+                range_type='distance',
+                range=bins,
+            )
+            iso = gpd.GeoDataFrame.from_features(isochrones, crs=4326)
+            iso_list.append(iso)
 
-    return iso_list
+        except ApiError:
+            log.warning('API Error we could not fix with a retry occured')
+            point_geoseries = gpd.GeoSeries.from_xy(*zip(*batch), crs=4326)
+            iso = approximate_isochrones(pois=point_geoseries, bins=bins)
+            iso_list.append(iso)
+
+    iso_df = gpd.GeoDataFrame(pd.concat(iso_list))
+    iso_df.set_crs(4326)
+    return iso_df
 
 
 def apply_isochrones_to_paths(iso: gpd.GeoDataFrame, paths: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
