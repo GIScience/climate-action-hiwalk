@@ -24,7 +24,6 @@ unit_tests:
     - pip install poetry==2.1.2
     - poetry config virtualenvs.in-project true
     - poetry install --with test,dev
-    - poetry remove pytest-approvaltests approvaltests && poetry add pytest-approvaltests 'approvaltests@17.2.1' --group=test
   script:
     - poetry run pre-commit run --all-files
     - poetry run pytest --ignore test/core/ --cov --cov-report term --cov-report xml:coverage.xml
