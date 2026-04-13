@@ -183,7 +183,13 @@ class OperatorWalkability(BaseOperator[ComputeInputWalkability]):
     def clean_geometries(self, aoi: shapely.MultiPolygon, geometries: gpd.GeoDataFrame, geom_name: str):
         geometries = geometries.explode(ignore_index=True)
         geometries['geometry'] = geometries.make_valid()
+
+        # reclipping
         geometries = gpd.clip(geometries, aoi, keep_geom_type=True).explode(ignore_index=True)
         geometries = geometries[geometries['geometry'].geom_type.str.contains(geom_name)]
+
+        # setting precision and remove paths that are sub-precision length, i.e. empty after set_precision
         geometries['geometry'] = geometries.set_precision(grid_size=0.0000001)
+        geometries = geometries[~geometries.geometry.is_empty]
+
         return geometries

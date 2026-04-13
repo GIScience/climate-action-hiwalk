@@ -114,3 +114,16 @@ def test_get_paths_with_erroneous_clipping(operator, responses_mock):
 
     assert computed_lines.empty
     assert computed_polygons.empty
+
+
+def test_clean_geometries_tiny_remnants(operator):
+    aoi = shapely.box(xmin=-0.1, xmax=1, ymin=-0.1, ymax=1.1)
+
+    big_path = shapely.LineString([(0.0, 1.0), (0.0, 0.0)])
+    path_that_should_collapse = shapely.LineString([(0.00000004, 0.0), (0.0, 0.0)])
+
+    paths = gpd.GeoDataFrame(data={'expected': [True, False]}, geometry=[big_path, path_that_should_collapse])
+
+    received = operator.clean_geometries(aoi=aoi, geometries=paths, geom_name='String')
+
+    assert received[~received['expected']].empty

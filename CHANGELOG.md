@@ -9,6 +9,7 @@ and this project mostly adheres to [Semantic Versioning](https://semver.org/spec
 
 ### Fixed
 - Introduce fall back to buffers for individual failed isochrone computations in comfort artifacts ([#293](https://gitlab.heigit.org/climate-action/plugins/walkability/-/work_items/293))
+- Make sure miniscule paths below precision threshold introduced in clipping operations are actually removed and not carried through as empty `LineString` ([#301](https://gitlab.heigit.org/climate-action/plugins/walkability/-/work_items/301))
 
 ## [3.0.4](https://gitlab.heigit.org/climate-action/plugins/walkability/-/releases/3.0.4) - 2026-02-23
 
