@@ -1,1 +1,0 @@
-How steep is this path?

@@ -6,7 +6,7 @@ import geopandas as gpd
 import numpy
 import pandas as pd
 import shapely
-from mobility_tools.ors_settings import ORSSettings
+from mobility_tools.settings import ORSSettings
 from ohsome import OhsomeClient
 from openrouteservice.exceptions import ApiError
 

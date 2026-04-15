@@ -15,7 +15,7 @@ from walkability.components.network_analyses.detour_analysis import (
 
 def test_build_detour_factor_artifact(default_polygon_geometry, compute_resources):
     test_detour_df = gpd.GeoDataFrame(
-        {'detour_factor': [1.0, 2.5, 3.5, np.nan]},
+        {'index': [1, 2, 3, 4], 'detour_factor': [1.0, 2.5, 3.5, np.nan]},
         geometry=[
             default_polygon_geometry,
             default_polygon_geometry,

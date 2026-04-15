@@ -12,7 +12,7 @@ import shapely
 from approvaltests import DiffReporter, set_default_reporter
 from climatoology.base.baseoperator import AoiProperties
 from climatoology.base.computation import ComputationScope
-from mobility_tools.ors_settings import ORSSettings
+from mobility_tools.settings import ORSSettings
 from pyproj import CRS
 from requests import PreparedRequest
 from responses import matchers
@@ -82,7 +82,7 @@ def ordered_responses_mock():
 
 @pytest.fixture
 def operator(naturalness_utility_mock, default_ors_settings) -> OperatorWalkability:
-    return OperatorWalkability(naturalness_utility_mock, default_ors_settings)
+    return OperatorWalkability(naturalness_utility_mock, default_ors_settings, None)  # type: ignore
 
 
 @pytest.fixture
@@ -301,3 +301,29 @@ def default_max_walking_distance_map() -> dict[PointsOfInterest, float]:
 @pytest.fixture(autouse=True)
 def configure_approvaltests():
     set_default_reporter(DiffReporter())
+
+
+@pytest.fixture
+def default_slopes_gdf() -> gpd.GeoDataFrame:
+    return gpd.GeoDataFrame(
+        data={
+            '@osmId': ['way/1', 'way/1', 'way/2', 'way/3'],
+            'segment_id': [0, 1, 0, 0],
+            'segment_length': [10, 10, 10, 10],
+            'slope': [1.0, 2.0, 3.0, 10.0],
+        },
+        geometry=[
+            LineString([(-1.0, -1.0), (-0.5, -0.5)]),  # way/1 seg0 — fully OUTSIDE
+            LineString([(0.2, 0.2), (0.5, 0.5)]),  # way/1 seg1 — fully INSIDE
+            LineString([(0.5, 0.0), (0.5, 1.0)]),  # way/2 seg0 — fully INSIDE (on boundary)
+            LineString([(0.8, 0.8), (1.5, 1.5)]),  # way/3 seg0 — CROSSES boundary (partial)
+        ],
+        crs='EPSG:4326',
+    )
+
+
+@pytest.fixture
+def slopes_mock(default_slopes_gdf):
+    with patch('walkability.components.slope.slope_analysis.get_paths_slopes') as get_slopes:
+        get_slopes.return_value = default_slopes_gdf
+        yield default_slopes_gdf

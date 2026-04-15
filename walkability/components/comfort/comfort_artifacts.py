@@ -6,7 +6,7 @@ import pandas as pd
 import shapely
 from climatoology.base.artifact_creators import Artifact, ArtifactMetadata, Legend, create_vector_artifact
 from climatoology.base.computation import ComputationResources
-from mobility_tools.ors_settings import ORSSettings
+from mobility_tools.settings import ORSSettings
 from ohsome import OhsomeClient
 from pydantic_extra_types.color import Color
 

@@ -7,6 +7,14 @@ and this project mostly adheres to [Semantic Versioning](https://semver.org/spec
 
 ## [Unreleased](https://gitlab.heigit.org/climate-action/plugins/walkability/-/compare/3.0.4...main)
 
+### Added
+- Reintroduce slope indicator based on mapterhorn high resolution elevation data ([#256](https://gitlab.heigit.org/climate-action/plugins/walkability/-/work_items/256))
+- Introduce standalone mode with update to climatoology v7.1
+
+### Changed
+- Update methodology of detour factors with release of mobility-tools v2.0
+- Enable work on translations with update to climatoology v7.1
+
 ### Fixed
 - Introduce fall back to buffers for individual failed isochrone computations in comfort artifacts ([#293](https://gitlab.heigit.org/climate-action/plugins/walkability/-/work_items/293))
 - Make sure miniscule paths below precision threshold introduced in clipping operations are actually removed and not carried through as empty `LineString` ([#301](https://gitlab.heigit.org/climate-action/plugins/walkability/-/work_items/301))

@@ -17,7 +17,7 @@ from climatoology.base.artifact_creators import (
 from climatoology.base.computation import ComputationResources
 from climatoology.base.exception import ClimatoologyUserError
 from mobility_tools.detour_factors import get_detour_factors
-from mobility_tools.ors_settings import ORSSettings
+from mobility_tools.settings import ORSSettings
 from mobility_tools.utils.exceptions import SizeLimitExceededError
 from pydantic_extra_types.color import Color
 
@@ -53,7 +53,7 @@ def build_detour_factor_artifact(
     data = apply_color_and_label(detour_factor_data, cmap_name)
 
     return create_vector_artifact(
-        data=data.drop(columns='detour_category'),
+        data=data[['index', 'geometry', 'detour_factor', 'color', 'label']],
         metadata=ArtifactMetadata(
             name='Detour Factor',
             filename='hexgrid_detours',

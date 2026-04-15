@@ -7,7 +7,7 @@ readme = "README.md"
 
 requires-python = ">=3.13.5,<3.14"
 dependencies = [
-    "climatoology @ git+https://gitlab.heigit.org/climate-action/climatoology.git@7.0.3",
+    "climatoology @ git+https://gitlab.heigit.org/climate-action/climatoology.git@7.1.1",
     "pydantic (>=2.12.5,<3.0.0)",
     "pydantic-settings (>=2.1.0,<3.0.0)",
     "shapely (>=2.0.2,<3.0.0)",
@@ -18,11 +18,11 @@ dependencies = [
     "openrouteservice (>=2.3.3,<3.0.0)",
     "h3pandas (>=0.3.0,<1.0.0)",
     "numpy (>=2.3.3,<3.0.0)",
-    "mobility-tools @ git+https://gitlab.heigit.org/climate-action/utilities/mobility-tools.git@1.0.3",
+    "mobility-tools @ git+https://gitlab.heigit.org/climate-action/utilities/mobility-tools.git@2.0.1",
 ]
 
 [project.urls]
-repository = "https://gitlab.heigit.org/climate-action/plugins/bikeability"
+repository = "https://gitlab.heigit.org/climate-action/plugins/walkability"
 
 [tool.poetry.group.test.dependencies]
 responses = "^0.26.0"
