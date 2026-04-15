@@ -154,7 +154,7 @@ def build_smoothness_artifact(
     smoothness_locations['color'] = generate_colors(
         smoothness_locations.smoothness_rating, cmap_name='coolwarm_r', min_value=0.0, max_value=1.0
     )
-    smoothness_locations['label'] = smoothness_locations.smoothness.apply(lambda r: r.name)
+    smoothness_locations['label'] = smoothness_locations.smoothness.apply(lambda r: r.value)
     return create_vector_artifact(
         data=smoothness_locations[['@osmId', 'color', 'label', 'geometry']],
         metadata=ArtifactMetadata(
@@ -177,7 +177,7 @@ def build_surface_artifact(
     surface_locations['color'] = generate_colors(
         surface_locations.surface_rating, cmap_name='tab10', min_value=0.0, max_value=1.0
     )
-    surface_locations['label'] = surface_locations.surface.apply(lambda r: r.name)
+    surface_locations['label'] = surface_locations.surface.apply(lambda r: r.value)
     return create_vector_artifact(
         data=surface_locations[['@osmId', 'color', 'label', 'geometry']],
         metadata=ArtifactMetadata(

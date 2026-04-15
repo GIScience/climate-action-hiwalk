@@ -1,6 +1,7 @@
 .env
 .env.base
 .env.ors
+.env.s3
 .idea/
 __pycache__/
 .pytest_cache/

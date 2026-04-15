@@ -45,6 +45,7 @@ def test_plugin_compute_request_all_optionals(
     ohsome_api,
     ohsome_api_count,
     ors_isochrone_api,
+    slopes_mock,
 ):
     with (
         open('test/resources/ohsome_admin_response.geojson', 'r') as admin_file,
@@ -71,6 +72,6 @@ def test_plugin_compute_request_all_optionals(
         params=expected_compute_input,
     )
 
-    assert len(computed_artifacts) == 12
+    assert len(computed_artifacts) == 14
     for artifact in computed_artifacts:
         assert isinstance(artifact, Artifact)

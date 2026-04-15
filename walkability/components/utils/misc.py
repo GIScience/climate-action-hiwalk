@@ -187,7 +187,7 @@ def generate_colors(
     norm = mpl.colors.Normalize(vmin=min_value, vmax=max_value)
     cmap = mpl.colormaps[cmap_name]
 
-    cmap.set_extremes(bad=bad_color, under=bad_color, over=bad_color)
+    cmap.set_extremes(bad=bad_color)
 
     mapped_colors = [Color(mpl.colors.to_hex(col)) for col in cmap(norm(color_by))]
     colors = pd.Series(data=mapped_colors, index=color_by.index)

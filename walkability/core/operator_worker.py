@@ -6,7 +6,7 @@ from climatoology.base.baseoperator import AoiProperties, Artifact, BaseOperator
 from climatoology.base.computation import ComputationResources
 from climatoology.base.plugin_info import PluginInfo
 from climatoology.utility.naturalness import NaturalnessIndex, NaturalnessUtility
-from mobility_tools.ors_settings import ORSSettings
+from mobility_tools.settings import ORSSettings, S3Settings
 from ohsome import OhsomeClient
 
 from walkability.components.categorise_paths.path_categorisation import path_categorisation, subset_walkable_paths
@@ -23,10 +23,7 @@ from walkability.components.naturalness.naturalness_analysis import naturalness_
 from walkability.components.network_analyses.detour_analysis import (
     detour_factor_analysis,
 )
-from walkability.components.slope.slope_analysis import slope_analysis, summarise_slope
-from walkability.components.slope.slope_artifacts import (
-    build_slope_summary_bar_artifact,
-)
+from walkability.components.slope.slope_analysis import compute_slope_analysis
 from walkability.components.utils.geometry import get_utm_zone
 from walkability.components.utils.misc import (
     WALKABLE_CATEGORIES,
@@ -41,12 +38,13 @@ log = logging.getLogger(__name__)
 
 
 class OperatorWalkability(BaseOperator[ComputeInputWalkability]):
-    def __init__(self, naturalness_utility: NaturalnessUtility, ors_settings: ORSSettings):
+    def __init__(self, naturalness_utility: NaturalnessUtility, ors_settings: ORSSettings, s3_settings: S3Settings):
         super().__init__()
         self.naturalness_utility = naturalness_utility
         self.ohsome = OhsomeClient(user_agent='CA Plugin Walkability')
 
         self.ors_settings = ors_settings
+        self.s3_settings = s3_settings
         self.admin_level = 1
 
         max_walking_distance_map = {
@@ -138,16 +136,12 @@ class OperatorWalkability(BaseOperator[ComputeInputWalkability]):
                 artifacts.extend(naturalness_artifacts)
 
         # disabled for now to no show silly results until we manage to build a proper utility for it
-        if False in params.optional_indicators:
+        if WalkabilityIndicators.SLOPE in params.optional_indicators:
             with self.catch_exceptions(indicator_name='Slope', resources=resources):
-                slope_artifact, line_paths_slope = slope_analysis(
-                    line_paths=line_paths, aoi=aoi, ors_settings=self.ors_settings, resources=resources
+                slope_artifacts = compute_slope_analysis(
+                    paths=line_paths, s3settings=self.s3_settings, resources=resources
                 )
-                slope_summary_bar = summarise_slope(paths=line_paths_slope, projected_crs=get_utm_zone(aoi))
-                slope_summary_bar_artifact = build_slope_summary_bar_artifact(
-                    aoi_aggregate=slope_summary_bar, resources=resources
-                )
-                artifacts.extend([slope_artifact, slope_summary_bar_artifact])
+                artifacts.extend(slope_artifacts)
 
         if WalkabilityIndicators.COMFORT in params.optional_indicators:
             with self.catch_exceptions(indicator_name='Comfort Indicators', resources=resources):
