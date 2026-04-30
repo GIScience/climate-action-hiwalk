@@ -28,8 +28,8 @@ repository = "https://gitlab.heigit.org/climate-action/plugins/walkability"
 responses = "^0.26.0"
 pytest-cov = "^7.0.0"
 vcrpy = {version = "^8.0.0", markers = "platform_python_implementation !='PyPy'"}  # https://github.com/kevin1024/vcrpy/issues/880
+approvaltests = "^18.0.1"
 pytest-approvaltests = "^0.2.4"
-approvaltests = "^17.4.1"
 
 
 [tool.poetry.group.dev.dependencies]
