@@ -16,5 +16,4 @@ def test_summarise_slope(default_slopes_gdf):
     histogram_chart = summarise_slope(path_slopes_data=default_slopes_gdf)
 
     assert isinstance(histogram_chart, go.Figure)
-    print(histogram_chart.data[0].x)
     np.testing.assert_array_equal(histogram_chart.data[0].x, [1, 2, 3, 10])
