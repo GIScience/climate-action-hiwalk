@@ -96,7 +96,7 @@ def summarise_slope(
     stats = path_slopes_data.dropna(how='any')
 
     lower_bound, upper_bound = 0, 13  # 12 + 1
-    clipped = stats['slope'].clip(lower=lower_bound, upper=upper_bound)
+    clipped = stats['slope'].clip(lower=lower_bound, upper=upper_bound - 0.1)
 
     bins = upper_bound
     pre_bin_edges = np.linspace(lower_bound, bins, bins + 1)
@@ -106,20 +106,12 @@ def summarise_slope(
     cmap = pyplt.get_cmap(cmap_name, len(counts))
     colors = [mcolors.to_hex(cmap(i)) for i in range(len(counts))]
 
-    bin_labels = [
-        f'Range: {bin_edges[b_i]:.2f} - {bin_edges[b_i + 1]:.2f}<br>Count: {counts[b_i]}'
-        if b_i != len(bin_edges) - 2
-        else f'≥{round(bin_edges[b_i])}<br>Count: {counts[b_i]}'
-        for b_i in range(len(bin_edges) - 1)
-    ]
-
     histogram = go.Histogram(
         x=clipped,
         nbinsx=bins,
         histnorm='percent',
         marker=dict(color=colors),
-        customdata=bin_labels,
-        hovertemplate='%{customdata}<extra></extra>',
+        hovertemplate='Range: %{x}<br>Percentage: %{y:.2f}%<extra></extra>',
         xbins=dict(start=lower_bound, end=upper_bound, size=(upper_bound - lower_bound) / bins),
     )
 
