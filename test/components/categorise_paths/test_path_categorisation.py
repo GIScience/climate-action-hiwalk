@@ -78,7 +78,7 @@ validation_objects = {
 }
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture
 def ohsome_test_data_categorisation(global_aoi, responses_mock) -> pd.DataFrame:
     with open('test/resources/ohsome_categorisation_response.geojson', 'r') as categorisation_examples:
         categorisation_examples = categorisation_examples.read()

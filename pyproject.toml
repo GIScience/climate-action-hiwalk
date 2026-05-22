@@ -19,6 +19,9 @@ dependencies = [
     "h3pandas (>=0.3.0,<1.0.0)",
     "numpy (>=2.3.3,<3.0.0)",
     "mobility-tools @ git+https://gitlab.heigit.org/climate-action/utilities/mobility-tools.git@2.0.1",
+    "boto3 (>=1.40.7)",
+    "botocore (>=1.40.7)",
+    "rasterio (>=1.5.0,<2.0.0)"
 ]
 
 [project.urls]
@@ -30,6 +33,7 @@ pytest-cov = "^7.0.0"
 vcrpy = {version = "^8.0.0", markers = "platform_python_implementation !='PyPy'"}  # https://github.com/kevin1024/vcrpy/issues/880
 approvaltests = "^18.0.1"
 pytest-approvaltests = "^0.2.4"
+moto = "^5.2.1"
 
 
 [tool.poetry.group.dev.dependencies]

@@ -7,3 +7,9 @@ class Settings(BaseSettings):
     naturalness_path: str
 
     model_config = SettingsConfigDict(env_file='.env')  # dead: disable
+
+
+class FeatureFlags(BaseSettings):
+    shade: bool = False
+
+    model_config = SettingsConfigDict(env_file='.env.feature')  # dead: disable
