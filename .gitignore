@@ -2,6 +2,7 @@
 .env.base
 .env.ors
 .env.s3
+.env.feature
 .idea/
 __pycache__/
 .pytest_cache/
@@ -12,6 +13,7 @@ __pycache__/
 
 
 ohsome_log/
+cache/
 
 .coverage
 coverage.xml

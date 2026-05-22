@@ -1,27 +1,35 @@
 import json
 import uuid
+from pathlib import Path
 from typing import Any, Callable, Tuple
 from unittest.mock import patch
 from urllib.parse import parse_qsl
 
+import boto3
 import geopandas as gpd
 import pandas as pd
 import pytest
 import responses
 import shapely
 from approvaltests import DiffReporter, set_default_reporter
+from botocore import UNSIGNED
+from botocore.config import Config
 from climatoology.base.baseoperator import AoiProperties
 from climatoology.base.computation import ComputationScope
 from mobility_tools.settings import ORSSettings
+from moto import mock_aws
 from pyproj import CRS
 from requests import PreparedRequest
 from responses import matchers
 from shapely.geometry import LineString
 
 from walkability.components.comfort.benches_and_drinking_water import PointsOfInterest
+from walkability.components.shade.utility import S3ShadeConfig
 from walkability.components.utils.misc import PathCategory
 from walkability.core.input import ComputeInputWalkability
 from walkability.core.operator_worker import OperatorWalkability
+
+TEST_RESOURCES_DIR = Path('test/resources')
 
 
 @pytest.fixture
@@ -29,7 +37,7 @@ def expected_compute_input() -> ComputeInputWalkability:
     return ComputeInputWalkability()
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture
 def global_aoi() -> shapely.MultiPolygon:
     return shapely.MultiPolygon([[[[-90, -180], [90, -180], [90, 180], [-90, 180], [-90, -180]]]])
 
@@ -68,7 +76,7 @@ def compute_resources():
         yield resources
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture
 def responses_mock():
     with responses.RequestsMock() as rsps:
         yield rsps
@@ -81,8 +89,48 @@ def ordered_responses_mock():
 
 
 @pytest.fixture
-def operator(naturalness_utility_mock, default_ors_settings) -> OperatorWalkability:
-    return OperatorWalkability(naturalness_utility_mock, default_ors_settings, None)  # type: ignore
+def default_shade_config():
+    return S3ShadeConfig(bucket='test-bucket', cache_dir='cache/test/tree_canopies')
+
+
+@pytest.fixture
+def default_shade_client(default_shade_config):
+    with mock_aws():
+        shade_client = boto3.client('s3', config=Config(user_agent='test', signature_version=UNSIGNED))
+        shade_client.create_bucket(Bucket=default_shade_config.bucket, ACL='public-read-write')
+
+        shade_client.upload_file(
+            Bucket=default_shade_config.bucket,
+            Key=str(default_shade_config.base_path / default_shade_config.tiles_object),
+            Filename=TEST_RESOURCES_DIR / 'mock_shade_tiles.geojson',
+        )
+
+        upload_tiles = ['mock_tree_raster1.tif', 'mock_tree_raster2.tif', 'mock_tree_raster2.tif.msk']
+        for tile in upload_tiles:
+            if tile.endswith('.msk'):
+                path = default_shade_config.cloud_mask_path
+            else:
+                path = default_shade_config.canopy_heights_path
+            shade_client.upload_file(
+                Bucket=default_shade_config.bucket,
+                Key=str(path / tile),
+                Filename=TEST_RESOURCES_DIR / tile,
+            )
+
+        yield shade_client
+
+
+@pytest.fixture
+def operator(
+    naturalness_utility_mock, default_shade_config, default_ors_settings, default_shade_client
+) -> OperatorWalkability:
+    with patch('walkability.core.operator_worker.boto3.client', return_value=default_shade_client):
+        return OperatorWalkability(
+            naturalness_utility=naturalness_utility_mock,
+            ors_settings=default_ors_settings,
+            s3_settings=None,
+            shade_config=default_shade_config,
+        )  # type: ignore
 
 
 @pytest.fixture

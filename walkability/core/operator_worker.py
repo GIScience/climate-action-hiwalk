@@ -1,7 +1,11 @@
 import logging
+import os
 
+import boto3
 import geopandas as gpd
 import shapely.ops
+from botocore import UNSIGNED
+from botocore.config import Config
 from climatoology.base.baseoperator import AoiProperties, Artifact, BaseOperator
 from climatoology.base.computation import ComputationResources
 from climatoology.base.plugin_info import PluginInfo
@@ -11,18 +15,13 @@ from ohsome import OhsomeClient
 
 from walkability.components.categorise_paths.path_categorisation import path_categorisation, subset_walkable_paths
 from walkability.components.categorise_paths.path_categorisation_artifacts import build_path_categorisation_artifact
-from walkability.components.categorise_paths.path_summarisation import (
-    summarise_aoi,
-    summarise_by_area,
-)
+from walkability.components.categorise_paths.path_summarisation import summarise_aoi, summarise_by_area
 from walkability.components.comfort.benches_and_drinking_water import PointsOfInterest
-from walkability.components.comfort.comfort_artifacts import (
-    compute_comfort_artifacts,
-)
+from walkability.components.comfort.comfort_artifacts import compute_comfort_artifacts
 from walkability.components.naturalness.naturalness_analysis import naturalness_analysis
-from walkability.components.network_analyses.detour_analysis import (
-    detour_factor_analysis,
-)
+from walkability.components.network_analyses.detour_analysis import detour_factor_analysis
+from walkability.components.shade.shade_analysis import shade_analysis
+from walkability.components.shade.utility import S3ShadeConfig, download_tile_spec
 from walkability.components.slope.slope_analysis import compute_slope_analysis
 from walkability.components.utils.geometry import get_utm_zone
 from walkability.components.utils.misc import (
@@ -38,10 +37,27 @@ log = logging.getLogger(__name__)
 
 
 class OperatorWalkability(BaseOperator[ComputeInputWalkability]):
-    def __init__(self, naturalness_utility: NaturalnessUtility, ors_settings: ORSSettings, s3_settings: S3Settings):
+    def __init__(
+        self,
+        naturalness_utility: NaturalnessUtility,
+        ors_settings: ORSSettings,
+        s3_settings: S3Settings,
+        shade_config: S3ShadeConfig,
+    ):
         super().__init__()
         self.naturalness_utility = naturalness_utility
         self.ohsome = OhsomeClient(user_agent='CA Plugin Walkability')
+
+        self.shade_config = shade_config
+        if not shade_config.cache_dir.exists():
+            os.makedirs(shade_config.cache_dir)
+
+        self.shade_client = boto3.client(
+            's3', config=Config(user_agent='climate-action-navigator_walkability', signature_version=UNSIGNED)
+        )
+        self.shade_tiles = download_tile_spec(
+            shade_config=shade_config, shade_client=self.shade_client, download_dir=shade_config.cache_dir
+        )
 
         self.ors_settings = ors_settings
         self.s3_settings = s3_settings
@@ -156,6 +172,19 @@ class OperatorWalkability(BaseOperator[ComputeInputWalkability]):
                 )
                 artifacts.extend(comfort_artifacts)
                 log.info('Comfort Computed')
+
+        if WalkabilityIndicators.SHADE in params.optional_indicators:
+            with self.catch_exceptions(indicator_name='Shade', resources=resources):
+                log.info('Computing Shade')
+                shade_artifacts = shade_analysis(
+                    paths=line_paths,
+                    tile_spec=self.shade_tiles,
+                    shade_client=self.shade_client,
+                    shade_config=self.shade_config,
+                    resources=resources,
+                )
+                artifacts.extend(shade_artifacts)
+                log.info('Shade Computed')
 
         return artifacts
 

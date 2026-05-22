@@ -9,7 +9,8 @@ To run your plugin locally requires the following setup:
 1. Set up the [infrastructure](https://gitlab.heigit.org/climate-action/infrastructure) locally in `devel` mode
 2. Copy your [.env.base_template](.env.base_template) to `.env.base` and [.env_template](.env_template) to `.env` and
    update them
-3. Run `poetry run python plugin_showcase/plugin.py`
+3. Optionally, activate feature flags in `.env.feature` (see [settings](./walkability/core/settings.py) for the available feature flags)
+4. Run `poetry run python walkability/plugin.py`
 
 ## Contributing
 

@@ -16,7 +16,9 @@ from walkability.components.comfort.benches_and_drinking_water import (
 )
 
 
-def test_distance_enrich_paths(default_path, default_aoi, responses_mock, operator, ors_isochrone_api):
+def test_distance_enrich_paths(default_path, default_aoi, operator, responses_mock, ors_isochrone_api):
+    # somehow the order of operator and the response mocks matters for the test being able to pass
+    # in particular the following order fails: ..., responses_mock, ors_isochrone_api, operator
     with open('test/resources/ohsome_drinking_water.geojson', 'r') as drinking_water:
         drinking_water_body = drinking_water.read()
     responses_mock.post(
