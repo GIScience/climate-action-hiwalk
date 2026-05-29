@@ -5,11 +5,19 @@ from pathlib import Path
 from climatoology.base.plugin_info import Concern, PluginAuthor, PluginInfo, generate_plugin_info
 
 from walkability.core.input import ComputeInputWalkability
+from walkability.core.settings import FeatureFlags
+
+feature_flags = FeatureFlags()
 
 log = logging.getLogger(__name__)
 
 
 def get_info() -> PluginInfo:
+    if feature_flags.shade:
+        methodology_path = Path('resources/info/methodology_shade.md')
+    else:
+        methodology_path = Path('resources/info/methodology.md')
+
     info = generate_plugin_info(
         name='hiWalk',
         icon=Path('resources/info/walk.jpeg'),
@@ -63,7 +71,7 @@ def get_info() -> PluginInfo:
         concerns={Concern.MOBILITY_PEDESTRIAN},
         purpose=Path('resources/info/purpose.md'),
         teaser='Assess the safety, comfort, and quality of walkable infrastructure in an area of interest.',
-        methodology=Path('resources/info/methodology.md'),
+        methodology=methodology_path,
         demo_input_parameters=ComputeInputWalkability(),
         computation_shelf_life=timedelta(weeks=24),
     )
