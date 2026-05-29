@@ -88,6 +88,7 @@ def summarise_by_area(
                         marker_color=stacked_bar_colors[i],
                         hovertemplate=f'{row["category"]}: {row["length"]:.2f} km ({row["percent"]:.1f}%)<extra></extra>',
                         showlegend=True,
+                        legendrank=len(summary) - i,
                     )
                 )
 
@@ -153,6 +154,7 @@ def summarise_aoi(
                 marker_color=stacked_bar_colors[i],
                 hovertemplate=f'{row["category"]}: {row["length"]:.2f} km ({row["percent"]:.1f}%)<extra></extra>',
                 showlegend=True,
+                legendrank=len(summary) - i,
             )
         )
 
@@ -202,6 +204,7 @@ def summarise_aoi(
                 marker_color=stacked_bar_colors[i],
                 hovertemplate=f'{row["quality"].replace("_", " ")}: {row["length"]:.2f} km ({row["percent"]:.1f}%)<extra></extra>',
                 showlegend=True,
+                legendrank=len(summary) - i,
             )
         )
 
