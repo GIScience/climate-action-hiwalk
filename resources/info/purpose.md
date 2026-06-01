@@ -1,1 +1,2 @@
 hiWalk provides a suite of indicators to assess the safety, comfort, and quality of walkable infrastructure in an area of interest. In the future, hiWalk will aggregate its component indicators into a general Walkability index score.
+Transportation emissions remain a major source of greenhouse gases. A high walkability encourages sustainable mobility, reducing car dependency and cutting emissions from transport.
