@@ -245,7 +245,7 @@ def get_shaded_path_stats(
     :param shade_client: client for requesting the data
     :param shade_config: S3 config for the tree canopy dataset
     :param min_tree_height: if provided, only include tree canopies greater than this value
-    :return: paths with the additional column of `prop_shaded`
+    :return: paths with the additional columns of `length` and `length_shaded`
     """
     tiles_in_aoi = subset_tiles(tiles=tile_spec, paths=paths)
 
@@ -290,4 +290,12 @@ def get_shaded_path_stats(
         covered_paths = compute_coverage(paths=clipped_paths, shade_raster=canopy_data, canopy_profile=canopy_profile)
         paths_out.append(covered_paths)
 
-    return pd.concat(paths_out)
+    shaded_paths = pd.concat(paths_out)
+    shaded_paths = (
+        shaded_paths.to_crs(shaded_paths.estimate_utm_crs())
+        .assign(length=shaded_paths.length, length_shaded=shaded_paths.length * shaded_paths['prop_shaded'])
+        .to_crs(paths.crs)
+        .drop(columns='prop_shaded')
+    )
+
+    return shaded_paths

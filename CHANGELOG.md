@@ -10,6 +10,7 @@ and this project mostly adheres to [Semantic Versioning](https://semver.org/spec
 ### Added
 - Reintroduce slope indicator based on mapterhorn high resolution elevation data ([#256](https://gitlab.heigit.org/climate-action/plugins/walkability/-/work_items/256))
 - Introduce standalone mode with update to climatoology v7.1
+- A map and a chart showing shaded paths
 - Add shade to methodology, conditional on the feature flag ([#320](https://gitlab.heigit.org/climate-action/plugins/walkability/-/work_items/320))
 
 ### Changed

@@ -12,4 +12,4 @@ class Settings(BaseSettings):
 class FeatureFlags(BaseSettings):
     shade: bool = False
 
-    model_config = SettingsConfigDict(env_file='.env.feature')  # dead: disable
+    model_config = SettingsConfigDict(env_file='.env.feature', env_prefix='feature_flag_')  # dead: disable
