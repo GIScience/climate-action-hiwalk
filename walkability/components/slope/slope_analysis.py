@@ -57,6 +57,9 @@ def build_slope_artifact(
         max_value=legend_upper_bound,
     )
 
+    # Clean data for labels
+    path_slopes_data['slope'] = path_slopes_data['slope'].round(2)
+
     legend = Legend(
         legend_data=ContinuousLegendData(
             cmap_name=cmap_name,
