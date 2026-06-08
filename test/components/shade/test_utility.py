@@ -66,11 +66,6 @@ def default_canopy_raster_profile():
     }
 
 
-@pytest.fixture
-def default_canopy_tiles() -> gpd.GeoDataFrame:
-    return gpd.read_file(TEST_RESOURCES_DIR / 'mock_shade_tiles.geojson').to_crs('epsg:4326')
-
-
 def test_download_tiles(operator, compute_resources):
     tiles = download_tile_spec(
         shade_config=operator.shade_config,
@@ -224,9 +219,11 @@ def test_compute_coverage_mixed_classes(default_shade_path_small, default_canopy
     assert_geodataframe_equal(covered_paths, expected_shade_path, check_like=True)
 
 
-@pytest.mark.parametrize(['min_tree_height', 'expected_prop_shaded'], [(None, [1.0, 0.5]), (2, [0.5, 0.5])])
+@pytest.mark.parametrize(
+    ['min_tree_height', 'expected_shaded_length'], [(None, [0.005, 0.0025]), (2, [0.0025, 0.0025])]
+)
 def test_get_shaded_path_stats(
-    min_tree_height, expected_prop_shaded, operator, default_canopy_tiles, default_shade_path
+    min_tree_height, expected_shaded_length, operator, default_canopy_tiles, default_shade_path
 ):
     """Assert that the lines were clipped to the tiles, the mask was applied, and then min_tree_height was applied."""
     expected_shade_result = default_shade_path.copy()
@@ -236,7 +233,8 @@ def test_get_shaded_path_stats(
         shapely.LineString([(12.3, 48.22), (12.305, 48.22)]),
         shapely.LineString([(12.305, 48.22), (12.31, 48.22)]),
     ]
-    expected_shaded_paths['prop_shaded'] = expected_prop_shaded
+    expected_shaded_paths['length_shaded'] = expected_shaded_length
+    expected_shaded_paths['length'] = [0.005, 0.005]
 
     shaded_paths = get_shaded_path_stats(
         paths=default_shade_path,

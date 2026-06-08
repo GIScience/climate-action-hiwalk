@@ -23,6 +23,7 @@ class Topics(StrEnum):
     BARRIERS = 'barriers'
     GREENNESS = 'greenness'
     COMFORT = 'comfort'
+    SHADE = 'shade'
 
 
 class PathCategory(Enum):

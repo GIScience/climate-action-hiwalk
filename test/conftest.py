@@ -94,6 +94,11 @@ def default_shade_config():
 
 
 @pytest.fixture
+def default_canopy_tiles() -> gpd.GeoDataFrame:
+    return gpd.read_file(TEST_RESOURCES_DIR / 'mock_shade_tiles.geojson').to_crs('epsg:4326')
+
+
+@pytest.fixture
 def default_shade_client(default_shade_config):
     with mock_aws():
         shade_client = boto3.client('s3', config=Config(user_agent='test', signature_version=UNSIGNED))
@@ -307,6 +312,8 @@ def default_path(default_path_geometry) -> gpd.GeoDataFrame:
             'category': [PathCategory.DESIGNATED],
             'rating': [1.0],
             '@other_tags': [{}],
+            'length': [122.5],
+            'length_shaded': [49],
             'geometry': [default_path_geometry],
         },
         crs='EPSG:4326',
