@@ -64,12 +64,12 @@ def create_shade_paths_chart_artifact(shaded_paths: gpd.GeoDataFrame, resources:
         {
             'shade_category': ['Unshaded', 'Shaded'],
             'length': [
-                len_unshaded.sum(),
-                shaded_paths['length_shaded'].sum(),
+                len_unshaded.sum() / 1000,
+                shaded_paths['length_shaded'].sum() / 1000,
             ],
         }
     )
-    summary['percent'] = summary['length'] / summary['length'].sum()
+    summary['percent'] = summary['length'] / summary['length'].sum() * 100
     summary = summary.set_index('shade_category')
     shade_chart = create_shade_plot(summary)
 
@@ -100,7 +100,7 @@ def create_shade_plot(summary: pd.DataFrame) -> go.Figure:
                 name=category,
                 orientation='h',
                 marker_color=colors[i],
-                hovertemplate=f'{category}: {row["length"]:.2f} km ({row["percent"]:.1f}%)<extra></extra>',
+                hovertemplate=f'{category}: {row["length"]:.0f} km ({row["percent"]:.1f}%)<extra></extra>',
                 showlegend=True,
                 legendrank=len(summary) - i,
             )
@@ -109,7 +109,7 @@ def create_shade_plot(summary: pd.DataFrame) -> go.Figure:
             barmode='stack',
             height=300,
             margin=dict(t=30, b=80, l=30, r=30),
-            xaxis_title=f'{summary.loc["Shaded", "length"]:.0f} out of {summary["length"].sum():.0f} km of paths are shaded.',
+            xaxis_title=f'Percentage of the {summary["length"].sum():.0f} km of paths that are shaded.',
             yaxis=dict(showticklabels=False),
             legend=dict(
                 orientation='h',

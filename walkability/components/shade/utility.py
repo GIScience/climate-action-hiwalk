@@ -291,9 +291,9 @@ def get_shaded_path_stats(
         paths_out.append(covered_paths)
 
     shaded_paths = pd.concat(paths_out)
+    shaded_paths = shaded_paths.to_crs(shaded_paths.estimate_utm_crs())
     shaded_paths = (
-        shaded_paths.to_crs(shaded_paths.estimate_utm_crs())
-        .assign(length=shaded_paths.length, length_shaded=shaded_paths.length * shaded_paths['prop_shaded'])
+        shaded_paths.assign(length=shaded_paths.length, length_shaded=shaded_paths.length * shaded_paths['prop_shaded'])
         .to_crs(paths.crs)
         .drop(columns='prop_shaded')
     )
