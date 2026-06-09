@@ -7,7 +7,7 @@ import geopandas as gpd
 import matplotlib as mpl
 import pandas as pd
 import shapely
-from climatoology.base.exception import ClimatoologyUserError
+from climatoology.base.exception import ClimatoologyUserError, InputValidationError
 from ohsome import OhsomeClient
 from ohsome.exceptions import OhsomeException
 from pydantic_extra_types.color import Color
@@ -238,7 +238,7 @@ def check_paths_count_limit(aoi: shapely.MultiPolygon, ohsome: OhsomeClient, cou
     path_lines_count = sum([response['value'] for response in ohsome_responses['result']])
     log.info(f'There are {path_lines_count} paths selected.')
     if path_lines_count > count_limit:
-        raise ClimatoologyUserError(
+        raise InputValidationError(
             f'There are too many path segments in the selected area: {path_lines_count} path segments. '
             f'Currently, only areas with a maximum of {count_limit} path segments are allowed. '
             f'Please select a smaller area or a sub-region of your selected area.'
