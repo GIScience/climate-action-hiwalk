@@ -17,6 +17,7 @@ and this project mostly adheres to [Semantic Versioning](https://semver.org/spec
 - Update methodology of detour factors with release of mobility-tools v2.0
 - Enable work on translations with update to climatoology v7.1
 - `check_paths_count_limit` now raises an `InputValidationError` instead of a `ClimatoologyUserError` ([#309](https://gitlab.heigit.org/climate-action/plugins/walkability/-/work_items/309))
+- Mark naturalness on paths in tunnels as 0 ([#335](https://gitlab.heigit.org/climate-action/plugins/walkability/-/work_items/335))
 
 ### Fixed
 - Introduce fall back to buffers for individual failed isochrone computations in comfort artifacts ([#293](https://gitlab.heigit.org/climate-action/plugins/walkability/-/work_items/293))

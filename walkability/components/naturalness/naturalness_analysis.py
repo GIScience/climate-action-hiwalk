@@ -57,21 +57,25 @@ def get_naturalness(
     """
     naturalness = []
     if not paths.empty:
+        paths.loc[paths['@other_tags'].apply(lambda x: x.get('tunnel')) == 'yes', 'naturalness'] = 0
         paths_ndvi = fetch_naturalness_by_vector(
             naturalness_utility=naturalness_utility,
             time_range=TimeRange(end_date=dt.datetime.now().replace(day=1).date()),
             vectors=[paths.geometry],
             index=index,
         )
+        paths_ndvi.loc[paths[paths['naturalness'] == 0].index, 'naturalness'] = 0
         naturalness.append(paths_ndvi)
 
     if not polygons.empty:
+        polygons.loc[polygons['@other_tags'].apply(lambda x: x.get('tunnel')) == 'yes', 'naturalness'] = 0
         polygons_ndvi = fetch_naturalness_by_vector(
             naturalness_utility=naturalness_utility,
             time_range=TimeRange(end_date=dt.datetime.now().replace(day=1).date()),
             vectors=[polygons.geometry],
             index=index,
         )
+        polygons_ndvi.loc[polygons[polygons['naturalness'] == 0].index, 'naturalness'] = 0
         naturalness.append(polygons_ndvi)
     naturalness_all: gpd.GeoDataFrame = pd.concat(naturalness)
     return naturalness_all
