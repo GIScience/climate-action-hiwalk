@@ -219,9 +219,7 @@ def test_compute_coverage_mixed_classes(default_shade_path_small, default_canopy
     assert_geodataframe_equal(covered_paths, expected_shade_path, check_like=True)
 
 
-@pytest.mark.parametrize(
-    ['min_tree_height', 'expected_shaded_length'], [(None, [0.005, 0.0025]), (2, [0.0025, 0.0025])]
-)
+@pytest.mark.parametrize(['min_tree_height', 'expected_shaded_length'], [(None, [371.6, 185.8]), (2, [185.8, 185.8])])
 def test_get_shaded_path_stats(
     min_tree_height, expected_shaded_length, operator, default_canopy_tiles, default_shade_path
 ):
@@ -234,7 +232,7 @@ def test_get_shaded_path_stats(
         shapely.LineString([(12.305, 48.22), (12.31, 48.22)]),
     ]
     expected_shaded_paths['length_shaded'] = expected_shaded_length
-    expected_shaded_paths['length'] = [0.005, 0.005]
+    expected_shaded_paths['length'] = [371.6, 371.6]
 
     shaded_paths = get_shaded_path_stats(
         paths=default_shade_path,
@@ -243,5 +241,6 @@ def test_get_shaded_path_stats(
         shade_client=operator.shade_client,
         shade_config=operator.shade_config,
     )
+    shaded_paths[['length', 'length_shaded']] = shaded_paths[['length', 'length_shaded']].apply(round, args=(1,))
 
     assert_geodataframe_equal(shaded_paths, expected_shaded_paths, check_like=True, check_less_precise=True)
