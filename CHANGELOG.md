@@ -12,6 +12,7 @@ and this project mostly adheres to [Semantic Versioning](https://semver.org/spec
 - Introduce standalone mode with update to climatoology v7.1
 - A map and a chart showing shaded paths
 - Add shade to methodology, conditional on the feature flag ([#320](https://gitlab.heigit.org/climate-action/plugins/walkability/-/work_items/320))
+- [Documentation](docs/environment_variables.md) for the available config options ([#311](https://gitlab.heigit.org/climate-action/plugins/walkability/-/work_items/311))
 
 ### Changed
 - Update methodology of detour factors with release of mobility-tools v2.0
