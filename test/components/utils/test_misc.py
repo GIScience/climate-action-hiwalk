@@ -8,7 +8,7 @@ import pytest
 import shapely
 from approvaltests import verify
 from approvaltests.namer import NamerFactory
-from climatoology.base.exception import ClimatoologyUserError
+from climatoology.base.exception import ClimatoologyUserError, InputValidationError
 from ohsome import OhsomeClient
 from ohsome.exceptions import OhsomeException
 from pandas.testing import assert_series_equal
@@ -81,7 +81,7 @@ def test_check_paths_count_limit(default_aoi, responses_mock):
         )
 
     # test false situation
-    with pytest.raises(ClimatoologyUserError):
+    with pytest.raises(InputValidationError):
         check_paths_count_limit(default_aoi, OhsomeClient(), 5000)
 
 
