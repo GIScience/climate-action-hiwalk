@@ -74,8 +74,8 @@ run `poetry run pytest --ignore test/core/ --cov --cov-report term-missing`
 
 ## Docker (for admins and interested devs)
 
-If the [infrastructure](https://gitlab.heigit.org/climate-action/infrastructure) is reachable you can
-copy [.env.base_template](.env.base_template) to `.env.base` and then run
+If the infrastructure is reachable you can copy the env templates like [.env.base_template](.env.base_template) to `.env.base`, and fill missing values (for more details see [docs/environment_variables.md](docs/environment_variables.md)).
+Then you can run
 
 ```shell
 docker build . --tag repo.heigit.org/climate-action/walkability:devel
