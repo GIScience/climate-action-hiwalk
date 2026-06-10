@@ -18,13 +18,13 @@ from climatoology.base.baseoperator import AoiProperties
 from climatoology.base.computation import ComputationScope
 from mobility_tools.settings import ORSSettings
 from moto import mock_aws
-from pyproj import CRS
 from requests import PreparedRequest
 from responses import matchers
 from shapely.geometry import LineString
 
 from walkability.components.comfort.benches_and_drinking_water import PointsOfInterest
 from walkability.components.shade.utility import S3ShadeConfig
+from walkability.components.utils.geometry import CAN_DEFAULT_CRS
 from walkability.components.utils.misc import PathCategory
 from walkability.core.input import ComputeInputWalkability
 from walkability.core.operator_worker import OperatorWalkability
@@ -95,7 +95,7 @@ def default_shade_config():
 
 @pytest.fixture
 def default_canopy_tiles() -> gpd.GeoDataFrame:
-    return gpd.read_file(TEST_RESOURCES_DIR / 'mock_shade_tiles.geojson').to_crs('epsg:4326')
+    return gpd.read_file(TEST_RESOURCES_DIR / 'mock_shade_tiles.geojson').to_crs(CAN_DEFAULT_CRS)
 
 
 @pytest.fixture
@@ -215,11 +215,9 @@ def naturalness_utility_mock():
                 LineString([[12.4, 48.25], [12.4, 48.30]]),
                 LineString([[12.41, 48.25], [12.41, 48.30]]),
             ],
-            crs=CRS.from_epsg(4326),
+            crs=CAN_DEFAULT_CRS,
         )
-        return_gdf = gpd.GeoDataFrame(
-            index=[1, 2], data={'median': [0.5, 0.6]}, geometry=vectors, crs=CRS.from_epsg(4326)
-        )
+        return_gdf = gpd.GeoDataFrame(index=[1, 2], data={'median': [0.5, 0.6]}, geometry=vectors, crs=CAN_DEFAULT_CRS)
 
         naturalness_utility.compute_vector.return_value = return_gdf
         yield naturalness_utility
@@ -316,7 +314,7 @@ def default_path(default_path_geometry) -> gpd.GeoDataFrame:
             'length_shaded': [49],
             'geometry': [default_path_geometry],
         },
-        crs='EPSG:4326',
+        crs=CAN_DEFAULT_CRS,
     )
 
 
@@ -373,7 +371,7 @@ def default_slopes_gdf() -> gpd.GeoDataFrame:
             LineString([(0.5, 0.0), (0.5, 1.0)]),  # way/2 seg0 — fully INSIDE (on boundary)
             LineString([(0.8, 0.8), (1.5, 1.5)]),  # way/3 seg0 — CROSSES boundary (partial)
         ],
-        crs='EPSG:4326',
+        crs=CAN_DEFAULT_CRS,
     )
 
 

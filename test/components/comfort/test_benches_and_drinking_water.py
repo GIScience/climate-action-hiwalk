@@ -14,6 +14,7 @@ from walkability.components.comfort.benches_and_drinking_water import (
     real_isochrones,
     request_pois,
 )
+from walkability.components.utils.geometry import CAN_DEFAULT_CRS
 
 
 def test_distance_enrich_paths(default_path, default_aoi, operator, responses_mock, ors_isochrone_api):
@@ -45,7 +46,7 @@ def test_distance_enrich_paths(default_path, default_aoi, operator, responses_mo
             LineString([[12.3, 48.22030903641037], [12.3, 48.2205], [12.300180707134169, 48.22031929286583]]),
             Point(12.3, 48.22),
         ],
-        crs=4326,
+        crs=CAN_DEFAULT_CRS,
     )
     received = distance_enrich_paths(
         paths=default_path,
@@ -90,7 +91,7 @@ def test_distance_enrich_paths_many_pois(default_path, default_aoi, operator, re
             LineString([[12.3, 48.2204491], [12.3, 48.2205], [12.300052, 48.220448]]),
             Point(12.3, 48.22),
         ],
-        crs=4326,
+        crs=CAN_DEFAULT_CRS,
     )
 
     received.geometry = received.set_precision(0.0000001)
@@ -154,7 +155,7 @@ def test_real_isochrones_one_bin_failure(default_ors_settings):
     ors_settings_low_batch = default_ors_settings.copy()
     ors_settings_low_batch.ors_isochrone_max_batch_size = 1
 
-    pois = gpd.GeoSeries.from_xy(x=list(range(3)), y=list(range(3)), crs=4326)
+    pois = gpd.GeoSeries.from_xy(x=list(range(3)), y=list(range(3)), crs=CAN_DEFAULT_CRS)
 
     with open('test/resources/test_real_isochrones.json') as file:
         working_isochrones = file.read()

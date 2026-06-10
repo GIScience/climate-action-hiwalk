@@ -10,6 +10,8 @@ from mobility_tools.settings import ORSSettings
 from ohsome import OhsomeClient
 from openrouteservice.exceptions import ApiError
 
+from walkability.components.utils.geometry import CAN_DEFAULT_CRS
+
 log = logging.getLogger(__name__)
 
 
@@ -55,7 +57,7 @@ def request_pois(aoi: shapely.MultiPolygon, poi: PointsOfInterest, ohsome_client
     pois = gpd.GeoDataFrame(
         data={'value': [0.0] * pois.shape[0]},
         geometry=pois.geometry,
-        crs=4326,
+        crs=CAN_DEFAULT_CRS,
     )
     return pois
 
@@ -101,7 +103,7 @@ def approximate_isochrones(pois: gpd.GeoSeries, bins: list[int]) -> gpd.GeoDataF
 
     iso_df: gpd.GeoDataFrame = gpd.GeoDataFrame(pd.concat(iso_list))
     iso_df.set_crs(crs, inplace=True)
-    iso_df.to_crs(4326, inplace=True)
+    iso_df.to_crs(CAN_DEFAULT_CRS, inplace=True)
 
     return iso_df
 
@@ -120,17 +122,17 @@ def real_isochrones(pois: gpd.GeoSeries, bins: list[int], ors_settings: ORSSetti
                 range_type='distance',
                 range=bins,
             )
-            iso = gpd.GeoDataFrame.from_features(isochrones, crs=4326)
+            iso = gpd.GeoDataFrame.from_features(isochrones, crs=CAN_DEFAULT_CRS)
             iso_list.append(iso)
 
         except ApiError:
             log.warning('API Error we could not fix with a retry occured')
-            point_geoseries = gpd.GeoSeries.from_xy(*zip(*batch), crs=4326)
+            point_geoseries = gpd.GeoSeries.from_xy(*zip(*batch), crs=CAN_DEFAULT_CRS)
             iso = approximate_isochrones(pois=point_geoseries, bins=bins)
             iso_list.append(iso)
 
     iso_df = gpd.GeoDataFrame(pd.concat(iso_list))
-    iso_df.set_crs(4326)
+    iso_df.set_crs(CAN_DEFAULT_CRS)
     return iso_df
 
 

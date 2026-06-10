@@ -3,7 +3,6 @@ import plotly.graph_objects as go
 import shapely
 from climatoology.utility.api import TimeRange
 from climatoology.utility.naturalness import NaturalnessIndex
-from pyproj import CRS
 from shapely import LineString, MultiLineString
 
 from walkability.components.naturalness.naturalness_analysis import (
@@ -11,6 +10,7 @@ from walkability.components.naturalness.naturalness_analysis import (
     get_naturalness,
     summarise_naturalness,
 )
+from walkability.components.utils.geometry import CAN_DEFAULT_CRS
 
 
 def test_get_naturalness(operator, naturalness_utility_mock):
@@ -22,13 +22,13 @@ def test_get_naturalness(operator, naturalness_utility_mock):
             LineString([[12.4, 48.25], [12.4, 48.30]]),
             LineString([[12.41, 48.25], [12.41, 48.30]]),
         ],
-        crs='EPSG:4326',
+        crs=CAN_DEFAULT_CRS,
     )
     polygons = gpd.GeoDataFrame(
         index=[1, 2],
         data={'@other_tags': [{}]},
         geometry=[polygon_geom, polygon_geom],
-        crs='EPSG:4326',
+        crs=CAN_DEFAULT_CRS,
     )
     computed_naturalness = get_naturalness(
         paths=paths, polygons=polygons, index=NaturalnessIndex.NDVI, naturalness_utility=operator.naturalness_utility
@@ -44,7 +44,7 @@ def test_get_naturalness(operator, naturalness_utility_mock):
             LineString([[12.41, 48.25], [12.41, 48.30]]),
         ],
         data={'naturalness': [0.0, 0.6]},
-        crs=CRS.from_epsg(4326),
+        crs=CAN_DEFAULT_CRS,
     )
 
     gpd.testing.assert_geodataframe_equal(
@@ -92,7 +92,7 @@ def test_summarise_naturalness(default_path_geometry, default_polygon_geometry):
             'naturalness': [0.4, 0.6],
             'geometry': [default_path_geometry] + [default_polygon_geometry],
         },
-        crs='EPSG:4326',
+        crs=CAN_DEFAULT_CRS,
     )
     bar_chart = summarise_naturalness(naturalness=input_paths)
 
