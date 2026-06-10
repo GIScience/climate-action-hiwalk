@@ -22,6 +22,8 @@ from rasterstats import zonal_stats
 from shapely import MultiPolygon
 from tqdm import tqdm
 
+from walkability.components.utils.geometry import CAN_DEFAULT_CRS
+
 logging.getLogger('botocore').setLevel(logging.WARNING)
 logging.getLogger('boto3').setLevel(logging.WARNING)
 logging.getLogger('s3transfer').setLevel(logging.WARNING)
@@ -99,7 +101,7 @@ def download_tile_spec(
     )
     if local_path is None:
         raise ClimatoologyUserError('Failed to download tile specification for tree canopy dataset')
-    tiles = gpd.read_file(local_path).to_crs('epsg:4326')
+    tiles = gpd.read_file(local_path).to_crs(CAN_DEFAULT_CRS)
     return tiles
 
 

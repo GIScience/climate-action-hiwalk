@@ -13,6 +13,7 @@ from walkability.components.categorise_paths.path_categorisation import (
     read_pavement_quality_rankings,
     subset_walkable_paths,
 )
+from walkability.components.utils.geometry import CAN_DEFAULT_CRS
 from walkability.components.utils.misc import (
     PathCategory,
     PavementQuality,
@@ -109,7 +110,7 @@ def test_path_categorisation():
                 },
             }
         ],
-        crs='EPSG:4326',
+        crs=CAN_DEFAULT_CRS,
     )
 
     expected_output = gpd.GeoDataFrame(
@@ -139,14 +140,14 @@ def test_path_categorisation():
                 'surface_rating': 0.85,
             }
         ],
-        crs='EPSG:4326',
+        crs=CAN_DEFAULT_CRS,
     )
     categorized_output = path_categorisation(input_test_data)
     pd.testing.assert_frame_equal(expected_output, categorized_output)
 
 
 def test_path_categorisation_empty_input():
-    empty_input = gpd.GeoDataFrame(columns=['@osmId', 'geometry', '@other_tags'], crs='EPSG:4326')
+    empty_input = gpd.GeoDataFrame(columns=['@osmId', 'geometry', '@other_tags'], crs=CAN_DEFAULT_CRS)
     expected_empty_output = gpd.GeoDataFrame(
         columns=[
             '@osmId',
@@ -161,7 +162,7 @@ def test_path_categorisation_empty_input():
             'smoothness_rating',
             'surface_rating',
         ],
-        crs='EPSG:4326',
+        crs=CAN_DEFAULT_CRS,
     )
     categorized_output = path_categorisation(empty_input)
     pd.testing.assert_frame_equal(expected_empty_output, categorized_output, check_dtype=False)

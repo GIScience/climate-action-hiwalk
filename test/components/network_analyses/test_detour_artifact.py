@@ -11,6 +11,7 @@ from walkability.components.network_analyses.detour_analysis import (
     build_detour_factor_artifact,
     summarise_detour,
 )
+from walkability.components.utils.geometry import CAN_DEFAULT_CRS
 
 
 def test_build_detour_factor_artifact(default_polygon_geometry, compute_resources):
@@ -22,7 +23,7 @@ def test_build_detour_factor_artifact(default_polygon_geometry, compute_resource
             default_polygon_geometry,
             default_polygon_geometry,
         ],
-        crs='EPSG:4326',
+        crs=CAN_DEFAULT_CRS,
     )
 
     artifact = build_detour_factor_artifact(test_detour_df, compute_resources)
@@ -39,7 +40,7 @@ def test_apply_detour_color_and_label(default_polygon_geometry):
             default_polygon_geometry,
             default_polygon_geometry,
         ],
-        crs='EPSG:4326',
+        crs=CAN_DEFAULT_CRS,
     )
 
     expected_detour_df = gpd.GeoDataFrame(
@@ -50,7 +51,7 @@ def test_apply_detour_color_and_label(default_polygon_geometry):
             'color': [Color('#eea321'), Color('#e75a13'), Color('#990404')],
             'label': ['Medium Detour', 'High Detour', 'Unreachable'],
         },
-        crs='EPSG:4326',
+        crs=CAN_DEFAULT_CRS,
     )
 
     received = apply_color_and_label(test_detour_df)
@@ -63,7 +64,7 @@ def test_summarise_detour(default_polygon_geometry):
             'detour_factor': [0, 3, 6, 10],
             'geometry': 4 * [default_polygon_geometry],
         },
-        crs='EPSG:4326',
+        crs=CAN_DEFAULT_CRS,
     )
     chart = summarise_detour(hexgrid=input_hexgrid)
 
@@ -77,7 +78,7 @@ def test_summarise_detour_inf(default_polygon_geometry):
             'detour_factor': [0, 3, 6, np.inf],
             'geometry': 4 * [default_polygon_geometry],
         },
-        crs='EPSG:4326',
+        crs=CAN_DEFAULT_CRS,
     )
     chart = summarise_detour(hexgrid=input_hexgrid)
 

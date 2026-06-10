@@ -14,6 +14,7 @@ from ohsome.exceptions import OhsomeException
 from pandas.testing import assert_series_equal
 from pydantic_extra_types.color import Color
 
+from walkability.components.utils.geometry import CAN_DEFAULT_CRS
 from walkability.components.utils.misc import (
     check_paths_count_limit,
     fetch_osm_data,
@@ -36,7 +37,7 @@ def test_fetch_osm_data(expected_compute_input, default_aoi, responses_mock):
             '@other_tags': [{'highway': 'pedestrian'}],
         },
         geometry=[shapely.LineString([(12.3, 48.22), (12.3, 48.2205), (12.3005, 48.22)])],
-        crs=4326,
+        crs=CAN_DEFAULT_CRS,
     )
     computed_osm_data = fetch_osm_data(default_aoi, 'dummy=yes', OhsomeClient())
     geopandas.testing.assert_geodataframe_equal(computed_osm_data, expected_osm_data, check_like=True)

@@ -8,6 +8,7 @@ from walkability.components.categorise_paths.path_summarisation import (
     summarise_aoi,
     summarise_by_area,
 )
+from walkability.components.utils.geometry import CAN_DEFAULT_CRS
 from walkability.components.utils.misc import PathCategory, PavementQuality
 
 
@@ -26,7 +27,7 @@ def test_summarise_by_area(operator, default_aoi, responses_mock, default_path_g
             'rating': 2 * [1.0],
             'geometry': [default_path_geometry] + [default_polygon_geometry],
         },
-        crs='EPSG:4326',
+        crs=CAN_DEFAULT_CRS,
     )
     computed_charts = summarise_by_area(
         paths=input_paths,
@@ -65,7 +66,7 @@ def test_summarise_by_area_no_boundaries(operator, default_aoi, responses_mock, 
             'rating': [1.0],
             'geometry': [default_path_geometry],
         },
-        crs='EPSG:4326',
+        crs=CAN_DEFAULT_CRS,
     )
     computed_charts = summarise_by_area(
         paths=input_paths,
@@ -93,7 +94,7 @@ def test_summarise_by_area_mixed_geometry_boundaries(operator, default_aoi, resp
             'rating': [1.0],
             'geometry': [shapely.LineString([[7.42, 51.51], [7.43, 51.51]])],
         },
-        crs='EPSG:4326',
+        crs=CAN_DEFAULT_CRS,
     )
     computed_charts = summarise_by_area(
         paths=input_paths,
@@ -122,7 +123,7 @@ def test_summarise_by_area_boundaries_no_name(operator, default_aoi, responses_m
             'rating': [1.0],
             'geometry': [default_path_geometry],
         },
-        crs='EPSG:4326',
+        crs=CAN_DEFAULT_CRS,
     )
     computed_charts = summarise_by_area(
         paths=input_paths,
@@ -149,7 +150,7 @@ def test_summarise_by_area_two_types(operator, default_aoi, responses_mock, defa
             'category': [PathCategory.UNKNOWN, PathCategory.DESIGNATED],
             'geometry': 2 * [default_path_geometry],
         },
-        crs='EPSG:4326',
+        crs=CAN_DEFAULT_CRS,
     )
     computed_charts = summarise_by_area(
         paths=input_paths,
@@ -177,7 +178,7 @@ def test_summarise_by_area_order_by_category_rating(operator, default_aoi, respo
             'category': [PathCategory.UNKNOWN, PathCategory.DESIGNATED, PathCategory.DESIGNATED_SHARED_WITH_BIKES],
             'geometry': 3 * [default_path_geometry],
         },
-        crs='EPSG:4326',
+        crs=CAN_DEFAULT_CRS,
     )
     computed_charts = summarise_by_area(
         paths=input_paths,
@@ -199,7 +200,7 @@ def test_summarise_aoi(default_path_geometry, default_polygon_geometry):
             'quality': 2 * [PavementQuality.GOOD],
             'geometry': [default_path_geometry] + [default_polygon_geometry],
         },
-        crs='EPSG:4326',
+        crs=CAN_DEFAULT_CRS,
     )
     (
         category_stacked_bar_chart,
@@ -221,7 +222,7 @@ def test_summarise_aoi_unknown(default_path_geometry):
             'quality': [PavementQuality.GOOD, PavementQuality.UNKNOWN],
             'geometry': 2 * [default_path_geometry],
         },
-        crs='EPSG:4326',
+        crs=CAN_DEFAULT_CRS,
     )
     category_stacked_bar_chart, quality_stacked_bar_chart = summarise_aoi(
         paths=input_paths, projected_crs=CRS.from_user_input(32632)

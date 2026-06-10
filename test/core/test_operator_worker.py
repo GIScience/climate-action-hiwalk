@@ -2,6 +2,7 @@ import geopandas as gpd
 import shapely
 from geopandas import testing
 
+from walkability.components.utils.geometry import CAN_DEFAULT_CRS
 from walkability.components.utils.misc import (
     PathCategory,
     PavementQuality,
@@ -30,7 +31,7 @@ def test_get_line_paths(operator, ohsome_api):
             'geometry': line_geom,
             '@other_tags': [{'highway': 'pedestrian'}, {'highway': 'pedestrian'}],
         },
-        crs='EPSG:4326',
+        crs=CAN_DEFAULT_CRS,
     )
 
     computed_lines, _ = operator._get_paths(
@@ -75,7 +76,7 @@ def test_get_polygon_paths(operator, default_aoi, ohsome_api):
             'surface': [SurfaceType.UNKNOWN],
             'surface_rating': [None],
         },
-        crs='EPSG:4326',
+        crs=CAN_DEFAULT_CRS,
     )
 
     _, computed_polygons = operator._get_paths(aoi=default_aoi)

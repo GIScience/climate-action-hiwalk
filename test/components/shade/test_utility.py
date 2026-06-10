@@ -4,7 +4,6 @@ import pandas as pd
 import pytest
 import shapely
 from geopandas.testing import assert_geodataframe_equal
-from pyproj import CRS
 from rasterio import Affine
 from shapely import LineString, Point
 
@@ -16,6 +15,7 @@ from walkability.components.shade.utility import (
     mask_and_crop,
     subset_tiles,
 )
+from walkability.components.utils.geometry import CAN_DEFAULT_CRS
 from walkability.components.utils.misc import PathCategory
 
 
@@ -30,7 +30,7 @@ def default_shade_path() -> gpd.GeoDataFrame:
             '@other_tags': [{}],
             'geometry': [LineString([[12.30, 48.22], [12.31, 48.22]])],
         },
-        crs='EPSG:4326',
+        crs=CAN_DEFAULT_CRS,
     )
 
 
@@ -47,7 +47,7 @@ def default_shade_path_small() -> gpd.GeoDataFrame:
             '@other_tags': [{}],
             'geometry': [LineString([[12.30, 48.22], [12.305, 48.22]])],
         },
-        crs='EPSG:4326',
+        crs=CAN_DEFAULT_CRS,
     )
 
 
@@ -61,7 +61,7 @@ def default_canopy_raster_profile():
         'width': 20,
         'height': 4,
         'count': 1,
-        'crs': CRS.from_epsg(4326),
+        'crs': CAN_DEFAULT_CRS,
         'transform': Affine(0.00024999999999995024, 0.0, 12.3, 0.0, -0.00024999999999995024, 48.2205),
     }
 
@@ -88,7 +88,7 @@ def test_subset_tiles_small_paths(default_canopy_tiles):
     """If the paths are very small (e.g. a point), still return the correct tile."""
     expected_tiles = {'mock_tree_raster1'}
 
-    paths = gpd.GeoDataFrame(geometry=[Point(12.3025, 48.22)], crs='epsg:4326')
+    paths = gpd.GeoDataFrame(geometry=[Point(12.3025, 48.22)], crs=CAN_DEFAULT_CRS)
 
     target_tiles = subset_tiles(tiles=default_canopy_tiles, paths=paths)
 
@@ -110,7 +110,7 @@ def test_subset_tiles_multiple_ignore_holes(default_canopy_tiles):
 
     paths = gpd.GeoDataFrame(
         geometry=[LineString(([12.30, 48.22], [12.315, 48.22], [12.315, 48.19], [12.30, 48.19], [12.30, 48.22]))],
-        crs='epsg:4326',
+        crs=CAN_DEFAULT_CRS,
     )
 
     target_tiles = subset_tiles(tiles=default_canopy_tiles, paths=paths)
@@ -122,7 +122,7 @@ def test_mask_and_crop_with_mask_file(default_aoi):
     received_masked_data, _ = mask_and_crop(
         file=TEST_RESOURCES_DIR / 'mock_tree_raster2.tif',
         aoi=default_aoi,
-        aoi_crs=CRS.from_epsg(4326),
+        aoi_crs=CAN_DEFAULT_CRS,
     )
 
     assert isinstance(received_masked_data, np.ndarray)
@@ -135,7 +135,7 @@ def test_mask_and_crop_missing_mask_file(default_aoi):
     received_masked_data, _ = mask_and_crop(
         file=TEST_RESOURCES_DIR / 'mock_tree_raster1.tif',
         aoi=default_aoi,
-        aoi_crs=CRS.from_epsg(4326),
+        aoi_crs=CAN_DEFAULT_CRS,
     )
 
     # no `nodata` values because nothing is masked out
@@ -146,7 +146,7 @@ def test_mask_and_crop_with_min_value(default_aoi):
     received_masked_data, _ = mask_and_crop(
         file=TEST_RESOURCES_DIR / 'mock_tree_raster1.tif',
         aoi=default_aoi,
-        aoi_crs=CRS.from_epsg(4326),
+        aoi_crs=CAN_DEFAULT_CRS,
         min_value=2,
     )
 
@@ -159,7 +159,7 @@ def test_mask_and_crop_is_cropped():
     received_masked_data, _ = mask_and_crop(
         file=TEST_RESOURCES_DIR / 'mock_tree_raster1.tif',
         aoi=mask_aoi,
-        aoi_crs=CRS.from_epsg(4326),
+        aoi_crs=CAN_DEFAULT_CRS,
     )
 
     assert received_masked_data.shape == (1, 44, 11)
@@ -171,7 +171,7 @@ def test_mask_and_crop_tiny_aoi():
     received_masked_data, _ = mask_and_crop(
         file=TEST_RESOURCES_DIR / 'mock_tree_raster1.tif',
         aoi=aoi,
-        aoi_crs=CRS.from_epsg(4326),
+        aoi_crs=CAN_DEFAULT_CRS,
     )
 
     assert received_masked_data.shape == (1, 2, 3)
@@ -183,7 +183,7 @@ def test_mask_and_crop_out_of_bounds():
         mask_and_crop(
             file=TEST_RESOURCES_DIR / 'mock_tree_raster1.tif',
             aoi=aoi,
-            aoi_crs=CRS.from_epsg(4326),
+            aoi_crs=CAN_DEFAULT_CRS,
         )
 
 
