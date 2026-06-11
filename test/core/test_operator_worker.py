@@ -1,5 +1,9 @@
+from unittest.mock import patch
+
 import geopandas as gpd
+import pytest
 import shapely
+from climatoology.base.exception import ClimatoologyUserError
 from geopandas import testing
 
 from walkability.components.utils.geometry import CAN_DEFAULT_CRS
@@ -97,24 +101,52 @@ def test_get_paths_with_erroneous_clipping(operator, responses_mock):
 
     responses_mock.post('https://api.ohsome.org/v1/elements/geometry', body=body)
 
-    computed_lines, computed_polygons = operator._get_paths(
-        aoi=shapely.MultiPolygon(
-            polygons=[
-                [
+    with pytest.raises(
+        ClimatoologyUserError,
+        match=r'No accessible paths for walking were found in your area. Please select a larger area',
+    ):
+        operator._get_paths(
+            aoi=shapely.MultiPolygon(
+                polygons=[
                     [
-                        [8.676042, 49.418866],
-                        [8.676042, 49.4190311],
-                        [8.6765357, 49.4190311],
-                        [8.6765357, 49.418866],
-                        [8.676042, 49.418866],
+                        [
+                            [8.676042, 49.418866],
+                            [8.676042, 49.4190311],
+                            [8.6765357, 49.4190311],
+                            [8.6765357, 49.418866],
+                            [8.676042, 49.418866],
+                        ]
                     ]
                 ]
-            ]
+            )
         )
-    )
 
-    assert computed_lines.empty
-    assert computed_polygons.empty
+
+def test_get_paths_empty_ohsome_response(operator, default_aoi):
+    with patch('walkability.core.operator_worker.fetch_osm_data') as mock:
+        mock.return_value = gpd.GeoDataFrame(columns=['@osmId', 'geometry', '@other_tags'])
+        with pytest.raises(
+            ClimatoologyUserError,
+            match=r'No accessible paths for walking were found in your area. Please select a larger area',
+        ):
+            operator._get_paths(aoi=default_aoi)
+
+
+# There are paths in the AOI, but they are removed by path_categorisation because they are in PathCategory.INACCESSIBLE
+def test_get_paths_inaccessible_ohsome_response(default_path_geometry, operator, default_aoi):
+    with patch('walkability.core.operator_worker.fetch_osm_data') as mock:
+        mock.return_value = gpd.GeoDataFrame(
+            data={
+                '@osmId': ['way/1'],
+                'geometry': [default_path_geometry],
+                '@other_tags': [{'highway': 'motorway'}],
+            },
+        )
+        with pytest.raises(
+            ClimatoologyUserError,
+            match=r'No accessible paths for walking were found in your area. Please select a larger area',
+        ):
+            operator._get_paths(aoi=default_aoi)
 
 
 def test_clean_geometries_tiny_remnants(operator):

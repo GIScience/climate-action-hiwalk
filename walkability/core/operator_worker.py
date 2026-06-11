@@ -8,6 +8,7 @@ from botocore import UNSIGNED
 from botocore.config import Config
 from climatoology.base.baseoperator import AoiProperties, Artifact, BaseOperator
 from climatoology.base.computation import ComputationResources
+from climatoology.base.exception import ClimatoologyUserError
 from climatoology.base.plugin_info import PluginInfo
 from climatoology.utility.naturalness import NaturalnessIndex, NaturalnessUtility
 from mobility_tools.settings import ORSSettings, S3Settings
@@ -200,6 +201,11 @@ class OperatorWalkability(BaseOperator[ComputeInputWalkability]):
 
         line_paths = path_categorisation(geometries=line_paths)
         polygon_paths = path_categorisation(geometries=polygon_paths)
+
+        if line_paths.empty and polygon_paths.empty:
+            raise ClimatoologyUserError(
+                'No accessible paths for walking were found in your area. Please select a larger area'
+            )
 
         return line_paths, polygon_paths
 
