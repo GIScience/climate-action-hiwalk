@@ -5,7 +5,9 @@ import geopandas as gpd
 import matplotlib.colors as mcolors
 import matplotlib.pyplot as pyplt
 import numpy as np
+import pandas as pd
 import plotly.graph_objects as go
+import shapely
 from climatoology.base.artifact import Artifact, ArtifactMetadata, ContinuousLegendData, Legend
 from climatoology.base.artifact_creators import create_plotly_chart_artifact, create_vector_artifact
 from climatoology.base.computation import ComputationResources
@@ -13,8 +15,10 @@ from climatoology.base.exception import ClimatoologyUserError
 from mobility_tools.settings import S3Settings
 from mobility_tools.slope import get_paths_slopes
 from plotly.graph_objs import Figure
+from shapely.ops import linemerge
 
 from walkability.components.categorise_paths.path_categorisation import PathCategory
+from walkability.components.utils.geometry import length_weighted_mean
 from walkability.components.utils.misc import Topics, generate_colors
 
 log = logging.getLogger(__name__)
@@ -36,12 +40,38 @@ def compute_slope_analysis(
     paths_with_slopes = get_paths_slopes(line_string_paths, s3settings, segment_length=15)
     paths_with_slopes['slope'] = paths_with_slopes['slope'].abs()
 
-    slope_artifact = build_slope_artifact(path_slopes_data=paths_with_slopes, resources=resources)
+    smoothed_slopes = merge_similar_slopes(paths_with_slopes)
+    slope_artifact = build_slope_artifact(path_slopes_data=smoothed_slopes, resources=resources)
 
     slope_summary = summarise_slope(paths_with_slopes)
     slope_summary_artifact = build_slope_summary_artifact(slope_summary, resources)
 
     return [slope_artifact, slope_summary_artifact]
+
+
+def merge_similar_slopes(paths: gpd.GeoDataFrame, merging_tolerance: float = 1.0) -> gpd.GeoDataFrame:
+    reconstituted_paths = []
+    for osm_id, indices in paths.groupby('@osmId').indices.items():
+        if len(indices) < 2:
+            reconstituted_paths.append(paths.loc[indices])
+            continue
+
+        mean_slope = length_weighted_mean(paths.loc[indices], col='slope')
+
+        slope_deviation = paths.loc[indices, 'slope'].apply(lambda slope: abs(slope - mean_slope))
+
+        if slope_deviation.apply(lambda deviation: deviation <= merging_tolerance).all():
+            geometry = linemerge(paths.loc[indices].geometry.to_list())
+            if isinstance(geometry, shapely.MultiLineString):
+                geometry = linemerge(geometry)
+            smoothed_path = gpd.GeoDataFrame(data={'@osmId': [osm_id], 'slope': mean_slope}, geometry=[geometry])
+            reconstituted_paths.append(smoothed_path)
+            continue
+
+        reconstituted_paths.append(paths.loc[indices])
+
+    smoothed_paths = pd.concat(reconstituted_paths, ignore_index=True)
+    return smoothed_paths
 
 
 def build_slope_artifact(
@@ -58,7 +88,7 @@ def build_slope_artifact(
     )
 
     # Clean data for labels
-    path_slopes_data['slope'] = path_slopes_data['slope'].round(2)
+    path_slopes_data['label'] = path_slopes_data['slope'].apply(lambda slope: f'{slope:.2f}%')
 
     legend = Legend(
         legend_data=ContinuousLegendData(
@@ -86,7 +116,6 @@ def build_slope_artifact(
         data=path_slopes_data,
         metadata=metadata,
         resources=resources,
-        label='slope',
         legend=legend,
     )
 

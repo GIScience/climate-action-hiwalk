@@ -27,3 +27,13 @@ def calculate_length(length_resolution_m, paths, projected_crs):
     stats['length'] = stats.length / length_resolution_m
     stats['length'] = round(stats['length'], 2)
     return stats
+
+
+def length_weighted_mean(gdf: gpd.GeoDataFrame, col: str) -> float:
+    projected_data = gdf.to_crs(gdf.estimate_utm_crs())
+
+    weighted_slopes = projected_data.length * projected_data[col]
+
+    total_length = projected_data.length.sum()
+    weighted_mean = weighted_slopes.sum() / total_length
+    return weighted_mean
