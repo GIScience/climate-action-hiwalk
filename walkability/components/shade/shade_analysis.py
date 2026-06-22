@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import botocore.client
 import geopandas as gpd
 import pandas as pd
@@ -36,11 +38,13 @@ def create_shade_paths_vector_artifact(shaded_paths: gpd.GeoDataFrame, resources
     shaded_paths['color'] = generate_colors(
         color_by=shaded_paths['prop_shaded'], cmap_name=cmap, min_value=0, max_value=1
     )
-    shaded_paths = shaded_paths[['color', 'prop_shaded', 'geometry']]
+    shaded_paths['label'] = shaded_paths['prop_shaded'].apply(lambda x: '{:.0f}%'.format(round(x * 100)))
+    shaded_paths = shaded_paths[['@osmId', 'color', 'label', 'geometry']]
 
     shade_metadata = ArtifactMetadata(
         name='Shaded Paths',
         summary='Is this path shaded by tree canopies?',
+        description=Path('resources/components/shade/description.md').read_text(),
         tags={Topics.SHADE, Topics.COMFORT},
         primary=False,
     )
@@ -49,10 +53,9 @@ def create_shade_paths_vector_artifact(shaded_paths: gpd.GeoDataFrame, resources
         metadata=shade_metadata,
         resources=resources,
         legend=Legend(
-            title='Proportion of Shade',
+            title='Proportion Shaded',
             legend_data=ContinuousLegendData(cmap_name=cmap, ticks={'0%': 0.0, '100%': 1.0}),
         ),
-        label='prop_shaded',
     )  # type: ignore
     return shade_artifact
 
