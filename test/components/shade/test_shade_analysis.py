@@ -1,13 +1,18 @@
+import geopandas as gpd
 import pandas as pd
 import plotly.graph_objects as go
 from climatoology.base.artifact import Artifact, ArtifactModality
+from geopandas.testing import assert_geodataframe_equal
+from shapely import LineString
 
 from walkability.components.shade.shade_analysis import (
     create_shade_paths_chart_artifact,
     create_shade_paths_vector_artifact,
     create_shade_plot,
+    get_shade_for_tunnels,
     shade_analysis,
 )
+from walkability.components.utils.geometry import CAN_DEFAULT_CRS
 
 
 def test_shade_analysis(
@@ -23,6 +28,24 @@ def test_shade_analysis(
 
     assert len(artifacts) == 2
     assert all([isinstance(a, Artifact) for a in artifacts])
+
+
+def test_get_shade_for_tunnels():
+    shaded_paths = gpd.GeoDataFrame(
+        index=[1, 2],
+        data={'@other_tags': [{'tunnel': 'yes'}, {}], 'length': [5560, 5560], 'length_shaded': [1000, 2500]},
+        geometry=[
+            LineString([[12.4, 48.25], [12.4, 48.30]]),
+            LineString([[12.41, 48.25], [12.41, 48.30]]),
+        ],
+        crs=CAN_DEFAULT_CRS,
+    )
+
+    expected_shaded_paths = shaded_paths.copy()
+    expected_shaded_paths.loc[1, 'length_shaded'] = 5560
+
+    shaded_paths_with_tunnel_correction = get_shade_for_tunnels(shaded_paths)
+    assert_geodataframe_equal(shaded_paths_with_tunnel_correction, expected_shaded_paths)
 
 
 def test_create_shade_paths_vector_artifact(default_path, compute_resources):

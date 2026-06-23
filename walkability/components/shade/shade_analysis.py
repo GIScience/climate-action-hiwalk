@@ -25,11 +25,18 @@ def shade_analysis(
     shaded_paths = get_shaded_path_stats(
         paths=paths, tile_spec=tile_spec, shade_client=shade_client, shade_config=shade_config
     )
+    shaded_paths = get_shade_for_tunnels(shaded_paths)
 
     shade_artifact = create_shade_paths_vector_artifact(shaded_paths, resources)
     shade_chart_artifact = create_shade_paths_chart_artifact(shaded_paths, resources)
 
     return [shade_artifact, shade_chart_artifact]
+
+
+def get_shade_for_tunnels(shaded_paths: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
+    tunneled_paths = shaded_paths['@other_tags'].apply(lambda x: x.get('tunnel')) == 'yes'
+    shaded_paths.loc[tunneled_paths, 'length_shaded'] = shaded_paths.loc[tunneled_paths, 'length']
+    return shaded_paths
 
 
 def create_shade_paths_vector_artifact(shaded_paths: gpd.GeoDataFrame, resources: ComputationResources) -> Artifact:
