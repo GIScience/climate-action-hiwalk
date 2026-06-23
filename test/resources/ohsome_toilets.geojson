@@ -1,0 +1,25 @@
+{
+  "attribution" : {
+    "url" : "https://ohsome.org/copyrights",
+    "text" : "© OpenStreetMap contributors"
+  },
+  "apiVersion" : "1.10.4",
+  "type" : "FeatureCollection",
+  "features" : [{
+    "type" : "Feature",
+    "geometry" : {
+      "type" : "Point",
+      "coordinates" : [
+        8.6546617,
+        49.4015634
+      ]
+    },
+    "properties" : {
+      "@osmId" : "node/1975553461",
+      "@snapshotTimestamp" : "2026-06-19T10:24:28Z",
+      "amenity": "toilets",
+      "fee": "no",
+      "wheelchair": "yes"
+    }
+  }]
+}
