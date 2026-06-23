@@ -10,7 +10,7 @@ from mobility_tools.settings import ORSSettings
 from ohsome import OhsomeClient
 from pydantic_extra_types.color import Color
 
-from walkability.components.comfort.benches_and_drinking_water import PointsOfInterest, distance_enrich_paths
+from walkability.components.comfort.comfort_poi_filters import PointsOfInterest, distance_enrich_paths
 from walkability.components.utils.geometry import get_buffered_aoi
 from walkability.components.utils.misc import Topics, generate_colors
 
@@ -27,7 +27,7 @@ def compute_comfort_artifacts(
     resources: ComputationResources,
 ) -> list[Artifact]:
     artifacts = []
-    for poi_type in [PointsOfInterest.DRINKING_WATER, PointsOfInterest.SEATING]:
+    for poi_type in [PointsOfInterest.DRINKING_WATER, PointsOfInterest.SEATING, PointsOfInterest.PUBLIC_TOILET]:
         log.debug(f'Computing Comfort for {poi_type}')
         max_walking_distance = max_walking_distance_map[poi_type]
         bin_size = int(max_walking_distance / N_BINS)
@@ -81,7 +81,7 @@ def build_isodistance_artifact(
         metadata=ArtifactMetadata(
             name=f'Distance to {poi_type.value.title()}',
             summary=f'How far is it to {poi_type.value.capitalize()}?',
-            description=f'If there are fewer than {max_isochrone_request} {poi_type.value.title()} in the area of interest,'
+            description=f'If there are fewer than {max_isochrone_request} {poi_type.value.title()} in the area of interest, '
             f'actual walking distances are computed. Otherwise, straight line distances are used.',
             filename=f'isodistance_{poi_type.value.replace(" ", "_")}',
             tags={Topics.COMFORT},
@@ -114,6 +114,8 @@ def assign_color(
             point_color = Color('black')
         case PointsOfInterest.DRINKING_WATER:
             point_color = Color('darkblue')
+        case PointsOfInterest.PUBLIC_TOILET:
+            point_color = Color('purple')
         case _:
             raise NotImplementedError('POI not supported by coloring function')
     data.loc[data.geom_type == 'Point', 'color'] = point_color

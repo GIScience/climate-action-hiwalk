@@ -17,8 +17,8 @@ from ohsome import OhsomeClient
 from walkability.components.categorise_paths.path_categorisation import path_categorisation, subset_walkable_paths
 from walkability.components.categorise_paths.path_categorisation_artifacts import build_path_categorisation_artifact
 from walkability.components.categorise_paths.path_summarisation import summarise_aoi, summarise_by_area
-from walkability.components.comfort.benches_and_drinking_water import PointsOfInterest
 from walkability.components.comfort.comfort_artifacts import compute_comfort_artifacts
+from walkability.components.comfort.comfort_poi_filters import PointsOfInterest
 from walkability.components.naturalness.naturalness_analysis import naturalness_analysis
 from walkability.components.network_analyses.detour_analysis import detour_factor_analysis
 from walkability.components.shade.shade_analysis import shade_analysis
@@ -68,6 +68,7 @@ class OperatorWalkability(BaseOperator[ComputeInputWalkability]):
             PointsOfInterest.DRINKING_WATER: 200,
             PointsOfInterest.SEATING: 200,
             PointsOfInterest.REMAINDER: 1000,
+            PointsOfInterest.PUBLIC_TOILET: 500,
         }
         self.max_walking_distance_map = {k: round(v, -1) for k, v in max_walking_distance_map.items()}
 

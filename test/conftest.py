@@ -22,7 +22,7 @@ from requests import PreparedRequest
 from responses import matchers
 from shapely.geometry import LineString
 
-from walkability.components.comfort.benches_and_drinking_water import PointsOfInterest
+from walkability.components.comfort.comfort_poi_filters import PointsOfInterest
 from walkability.components.shade.utility import S3ShadeConfig
 from walkability.components.utils.geometry import CAN_DEFAULT_CRS
 from walkability.components.utils.misc import PathCategory
@@ -336,7 +336,7 @@ def filter_start_matcher(filter_start: str) -> Callable[..., Any]:
 
 @pytest.fixture
 def empty_pois(default_path):
-    with patch('walkability.components.comfort.benches_and_drinking_water.request_pois') as mock:
+    with patch('walkability.components.comfort.comfort_poi_filters.request_pois') as mock:
         mock.return_value = gpd.GeoDataFrame()
         yield mock
 

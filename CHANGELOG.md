@@ -8,6 +8,7 @@ and this project mostly adheres to [Semantic Versioning](https://semver.org/spec
 ## [Unreleased](https://gitlab.heigit.org/climate-action/plugins/walkability/-/compare/3.0.4...main)
 
 ### Added
+- An indicator mapping out the locations and walking distances to public toilets ([#328](https://gitlab.heigit.org/climate-action/plugins/walkability/-/work_items/328))
 - Reintroduce slope indicator based on mapterhorn high resolution elevation data ([#256](https://gitlab.heigit.org/climate-action/plugins/walkability/-/work_items/256))
 - Introduce standalone mode with update to climatoology v7.1
 - A map and a chart showing shaded paths
@@ -85,7 +86,6 @@ and this project mostly adheres to [Semantic Versioning](https://semver.org/spec
 - Moved out settings for the openrouteservice to a settings file at `.env.ors`. See `.env.ors_template`
 
 ### Added
-
 - An indicator mapping out the locations and walking distances to
   benches ([#30](https://gitlab.heigit.org/climate-action/plugins/walkability/-/issues/30))
 - An indicator mapping out the locations and walking distances to drinking water

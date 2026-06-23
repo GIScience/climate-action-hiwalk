@@ -7,7 +7,7 @@ from ohsome import OhsomeClient
 from responses.registries import OrderedRegistry
 from shapely import LineString, Point
 
-from walkability.components.comfort.benches_and_drinking_water import (
+from walkability.components.comfort.comfort_poi_filters import (
     PointsOfInterest,
     apply_isochrones_to_paths,
     distance_enrich_paths,
@@ -128,6 +128,16 @@ def test_request_benches(responses_mock, small_aoi):
         body=benches_body,
     )
     verify(request_pois(aoi=small_aoi, poi=PointsOfInterest.SEATING, ohsome_client=OhsomeClient()).to_json())
+
+
+def test_request_toilets(responses_mock, small_aoi):
+    with open('test/resources/ohsome_toilets.geojson', 'r') as toilets:
+        toilets_body = toilets.read()
+    responses_mock.post(
+        'https://api.ohsome.org/v1/elements/centroid',
+        body=toilets_body,
+    )
+    verify(request_pois(aoi=small_aoi, poi=PointsOfInterest.PUBLIC_TOILET, ohsome_client=OhsomeClient()).to_json())
 
 
 def test_apply_isochrones_to_paths():

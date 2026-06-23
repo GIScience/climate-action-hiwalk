@@ -2,8 +2,8 @@ import geopandas as gpd
 import shapely
 from pydantic_extra_types.color import Color
 
-from walkability.components.comfort.benches_and_drinking_water import PointsOfInterest
 from walkability.components.comfort.comfort_artifacts import assign_color, assign_label
+from walkability.components.comfort.comfort_poi_filters import PointsOfInterest
 
 
 def test_assign_color(default_max_walking_distance_map):
