@@ -5,9 +5,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project mostly adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://gitlab.heigit.org/climate-action/plugins/walkability/-/compare/3.1.0...main)
+## [Unreleased](https://gitlab.heigit.org/climate-action/plugins/walkability/-/compare/4.0.0...main)
 
-## [3.1.0](https://gitlab.heigit.org/climate-action/plugins/walkability/-/releases/3.1.0) - 2026-06-24
+## [4.0.0](https://gitlab.heigit.org/climate-action/plugins/walkability/-/releases/4.0.0) - 2026-06-24
 
 ### Added
 - Reintroduce slope indicator based on mapterhorn high resolution elevation data ([#256](https://gitlab.heigit.org/climate-action/plugins/walkability/-/work_items/256))
