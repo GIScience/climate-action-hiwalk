@@ -5,7 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project mostly adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://gitlab.heigit.org/climate-action/plugins/walkability/-/compare/4.0.0...main)
+## [Unreleased](https://gitlab.heigit.org/climate-action/plugins/walkability/-/compare/4.0.1...main)
+
+### Fixed
+- Update climatoology to v 7.2.0 to fix bug with pmtile display
+
+## [4.0.1](https://gitlab.heigit.org/climate-action/plugins/walkability/-/releases/4.0.1) - 2026-06-24
 
 ## [4.0.0](https://gitlab.heigit.org/climate-action/plugins/walkability/-/releases/4.0.0) - 2026-06-24
 
