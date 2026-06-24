@@ -1,6 +1,6 @@
 [project]
 name = "walkability"
-version = "3.0.4"
+version = "3.1.0"
 description = "The Walkability plugin"
 authors = [{name="Moritz Schott", email="moritz.schott@heigit.org"}, {name="Maciej Adamiak", email="maciej.adamiak@heigit.org"}, {name="Emily C. Wilke", email="emily.wilke@heigit.org"}]
 readme = "README.md"
