@@ -1,13 +1,13 @@
 [project]
 name = "walkability"
-version = "4.0.0"
+version = "4.0.1"
 description = "The Walkability plugin"
 authors = [{name="Moritz Schott", email="moritz.schott@heigit.org"}, {name="Maciej Adamiak", email="maciej.adamiak@heigit.org"}, {name="Emily C. Wilke", email="emily.wilke@heigit.org"}]
 readme = "README.md"
 
 requires-python = ">=3.13.5,<3.14"
 dependencies = [
-    "climatoology @ git+https://gitlab.heigit.org/climate-action/climatoology.git@7.1.1",
+    "climatoology @ git+https://gitlab.heigit.org/climate-action/climatoology.git@7.2.0",
     "pydantic (>=2.12.5,<3.0.0)",
     "pydantic-settings (>=2.1.0,<3.0.0)",
     "shapely (>=2.0.2,<3.0.0)",
