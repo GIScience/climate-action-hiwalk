@@ -7,10 +7,10 @@ and this project mostly adheres to [Semantic Versioning](https://semver.org/spec
 
 ## [Unreleased](https://gitlab.heigit.org/climate-action/plugins/walkability/-/compare/4.0.1...main)
 
+## [4.0.1](https://gitlab.heigit.org/climate-action/plugins/walkability/-/releases/4.0.1) - 2026-06-25
+
 ### Fixed
 - Update climatoology to v 7.2.0 to fix bug with pmtile display
-
-## [4.0.1](https://gitlab.heigit.org/climate-action/plugins/walkability/-/releases/4.0.1) - 2026-06-24
 
 ## [4.0.0](https://gitlab.heigit.org/climate-action/plugins/walkability/-/releases/4.0.0) - 2026-06-24
 
