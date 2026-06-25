@@ -13,6 +13,8 @@ from climatoology.base.plugin_info import PluginInfo
 from climatoology.utility.naturalness import NaturalnessIndex, NaturalnessUtility
 from mobility_tools.settings import ORSSettings, S3Settings
 from ohsome import OhsomeClient
+from pydantic import BaseModel
+from pydantic_extra_types.language_code import LanguageAlpha2
 
 from walkability.components.categorise_paths.path_categorisation import path_categorisation, subset_walkable_paths
 from walkability.components.categorise_paths.path_categorisation_artifacts import build_path_categorisation_artifact
@@ -79,10 +81,13 @@ class OperatorWalkability(BaseOperator[ComputeInputWalkability]):
 
     def compute(  # dead: disable
         self,
+        *,
         resources: ComputationResources,
         aoi: shapely.MultiPolygon,
         aoi_properties: AoiProperties,
-        params: ComputeInputWalkability,
+        params: ComputeInputWalkability | BaseModel,
+        language: LanguageAlpha2 | None = None,
+        **kwargs,
     ) -> list[Artifact]:
         log.info(f'Handling compute request: {params.model_dump()} in context: {resources}')
 
