@@ -7,6 +7,9 @@ and this project mostly adheres to [Semantic Versioning](https://semver.org/spec
 
 ## [Unreleased](https://gitlab.heigit.org/climate-action/plugins/walkability/-/compare/4.0.2...main)
 
+### Changed
+- Make `max_path_limit` configurable and add it as environment variable ([#346](https://gitlab.heigit.org/climate-action/plugins/walkability/-/work_items/346))
+
 ## [4.0.2](https://gitlab.heigit.org/climate-action/plugins/walkability/-/releases/4.0.2) - 2026-06-25
 
 ### Fixed
