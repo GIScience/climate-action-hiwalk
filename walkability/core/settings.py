@@ -5,6 +5,7 @@ class Settings(BaseSettings):
     naturalness_host: str
     naturalness_port: int
     naturalness_path: str
+    max_path_limit: int = 100000
 
     model_config = SettingsConfigDict(env_file='.env')  # dead: disable
 

@@ -46,6 +46,7 @@ class OperatorWalkability(BaseOperator[ComputeInputWalkability]):
         ors_settings: ORSSettings,
         s3_settings: S3Settings,
         shade_config: S3ShadeConfig,
+        max_path_limit: int,
     ):
         super().__init__()
         self.naturalness_utility = naturalness_utility
@@ -76,6 +77,8 @@ class OperatorWalkability(BaseOperator[ComputeInputWalkability]):
 
         log.debug('Initialised walkability operator with ohsome client and Naturalness Utility')
 
+        self.max_path_limit = max_path_limit
+
     def info(self) -> PluginInfo:
         return get_info()
 
@@ -93,7 +96,8 @@ class OperatorWalkability(BaseOperator[ComputeInputWalkability]):
 
         artifacts = []
 
-        check_paths_count_limit(aoi=aoi, ohsome=self.ohsome, count_limit=100000)
+        if self.max_path_limit > 0:
+            check_paths_count_limit(aoi=aoi, ohsome=self.ohsome, count_limit=self.max_path_limit)
 
         line_paths, polygon_paths = self._get_paths(aoi=aoi)
 

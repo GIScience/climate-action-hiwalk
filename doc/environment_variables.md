@@ -17,6 +17,7 @@ This file contains miscellaneous settings, including options for the Naturalness
 | `NATURALNESS_HOST` | Host for the [Naturalness Utility](https://gitlab.heigit.org/climate-action/utilities/naturalness-utility) | True     | -       |
 | `NATURALNESS_PORT` | Port for the Naturalness Utility                                                                           | True     | -       |
 | `NATURALNESS_PATH` | URL path to the Naturalness api endpoint                                                                   | True     | -       |
+| `MAX_PATH_LIMIT`   | If number of paths in the AOI exceeds this limit, computation is aborted                                   | False    | 100000  |
 
 ## `.env.ors`
 This file contains options pertaining to the [openrouteservice](https://openrouteservice.org/)(ORS).

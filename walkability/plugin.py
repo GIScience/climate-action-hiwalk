@@ -26,6 +26,7 @@ def init_plugin(
         ors_settings=initialised_ors_settings,
         s3_settings=s3_settings,
         shade_config=shade_config,
+        max_path_limit=initialised_settings.max_path_limit,
     )
 
     log.info(f'Starting plugin: {operator.info().name}')

@@ -135,6 +135,7 @@ def operator(
             ors_settings=default_ors_settings,
             s3_settings=None,
             shade_config=default_shade_config,
+            max_path_limit=100000,
         )  # type: ignore
 
 
