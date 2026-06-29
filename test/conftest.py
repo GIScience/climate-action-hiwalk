@@ -1,6 +1,7 @@
 import json
 import uuid
 from pathlib import Path
+from tempfile import TemporaryDirectory
 from typing import Any, Callable, Tuple
 from unittest.mock import patch
 from urllib.parse import parse_qsl
@@ -18,12 +19,14 @@ from climatoology.base.baseoperator import AoiProperties
 from climatoology.base.computation import ComputationScope
 from mobility_tools.settings import ORSSettings
 from moto import mock_aws
+from rasterio import Affine
 from requests import PreparedRequest
 from responses import matchers
 from shapely.geometry import LineString
 
 from walkability.components.comfort.comfort_poi_filters import PointsOfInterest
-from walkability.components.shade.utility import S3ShadeConfig
+from walkability.components.shade.utility.config import S3ShadeConfig
+from walkability.components.shade.utility.download import download_tile_spec
 from walkability.components.utils.geometry import CAN_DEFAULT_CRS
 from walkability.components.utils.misc import PathCategory
 from walkability.core.input import ComputeInputWalkability
@@ -90,12 +93,18 @@ def ordered_responses_mock():
 
 @pytest.fixture
 def default_shade_config():
-    return S3ShadeConfig(bucket='test-bucket', cache_dir='cache/test/tree_canopies')
+    with TemporaryDirectory() as tmpdir:
+        yield S3ShadeConfig(bucket='test-bucket', cache_dir=tmpdir)
 
 
 @pytest.fixture
-def default_canopy_tiles() -> gpd.GeoDataFrame:
-    return gpd.read_file(TEST_RESOURCES_DIR / 'mock_shade_tiles.geojson').to_crs(CAN_DEFAULT_CRS)
+def default_canopy_tiles(default_shade_client, default_shade_config):
+    canopy_tiles = download_tile_spec(
+        shade_client=default_shade_client,
+        shade_config=default_shade_config,
+        download_dir=default_shade_config.cache_dir,
+    )
+    yield canopy_tiles
 
 
 @pytest.fixture
@@ -107,7 +116,7 @@ def default_shade_client(default_shade_config):
         shade_client.upload_file(
             Bucket=default_shade_config.bucket,
             Key=str(default_shade_config.base_path / default_shade_config.tiles_object),
-            Filename=TEST_RESOURCES_DIR / 'mock_shade_tiles.geojson',
+            Filename=TEST_RESOURCES_DIR / 'shade/mock_shade_tiles.geojson',
         )
 
         upload_tiles = ['mock_tree_raster1.tif', 'mock_tree_raster2.tif', 'mock_tree_raster2.tif.msk']
@@ -119,7 +128,7 @@ def default_shade_client(default_shade_config):
             shade_client.upload_file(
                 Bucket=default_shade_config.bucket,
                 Key=str(path / tile),
-                Filename=TEST_RESOURCES_DIR / tile,
+                Filename=TEST_RESOURCES_DIR / 'shade' / tile,
             )
 
         yield shade_client
@@ -381,3 +390,51 @@ def slopes_mock(default_slopes_gdf):
     with patch('walkability.components.slope.slope_analysis.get_paths_slopes') as get_slopes:
         get_slopes.return_value = default_slopes_gdf
         yield default_slopes_gdf
+
+
+@pytest.fixture
+def default_shade_path() -> gpd.GeoDataFrame:
+    """A default shade path which overlaps with both `mock_tree_raster1.tif` and `mock_tree_raster2.tif`."""
+    # This LineString transforms to clean coordinates in EPSG:3857, which makes for nice testing with the raster files.
+    return gpd.GeoDataFrame(
+        data={
+            '@osmId': ['test'],
+            'category': [PathCategory.DESIGNATED],
+            'rating': [1.0],
+            '@other_tags': [{}],
+            'geometry': [LineString([[12.29973287, 48.22], [12.31051265, 48.22]])],
+        },
+        crs=CAN_DEFAULT_CRS,
+    )
+
+
+@pytest.fixture
+def default_shade_path_small() -> gpd.GeoDataFrame:
+    """A default shade path which is covered by only `mock_tree_raster1.tif` and can be used with
+    `default_canopy_raster_profile` for unit testing.
+    """
+    return gpd.GeoDataFrame(
+        data={
+            '@osmId': ['test'],
+            'category': [PathCategory.DESIGNATED],
+            'rating': [1.0],
+            '@other_tags': [{}],
+            'geometry': [LineString([[12.30, 48.22], [12.305, 48.22]])],
+        },
+        crs=CAN_DEFAULT_CRS,
+    )
+
+
+@pytest.fixture
+def default_canopy_raster_profile():
+    """This is a default raster profile for an array of shape (4, 20), which covers all of `default_shade_path_small`."""
+    return {
+        'driver': 'GTiff',
+        'dtype': 'float32',
+        'nodata': 255,
+        'width': 20,
+        'height': 4,
+        'count': 1,
+        'crs': CAN_DEFAULT_CRS,
+        'transform': Affine(0.00024999999999995024, 0.0, 12.3, 0.0, -0.00024999999999995024, 48.2205),
+    }

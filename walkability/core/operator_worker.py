@@ -24,7 +24,8 @@ from walkability.components.comfort.comfort_poi_filters import PointsOfInterest
 from walkability.components.naturalness.naturalness_analysis import naturalness_analysis
 from walkability.components.network_analyses.detour_analysis import detour_factor_analysis
 from walkability.components.shade.shade_analysis import shade_analysis
-from walkability.components.shade.utility import S3ShadeConfig, download_tile_spec
+from walkability.components.shade.utility.config import S3ShadeConfig
+from walkability.components.shade.utility.download import download_tile_spec
 from walkability.components.slope.slope_analysis import compute_slope_analysis
 from walkability.components.utils.geometry import get_utm_zone
 from walkability.components.utils.misc import (

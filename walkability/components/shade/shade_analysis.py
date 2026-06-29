@@ -9,7 +9,8 @@ from climatoology.base.artifact_creators import Artifact, create_plotly_chart_ar
 from climatoology.base.computation import ComputationResources
 from climatoology.base.logging import get_climatoology_logger
 
-from walkability.components.shade.utility import S3ShadeConfig, get_shaded_path_stats
+from walkability.components.shade.utility.analysis import get_shaded_path_stats
+from walkability.components.shade.utility.config import S3ShadeConfig
 from walkability.components.utils.misc import Topics, generate_colors
 
 log = get_climatoology_logger(__name__)
@@ -17,7 +18,7 @@ log = get_climatoology_logger(__name__)
 
 def shade_analysis(
     paths: gpd.GeoDataFrame,
-    tile_spec: gpd.GeoDataFrame,
+    tile_spec: gpd.GeoSeries,
     shade_client: botocore.client.BaseClient,
     shade_config: S3ShadeConfig,
     resources: ComputationResources,
