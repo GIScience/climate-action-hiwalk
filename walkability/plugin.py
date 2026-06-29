@@ -4,7 +4,7 @@ from climatoology.app.plugin import start_plugin
 from climatoology.utility.naturalness import NaturalnessUtility
 from mobility_tools.settings import ORSSettings, S3Settings
 
-from walkability.components.shade.utility import S3ShadeConfig
+from walkability.components.shade.utility.config import S3ShadeConfig
 from walkability.core.operator_worker import OperatorWalkability
 from walkability.core.settings import Settings
 
