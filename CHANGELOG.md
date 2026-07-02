@@ -5,7 +5,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project mostly adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://gitlab.heigit.org/climate-action/plugins/walkability/-/compare/4.0.2...main)
+## [Unreleased](https://gitlab.heigit.org/climate-action/plugins/walkability/-/compare/4.0.3...main)
+
+## [4.0.3](https://gitlab.heigit.org/climate-action/plugins/walkability/-/releases/4.0.3) - 2026-07-02
 
 ### Changed
 - Make `max_path_limit` configurable and add it as environment variable ([#346](https://gitlab.heigit.org/climate-action/plugins/walkability/-/work_items/346))
