@@ -186,8 +186,8 @@ class OperatorWalkability(BaseOperator[ComputeInputWalkability]):
                 log.info('Comfort Computed')
 
         if WalkabilityIndicators.SHADE in params.optional_indicators:
-            with self.catch_exceptions(indicator_name='Shade', resources=resources):
-                log.info('Computing Shade')
+            with self.catch_exceptions(indicator_name='Tree Shade', resources=resources):
+                log.info('Computing Tree Shade')
                 shade_artifacts = shade_analysis(
                     paths=line_paths,
                     tile_spec=self.shade_tiles,
@@ -196,7 +196,7 @@ class OperatorWalkability(BaseOperator[ComputeInputWalkability]):
                     resources=resources,
                 )
                 artifacts.extend(shade_artifacts)
-                log.info('Shade Computed')
+                log.info('Tree Shade Computed')
 
         return artifacts
 

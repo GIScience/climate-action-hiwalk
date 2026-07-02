@@ -3,5 +3,6 @@ Shaded paths promote walking by reducing the solar radiation and perceived tempe
 
 To be considered 'shaded', the trees must be at least 2m high and must be directly over the path.
 This represents the shade provided by trees during peak solar hours (i.e., when the sun is directly overhead).
+Tunnels are always classed as shaded, to avoid marking them based on the landscape above.
 
 Shade provided by other means, such as shelters or buildings, is not captured by this indicator.
