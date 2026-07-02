@@ -7,6 +7,9 @@ and this project mostly adheres to [Semantic Versioning](https://semver.org/spec
 
 ## [Unreleased](https://gitlab.heigit.org/climate-action/plugins/walkability/-/compare/4.0.3...main)
 
+### Added
+- Add an optional indicator for visualizing the paths with different kinds of lighting ([#327](https://gitlab.heigit.org/climate-action/plugins/walkability/-/work_items/327))
+
 ## [4.0.3](https://gitlab.heigit.org/climate-action/plugins/walkability/-/releases/4.0.3) - 2026-07-02
 
 ### Changed

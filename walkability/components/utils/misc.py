@@ -24,6 +24,7 @@ class Topics(StrEnum):
     GREENNESS = 'greenness'
     COMFORT = 'comfort'
     SHADE = 'shade'
+    SAFETY = 'safety'
 
 
 class PathCategory(Enum):
@@ -128,6 +129,23 @@ SURFACE_TYPE_RATING_MAP = {
 }
 
 
+class PathLightingCategory(Enum):
+    YES = 'yes'
+    AUTOMATIC = 'automatic'
+    LIMITED = 'limited'
+    NO = 'no'
+    UNKNOWN = 'unknown'
+
+
+PATH_LIGHTING_CATEGORY_RATING_MAP = {
+    PathLightingCategory.YES: 1.0,
+    PathLightingCategory.AUTOMATIC: 0.8,
+    PathLightingCategory.LIMITED: 0.3,
+    PathLightingCategory.NO: 0.0,
+    PathLightingCategory.UNKNOWN: None,
+}
+
+
 def fetch_osm_data(aoi: shapely.MultiPolygon, osm_filter: str, ohsome: OhsomeClient) -> gpd.GeoDataFrame:
     try:
         elements = ohsome.elements.geometry.post(
@@ -164,6 +182,10 @@ def get_smoothness_legend() -> Dict[str, Color]:
 
 def get_surface_type_legend() -> Dict[str, Color]:
     return _dict_to_legend(SURFACE_TYPE_RATING_MAP, cmap_name='tab10')
+
+
+def get_path_lighting_legend() -> Dict[str, Color]:
+    return _dict_to_legend(PATH_LIGHTING_CATEGORY_RATING_MAP, cmap_name='coolwarm_r')
 
 
 def generate_colors(
