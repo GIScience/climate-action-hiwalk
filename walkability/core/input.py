@@ -14,6 +14,7 @@ class WalkabilityIndicators(Enum):
     DETOURS = 'Detour Factor'
     COMFORT = 'Comfort Factor'
     SHADE = 'Tree Shade'
+    LIGHT = 'Path Lighting'
 
 
 class ComputeInputWalkability(BaseModel):

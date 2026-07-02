@@ -23,6 +23,7 @@ from walkability.components.comfort.comfort_artifacts import compute_comfort_art
 from walkability.components.comfort.comfort_poi_filters import PointsOfInterest
 from walkability.components.naturalness.naturalness_analysis import naturalness_analysis
 from walkability.components.network_analyses.detour_analysis import detour_factor_analysis
+from walkability.components.path_lighting.path_lighting_analysis import path_lighting_analysis
 from walkability.components.shade.shade_analysis import shade_analysis
 from walkability.components.shade.utility.config import S3ShadeConfig
 from walkability.components.shade.utility.download import download_tile_spec
@@ -184,6 +185,17 @@ class OperatorWalkability(BaseOperator[ComputeInputWalkability]):
                 )
                 artifacts.extend(comfort_artifacts)
                 log.info('Comfort Computed')
+
+        if WalkabilityIndicators.LIGHT in params.optional_indicators:
+            with self.catch_exceptions(indicator_name='Path Lighting Indicators', resources=resources):
+                log.info('Computing Path Lighting Indicators')
+                light_path_artifact = path_lighting_analysis(
+                    line_paths=line_paths,
+                    polygon_paths=polygon_paths,
+                    resources=resources,
+                )
+                artifacts.extend(light_path_artifact)
+                log.info('Path Lighting Indicators Computed')
 
         if WalkabilityIndicators.SHADE in params.optional_indicators:
             with self.catch_exceptions(indicator_name='Tree Shade', resources=resources):

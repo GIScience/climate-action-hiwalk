@@ -13,6 +13,8 @@ In addition, hiWalk includes four optional indicators, which are unselected by d
 
 4. **Comfort factor**: A set of metrics measuring how convenient it is for pedestrians to access essential public amenities, including benches, drinking water and public toilet facilities.
 
+5. **Path lighting**: A categorisation of walkable paths based on the availability and quality of lighting.
+
 After computing hiWalk for an area of interest and selecting one of the indicator results, the 'Description' page
 includes further details about the indicator's data and methodology.
 
