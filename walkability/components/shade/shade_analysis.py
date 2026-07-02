@@ -50,7 +50,7 @@ def create_shade_paths_vector_artifact(shaded_paths: gpd.GeoDataFrame, resources
     shaded_paths = shaded_paths[['@osmId', 'color', 'label', 'geometry']]
 
     shade_metadata = ArtifactMetadata(
-        name='Shaded Paths',
+        name='Tree Shaded Paths',
         summary='Is this path shaded by tree canopies?',
         description=Path('resources/components/shade/description.md').read_text(),
         tags={Topics.SHADE, Topics.COMFORT},
@@ -73,7 +73,7 @@ def create_shade_paths_chart_artifact(shaded_paths: gpd.GeoDataFrame, resources:
 
     summary = pd.DataFrame(
         {
-            'shade_category': ['Unshaded', 'Shaded'],
+            'shade_category': ['Unshaded', 'Shaded by Trees'],
             'length': [
                 len_unshaded.sum() / 1000,
                 shaded_paths['length_shaded'].sum() / 1000,
@@ -85,7 +85,7 @@ def create_shade_paths_chart_artifact(shaded_paths: gpd.GeoDataFrame, resources:
     shade_chart = create_shade_plot(summary)
 
     shade_chart_metadata = ArtifactMetadata(
-        name='Distribution of Shade',
+        name='Distribution of Tree Shaded Paths',
         summary='What length of paths is shaded?',
         tags={Topics.SHADE, Topics.COMFORT},
         primary=False,
@@ -120,7 +120,7 @@ def create_shade_plot(summary: pd.DataFrame) -> go.Figure:
             barmode='stack',
             height=300,
             margin=dict(t=30, b=80, l=30, r=30),
-            xaxis_title=f'Percentage of the {summary["length"].sum():.0f} km of paths that are shaded.',
+            xaxis_title=f'Percentage of the {summary["length"].sum():.0f} km of paths that are shaded by trees.',
             yaxis=dict(showticklabels=False),
             legend=dict(
                 orientation='h',

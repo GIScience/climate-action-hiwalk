@@ -9,6 +9,7 @@ and this project mostly adheres to [Semantic Versioning](https://semver.org/spec
 
 ### Changed
 - Make `max_path_limit` configurable and add it as environment variable ([#346](https://gitlab.heigit.org/climate-action/plugins/walkability/-/work_items/346))
+- Renamed Shade indicator to Tree Shade ([#352](https://gitlab.heigit.org/climate-action/plugins/walkability/-/work_items/352))
 
 ### Fixed
 - Analyse tree canopy tiles for shade in tiles to reduce RAM consumption ([#350](https://gitlab.heigit.org/climate-action/plugins/walkability/-/work_items/350))
