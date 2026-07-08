@@ -151,11 +151,14 @@ def fetch_osm_data(aoi: shapely.MultiPolygon, osm_filter: str, ohsome: OhsomeCli
         elements = ohsome.elements.geometry.post(
             bpolys=aoi, clipGeometry=True, properties='tags', filter=osm_filter
         ).as_dataframe()
-    except OhsomeException as e:
-        if e.error_code in [500, 501, 502, 503, 507]:
+    except Exception as e:
+        if isinstance(e, OhsomeException) and e.error_code in [413, 500, 501, 502, 503, 507]:
             raise ClimatoologyUserError('There was an error collecting OSM data. Please try again later.')
         else:
-            raise e
+            log.exception('Unexpected error when downloading OSM data.')
+            raise ClimatoologyUserError(
+                'Unexpected error when collecting OSM data. Please contact us to find out more.'
+            )
 
     elements = elements.reset_index(drop=False)
     return elements[['@osmId', 'geometry', '@other_tags']]
