@@ -5,7 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project mostly adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://gitlab.heigit.org/climate-action/plugins/walkability/-/compare/4.1.0...main)
+## [Unreleased](https://gitlab.heigit.org/climate-action/plugins/walkability/-/compare/4.1.1...main)
+
+## [4.1.1](https://gitlab.heigit.org/climate-action/plugins/walkability/-/releases/4.1.1) - 2026-07-16
+
+### Fixed
+- Reduce `max_raster_size` for naturalness computation to avoid exceeding the per-minute processing unit quota of
+  Sentinel Hub. This is a temporary fix
+  pending [naturalness-utility#](https://gitlab.heigit.org/climate-action/utilities/naturalness-utility/-/work_items/47)
 
 ## [4.1.0](https://gitlab.heigit.org/climate-action/plugins/walkability/-/releases/4.1.0) - 2026-07-15
 
