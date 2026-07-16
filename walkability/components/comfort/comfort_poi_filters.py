@@ -20,6 +20,7 @@ class PointsOfInterest(Enum):
     SEATING = 'benches'
     REMAINDER = 'remainder'
     PUBLIC_TOILET = 'public toilets'
+    SHELTERED_BENCH = 'sheltered benches'
 
 
 def distance_enrich_paths(
@@ -66,18 +67,29 @@ def request_pois(aoi: shapely.MultiPolygon, poi: PointsOfInterest, ohsome_client
 def get_ohsome_filter(poi: PointsOfInterest):
     match poi:
         case PointsOfInterest.DRINKING_WATER:
-            return '(amenity=drinking_water or drinking_water=yes) and (not access=* or not access in (private, no, customers))'
+            return '(amenity=drinking_water or drinking_water=yes) and not access in (private, no, customers)'
         case PointsOfInterest.SEATING:
             return str(
-                'amenity=bench or ((amenity=shelter or public_transport=platform or highway=bus_stop) and bench=yes) '
-                'or leisure=picnic_table or amenity=table or amenity=lounger or tourism=picnic_site '
-                'and (not "bench:type"=stand_up) and (not access=* or not access in (private, no, customers)) and (not seasonal=yes)'
+                '(amenity=bench '
+                'or amenity=table or amenity=lounger or tourism=picnic_site '
+                'or ((amenity=shelter or public_transport=platform or highway=bus_stop) and bench=yes) '
+                'or (leisure=picnic_table and not bench=no)) '
+                'and (not "bench:type"=stand_up) and not access in (private, no, customers) and (not seasonal=yes)'
             )
         case PointsOfInterest.PUBLIC_TOILET:
             return str(
                 'amenity=toilets '
                 'and not access in (private, no, customers, destination, permit) '
                 'and not locked=* and not centralkey=* and not seasonal=yes'
+            )
+        case PointsOfInterest.SHELTERED_BENCH:
+            return str(
+                '((amenity=bench and covered=yes) '
+                'or (amenity=shelter and bench=yes) '
+                'or ((highway=bus_stop or public_transport=platform) and (covered=yes or shelter=yes) and bench=yes) '
+                'or (leisure=picnic_table and not bench=no and (covered=yes or shelter=yes)) '
+                'or (tourism=picnic_site and (covered=yes or shelter=yes))) '
+                'and (not "bench:type"=stand_up) and not access in (private, no, customers) and (not seasonal=yes)'
             )
         case _:
             raise NotImplementedError('POI type has no ohsome filter')

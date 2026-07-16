@@ -74,6 +74,7 @@ class OperatorWalkability(BaseOperator[ComputeInputWalkability]):
             PointsOfInterest.SEATING: 200,
             PointsOfInterest.REMAINDER: 1000,
             PointsOfInterest.PUBLIC_TOILET: 500,
+            PointsOfInterest.SHELTERED_BENCH: 200,
         }
         self.max_walking_distance_map = {k: round(v, -1) for k, v in max_walking_distance_map.items()}
 

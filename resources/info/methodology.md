@@ -11,7 +11,7 @@ In addition, hiWalk includes four optional indicators, which are unselected by d
 
 3. **Slope**: Slope of each walkable path (in %) calculated by comparing the elevation at each end of the path.
 
-4. **Comfort factor**: A set of metrics measuring how convenient it is for pedestrians to access essential public amenities, including benches, drinking water and public toilet facilities.
+4. **Comfort factor**: A set of metrics measuring how convenient it is for pedestrians to access essential public amenities, including benches, sheltered benches, drinking water and public toilet facilities.
 
 5. **Path lighting**: A categorisation of walkable paths based on the availability and quality of lighting.
 

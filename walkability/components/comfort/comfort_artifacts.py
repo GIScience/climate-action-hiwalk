@@ -27,7 +27,12 @@ def compute_comfort_artifacts(
     resources: ComputationResources,
 ) -> list[Artifact]:
     artifacts = []
-    for poi_type in [PointsOfInterest.DRINKING_WATER, PointsOfInterest.SEATING, PointsOfInterest.PUBLIC_TOILET]:
+    for poi_type in [
+        PointsOfInterest.DRINKING_WATER,
+        PointsOfInterest.SEATING,
+        PointsOfInterest.PUBLIC_TOILET,
+        PointsOfInterest.SHELTERED_BENCH,
+    ]:
         log.debug(f'Computing Comfort for {poi_type}')
         max_walking_distance = max_walking_distance_map[poi_type]
         bin_size = int(max_walking_distance / N_BINS)
@@ -116,6 +121,8 @@ def assign_color(
             point_color = Color('darkblue')
         case PointsOfInterest.PUBLIC_TOILET:
             point_color = Color('purple')
+        case PointsOfInterest.SHELTERED_BENCH:
+            point_color = Color('brown')
         case _:
             raise NotImplementedError('POI not supported by coloring function')
     data.loc[data.geom_type == 'Point', 'color'] = point_color

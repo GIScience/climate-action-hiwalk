@@ -140,6 +140,16 @@ def test_request_toilets(responses_mock, small_aoi):
     verify(request_pois(aoi=small_aoi, poi=PointsOfInterest.PUBLIC_TOILET, ohsome_client=OhsomeClient()).to_json())
 
 
+def test_request_sheltered_benches(responses_mock, small_aoi):
+    with open('test/resources/ohsome_sheltered_benches.geojson', 'r') as sheltered_benches:
+        sheltered_benches_body = sheltered_benches.read()
+    responses_mock.post(
+        'https://api.ohsome.org/v1/elements/centroid',
+        body=sheltered_benches_body,
+    )
+    verify(request_pois(aoi=small_aoi, poi=PointsOfInterest.SHELTERED_BENCH, ohsome_client=OhsomeClient()).to_json())
+
+
 def test_apply_isochrones_to_paths():
     paths = gpd.GeoDataFrame(geometry=[shapely.LineString([(0, 0), (0, 3)])])
 
