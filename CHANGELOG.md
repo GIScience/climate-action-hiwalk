@@ -10,9 +10,10 @@ and this project mostly adheres to [Semantic Versioning](https://semver.org/spec
 ## [4.1.1](https://gitlab.heigit.org/climate-action/plugins/walkability/-/releases/4.1.1) - 2026-07-16
 
 ### Fixed
+- Update `mobility_tools` dependency to contain fix for slope tiles not found
 - Reduce `max_raster_size` for naturalness computation to avoid exceeding the per-minute processing unit quota of
   Sentinel Hub. This is a temporary fix
-  pending [naturalness-utility#](https://gitlab.heigit.org/climate-action/utilities/naturalness-utility/-/work_items/47)
+  pending [naturalness-utility#47](https://gitlab.heigit.org/climate-action/utilities/naturalness-utility/-/work_items/47)
 
 ## [4.1.0](https://gitlab.heigit.org/climate-action/plugins/walkability/-/releases/4.1.0) - 2026-07-15
 
