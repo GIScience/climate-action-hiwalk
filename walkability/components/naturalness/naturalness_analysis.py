@@ -95,6 +95,7 @@ def fetch_naturalness_by_vector(
         vectors=vectors,
         time_range=time_range,
         resolution=resolution,
+        max_raster_size=500,
     )
 
     naturalness_gdf = naturalness_gdf.rename(columns={agg_stat: 'naturalness'})
