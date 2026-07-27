@@ -15,6 +15,7 @@ class WalkabilityIndicators(Enum):
     COMFORT = 'Comfort Factor'
     SHADE = 'Tree Shade'
     LIGHT = 'Path Lighting'
+    TACTILE_PAVING = 'Tactile Paving'
 
 
 class ComputeInputWalkability(BaseModel):

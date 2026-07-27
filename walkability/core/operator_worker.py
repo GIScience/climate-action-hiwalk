@@ -28,6 +28,7 @@ from walkability.components.shade.shade_analysis import shade_analysis
 from walkability.components.shade.utility.config import S3ShadeConfig
 from walkability.components.shade.utility.download import download_tile_spec
 from walkability.components.slope.slope_analysis import compute_slope_analysis
+from walkability.components.tactile_paving.tactile_paving_analysis import tactile_paving_analysis
 from walkability.components.utils.geometry import get_utm_zone
 from walkability.components.utils.misc import (
     WALKABLE_CATEGORIES,
@@ -188,15 +189,26 @@ class OperatorWalkability(BaseOperator[ComputeInputWalkability]):
                 log.info('Comfort Computed')
 
         if WalkabilityIndicators.LIGHT in params.optional_indicators:
-            with self.catch_exceptions(indicator_name='Path Lighting Indicators', resources=resources):
-                log.info('Computing Path Lighting Indicators')
+            with self.catch_exceptions(indicator_name='Path Lighting Indicator', resources=resources):
+                log.info('Computing Path Lighting Indicator')
                 light_path_artifact = path_lighting_analysis(
                     line_paths=line_paths,
                     polygon_paths=polygon_paths,
                     resources=resources,
                 )
                 artifacts.extend(light_path_artifact)
-                log.info('Path Lighting Indicators Computed')
+                log.info('Path Lighting Indicator Computed')
+
+        if WalkabilityIndicators.TACTILE_PAVING in params.optional_indicators:
+            with self.catch_exceptions(indicator_name='Tactile Paving Indicator', resources=resources):
+                log.info('Computing Tactile Paving Indicator')
+                tactile_paving_artifact = tactile_paving_analysis(
+                    line_paths=line_paths,
+                    polygon_paths=polygon_paths,
+                    resources=resources,
+                )
+                artifacts.extend(tactile_paving_artifact)
+                log.info('Tactile Paving Indicator Computed')
 
         if WalkabilityIndicators.SHADE in params.optional_indicators:
             with self.catch_exceptions(indicator_name='Tree Shade', resources=resources):
