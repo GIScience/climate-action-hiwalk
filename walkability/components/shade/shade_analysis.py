@@ -53,7 +53,7 @@ def create_shade_paths_vector_artifact(shaded_paths: gpd.GeoDataFrame, resources
         name='Tree Shaded Paths',
         summary='Is this path shaded by tree canopies?',
         description=Path('resources/components/shade/description.md').read_text(),
-        tags={Topics.SHADE, Topics.COMFORT},
+        tags={Topics.SHADE},
         primary=False,
     )
     shade_artifact = create_vector_artifact(
@@ -87,7 +87,7 @@ def create_shade_paths_chart_artifact(shaded_paths: gpd.GeoDataFrame, resources:
     shade_chart_metadata = ArtifactMetadata(
         name='Distribution of Tree Shaded Paths',
         summary='What length of paths is shaded?',
-        tags={Topics.SHADE, Topics.COMFORT},
+        tags={Topics.SHADE},
         primary=False,
     )
     shade_chart_artifact = create_plotly_chart_artifact(
