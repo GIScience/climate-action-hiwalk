@@ -9,6 +9,7 @@ and this project mostly adheres to [Semantic Versioning](https://semver.org/spec
 
 ### Added
 - An indicator mapping out the locations and walking distances to sheltered benches ([#331](https://gitlab.heigit.org/climate-action/plugins/walkability/-/work_items/331))
+- Add tactile paving paths as an optional indicator ([#323](https://gitlab.heigit.org/climate-action/plugins/walkability/-/work_items/323))
 
 ### Fixed
 - Remove the tree shade indicator from the comfort tag list ([#356](https://gitlab.heigit.org/climate-action/plugins/walkability/-/work_items/356))

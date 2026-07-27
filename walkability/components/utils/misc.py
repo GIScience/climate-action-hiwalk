@@ -146,6 +146,23 @@ PATH_LIGHTING_CATEGORY_RATING_MAP = {
 }
 
 
+class TactilePavingCategory(Enum):
+    YES = 'yes'
+    OTHER_SIGNS = 'other signs'
+    PARTIAL = 'partial / incorrect'
+    NO = 'no'
+    UNKNOWN = 'unknown'
+
+
+TACTILE_PAVING_CATEGORY_RATING_MAP = {
+    TactilePavingCategory.YES: 1.0,
+    TactilePavingCategory.OTHER_SIGNS: 0.5,
+    TactilePavingCategory.PARTIAL: 0.4,
+    TactilePavingCategory.NO: 0.0,
+    TactilePavingCategory.UNKNOWN: None,
+}
+
+
 def fetch_osm_data(aoi: shapely.MultiPolygon, osm_filter: str, ohsome: OhsomeClient) -> gpd.GeoDataFrame:
     try:
         elements = ohsome.elements.geometry.post(
@@ -189,6 +206,10 @@ def get_surface_type_legend() -> Dict[str, Color]:
 
 def get_path_lighting_legend() -> Dict[str, Color]:
     return _dict_to_legend(PATH_LIGHTING_CATEGORY_RATING_MAP, cmap_name='coolwarm_r')
+
+
+def get_tactile_paving_legend() -> Dict[str, Color]:
+    return _dict_to_legend(TACTILE_PAVING_CATEGORY_RATING_MAP, cmap_name='coolwarm_r')
 
 
 def generate_colors(
