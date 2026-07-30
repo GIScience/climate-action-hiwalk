@@ -23,6 +23,7 @@ def init_plugin(
 
     operator = OperatorWalkability(
         naturalness_utility=naturalness_utility,
+        hiwalk_settings=initialised_settings,
         ors_settings=initialised_ors_settings,
         s3_settings=s3_settings,
         shade_config=shade_config,

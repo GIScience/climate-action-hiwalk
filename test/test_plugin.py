@@ -1,6 +1,8 @@
 from unittest.mock import patch
 
 import pytest
+import responses
+import shapely
 from climatoology.base.baseoperator import Artifact
 from climatoology.base.plugin_info import PluginInfo
 
@@ -21,12 +23,16 @@ def mock_detour_factor_calculation(expected_detour_factors):
         yield detour_factors
 
 
+@pytest.mark.vcr
 def test_plugin_compute_request_minimal(
-    operator, default_aoi, default_aoi_properties, compute_resources, ohsome_api, ohsome_api_count
+    operator,
+    small_aoi,
+    default_aoi_properties,
+    compute_resources,
 ):
     computed_artifacts = operator.compute(
         resources=compute_resources,
-        aoi=default_aoi,
+        aoi=small_aoi,
         aoi_properties=default_aoi_properties,
         params=ComputeInputWalkability(),
     )
@@ -36,10 +42,62 @@ def test_plugin_compute_request_minimal(
         assert isinstance(artifact, Artifact)
 
 
+# The test below is the only one requiring responses mocks, so the fixtures are all defined here
+
+
+@pytest.fixture
+def responses_mock():
+    with responses.RequestsMock() as rsps:
+        yield rsps
+
+
+@pytest.fixture
+def ohsome_api(responses_mock):
+    with (
+        open('test/resources/ohsome_line_response.geojson', 'r') as line_file,
+        open('test/resources/ohsome_polygon_response.geojson', 'r') as polygon_file,
+    ):
+        line_body = line_file.read()
+        polygon_body = polygon_file.read()
+
+    responses_mock.post(
+        'https://api.ohsome.org/v1/elements/geometry',
+        body=line_body,
+        match=[filter_start_matcher('geometry:line')],
+    )
+
+    responses_mock.post(
+        'https://api.ohsome.org/v1/elements/geometry',
+        body=polygon_body,
+        match=[filter_start_matcher('geometry:polygon')],
+    )
+    return responses_mock
+
+
+@pytest.fixture
+def ohsome_api_count(responses_mock):
+    with open('test/resources/ohsome_count_response.json', 'rb') as paths_count_file:
+        paths_count_body = paths_count_file.read()
+
+    responses_mock.post(
+        'https://api.ohsome.org/v1/elements/count',
+        body=paths_count_body,
+    )
+
+    return responses_mock
+
+
+@pytest.fixture
+def ors_isochrone_api(responses_mock):
+    with open('test/resources/ors_isochrones.geojson', 'r') as isochrones:
+        isochrones_body = isochrones.read()
+
+    responses_mock.post('http://vcr-secret-url/v2/isochrones/foot-walking/geojson', body=isochrones_body)
+
+
 def test_plugin_compute_request_all_optionals(
     operator,
     expected_compute_input,
-    default_aoi,
     default_aoi_properties,
     compute_resources,
     ohsome_api,
@@ -65,12 +123,29 @@ def test_plugin_compute_request_all_optionals(
 
     expected_compute_input = expected_compute_input.model_copy(deep=True)
     expected_compute_input.optional_indicators = {e for e in WalkabilityIndicators}
+
+    aoi = shapely.MultiPolygon(
+        polygons=[
+            [
+                [
+                    [12.29, 48.20],
+                    [12.29, 48.34],
+                    [12.48, 48.34],
+                    [12.48, 48.20],
+                    [12.29, 48.20],
+                ]
+            ]  # type: ignore
+        ]
+    )
+
     computed_artifacts = operator.compute(
         resources=compute_resources,
-        aoi=default_aoi,
+        aoi=aoi,
         aoi_properties=default_aoi_properties,
         params=expected_compute_input,
     )
+
+    assert compute_resources.artifact_errors == {'Detour Factors': ''}
 
     assert len(computed_artifacts) == 20
     for artifact in computed_artifacts:

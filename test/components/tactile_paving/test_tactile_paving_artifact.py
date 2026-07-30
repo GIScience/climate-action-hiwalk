@@ -10,8 +10,9 @@ def test_build_tactile_paving_artifact(default_path_geometry, default_polygon_ge
     tactile_locations = gpd.GeoDataFrame(
         index=[1, 2, 3],
         data={
-            '@osmId': ['way/1', 'way/2', 'way/3'],
-            '@other_tags': [{'tactile_paving': 'yes'}, {'tactile_paving': 'unpaved'}, {}],
+            'osm_id': ['1', '2', '3'],
+            'osm_type': ['way', 'way', 'way'],
+            'osm_tags': [{'tactile_paving': 'yes'}, {'tactile_paving': 'unpaved'}, {}],
             'tactile_paving': [
                 TactilePavingCategory.YES,
                 TactilePavingCategory.OTHER_SIGNS,

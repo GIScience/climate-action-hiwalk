@@ -32,6 +32,10 @@ and this project mostly adheres to [Semantic Versioning](https://semver.org/spec
 - Catch 413 error and also handle unknown ohsome
   errors ([#353](https://gitlab.heigit.org/climate-action/plugins/walkability/-/work_items/353))
 
+### Changed
+- Use internal `ohsome-py2` library to query from ohsome API v1, to ease the migration to ohsome API v2 ([#360](https://gitlab.heigit.org/climate-action/plugins/walkability/-/work_items/360))
+
+
 ## [4.0.3](https://gitlab.heigit.org/climate-action/plugins/walkability/-/releases/4.0.3) - 2026-07-02
 
 ### Changed

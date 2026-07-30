@@ -4,7 +4,7 @@ from typing import Dict, Tuple
 import geopandas as gpd
 import plotly.graph_objects as go
 import shapely
-from ohsome import OhsomeClient
+from ohsome_py2.client import OhsomeClient
 from pyproj import CRS
 
 from walkability.components.utils.geometry import calculate_length
@@ -32,17 +32,19 @@ def summarise_by_area(
     stats = paths.copy()
     stats = stats.loc[stats.geometry.geom_type.isin(('MultiLineString', 'LineString'))]
 
+    log.info('Querying admin boundaries from ohsome')
     minimum_keys = ['admin_level', 'name']
-    boundaries = ohsome_client.elements.geometry.post(
-        properties='tags',
-        bpolys=aoi,
-        filter=f'geometry:polygon and boundary=administrative and admin_level={admin_level}',
-        clipGeometry=True,
-    ).as_dataframe(explode_tags=minimum_keys)
+    boundaries = ohsome_client.features_extraction(
+        aoi=aoi,
+        osm_filter=f'geometry:polygon and boundary=administrative and admin_level={admin_level}',
+        tags=minimum_keys,
+    )
+    boundaries = boundaries.rename_geometry('geometry')
+
     boundaries = boundaries.loc[boundaries.geometry.geom_type.isin(('MultiPolygon', 'Polygon'))]
     boundaries = boundaries[boundaries.is_valid]
     boundaries = boundaries.reset_index(drop=True)
-    if boundaries.shape[0] == 1:
+    if boundaries.shape[0] <= 1:
         data = {}
     else:
         log.debug(f'Summarising paths into {boundaries.shape[0]} boundaries')

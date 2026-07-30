@@ -52,7 +52,7 @@ def path_categorisation(
 
 
 def apply_path_category_filters(row: pd.Series) -> PathCategory:
-    tags = row['@other_tags']
+    tags = row['osm_tags']
     # TODO This reinstantiates a class again and again in the apply call, maybe think about storing the contained data in a better way.
     filters = PathCategoryFilters(tags=tags)
     match tags:
@@ -82,7 +82,7 @@ def evaluate_quality(
     if row['category'] == PathCategory.UNKNOWN:
         return PavementQuality.UNKNOWN
 
-    tags = row['@other_tags']
+    tags = row['osm_tags']
 
     match_key, match_value = get_first_match(keys, tags)
 
@@ -154,7 +154,7 @@ def subset_walkable_paths(
 
 
 def apply_path_smoothness_filters(row: pd.Series) -> SmoothnessCategory:
-    smoothness_tag = row['@other_tags'].get('smoothness')
+    smoothness_tag = row['osm_tags'].get('smoothness')
     match smoothness_tag:
         case 'very_bad' | 'horrible' | 'very_horrible' | 'impassable':
             return SmoothnessCategory.VERY_POOR
@@ -169,7 +169,7 @@ def apply_path_smoothness_filters(row: pd.Series) -> SmoothnessCategory:
 
 
 def apply_path_surface_filters(row: pd.Series) -> SurfaceType:
-    surface_tag = row['@other_tags'].get('surface')
+    surface_tag = row['osm_tags'].get('surface')
     match surface_tag:
         case 'asphalt' | 'concrete':
             return SurfaceType.CONTINUOUS_PAVEMENT

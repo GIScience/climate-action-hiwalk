@@ -47,36 +47,36 @@ def tactile_paving_categorisation(
 
 
 def apply_tactile_paving_filters(row: pd.Series) -> TactilePavingCategory:
-    tactile_paving_tag = row['@other_tags'].get('tactile_paving')
+    tactile_paving_tag = row['osm_tags'].get('tactile_paving')
 
     if tactile_paving_tag == 'yes':
-        if row['@other_tags'].get('tactile_paving: surface') == 'unpaved':
+        if row['osm_tags'].get('tactile_paving: surface') == 'unpaved':
             tactile_paving_tag = 'unpaved'
-        if row['@other_tags'].get('tactile_paving: condition') in ['bad', 'very_bad']:
+        if row['osm_tags'].get('tactile_paving: condition') in ['bad', 'very_bad']:
             tactile_paving_tag = 'partial'
 
     if tactile_paving_tag is None:
-        if row['@other_tags'].get('tactile_paving: contrast') == '*':
+        if row['osm_tags'].get('tactile_paving: contrast') == '*':
             tactile_paving_tag = 'contrasted'
-        if row['@other_tags'].get('tactile_paving: surface') == 'unpaved':
+        if row['osm_tags'].get('tactile_paving: surface') == 'unpaved':
             tactile_paving_tag = 'unpaved'
-        if row['@other_tags'].get('tactile_paving: surface') in ['cobblestone', 'paving_stones', 'sett']:
+        if row['osm_tags'].get('tactile_paving: surface') in ['cobblestone', 'paving_stones', 'sett']:
             tactile_paving_tag = 'yes'
-        if row['@other_tags'].get('tactile_paving: segregated') == 'yes':
+        if row['osm_tags'].get('tactile_paving: segregated') == 'yes':
             tactile_paving_tag = 'yes'
-        if row['@other_tags'].get('tactile_paving: type') == '*':
+        if row['osm_tags'].get('tactile_paving: type') == '*':
             tactile_paving_tag = 'yes'
-        if row['@other_tags'].get('tactile_paving: condition') in ['excellent', 'good', 'intermediate']:
+        if row['osm_tags'].get('tactile_paving: condition') in ['excellent', 'good', 'intermediate']:
             tactile_paving_tag = 'yes'
-        if row['@other_tags'].get('tactile_paving: condition') in ['bad', 'very_bad']:
+        if row['osm_tags'].get('tactile_paving: condition') in ['bad', 'very_bad']:
             tactile_paving_tag = 'partial'
-        if row['@other_tags'].get('tactile_paving: colour') == '*':
+        if row['osm_tags'].get('tactile_paving: colour') == '*':
             tactile_paving_tag = 'yes'
-        if row['@other_tags'].get('tactile_paving: material') == '*':
+        if row['osm_tags'].get('tactile_paving: material') == '*':
             tactile_paving_tag = 'yes'
-        if row['@other_tags'].get('tactile_paving: pattern') == '*':
+        if row['osm_tags'].get('tactile_paving: pattern') == '*':
             tactile_paving_tag = 'yes'
-        if row['@other_tags'].get('tactile_paving: slab_size') == '*':
+        if row['osm_tags'].get('tactile_paving: slab_size') == '*':
             tactile_paving_tag = 'yes'
 
     match tactile_paving_tag:

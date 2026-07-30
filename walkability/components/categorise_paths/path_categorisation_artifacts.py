@@ -88,7 +88,7 @@ def build_walkable_paths_artifact(
     walkable_paths['label'] = walkable_paths['category'].apply(lambda x: x.value)
 
     return create_vector_artifact(
-        data=walkable_paths[['@osmId', 'color', 'label', 'geometry']],
+        data=walkable_paths[['osm_id', 'osm_type', 'color', 'label', 'geometry']],
         metadata=ArtifactMetadata(
             name='Path Categories',
             summary=Path(
@@ -133,7 +133,7 @@ def build_surface_quality_artifact(
     surface_quality_locations['label'] = surface_quality_locations.quality.apply(lambda r: r.value)
 
     return create_vector_artifact(
-        data=surface_quality_locations[['@osmId', 'color', 'label', 'geometry']],
+        data=surface_quality_locations[['osm_id', 'osm_type', 'color', 'label', 'geometry']],
         metadata=ArtifactMetadata(
             name='Surface Quality',
             summary=Path('resources/components/categorise_paths/surface_quality_caption.md').read_text(),
@@ -156,7 +156,7 @@ def build_smoothness_artifact(
     )
     smoothness_locations['label'] = smoothness_locations.smoothness.apply(lambda r: r.value)
     return create_vector_artifact(
-        data=smoothness_locations[['@osmId', 'color', 'label', 'geometry']],
+        data=smoothness_locations[['osm_id', 'osm_type', 'color', 'label', 'geometry']],
         metadata=ArtifactMetadata(
             name='Smoothness',
             summary=Path('resources/components/categorise_paths/smoothness_caption.md').read_text(),
@@ -179,7 +179,7 @@ def build_surface_artifact(
     )
     surface_locations['label'] = surface_locations.surface.apply(lambda r: r.value)
     return create_vector_artifact(
-        data=surface_locations[['@osmId', 'color', 'label', 'geometry']],
+        data=surface_locations[['osm_id', 'osm_type', 'color', 'label', 'geometry']],
         metadata=ArtifactMetadata(
             name='Surface Type',
             summary=Path('resources/components/categorise_paths/surface_caption.md').read_text(),

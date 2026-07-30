@@ -1,3 +1,4 @@
+import importlib
 import logging
 import os
 
@@ -12,7 +13,7 @@ from climatoology.base.exception import ClimatoologyUserError
 from climatoology.base.plugin_info import PluginInfo
 from climatoology.utility.naturalness import NaturalnessIndex, NaturalnessUtility
 from mobility_tools.settings import ORSSettings, S3Settings
-from ohsome import OhsomeClient
+from ohsome_py2.client import OhsomeClient
 from pydantic import BaseModel
 from pydantic_extra_types.language_code import LanguageAlpha2
 
@@ -38,6 +39,7 @@ from walkability.components.utils.misc import (
 )
 from walkability.core.info import get_info
 from walkability.core.input import ComputeInputWalkability, WalkabilityIndicators
+from walkability.core.settings import Settings
 
 log = logging.getLogger(__name__)
 
@@ -46,6 +48,7 @@ class OperatorWalkability(BaseOperator[ComputeInputWalkability]):
     def __init__(
         self,
         naturalness_utility: NaturalnessUtility,
+        hiwalk_settings: Settings,
         ors_settings: ORSSettings,
         s3_settings: S3Settings,
         shade_config: S3ShadeConfig,
@@ -53,7 +56,13 @@ class OperatorWalkability(BaseOperator[ComputeInputWalkability]):
     ):
         super().__init__()
         self.naturalness_utility = naturalness_utility
-        self.ohsome = OhsomeClient(user_agent='CA Plugin Walkability')
+        version = importlib.metadata.version('walkability')
+        user_agent = 'climate-action-navigator-walkability/' + version
+        self.ohsome = OhsomeClient(
+            base_url=hiwalk_settings.ohsome_base_url,
+            user_agent=user_agent,
+            v2=hiwalk_settings.feature_flag_ohsome2,
+        )
 
         self.shade_config = shade_config
         if not shade_config.cache_dir.exists():

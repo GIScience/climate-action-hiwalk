@@ -1,4 +1,5 @@
 import geopandas as gpd
+import geopandas.testing
 
 from walkability.components.path_lighting.path_lighting_analysis import (
     get_path_lighting,
@@ -10,7 +11,7 @@ from walkability.components.utils.misc import PathLightingCategory
 
 def test_get_path_lighting(default_path_geometry, default_polygon_geometry):
     line_paths = gpd.GeoDataFrame(
-        data={'@osmId': ['way/1', 'way/2'], '@other_tags': [{'lit': 'yes'}, {'lit': 'automatic'}]},
+        data={'osm_id': ['1', '2'], 'osm_type': ['way', 'way'], 'osm_tags': [{'lit': 'yes'}, {'lit': 'automatic'}]},
         geometry=[
             default_path_geometry,
             default_path_geometry,
@@ -19,7 +20,7 @@ def test_get_path_lighting(default_path_geometry, default_polygon_geometry):
     )
 
     polygon_paths = gpd.GeoDataFrame(
-        data={'@osmId': ['way/3'], '@other_tags': [{}]},
+        data={'osm_id': ['3'], 'osm_type': ['way'], 'osm_tags': [{}]},
         geometry=[default_polygon_geometry],
         crs=CAN_DEFAULT_CRS,
     )
@@ -27,8 +28,9 @@ def test_get_path_lighting(default_path_geometry, default_polygon_geometry):
     expected_light_paths_all = gpd.GeoDataFrame(
         index=[0, 1, 2],
         data={
-            '@osmId': ['way/1', 'way/2', 'way/3'],
-            '@other_tags': [{'lit': 'yes'}, {'lit': 'automatic'}, {}],
+            'osm_id': ['1', '2', '3'],
+            'osm_type': ['way', 'way', 'way'],
+            'osm_tags': [{'lit': 'yes'}, {'lit': 'automatic'}, {}],
             'geometry': [default_path_geometry, default_path_geometry, default_polygon_geometry],
             'path_lighting': [PathLightingCategory.YES, PathLightingCategory.AUTOMATIC, PathLightingCategory.UNKNOWN],
             'path_lighting_rating': [1, 0.8, None],
@@ -45,7 +47,7 @@ def test_path_lighting_categorisation(default_path_geometry, default_polygon_geo
     geometries = gpd.GeoDataFrame(
         index=[1, 2, 3, 4, 5],
         data={
-            '@other_tags': [
+            'osm_tags': [
                 {'lit': '24/7', 'lit_by_led': 'yes'},
                 {'lit': 'limited', 'lit_by_led': 'yes'},
                 {'lit': 'no'},
@@ -65,7 +67,7 @@ def test_path_lighting_categorisation(default_path_geometry, default_polygon_geo
     expected_path_lighting_categorisation = gpd.GeoDataFrame(
         index=[1, 2, 3, 4, 5],
         data={
-            '@other_tags': [
+            'osm_tags': [
                 {'lit': '24/7', 'lit_by_led': 'yes'},
                 {'lit': 'limited', 'lit_by_led': 'yes'},
                 {'lit': 'no'},

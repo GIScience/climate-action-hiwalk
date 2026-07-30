@@ -35,7 +35,8 @@
       ]
     },
     "properties" : {
-      "@osmId" : "relation/3283776",
+      "osm_id" : "3283776",
+      "osm_type" : "relation",
       "@snapshotTimestamp" : "2017-01-01T00:00:00Z"
     }
   }]

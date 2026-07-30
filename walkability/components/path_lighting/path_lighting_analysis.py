@@ -47,10 +47,10 @@ def path_lighting_categorisation(
 
 
 def apply_path_lighting_filters(row: pd.Series) -> PathLightingCategory:
-    path_lighting_tag = row['@other_tags'].get('lit')
+    path_lighting_tag = row['osm_tags'].get('lit')
 
     if path_lighting_tag is None:
-        if row['@other_tags'].get('lit_by_led') == 'yes' or row['@other_tags'].get('lit_by_gaslight') == 'yes':
+        if row['osm_tags'].get('lit_by_led') == 'yes' or row['osm_tags'].get('lit_by_gaslight') == 'yes':
             path_lighting_tag = 'yes'
 
     match path_lighting_tag:

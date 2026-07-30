@@ -15,12 +15,15 @@
       ]
     },
     "properties" : {
-      "@osmId" : "way/25805784",
+      "osm_id" : "25805784",
+      "osm_type": "way",
       "@snapshotTimestamp" : "2025-01-01T00:00:00Z",
-      "bicycle" : "yes",
-      "highway" : "footway",
-      "lit" : "yes",
-      "surface" : "paving_stones"
+      "osm_tags": {
+        "bicycle" : "yes",
+        "highway" : "footway",
+        "lit" : "yes",
+        "surface" : "paving_stones"
+      }
     }
   }]
 }

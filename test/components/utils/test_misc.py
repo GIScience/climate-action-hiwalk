@@ -2,19 +2,16 @@ from unittest.mock import patch
 
 import geopandas as gpd
 import geopandas.testing
-import ohsome
 import pandas as pd
 import pytest
-import shapely
 from approvaltests import verify
 from approvaltests.namer import NamerFactory
 from climatoology.base.exception import ClimatoologyUserError, InputValidationError
-from ohsome import OhsomeClient
 from ohsome.exceptions import OhsomeException
+from ohsome_py2.client import OhsomeClient
 from pandas.testing import assert_series_equal
 from pydantic_extra_types.color import Color
 
-from walkability.components.utils.geometry import CAN_DEFAULT_CRS
 from walkability.components.utils.misc import (
     check_paths_count_limit,
     fetch_osm_data,
@@ -24,23 +21,19 @@ from walkability.components.utils.misc import (
 )
 
 
-def test_fetch_osm_data(expected_compute_input, default_aoi, responses_mock):
-    with open('test/resources/ohsome_line_response.geojson', 'rb') as vector:
-        responses_mock.post(
-            'https://api.ohsome.org/v1/elements/geometry',
-            body=vector.read(),
-        )
+@pytest.mark.vcr
+def test_fetch_osm_data(small_aoi, default_ohsome_client_v1):
+    # Basic test that could probably be deleted (it is a very short function that just calls external code)
 
-    expected_osm_data = gpd.GeoDataFrame(
-        data={
-            '@osmId': ['way/171574582'],
-            '@other_tags': [{'highway': 'pedestrian'}],
-        },
-        geometry=[shapely.LineString([(12.3, 48.22), (12.3, 48.2205), (12.3005, 48.22)])],
-        crs=CAN_DEFAULT_CRS,
+    computed_osm_data = fetch_osm_data(
+        aoi=small_aoi,
+        osm_filter='geometry:polygon and highway=*',
+        ohsome=default_ohsome_client_v1,
     )
-    computed_osm_data = fetch_osm_data(default_aoi, 'dummy=yes', OhsomeClient())
-    geopandas.testing.assert_geodataframe_equal(computed_osm_data, expected_osm_data, check_like=True)
+
+    assert isinstance(computed_osm_data, gpd.GeoDataFrame)
+    assert not computed_osm_data.empty
+    assert all([col in computed_osm_data for col in ['osm_id', 'osm_type', 'osm_tags', 'geometry']])
 
 
 class MockPostClient:
@@ -54,10 +47,14 @@ class MockElements:
         return MockPostClient()
 
 
-@patch.object(ohsome.OhsomeClient, attribute='elements', new=MockElements())
-def test_fetch_osm_data_ohsome_error(default_aoi):
+@patch.object(OhsomeClient, attribute='features_extraction', new=MockElements())
+def test_fetch_osm_data_ohsome_error(default_aoi, default_ohsome_client_v1):
     with pytest.raises(ClimatoologyUserError):
-        fetch_osm_data(default_aoi, 'dummy=yes', OhsomeClient())
+        fetch_osm_data(
+            aoi=default_aoi,
+            osm_filter='dummy=yes',
+            ohsome=default_ohsome_client_v1,
+        )
 
 
 def test_generate_colors():
@@ -74,16 +71,14 @@ def test_ohsome_filter(geometry_type):
     verify(ohsome_filter(geometry_type), options=NamerFactory.with_parameters(geometry_type))
 
 
-def test_check_paths_count_limit(default_aoi, responses_mock):
-    with open('test/resources/ohsome_count_response.json', 'r') as paths_count:
-        responses_mock.post(
-            'https://api.ohsome.org/v1/elements/count',
-            body=paths_count.read(),
-        )
-
-    # test false situation
+@pytest.mark.vcr
+def test_check_paths_count_limit(default_aoi, default_ohsome_client_v1):
     with pytest.raises(InputValidationError):
-        check_paths_count_limit(default_aoi, OhsomeClient(), 5000)
+        check_paths_count_limit(
+            aoi=default_aoi,
+            count_limit=5000,
+            ohsome=default_ohsome_client_v1,
+        )
 
 
 def test_sanitize_filenames():

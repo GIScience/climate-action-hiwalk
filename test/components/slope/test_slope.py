@@ -19,7 +19,7 @@ def test_compute_slope_analysis(default_path, compute_resources, slopes_mock):
 
 def test_merge_similar_slopes_similar():
     input_slope_paths = gpd.GeoDataFrame(
-        data={'@osmId': ['a', 'a', 'a', 'b'], 'slope': [0.012, 0.013, 0.011, 0.2]},
+        data={'osm_id': ['a', 'a', 'a', 'b'], 'slope': [0.012, 0.013, 0.011, 0.2]},
         geometry=[
             shapely.LineString([(0, 0), (0, 1)]),
             shapely.LineString([(0, 1), (1, 1)]),
@@ -30,7 +30,7 @@ def test_merge_similar_slopes_similar():
     )
 
     expected = gpd.GeoDataFrame(
-        data={'@osmId': ['a', 'b'], 'slope': [0.012, 0.2]},
+        data={'osm_id': ['a', 'b'], 'slope': [0.012, 0.2]},
         geometry=[shapely.LineString([(0, 0), (0, 1), (1, 1), (1, 0)]), shapely.LineString([(0, 0), (0, 1)])],
         crs=CAN_DEFAULT_CRS,
     )
@@ -38,12 +38,12 @@ def test_merge_similar_slopes_similar():
     received = merge_similar_slopes(input_slope_paths, merging_tolerance=0.05)
 
     assert_geoseries_equal(received.geometry, expected.geometry)
-    assert_frame_equal(received[['@osmId', 'slope']], expected[['@osmId', 'slope']], atol=0.01)
+    assert_frame_equal(received[['osm_id', 'slope']], expected[['osm_id', 'slope']], atol=0.01)
 
 
 def test_no_merge_similar_slope_with_outlier():
     input_slope_paths = gpd.GeoDataFrame(
-        data={'@osmId': ['a', 'a', 'a'], 'slope': [0.012, 0.013, 0.2]},
+        data={'osm_id': ['a', 'a', 'a'], 'slope': [0.012, 0.013, 0.2]},
         geometry=[
             shapely.LineString([(0, 0), (0, 1)]),
             shapely.LineString([(0, 1), (1, 1)]),

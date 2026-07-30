@@ -7,7 +7,7 @@ import numpy
 import pandas as pd
 import shapely
 from mobility_tools.settings import ORSSettings
-from ohsome import OhsomeClient
+from ohsome_py2.client import OhsomeClient
 from openrouteservice.exceptions import ApiError
 
 from walkability.components.utils.geometry import CAN_DEFAULT_CRS
@@ -33,12 +33,14 @@ def distance_enrich_paths(
 ) -> gpd.GeoDataFrame:
     log.debug(f'Requesting {poi_type} from ohsome')
     pois = request_pois(aoi, poi_type, ohsome_client)
+
     if pois.empty:
         paths = paths.copy(deep=True)
         paths['value'] = numpy.nan
 
         log.debug(f'No POIs of {poi_type} in this area, returning paths unchanged')
-        return paths[['@osmId', '@other_tags', 'value', 'geometry']]
+        return paths
+
     pois['value'] = 0.0
 
     isochrones = generate_isochrones(pois.geometry, bins, ors_settings)
@@ -51,16 +53,9 @@ def distance_enrich_paths(
 
 
 def request_pois(aoi: shapely.MultiPolygon, poi: PointsOfInterest, ohsome_client: OhsomeClient) -> gpd.GeoDataFrame:
-    poi_request = ohsome_client.elements.centroid.post(
-        bpolys=aoi,
-        filter=get_ohsome_filter(poi),
-    )
-    pois = poi_request.as_dataframe(multi_index=False)
-    pois = gpd.GeoDataFrame(
-        data={'value': [0.0] * pois.shape[0]},
-        geometry=pois.geometry,
-        crs=CAN_DEFAULT_CRS,
-    )
+    pois = ohsome_client.features_extraction(aoi=aoi, osm_filter=get_ohsome_filter(poi), centroid=True)
+    pois = pois.rename_geometry('geometry')
+    pois['value'] = 0
     return pois
 
 
