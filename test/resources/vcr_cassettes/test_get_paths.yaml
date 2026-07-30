@@ -1,0 +1,1397 @@
+interactions:
+- request:
+    body: bpolys=%7B%22type%22%3A+%22FeatureCollection%22%2C+%22features%22%3A+%5B%7B%22id%22%3A+%220%22%2C+%22type%22%3A+%22Feature%22%2C+%22properties%22%3A+%7B%7D%2C+%22geometry%22%3A+%7B%22type%22%3A+%22MultiPolygon%22%2C+%22coordinates%22%3A+%5B%5B%5B%5B8.6774288%2C+49.4046213%5D%2C+%5B8.6774288%2C+49.4064122%5D%2C+%5B8.6742192%2C+49.4064122%5D%2C+%5B8.6742192%2C+49.4046213%5D%2C+%5B8.6774288%2C+49.4046213%5D%5D%5D%5D%7D%7D%5D%7D&filter=geometry%3Aline+and+%28highway%3D%2A+or+route%3Dferry+or+railway%3Dplatform+or+%28waterway%3Dlock_gate+and+foot+in+%28yes%2C+designated%2C+official%2C+permissive%29%29%29+and+not+%28footway%3Dseparate+or+sidewalk%3Dseparate+or+sidewalk%3Aboth%3Dseparate+or+%28sidewalk%3Aright%3Dseparate+and+sidewalk%3Aleft%3Dseparate%29+or+%28sidewalk%3Aright%3Dseparate+and+sidewalk%3Aleft%3Dno%29+or+%28sidewalk%3Aright%3Dno+and+sidewalk%3Aleft%3Dseparate%29%29&properties=tags&clipGeometry=True
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '918'
+      Content-Type:
+      - application/x-www-form-urlencoded
+      host:
+      - ohsome-api.test
+      user-agent:
+      - ohsome-py/0.3.0
+    method: POST
+    uri: http://ohsome-api.test/v1/elements/geometry
+  response:
+    body:
+      string: "{\n  \"attribution\" : {\n    \"url\" : \"https://ohsome.org/copyrights\",\n
+        \   \"text\" : \"\xA9 OpenStreetMap contributors\"\n  },\n  \"apiVersion\"
+        : \"1.10.4\",\n  \"type\" : \"FeatureCollection\",\n  \"features\" : [{\n
+        \   \"type\" : \"Feature\",\n    \"geometry\" : {\n      \"type\" : \"LineString\",\n
+        \     \"coordinates\" : [\n        [\n          8.6758274,\n          49.4064122\n
+        \       ],\n        [\n          8.6758184,\n          49.4063867\n        ],\n
+        \       [\n          8.6758179,\n          49.4062657\n        ],\n        [\n
+        \         8.6758178,\n          49.4062518\n        ],\n        [\n          8.6758153,\n
+        \         49.4061834\n        ],\n        [\n          8.6758198,\n          49.4060728\n
+        \       ]\n      ]\n    },\n    \"properties\" : {\n      \"@osmId\" : \"way/24794022\",\n
+        \     \"@snapshotTimestamp\" : \"2026-06-19T10:00:00Z\",\n      \"access\"
+        : \"permissive\",\n      \"highway\" : \"service\",\n      \"lit\" : \"no\",\n
+        \     \"smoothness\" : \"intermediate\",\n      \"surface\" : \"asphalt\"\n
+        \   }\n  }, {\n    \"type\" : \"Feature\",\n    \"geometry\" : {\n      \"type\"
+        : \"LineString\",\n      \"coordinates\" : [\n        [\n          8.6742192,\n
+        \         49.4060442\n        ],\n        [\n          8.6744865,\n          49.4060507\n
+        \       ],\n        [\n          8.6746781,\n          49.4060553\n        ],\n
+        \       [\n          8.6747758,\n          49.4060577\n        ],\n        [\n
+        \         8.6748445,\n          49.4060593\n        ],\n        [\n          8.6748677,\n
+        \         49.4060599\n        ]\n      ]\n    },\n    \"properties\" : {\n
+        \     \"@osmId\" : \"way/24794025\",\n      \"@snapshotTimestamp\" : \"2026-06-19T10:00:00Z\",\n
+        \     \"cycleway\" : \"no\",\n      \"highway\" : \"residential\",\n      \"lanes\"
+        : \"1\",\n      \"lit\" : \"yes\",\n      \"maxspeed\" : \"50\",\n      \"name\"
+        : \"Alte Eppelheimer Stra\xDFe\",\n      \"name:etymology:wikidata\" : \"Q82539\",\n
+        \     \"oneway\" : \"no\",\n      \"sidewalk\" : \"both\",\n      \"sidewalk:left:surface\"
+        : \"asphalt\",\n      \"sidewalk:right:surface\" : \"paving_stones\",\n      \"surface\"
+        : \"asphalt\",\n      \"wheelchair\" : \"yes\",\n      \"width\" : \"4\"\n
+        \   }\n  }, {\n    \"type\" : \"Feature\",\n    \"geometry\" : {\n      \"type\"
+        : \"LineString\",\n      \"coordinates\" : [\n        [\n          8.6748677,\n
+        \         49.4060599\n        ],\n        [\n          8.6748606,\n          49.4062241\n
+        \       ],\n        [\n          8.6748523,\n          49.4064122\n        ]\n
+        \     ]\n    },\n    \"properties\" : {\n      \"@osmId\" : \"way/24834161\",\n
+        \     \"@snapshotTimestamp\" : \"2026-06-19T10:00:00Z\",\n      \"bus\" :
+        \"yes\",\n      \"cycleway\" : \"no\",\n      \"highway\" : \"residential\",\n
+        \     \"lanes\" : \"1\",\n      \"lit\" : \"yes\",\n      \"maxspeed\" : \"50\",\n
+        \     \"name\" : \"Karl-Metz-Stra\xDFe\",\n      \"sidewalk\" : \"right\",\n
+        \     \"sidewalk:right:surface\" : \"paving_stones\",\n      \"surface\" :
+        \"paving_stones\",\n      \"vehicle\" : \"destination\"\n    }\n  }, {\n    \"type\"
+        : \"Feature\",\n    \"geometry\" : {\n      \"type\" : \"LineString\",\n      \"coordinates\"
+        : [\n        [\n          8.6749505,\n          49.4057087\n        ],\n        [\n
+        \         8.6749611,\n          49.4057202\n        ],\n        [\n          8.6749685,\n
+        \         49.405722\n        ],\n        [\n          8.6749831,\n          49.4057274\n
+        \       ]\n      ]\n    },\n    \"properties\" : {\n      \"@osmId\" : \"way/24834175\",\n
+        \     \"@snapshotTimestamp\" : \"2026-06-19T10:00:00Z\",\n      \"highway\"
+        : \"service\",\n      \"lanes\" : \"1\",\n      \"layer\" : \"-1\",\n      \"lit\"
+        : \"yes\",\n      \"maxheight\" : \"2\",\n      \"oneway\" : \"yes\",\n      \"surface\"
+        : \"asphalt\",\n      \"tunnel\" : \"yes\",\n      \"width\" : \"2\"\n    }\n
+        \ }, {\n    \"type\" : \"Feature\",\n    \"geometry\" : {\n      \"type\"
+        : \"LineString\",\n      \"coordinates\" : [\n        [\n          8.6749479,\n
+        \         49.4057839\n        ],\n        [\n          8.6749404,\n          49.4059908\n
+        \       ],\n        [\n          8.6749378,\n          49.4060616\n        ]\n
+        \     ]\n    },\n    \"properties\" : {\n      \"@osmId\" : \"way/24834177\",\n
+        \     \"@snapshotTimestamp\" : \"2026-06-19T10:00:00Z\",\n      \"highway\"
+        : \"service\",\n      \"lanes\" : \"1\",\n      \"lit\" : \"yes\",\n      \"oneway\"
+        : \"yes\",\n      \"sidewalk\" : \"right\",\n      \"sidewalk:right:surface\"
+        : \"paving_stones\",\n      \"surface\" : \"sett\",\n      \"width\" : \"2\"\n
+        \   }\n  }, {\n    \"type\" : \"Feature\",\n    \"geometry\" : {\n      \"type\"
+        : \"LineString\",\n      \"coordinates\" : [\n        [\n          8.6771466,\n
+        \         49.4047789\n        ],\n        [\n          8.6771118,\n          49.4048421\n
+        \       ],\n        [\n          8.6770945,\n          49.4049024\n        ],\n
+        \       [\n          8.6770899,\n          49.4049456\n        ],\n        [\n
+        \         8.6770774,\n          49.4050634\n        ],\n        [\n          8.6770621,\n
+        \         49.4056179\n        ],\n        [\n          8.67704,\n          49.405964\n
+        \       ],\n        [\n          8.6770376,\n          49.4059969\n        ],\n
+        \       [\n          8.6770311,\n          49.4060993\n        ],\n        [\n
+        \         8.677018,\n          49.4064122\n        ]\n      ]\n    },\n    \"properties\"
+        : {\n      \"@osmId\" : \"way/24868395\",\n      \"@snapshotTimestamp\" :
+        \"2026-06-19T10:00:00Z\",\n      \"bicycle\" : \"designated\",\n      \"check_date:bicycle\"
+        : \"2024-10-02\",\n      \"cycleway:surface\" : \"asphalt\",\n      \"cycleway:width\"
+        : \"1.5\",\n      \"foot\" : \"designated\",\n      \"footway:surface\" :
+        \"concrete\",\n      \"highway\" : \"cycleway\",\n      \"lit\" : \"yes\",\n
+        \     \"oneway\" : \"yes\",\n      \"oneway:bicycle\" : \"yes\",\n      \"segregated\"
+        : \"yes\",\n      \"surface\" : \"asphalt\"\n    }\n  }, {\n    \"type\" :
+        \"Feature\",\n    \"geometry\" : {\n      \"type\" : \"LineString\",\n      \"coordinates\"
+        : [\n        [\n          8.6748627,\n          49.4049941\n        ],\n        [\n
+        \         8.6748319,\n          49.4049462\n        ],\n        [\n          8.6748071,\n
+        \         49.4049242\n        ]\n      ]\n    },\n    \"properties\" : {\n
+        \     \"@osmId\" : \"way/24902141\",\n      \"@snapshotTimestamp\" : \"2026-06-19T10:00:00Z\",\n
+        \     \"highway\" : \"service\",\n      \"lanes\" : \"1\",\n      \"lit\"
+        : \"yes\",\n      \"name\" : \"Willy-Brandt-Platz\",\n      \"name:etymology:wikidata\"
+        : \"Q2514\",\n      \"oneway\" : \"yes\",\n      \"surface\" : \"asphalt\"\n
+        \   }\n  }, {\n    \"type\" : \"Feature\",\n    \"geometry\" : {\n      \"type\"
+        : \"LineString\",\n      \"coordinates\" : [\n        [\n          8.676903,\n
+        \         49.4047592\n        ],\n        [\n          8.6768669,\n          49.4047209\n
+        \       ],\n        [\n          8.676827,\n          49.4046827\n        ],\n
+        \       [\n          8.676813,\n          49.4046658\n        ]\n      ]\n
+        \   },\n    \"properties\" : {\n      \"@osmId\" : \"way/25039127\",\n      \"@snapshotTimestamp\"
+        : \"2026-06-19T10:00:00Z\",\n      \"bus\" : \"designated\",\n      \"highway\"
+        : \"service\",\n      \"lit\" : \"yes\",\n      \"oneway\" : \"yes\",\n      \"service\"
+        : \"bus\",\n      \"surface\" : \"asphalt\",\n      \"vehicle\" : \"no\"\n
+        \   }\n  }, {\n    \"type\" : \"Feature\",\n    \"geometry\" : {\n      \"type\"
+        : \"LineString\",\n      \"coordinates\" : [\n        [\n          8.6769479,\n
+        \         49.4057279\n        ],\n        [\n          8.6768611,\n          49.4057263\n
+        \       ],\n        [\n          8.676831,\n          49.4057257\n        ]\n
+        \     ]\n    },\n    \"properties\" : {\n      \"@osmId\" : \"way/26105289\",\n
+        \     \"@snapshotTimestamp\" : \"2026-06-19T10:00:00Z\",\n      \"highway\"
+        : \"service\",\n      \"lit\" : \"yes\",\n      \"motor_vehicle\" : \"private\",\n
+        \     \"smoothness\" : \"good\",\n      \"surface\" : \"paving_stones\"\n
+        \   }\n  }, {\n    \"type\" : \"Feature\",\n    \"geometry\" : {\n      \"type\"
+        : \"LineString\",\n      \"coordinates\" : [\n        [\n          8.6757688,\n
+        \         49.4060716\n        ],\n        [\n          8.6757736,\n          49.4060017\n
+        \       ],\n        [\n          8.6757755,\n          49.4059732\n        ],\n
+        \       [\n          8.6757887,\n          49.4057779\n        ],\n        [\n
+        \         8.6757839,\n          49.4056766\n        ]\n      ]\n    },\n    \"properties\"
+        : {\n      \"@osmId\" : \"way/26105291\",\n      \"@snapshotTimestamp\" :
+        \"2026-06-19T10:00:00Z\",\n      \"bicycle\" : \"yes\",\n      \"emergency\"
+        : \"yes\",\n      \"foot\" : \"yes\",\n      \"highway\" : \"service\",\n
+        \     \"lit\" : \"no\",\n      \"smoothness\" : \"good\",\n      \"surface\"
+        : \"paving_stones\"\n    }\n  }, {\n    \"type\" : \"Feature\",\n    \"geometry\"
+        : {\n      \"type\" : \"LineString\",\n      \"coordinates\" : [\n        [\n
+        \         8.6768574,\n          49.405386\n        ],\n        [\n          8.6767531,\n
+        \         49.4053848\n        ],\n        [\n          8.6765109,\n          49.4053933\n
+        \       ]\n      ]\n    },\n    \"properties\" : {\n      \"@osmId\" : \"way/26105295\",\n
+        \     \"@snapshotTimestamp\" : \"2026-06-19T10:00:00Z\",\n      \"highway\"
+        : \"service\",\n      \"lit\" : \"yes\",\n      \"smoothness\" : \"good\",\n
+        \     \"surface\" : \"paving_stones\"\n    }\n  }, {\n    \"type\" : \"Feature\",\n
+        \   \"geometry\" : {\n      \"type\" : \"LineString\",\n      \"coordinates\"
+        : [\n        [\n          8.6754811,\n          49.4053744\n        ],\n        [\n
+        \         8.6754481,\n          49.4053683\n        ],\n        [\n          8.675459,\n
+        \         49.4052646\n        ]\n      ]\n    },\n    \"properties\" : {\n
+        \     \"@osmId\" : \"way/26105299\",\n      \"@snapshotTimestamp\" : \"2026-06-19T10:00:00Z\",\n
+        \     \"highway\" : \"footway\",\n      \"lit\" : \"yes\",\n      \"smoothness\"
+        : \"good\",\n      \"surface\" : \"paving_stones\"\n    }\n  }, {\n    \"type\"
+        : \"Feature\",\n    \"geometry\" : {\n      \"type\" : \"LineString\",\n      \"coordinates\"
+        : [\n        [\n          8.6758041,\n          49.4052102\n        ],\n        [\n
+        \         8.6757988,\n          49.4051982\n        ],\n        [\n          8.6757958,\n
+        \         49.4051916\n        ]\n      ]\n    },\n    \"properties\" : {\n
+        \     \"@osmId\" : \"way/26105300\",\n      \"@snapshotTimestamp\" : \"2026-06-19T10:00:00Z\",\n
+        \     \"check_date:surface\" : \"2026-04-14\",\n      \"highway\" : \"footway\",\n
+        \     \"lit\" : \"yes\",\n      \"smoothness\" : \"excellent\",\n      \"surface\"
+        : \"paving_stones\"\n    }\n  }, {\n    \"type\" : \"Feature\",\n    \"geometry\"
+        : {\n      \"type\" : \"LineString\",\n      \"coordinates\" : [\n        [\n
+        \         8.6757887,\n          49.4057779\n        ],\n        [\n          8.6758857,\n
+        \         49.4057809\n        ]\n      ]\n    },\n    \"properties\" : {\n
+        \     \"@osmId\" : \"way/26105302\",\n      \"@snapshotTimestamp\" : \"2026-06-19T10:00:00Z\",\n
+        \     \"bicycle\" : \"yes\",\n      \"emergency\" : \"yes\",\n      \"foot\"
+        : \"yes\",\n      \"highway\" : \"service\",\n      \"lit\" : \"no\",\n      \"smoothness\"
+        : \"good\",\n      \"surface\" : \"paving_stones\"\n    }\n  }, {\n    \"type\"
+        : \"Feature\",\n    \"geometry\" : {\n      \"type\" : \"LineString\",\n      \"coordinates\"
+        : [\n        [\n          8.676707,\n          49.4050559\n        ],\n        [\n
+        \         8.6767772,\n          49.4050368\n        ],\n        [\n          8.6768197,\n
+        \         49.4050229\n        ],\n        [\n          8.6768601,\n          49.4050109\n
+        \       ],\n        [\n          8.6770147,\n          49.4049678\n        ],\n
+        \       [\n          8.6770899,\n          49.4049456\n        ]\n      ]\n
+        \   },\n    \"properties\" : {\n      \"@osmId\" : \"way/38846036\",\n      \"@snapshotTimestamp\"
+        : \"2026-06-19T10:00:00Z\",\n      \"bicycle\" : \"designated\",\n      \"cycleway:surface\"
+        : \"asphalt\",\n      \"cycleway:width\" : \"2\",\n      \"foot\" : \"designated\",\n
+        \     \"footway:surface\" : \"asphalt\",\n      \"highway\" : \"path\",\n
+        \     \"lit\" : \"yes\",\n      \"oneway\" : \"yes\",\n      \"oneway:bicycle\"
+        : \"yes\",\n      \"segregated\" : \"yes\",\n      \"source:cycleway:width\"
+        : \"ARCore\",\n      \"surface\" : \"asphalt\"\n    }\n  }, {\n    \"type\"
+        : \"Feature\",\n    \"geometry\" : {\n      \"type\" : \"LineString\",\n      \"coordinates\"
+        : [\n        [\n          8.6742192,\n          49.4051924\n        ],\n        [\n
+        \         8.6743391,\n          49.4051745\n        ],\n        [\n          8.6745205,\n
+        \         49.4051586\n        ],\n        [\n          8.6745165,\n          49.405119\n
+        \       ],\n        [\n          8.6745153,\n          49.4051075\n        ],\n
+        \       [\n          8.6745136,\n          49.4050934\n        ],\n        [\n
+        \         8.6745131,\n          49.4050863\n        ],\n        [\n          8.6745108,\n
+        \         49.4050632\n        ],\n        [\n          8.6745062,\n          49.4050267\n
+        \       ]\n      ]\n    },\n    \"properties\" : {\n      \"@osmId\" : \"way/50702356\",\n
+        \     \"@snapshotTimestamp\" : \"2026-06-19T10:00:00Z\",\n      \"bicycle\"
+        : \"designated\",\n      \"foot\" : \"designated\",\n      \"highway\" : \"path\",\n
+        \     \"lcn\" : \"yes\",\n      \"lit\" : \"yes\",\n      \"oneway\" : \"no\",\n
+        \     \"segregated\" : \"no\",\n      \"smoothness\" : \"good\",\n      \"surface\"
+        : \"asphalt\",\n      \"width\" : \"3.5\"\n    }\n  }, {\n    \"type\" : \"Feature\",\n
+        \   \"geometry\" : {\n      \"type\" : \"LineString\",\n      \"coordinates\"
+        : [\n        [\n          8.6755508,\n          49.404778\n        ],\n        [\n
+        \         8.6756141,\n          49.4047642\n        ],\n        [\n          8.6758386,\n
+        \         49.4047151\n        ],\n        [\n          8.6761257,\n          49.4046511\n
+        \       ]\n      ]\n    },\n    \"properties\" : {\n      \"@osmId\" : \"way/50879415\",\n
+        \     \"@snapshotTimestamp\" : \"2026-06-19T10:00:00Z\",\n      \"highway\"
+        : \"footway\",\n      \"lit\" : \"yes\",\n      \"smoothness\" : \"good\",\n
+        \     \"surface\" : \"paving_stones\",\n      \"tactile_paving\" : \"yes\"\n
+        \   }\n  }, {\n    \"type\" : \"Feature\",\n    \"geometry\" : {\n      \"type\"
+        : \"LineString\",\n      \"coordinates\" : [\n        [\n          8.676831,\n
+        \         49.4057257\n        ],\n        [\n          8.676682,\n          49.4057248\n
+        \       ]\n      ]\n    },\n    \"properties\" : {\n      \"@osmId\" : \"way/96963139\",\n
+        \     \"@snapshotTimestamp\" : \"2026-06-19T10:00:00Z\",\n      \"bicycle\"
+        : \"no\",\n      \"highway\" : \"service\",\n      \"lit\" : \"yes\",\n      \"maxheight\"
+        : \"4\",\n      \"maxheight:signed\" : \"no\",\n      \"motor_vehicle\" :
+        \"private\",\n      \"smoothness\" : \"good\",\n      \"surface\" : \"paving_stones\",\n
+        \     \"tunnel\" : \"building_passage\"\n    }\n  }, {\n    \"type\" : \"Feature\",\n
+        \   \"geometry\" : {\n      \"type\" : \"LineString\",\n      \"coordinates\"
+        : [\n        [\n          8.676682,\n          49.4057248\n        ],\n        [\n
+        \         8.6763452,\n          49.4057109\n        ],\n        [\n          8.6761469,\n
+        \         49.4057112\n        ],\n        [\n          8.6760664,\n          49.4057103\n
+        \       ]\n      ]\n    },\n    \"properties\" : {\n      \"@osmId\" : \"way/96963178\",\n
+        \     \"@snapshotTimestamp\" : \"2026-06-19T10:00:00Z\",\n      \"highway\"
+        : \"service\",\n      \"lit\" : \"no\",\n      \"motor_vehicle\" : \"private\",\n
+        \     \"smoothness\" : \"good\",\n      \"surface\" : \"paving_stones\"\n
+        \   }\n  }, {\n    \"type\" : \"Feature\",\n    \"geometry\" : {\n      \"type\"
+        : \"LineString\",\n      \"coordinates\" : [\n        [\n          8.6749505,\n
+        \         49.4057087\n        ],\n        [\n          8.6749492,\n          49.4057473\n
+        \       ],\n        [\n          8.6749479,\n          49.4057839\n        ]\n
+        \     ]\n    },\n    \"properties\" : {\n      \"@osmId\" : \"way/100639533\",\n
+        \     \"@snapshotTimestamp\" : \"2026-06-19T10:00:00Z\",\n      \"foot\" :
+        \"yes\",\n      \"highway\" : \"service\",\n      \"lanes\" : \"1\",\n      \"lit\"
+        : \"yes\",\n      \"motor_vehicle\" : \"no\",\n      \"oneway\" : \"yes\",\n
+        \     \"sidewalk\" : \"right\",\n      \"sidewalk:right:surface\" : \"paving_stones\",\n
+        \     \"surface\" : \"asphalt\",\n      \"wheelchair\" : \"no\",\n      \"width\"
+        : \"2\"\n    }\n  }, {\n    \"type\" : \"Feature\",\n    \"geometry\" : {\n
+        \     \"type\" : \"LineString\",\n      \"coordinates\" : [\n        [\n          8.6769388,\n
+        \         49.4060928\n        ],\n        [\n          8.6770311,\n          49.4060993\n
+        \       ]\n      ]\n    },\n    \"properties\" : {\n      \"@osmId\" : \"way/152548384\",\n
+        \     \"@snapshotTimestamp\" : \"2026-06-19T10:00:00Z\",\n      \"cycleway:both\"
+        : \"no\",\n      \"highway\" : \"residential\",\n      \"lane_markings\" :
+        \"no\",\n      \"lit\" : \"yes\",\n      \"maxspeed\" : \"30\",\n      \"maxspeed:type\"
+        : \"DE:zone30\",\n      \"name\" : \"Alte Eppelheimer Stra\xDFe\",\n      \"sidewalk\"
+        : \"no\",\n      \"smoothness\" : \"good\",\n      \"source:maxspeed\" : \"DE:zone30\",\n
+        \     \"surface\" : \"asphalt\",\n      \"width\" : \"10\"\n    }\n  }, {\n
+        \   \"type\" : \"Feature\",\n    \"geometry\" : {\n      \"type\" : \"LineString\",\n
+        \     \"coordinates\" : [\n        [\n          8.6749807,\n          49.4057652\n
+        \       ],\n        [\n          8.6749663,\n          49.4057711\n        ],\n
+        \       [\n          8.6749479,\n          49.4057839\n        ]\n      ]\n
+        \   },\n    \"properties\" : {\n      \"@osmId\" : \"way/158368930\",\n      \"@snapshotTimestamp\"
+        : \"2026-06-19T10:00:00Z\",\n      \"highway\" : \"service\",\n      \"lanes\"
+        : \"1\",\n      \"layer\" : \"-1\",\n      \"lit\" : \"yes\",\n      \"maxheight\"
+        : \"2\",\n      \"oneway\" : \"yes\",\n      \"surface\" : \"asphalt\",\n
+        \     \"tunnel\" : \"yes\",\n      \"width\" : \"2\"\n    }\n  }, {\n    \"type\"
+        : \"Feature\",\n    \"geometry\" : {\n      \"type\" : \"LineString\",\n      \"coordinates\"
+        : [\n        [\n          8.6749378,\n          49.4060616\n        ],\n        [\n
+        \         8.6749792,\n          49.4060626\n        ],\n        [\n          8.6755057,\n
+        \         49.4060679\n        ],\n        [\n          8.6757688,\n          49.4060716\n
+        \       ],\n        [\n          8.6758198,\n          49.4060728\n        ],\n
+        \       [\n          8.6758672,\n          49.4060735\n        ],\n        [\n
+        \         8.6768401,\n          49.4060893\n        ],\n        [\n          8.6769388,\n
+        \         49.4060928\n        ]\n      ]\n    },\n    \"properties\" : {\n
+        \     \"@osmId\" : \"way/160687234\",\n      \"@snapshotTimestamp\" : \"2026-06-19T10:00:00Z\",\n
+        \     \"cycleway:both\" : \"no\",\n      \"highway\" : \"residential\",\n
+        \     \"lane_markings\" : \"no\",\n      \"lit\" : \"yes\",\n      \"maxspeed\"
+        : \"50\",\n      \"name\" : \"Alte Eppelheimer Stra\xDFe\",\n      \"name:etymology:wikidata\"
+        : \"Q82539\",\n      \"parking:both\" : \"on_kerb\",\n      \"parking:both:orientation\"
+        : \"parallel\",\n      \"sidewalk:both:surface\" : \"asphalt\",\n      \"sidewalk:left\"
+        : \"yes\",\n      \"sidewalk:right\" : \"separate\",\n      \"smoothness\"
+        : \"good\",\n      \"surface\" : \"asphalt\"\n    }\n  }, {\n    \"type\"
+        : \"Feature\",\n    \"geometry\" : {\n      \"type\" : \"LineString\",\n      \"coordinates\"
+        : [\n        [\n          8.6773844,\n          49.4046213\n        ],\n        [\n
+        \         8.6772123,\n          49.4046568\n        ],\n        [\n          8.6771096,\n
+        \         49.4046724\n        ],\n        [\n          8.6769697,\n          49.4046808\n
+        \       ],\n        [\n          8.6769286,\n          49.4046823\n        ],\n
+        \       [\n          8.676827,\n          49.4046827\n        ]\n      ]\n
+        \   },\n    \"properties\" : {\n      \"@osmId\" : \"way/194487041\",\n      \"@snapshotTimestamp\"
+        : \"2026-06-19T10:00:00Z\",\n      \"access\" : \"no\",\n      \"bus\" : \"yes\",\n
+        \     \"highway\" : \"service\",\n      \"lit\" : \"yes\",\n      \"oneway\"
+        : \"yes\"\n    }\n  }, {\n    \"type\" : \"Feature\",\n    \"geometry\" :
+        {\n      \"type\" : \"LineString\",\n      \"coordinates\" : [\n        [\n
+        \         8.6748677,\n          49.4060599\n        ],\n        [\n          8.6748869,\n
+        \         49.4060604\n        ],\n        [\n          8.6749378,\n          49.4060616\n
+        \       ]\n      ]\n    },\n    \"properties\" : {\n      \"@osmId\" : \"way/229409965\",\n
+        \     \"@snapshotTimestamp\" : \"2026-06-19T10:00:00Z\",\n      \"cycleway:both\"
+        : \"no\",\n      \"highway\" : \"residential\",\n      \"lanes\" : \"1\",\n
+        \     \"lit\" : \"yes\",\n      \"maxspeed:type\" : \"DE:urban\",\n      \"name\"
+        : \"Alte Eppelheimer Stra\xDFe\",\n      \"oneway\" : \"no\",\n      \"sidewalk\"
+        : \"no\",\n      \"surface\" : \"asphalt\",\n      \"width\" : \"4\"\n    }\n
+        \ }, {\n    \"type\" : \"Feature\",\n    \"geometry\" : {\n      \"type\"
+        : \"LineString\",\n      \"coordinates\" : [\n        [\n          8.6774288,\n
+        \         49.4046903\n        ],\n        [\n          8.6773275,\n          49.4047078\n
+        \       ],\n        [\n          8.6772386,\n          49.4047395\n        ],\n
+        \       [\n          8.6771466,\n          49.4047789\n        ]\n      ]\n
+        \   },\n    \"properties\" : {\n      \"@osmId\" : \"way/231972185\",\n      \"@snapshotTimestamp\"
+        : \"2026-06-19T10:00:00Z\",\n      \"bicycle\" : \"designated\",\n      \"cycleway:surface\"
+        : \"asphalt\",\n      \"foot\" : \"designated\",\n      \"footway:surface\"
+        : \"asphalt\",\n      \"highway\" : \"path\",\n      \"lit\" : \"yes\",\n
+        \     \"oneway:bicycle\" : \"yes\",\n      \"segregated\" : \"yes\"\n    }\n
+        \ }, {\n    \"type\" : \"Feature\",\n    \"geometry\" : {\n      \"type\"
+        : \"LineString\",\n      \"coordinates\" : [\n        [\n          8.6771945,\n
+        \         49.4046899\n        ],\n        [\n          8.6771466,\n          49.4047789\n
+        \       ]\n      ]\n    },\n    \"properties\" : {\n      \"@osmId\" : \"way/231972188\",\n
+        \     \"@snapshotTimestamp\" : \"2026-06-19T10:00:00Z\",\n      \"foot\" :
+        \"no\",\n      \"highway\" : \"cycleway\",\n      \"lit\" : \"yes\",\n      \"oneway\"
+        : \"yes\",\n      \"surface\" : \"asphalt\",\n      \"surface:colour\" : \"red\",\n
+        \     \"width\" : \"2.5\"\n    }\n  }, {\n    \"type\" : \"Feature\",\n    \"geometry\"
+        : {\n      \"type\" : \"LineString\",\n      \"coordinates\" : [\n        [\n
+        \         8.6772296,\n          49.4046273\n        ],\n        [\n          8.6772123,\n
+        \         49.4046568\n        ],\n        [\n          8.6771945,\n          49.4046899\n
+        \       ]\n      ]\n    },\n    \"properties\" : {\n      \"@osmId\" : \"way/231972192\",\n
+        \     \"@snapshotTimestamp\" : \"2026-06-19T10:00:00Z\",\n      \"foot\" :
+        \"no\",\n      \"highway\" : \"cycleway\",\n      \"lit\" : \"yes\",\n      \"oneway\"
+        : \"yes\",\n      \"surface\" : \"asphalt\",\n      \"surface:colour\" : \"red\",\n
+        \     \"width\" : \"2\"\n    }\n  }, {\n    \"type\" : \"Feature\",\n    \"geometry\"
+        : {\n      \"type\" : \"LineString\",\n      \"coordinates\" : [\n        [\n
+        \         8.6772296,\n          49.4046273\n        ],\n        [\n          8.6771329,\n
+        \         49.4046236\n        ]\n      ]\n    },\n    \"properties\" : {\n
+        \     \"@osmId\" : \"way/231972202\",\n      \"@snapshotTimestamp\" : \"2026-06-19T10:00:00Z\",\n
+        \     \"cycleway:both\" : \"no\",\n      \"foot\" : \"no\",\n      \"highway\"
+        : \"secondary\",\n      \"lanes\" : \"2\",\n      \"lit\" : \"yes\",\n      \"maxspeed\"
+        : \"50\",\n      \"name\" : \"Kurf\xFCrsten-Anlage\",\n      \"name:etymology:wikidata\"
+        : \"Q22722\",\n      \"oneway\" : \"yes\",\n      \"shoulder\" : \"no\",\n
+        \     \"sidewalk\" : \"no\",\n      \"source:maxspeed\" : \"DE:urban\",\n
+        \     \"surface\" : \"asphalt\"\n    }\n  }, {\n    \"type\" : \"Feature\",\n
+        \   \"geometry\" : {\n      \"type\" : \"LineString\",\n      \"coordinates\"
+        : [\n        [\n          8.6757958,\n          49.4051916\n        ],\n        [\n
+        \         8.6757865,\n          49.4051707\n        ]\n      ]\n    },\n    \"properties\"
+        : {\n      \"@osmId\" : \"way/242307095\",\n      \"@snapshotTimestamp\" :
+        \"2026-06-19T10:00:00Z\",\n      \"handrail\" : \"yes\",\n      \"highway\"
+        : \"steps\",\n      \"incline\" : \"up\",\n      \"lit\" : \"yes\",\n      \"ramp\"
+        : \"separate\",\n      \"ramp:wheelchair\" : \"separate\",\n      \"step_count\"
+        : \"5\",\n      \"surface\" : \"concrete\",\n      \"tactile_paving\" : \"yes\",\n
+        \     \"width\" : \"10\"\n    }\n  }, {\n    \"type\" : \"Feature\",\n    \"geometry\"
+        : {\n      \"type\" : \"LineString\",\n      \"coordinates\" : [\n        [\n
+        \         8.6749006,\n          49.4052199\n        ],\n        [\n          8.6749104,\n
+        \         49.4051324\n        ],\n        [\n          8.6749052,\n          49.4050726\n
+        \       ],\n        [\n          8.6748955,\n          49.4050516\n        ],\n
+        \       [\n          8.6748627,\n          49.4049941\n        ]\n      ]\n
+        \   },\n    \"properties\" : {\n      \"@osmId\" : \"way/242307096\",\n      \"@snapshotTimestamp\"
+        : \"2026-06-19T10:00:00Z\",\n      \"highway\" : \"service\",\n      \"lanes\"
+        : \"1\",\n      \"lit\" : \"yes\",\n      \"maxspeed\" : \"50\",\n      \"name\"
+        : \"Willy-Brandt-Platz\",\n      \"name:etymology:wikidata\" : \"Q2514\",\n
+        \     \"oneway\" : \"yes\",\n      \"surface\" : \"asphalt\",\n      \"zone:maxspeed\"
+        : \"DE:urban\",\n      \"zone:traffic\" : \"DE:urban\"\n    }\n  }, {\n    \"type\"
+        : \"Feature\",\n    \"geometry\" : {\n      \"type\" : \"LineString\",\n      \"coordinates\"
+        : [\n        [\n          8.6757865,\n          49.4051707\n        ],\n        [\n
+        \         8.6757813,\n          49.4051606\n        ],\n        [\n          8.6757515,\n
+        \         49.4051671\n        ]\n      ]\n    },\n    \"properties\" : {\n
+        \     \"@osmId\" : \"way/242307097\",\n      \"@snapshotTimestamp\" : \"2026-06-19T10:00:00Z\",\n
+        \     \"check_date:surface\" : \"2026-04-14\",\n      \"highway\" : \"footway\",\n
+        \     \"lit\" : \"yes\",\n      \"smoothness\" : \"excellent\",\n      \"surface\"
+        : \"paving_stones\"\n    }\n  }, {\n    \"type\" : \"Feature\",\n    \"geometry\"
+        : {\n      \"type\" : \"LineString\",\n      \"coordinates\" : [\n        [\n
+        \         8.6763528,\n          49.4050849\n        ],\n        [\n          8.676356,\n
+        \         49.4050924\n        ],\n        [\n          8.6763549,\n          49.4051038\n
+        \       ],\n        [\n          8.6763503,\n          49.4051148\n        ],\n
+        \       [\n          8.6763423,\n          49.405125\n        ],\n        [\n
+        \         8.6763313,\n          49.4051339\n        ],\n        [\n          8.6763177,\n
+        \         49.4051412\n        ],\n        [\n          8.6763022,\n          49.4051465\n
+        \       ],\n        [\n          8.6762853,\n          49.4051496\n        ],\n
+        \       [\n          8.6762678,\n          49.4051504\n        ],\n        [\n
+        \         8.6762504,\n          49.4051489\n        ],\n        [\n          8.6762338,\n
+        \         49.4051452\n        ],\n        [\n          8.6762188,\n          49.4051393\n
+        \       ],\n        [\n          8.6762059,\n          49.4051315\n        ],\n
+        \       [\n          8.6761957,\n          49.4051222\n        ],\n        [\n
+        \         8.676193,\n          49.405117\n        ]\n      ]\n    },\n    \"properties\"
+        : {\n      \"@osmId\" : \"way/242535113\",\n      \"@snapshotTimestamp\" :
+        \"2026-06-19T10:00:00Z\",\n      \"foot\" : \"yes\",\n      \"highway\" :
+        \"service\",\n      \"maxheight:signed\" : \"no\",\n      \"source:geometry\"
+        : \"HiRes aerial imagery\",\n      \"surface\" : \"paving_stones\"\n    }\n
+        \ }, {\n    \"type\" : \"Feature\",\n    \"geometry\" : {\n      \"type\"
+        : \"LineString\",\n      \"coordinates\" : [\n        [\n          8.6756322,\n
+        \         49.4046213\n        ],\n        [\n          8.6756141,\n          49.4047642\n
+        \       ]\n      ]\n    },\n    \"properties\" : {\n      \"@osmId\" : \"way/242535115\",\n
+        \     \"@snapshotTimestamp\" : \"2026-06-19T10:00:00Z\",\n      \"highway\"
+        : \"footway\",\n      \"lit\" : \"yes\",\n      \"smoothness\" : \"good\",\n
+        \     \"surface\" : \"paving_stones\"\n    }\n  }, {\n    \"type\" : \"Feature\",\n
+        \   \"geometry\" : {\n      \"type\" : \"LineString\",\n      \"coordinates\"
+        : [\n        [\n          8.676193,\n          49.405117\n        ],\n        [\n
+        \         8.6761666,\n          49.4050677\n        ],\n        [\n          8.6761516,\n
+        \         49.4050455\n        ]\n      ]\n    },\n    \"properties\" : {\n
+        \     \"@osmId\" : \"way/242535120\",\n      \"@snapshotTimestamp\" : \"2026-06-19T10:00:00Z\",\n
+        \     \"highway\" : \"service\",\n      \"source:geometry\" : \"HiRes aerial
+        imagery\",\n      \"surface\" : \"paving_stones\"\n    }\n  }, {\n    \"type\"
+        : \"Feature\",\n    \"geometry\" : {\n      \"type\" : \"LineString\",\n      \"coordinates\"
+        : [\n        [\n          8.6763146,\n          49.4050118\n        ],\n        [\n
+        \         8.6763307,\n          49.4050332\n        ],\n        [\n          8.6763528,\n
+        \         49.4050849\n        ]\n      ]\n    },\n    \"properties\" : {\n
+        \     \"@osmId\" : \"way/242535121\",\n      \"@snapshotTimestamp\" : \"2026-06-19T10:00:00Z\",\n
+        \     \"highway\" : \"service\",\n      \"source:geometry\" : \"HiRes aerial
+        imagery\",\n      \"surface\" : \"paving_stones\"\n    }\n  }, {\n    \"type\"
+        : \"Feature\",\n    \"geometry\" : {\n      \"type\" : \"LineString\",\n      \"coordinates\"
+        : [\n        [\n          8.6754481,\n          49.4053683\n        ],\n        [\n
+        \         8.675096,\n          49.4053627\n        ],\n        [\n          8.6750086,\n
+        \         49.4053427\n        ],\n        [\n          8.6749651,\n          49.4053425\n
+        \       ]\n      ]\n    },\n    \"properties\" : {\n      \"@osmId\" : \"way/242535122\",\n
+        \     \"@snapshotTimestamp\" : \"2026-06-19T10:00:00Z\",\n      \"highway\"
+        : \"footway\",\n      \"lit\" : \"yes\",\n      \"smoothness\" : \"good\",\n
+        \     \"source:geometry\" : \"HiRes aerial imagery\",\n      \"surface\" :
+        \"paving_stones\"\n    }\n  }, {\n    \"type\" : \"Feature\",\n    \"geometry\"
+        : {\n      \"type\" : \"LineString\",\n      \"coordinates\" : [\n        [\n
+        \         8.6772331,\n          49.4046213\n        ],\n        [\n          8.6772296,\n
+        \         49.4046273\n        ]\n      ]\n    },\n    \"properties\" : {\n
+        \     \"@osmId\" : \"way/242535123\",\n      \"@snapshotTimestamp\" : \"2026-06-19T10:00:00Z\",\n
+        \     \"foot\" : \"no\",\n      \"highway\" : \"cycleway\",\n      \"lit\"
+        : \"yes\",\n      \"oneway\" : \"yes\",\n      \"surface\" : \"asphalt\",\n
+        \     \"surface:colour\" : \"red\",\n      \"width\" : \"2\"\n    }\n  },
+        {\n    \"type\" : \"Feature\",\n    \"geometry\" : {\n      \"type\" : \"LineString\",\n
+        \     \"coordinates\" : [\n        [\n          8.6758672,\n          49.4060735\n
+        \       ],\n        [\n          8.6758703,\n          49.406005\n        ],\n
+        \       [\n          8.6758827,\n          49.4058252\n        ],\n        [\n
+        \         8.6758857,\n          49.4057809\n        ],\n        [\n          8.6758907,\n
+        \         49.4057087\n        ],\n        [\n          8.6760664,\n          49.4057103\n
+        \       ]\n      ]\n    },\n    \"properties\" : {\n      \"@osmId\" : \"way/242535124\",\n
+        \     \"@snapshotTimestamp\" : \"2026-06-19T10:00:00Z\",\n      \"emergency\"
+        : \"yes\",\n      \"highway\" : \"service\",\n      \"lit\" : \"no\",\n      \"smoothness\"
+        : \"good\",\n      \"source:geometry\" : \"HiRes aerial imagery\",\n      \"surface\"
+        : \"paving_stones\"\n    }\n  }, {\n    \"type\" : \"Feature\",\n    \"geometry\"
+        : {\n      \"type\" : \"LineString\",\n      \"coordinates\" : [\n        [\n
+        \         8.6763528,\n          49.4050849\n        ],\n        [\n          8.6765455,\n
+        \         49.4050462\n        ],\n        [\n          8.676631,\n          49.4050371\n
+        \       ],\n        [\n          8.6766384,\n          49.4050271\n        ]\n
+        \     ]\n    },\n    \"properties\" : {\n      \"@osmId\" : \"way/242535125\",\n
+        \     \"@snapshotTimestamp\" : \"2026-06-19T10:00:00Z\",\n      \"check_date:surface\"
+        : \"2026-03-04\",\n      \"cycleway\" : \"permissive\",\n      \"highway\"
+        : \"footway\",\n      \"lit\" : \"yes\",\n      \"smoothness\" : \"good\",\n
+        \     \"source:geometry\" : \"HiRes aerial imagery\",\n      \"surface\" :
+        \"paving_stones\"\n    }\n  }, {\n    \"type\" : \"Feature\",\n    \"geometry\"
+        : {\n      \"type\" : \"LineString\",\n      \"coordinates\" : [\n        [\n
+        \         8.675096,\n          49.4053627\n        ],\n        [\n          8.675171,\n
+        \         49.4053236\n        ],\n        [\n          8.675459,\n          49.4052646\n
+        \       ],\n        [\n          8.6755085,\n          49.4052546\n        ],\n
+        \       [\n          8.6757988,\n          49.4051982\n        ],\n        [\n
+        \         8.676193,\n          49.405117\n        ]\n      ]\n    },\n    \"properties\"
+        : {\n      \"@osmId\" : \"way/242535126\",\n      \"@snapshotTimestamp\" :
+        \"2026-06-19T10:00:00Z\",\n      \"highway\" : \"footway\",\n      \"lit\"
+        : \"yes\",\n      \"smoothness\" : \"good\",\n      \"source:geometry\" :
+        \"HiRes aerial imagery\",\n      \"surface\" : \"paving_stones\"\n    }\n
+        \ }, {\n    \"type\" : \"Feature\",\n    \"geometry\" : {\n      \"type\"
+        : \"LineString\",\n      \"coordinates\" : [\n        [\n          8.6767735,\n
+        \         49.4051237\n        ],\n        [\n          8.6767714,\n          49.4050767\n
+        \       ],\n        [\n          8.6767772,\n          49.4050368\n        ],\n
+        \       [\n          8.6767733,\n          49.4049876\n        ],\n        [\n
+        \         8.6767762,\n          49.4049503\n        ],\n        [\n          8.6767847,\n
+        \         49.4049064\n        ],\n        [\n          8.6767961,\n          49.4048365\n
+        \       ],\n        [\n          8.6768143,\n          49.4047386\n        ],\n
+        \       [\n          8.676827,\n          49.4046827\n        ],\n        [\n
+        \         8.6768319,\n          49.40466\n        ],\n        [\n          8.6768396,\n
+        \         49.404624\n        ],\n        [\n          8.6768402,\n          49.4046213\n
+        \       ]\n      ]\n    },\n    \"properties\" : {\n      \"@osmId\" : \"way/242535127\",\n
+        \     \"@snapshotTimestamp\" : \"2026-06-19T10:00:00Z\",\n      \"foot\" :
+        \"no\",\n      \"highway\" : \"cycleway\",\n      \"lit\" : \"yes\",\n      \"oneway\"
+        : \"yes\",\n      \"surface\" : \"asphalt\",\n      \"surface:colour\" : \"red\",\n
+        \     \"width\" : \"2\"\n    }\n  }, {\n    \"type\" : \"Feature\",\n    \"geometry\"
+        : {\n      \"type\" : \"LineString\",\n      \"coordinates\" : [\n        [\n
+        \         8.6771329,\n          49.4046236\n        ],\n        [\n          8.677115,\n
+        \         49.4046213\n        ]\n      ]\n    },\n    \"properties\" : {\n
+        \     \"@osmId\" : \"way/249453183\",\n      \"@snapshotTimestamp\" : \"2026-06-19T10:00:00Z\",\n
+        \     \"cycleway:right\" : \"no\",\n      \"foot\" : \"no\",\n      \"highway\"
+        : \"primary_link\",\n      \"lanes\" : \"2\",\n      \"lit\" : \"yes\",\n
+        \     \"maxspeed\" : \"50\",\n      \"name\" : \"Kurf\xFCrsten-Anlage\",\n
+        \     \"name:etymology:wikidata\" : \"Q22722\",\n      \"oneway\" : \"yes\",\n
+        \     \"sidewalk\" : \"no\",\n      \"source:maxspeed\" : \"DE:urban\",\n
+        \     \"surface\" : \"asphalt\"\n    }\n  }, {\n    \"type\" : \"Feature\",\n
+        \   \"geometry\" : {\n      \"type\" : \"LineString\",\n      \"coordinates\"
+        : [\n        [\n          8.6755057,\n          49.4060679\n        ],\n        [\n
+        \         8.6755048,\n          49.406246\n        ]\n      ]\n    },\n    \"properties\"
+        : {\n      \"@osmId\" : \"way/282614207\",\n      \"@snapshotTimestamp\" :
+        \"2026-06-19T10:00:00Z\",\n      \"highway\" : \"footway\",\n      \"lit\"
+        : \"yes\",\n      \"smoothness\" : \"good\",\n      \"source:geometry\" :
+        \"HiRes aerial imagery\",\n      \"surface\" : \"asphalt\"\n    }\n  }, {\n
+        \   \"type\" : \"Feature\",\n    \"geometry\" : {\n      \"type\" : \"LineString\",\n
+        \     \"coordinates\" : [\n        [\n          8.6749792,\n          49.4060626\n
+        \       ],\n        [\n          8.6749767,\n          49.406156\n        ],\n
+        \       [\n          8.6749755,\n          49.4062254\n        ],\n        [\n
+        \         8.6749753,\n          49.4062382\n        ]\n      ]\n    },\n    \"properties\"
+        : {\n      \"@osmId\" : \"way/282614209\",\n      \"@snapshotTimestamp\" :
+        \"2026-06-19T10:00:00Z\",\n      \"highway\" : \"service\",\n      \"lit\"
+        : \"yes\",\n      \"source:geometry\" : \"HiRes aerial imagery\",\n      \"surface\"
+        : \"asphalt\"\n    }\n  }, {\n    \"type\" : \"Feature\",\n    \"geometry\"
+        : {\n      \"type\" : \"LineString\",\n      \"coordinates\" : [\n        [\n
+        \         8.6758179,\n          49.4062657\n        ],\n        [\n          8.6761974,\n
+        \         49.406274\n        ],\n        [\n          8.6762448,\n          49.4062828\n
+        \       ],\n        [\n          8.6767207,\n          49.4062928\n        ]\n
+        \     ]\n    },\n    \"properties\" : {\n      \"@osmId\" : \"way/282614210\",\n
+        \     \"@snapshotTimestamp\" : \"2026-06-19T10:00:00Z\",\n      \"access\"
+        : \"permissive\",\n      \"highway\" : \"service\",\n      \"service\" : \"parking_aisle\",\n
+        \     \"source:geometry\" : \"HiRes aerial imagery\",\n      \"surface\" :
+        \"asphalt\"\n    }\n  }, {\n    \"type\" : \"Feature\",\n    \"geometry\"
+        : {\n      \"type\" : \"LineString\",\n      \"coordinates\" : [\n        [\n
+        \         8.6758178,\n          49.4062518\n        ],\n        [\n          8.6755048,\n
+        \         49.406246\n        ],\n        [\n          8.6749753,\n          49.4062382\n
+        \       ]\n      ]\n    },\n    \"properties\" : {\n      \"@osmId\" : \"way/282614211\",\n
+        \     \"@snapshotTimestamp\" : \"2026-06-19T10:00:00Z\",\n      \"access\"
+        : \"permissive\",\n      \"highway\" : \"service\",\n      \"lit\" : \"yes\",\n
+        \     \"service\" : \"parking_aisle\",\n      \"source:geometry\" : \"HiRes
+        aerial imagery\",\n      \"surface\" : \"asphalt\"\n    }\n  }, {\n    \"type\"
+        : \"Feature\",\n    \"geometry\" : {\n      \"type\" : \"LineString\",\n      \"coordinates\"
+        : [\n        [\n          8.675223,\n          49.4055728\n        ],\n        [\n
+        \         8.6752234,\n          49.405767\n        ]\n      ]\n    },\n    \"properties\"
+        : {\n      \"@osmId\" : \"way/302905701\",\n      \"@snapshotTimestamp\" :
+        \"2026-06-19T10:00:00Z\",\n      \"highway\" : \"footway\",\n      \"lit\"
+        : \"yes\",\n      \"smoothness\" : \"good\",\n      \"surface\" : \"paving_stones\"\n
+        \   }\n  }, {\n    \"type\" : \"Feature\",\n    \"geometry\" : {\n      \"type\"
+        : \"LineString\",\n      \"coordinates\" : [\n        [\n          8.6746781,\n
+        \         49.4060553\n        ],\n        [\n          8.6746999,\n          49.4053433\n
+        \       ]\n      ]\n    },\n    \"properties\" : {\n      \"@osmId\" : \"way/384766605\",\n
+        \     \"@snapshotTimestamp\" : \"2026-06-19T10:00:00Z\",\n      \"highway\"
+        : \"footway\",\n      \"lit\" : \"yes\",\n      \"smoothness\" : \"good\",\n
+        \     \"surface\" : \"paving_stones\"\n    }\n  }, {\n    \"type\" : \"Feature\",\n
+        \   \"geometry\" : {\n      \"type\" : \"LineString\",\n      \"coordinates\"
+        : [\n        [\n          8.6770774,\n          49.4050634\n        ],\n        [\n
+        \         8.6771707,\n          49.4050781\n        ],\n        [\n          8.6774288,\n
+        \         49.4051189\n        ]\n      ]\n    },\n    \"properties\" : {\n
+        \     \"@osmId\" : \"way/406929617\",\n      \"@snapshotTimestamp\" : \"2026-06-19T10:00:00Z\",\n
+        \     \"highway\" : \"path\",\n      \"lit\" : \"yes\",\n      \"surface\"
+        : \"paving_stones\"\n    }\n  }, {\n    \"type\" : \"Feature\",\n    \"geometry\"
+        : {\n      \"type\" : \"LineString\",\n      \"coordinates\" : [\n        [\n
+        \         8.6767927,\n          49.4046397\n        ],\n        [\n          8.6767862,\n
+        \         49.4046213\n        ]\n      ]\n    },\n    \"properties\" : {\n
+        \     \"@osmId\" : \"way/437571200\",\n      \"@snapshotTimestamp\" : \"2026-06-19T10:00:00Z\",\n
+        \     \"bus\" : \"designated\",\n      \"highway\" : \"service\",\n      \"lit\"
+        : \"yes\",\n      \"note\" : \"Zufahrt aus KFA: geradeaus abbiegen (wie Richtung
+        RNV) und dann doch nach links\",\n      \"oneway\" : \"yes\",\n      \"service\"
+        : \"bus\",\n      \"surface\" : \"asphalt\",\n      \"vehicle\" : \"no\"\n
+        \   }\n  }, {\n    \"type\" : \"Feature\",\n    \"geometry\" : {\n      \"type\"
+        : \"LineString\",\n      \"coordinates\" : [\n        [\n          8.6752234,\n
+        \         49.405767\n        ],\n        [\n          8.6757562,\n          49.4057773\n
+        \       ],\n        [\n          8.6757887,\n          49.4057779\n        ]\n
+        \     ]\n    },\n    \"properties\" : {\n      \"@osmId\" : \"way/484320309\",\n
+        \     \"@snapshotTimestamp\" : \"2026-06-19T10:00:00Z\",\n      \"emergency\"
+        : \"yes\",\n      \"highway\" : \"service\",\n      \"lit\" : \"no\",\n      \"smoothness\"
+        : \"excellent\",\n      \"surface\" : \"paving_stones\"\n    }\n  }, {\n    \"type\"
+        : \"Feature\",\n    \"geometry\" : {\n      \"type\" : \"LineString\",\n      \"coordinates\"
+        : [\n        [\n          8.6763452,\n          49.4057109\n        ],\n        [\n
+        \         8.6763504,\n          49.405621\n        ],\n        [\n          8.6761509,\n
+        \         49.4056189\n        ],\n        [\n          8.6761469,\n          49.4057112\n
+        \       ]\n      ]\n    },\n    \"properties\" : {\n      \"@osmId\" : \"way/484321190\",\n
+        \     \"@snapshotTimestamp\" : \"2026-06-19T10:00:00Z\",\n      \"highway\"
+        : \"service\",\n      \"lit\" : \"24/7\",\n      \"motor_vehicle\" : \"private\",\n
+        \     \"smoothness\" : \"good\",\n      \"surface\" : \"paving_stones\"\n
+        \   }\n  }, {\n    \"type\" : \"Feature\",\n    \"geometry\" : {\n      \"type\"
+        : \"LineString\",\n      \"coordinates\" : [\n        [\n          8.6758827,\n
+        \         49.4058252\n        ],\n        [\n          8.6759223,\n          49.4058258\n
+        \       ],\n        [\n          8.6761697,\n          49.4058297\n        ]\n
+        \     ]\n    },\n    \"properties\" : {\n      \"@osmId\" : \"way/484321191\",\n
+        \     \"@snapshotTimestamp\" : \"2026-06-19T10:00:00Z\",\n      \"highway\"
+        : \"path\",\n      \"lit\" : \"no\",\n      \"smoothness\" : \"good\",\n      \"surface\"
+        : \"paving_stones\"\n    }\n  }, {\n    \"type\" : \"Feature\",\n    \"geometry\"
+        : {\n      \"type\" : \"LineString\",\n      \"coordinates\" : [\n        [\n
+        \         8.6749754,\n          49.4055678\n        ],\n        [\n          8.6751804,\n
+        \         49.4055718\n        ]\n      ]\n    },\n    \"properties\" : {\n
+        \     \"@osmId\" : \"way/485225315\",\n      \"@snapshotTimestamp\" : \"2026-06-19T10:00:00Z\",\n
+        \     \"highway\" : \"footway\",\n      \"lit\" : \"yes\",\n      \"smoothness\"
+        : \"good\",\n      \"surface\" : \"paving_stones\",\n      \"tunnel\" : \"building_passage\"\n
+        \   }\n  }, {\n    \"type\" : \"Feature\",\n    \"geometry\" : {\n      \"type\"
+        : \"LineString\",\n      \"coordinates\" : [\n        [\n          8.6749553,\n
+        \         49.4055748\n        ],\n        [\n          8.6749754,\n          49.4055678\n
+        \       ]\n      ]\n    },\n    \"properties\" : {\n      \"@osmId\" : \"way/485225316\",\n
+        \     \"@snapshotTimestamp\" : \"2026-06-19T10:00:00Z\",\n      \"highway\"
+        : \"footway\",\n      \"lit\" : \"yes\",\n      \"smoothness\" : \"good\",\n
+        \     \"surface\" : \"paving_stones\"\n    }\n  }, {\n    \"type\" : \"Feature\",\n
+        \   \"geometry\" : {\n      \"type\" : \"LineString\",\n      \"coordinates\"
+        : [\n        [\n          8.6751804,\n          49.4055718\n        ],\n        [\n
+        \         8.675223,\n          49.4055728\n        ],\n        [\n          8.6754695,\n
+        \         49.4055787\n        ]\n      ]\n    },\n    \"properties\" : {\n
+        \     \"@osmId\" : \"way/485225317\",\n      \"@snapshotTimestamp\" : \"2026-06-19T10:00:00Z\",\n
+        \     \"highway\" : \"footway\",\n      \"lit\" : \"yes\",\n      \"smoothness\"
+        : \"good\",\n      \"surface\" : \"paving_stones\"\n    }\n  }, {\n    \"type\"
+        : \"Feature\",\n    \"geometry\" : {\n      \"type\" : \"LineString\",\n      \"coordinates\"
+        : [\n        [\n          8.6746999,\n          49.4053433\n        ],\n        [\n
+        \         8.6745308,\n          49.4053696\n        ],\n        [\n          8.6742192,\n
+        \         49.4054208\n        ]\n      ]\n    },\n    \"properties\" : {\n
+        \     \"@osmId\" : \"way/514786281\",\n      \"@snapshotTimestamp\" : \"2026-06-19T10:00:00Z\",\n
+        \     \"bicycle\" : \"designated\",\n      \"cycleway:surface\" : \"asphalt\",\n
+        \     \"cycleway:width\" : \"2.5\",\n      \"foot\" : \"designated\",\n      \"footway:surface\"
+        : \"paving_stones\",\n      \"highway\" : \"path\",\n      \"lit\" : \"yes\",\n
+        \     \"oneway\" : \"yes\",\n      \"segregated\" : \"yes\",\n      \"smoothness\"
+        : \"good\",\n      \"surface\" : \"paved\",\n      \"traffic_sign\" : \"DE:241\"\n
+        \   }\n  }, {\n    \"type\" : \"Feature\",\n    \"geometry\" : {\n      \"type\"
+        : \"LineString\",\n      \"coordinates\" : [\n        [\n          8.6745062,\n
+        \         49.4050267\n        ],\n        [\n          8.6742192,\n          49.4050812\n
+        \       ]\n      ]\n    },\n    \"properties\" : {\n      \"@osmId\" : \"way/612152595\",\n
+        \     \"@snapshotTimestamp\" : \"2026-06-19T10:00:00Z\",\n      \"highway\"
+        : \"footway\",\n      \"lit\" : \"yes\",\n      \"smoothness\" : \"excellent\",\n
+        \     \"surface\" : \"paving_stones\"\n    }\n  }, {\n    \"type\" : \"Feature\",\n
+        \   \"geometry\" : {\n      \"type\" : \"LineString\",\n      \"coordinates\"
+        : [\n        [\n          8.6745062,\n          49.4050267\n        ],\n        [\n
+        \         8.6746673,\n          49.4049893\n        ],\n        [\n          8.6747748,\n
+        \         49.4049643\n        ],\n        [\n          8.6748319,\n          49.4049462\n
+        \       ]\n      ]\n    },\n    \"properties\" : {\n      \"@osmId\" : \"way/620369364\",\n
+        \     \"@snapshotTimestamp\" : \"2026-06-19T10:00:00Z\",\n      \"bicycle\"
+        : \"yes\",\n      \"foot\" : \"designated\",\n      \"highway\" : \"footway\",\n
+        \     \"lcn\" : \"yes\",\n      \"lit\" : \"yes\",\n      \"oneway\" : \"no\",\n
+        \     \"segregated\" : \"no\",\n      \"smoothness\" : \"good\",\n      \"surface\"
+        : \"asphalt\",\n      \"width\" : \"3.5\"\n    }\n  }, {\n    \"type\" : \"Feature\",\n
+        \   \"geometry\" : {\n      \"type\" : \"LineString\",\n      \"coordinates\"
+        : [\n        [\n          8.6745308,\n          49.4053696\n        ],\n        [\n
+        \         8.674528,\n          49.405243\n        ],\n        [\n          8.6745205,\n
+        \         49.4051586\n        ]\n      ]\n    },\n    \"properties\" : {\n
+        \     \"@osmId\" : \"way/638201811\",\n      \"@snapshotTimestamp\" : \"2026-06-19T10:00:00Z\",\n
+        \     \"bicycle\" : \"designated\",\n      \"check_date:surface\" : \"2024-05-01\",\n
+        \     \"cycleway:surface\" : \"asphalt\",\n      \"cycleway:width\" : \"2.5\",\n
+        \     \"foot\" : \"designated\",\n      \"footway:surface\" : \"asphalt\",\n
+        \     \"highway\" : \"path\",\n      \"lit\" : \"yes\",\n      \"oneway\"
+        : \"no\",\n      \"segregated\" : \"yes\",\n      \"surface\" : \"asphalt\"\n
+        \   }\n  }, {\n    \"type\" : \"Feature\",\n    \"geometry\" : {\n      \"type\"
+        : \"LineString\",\n      \"coordinates\" : [\n        [\n          8.6746999,\n
+        \         49.4053433\n        ],\n        [\n          8.6748088,\n          49.4053529\n
+        \       ],\n        [\n          8.6748707,\n          49.4053488\n        ],\n
+        \       [\n          8.6748845,\n          49.4053479\n        ],\n        [\n
+        \         8.6749005,\n          49.4053468\n        ],\n        [\n          8.6749157,\n
+        \         49.4053457\n        ],\n        [\n          8.6749372,\n          49.4053444\n
+        \       ],\n        [\n          8.6749651,\n          49.4053425\n        ]\n
+        \     ]\n    },\n    \"properties\" : {\n      \"@osmId\" : \"way/653838761\",\n
+        \     \"@snapshotTimestamp\" : \"2026-06-19T10:00:00Z\",\n      \"highway\"
+        : \"footway\",\n      \"lit\" : \"yes\",\n      \"surface\" : \"paving_stones\"\n
+        \   }\n  }, {\n    \"type\" : \"Feature\",\n    \"geometry\" : {\n      \"type\"
+        : \"LineString\",\n      \"coordinates\" : [\n        [\n          8.6761076,\n
+        \         49.4055897\n        ],\n        [\n          8.6761509,\n          49.4056189\n
+        \       ]\n      ]\n    },\n    \"properties\" : {\n      \"@osmId\" : \"way/661279634\",\n
+        \     \"@snapshotTimestamp\" : \"2026-06-19T10:00:00Z\",\n      \"highway\"
+        : \"footway\",\n      \"lit\" : \"24/7\",\n      \"smoothness\" : \"good\",\n
+        \     \"surface\" : \"paving_stones\"\n    }\n  }, {\n    \"type\" : \"Feature\",\n
+        \   \"geometry\" : {\n      \"type\" : \"LineString\",\n      \"coordinates\"
+        : [\n        [\n          8.6757515,\n          49.4051671\n        ],\n        [\n
+        \         8.6757026,\n          49.4051926\n        ],\n        [\n          8.6754981,\n
+        \         49.4052333\n        ],\n        [\n          8.6755085,\n          49.4052546\n
+        \       ]\n      ]\n    },\n    \"properties\" : {\n      \"@osmId\" : \"way/664783309\",\n
+        \     \"@snapshotTimestamp\" : \"2026-06-19T10:00:00Z\",\n      \"description\"
+        : \"Rampe\",\n      \"highway\" : \"path\",\n      \"lit\" : \"yes\",\n      \"smoothness\"
+        : \"good\",\n      \"surface\" : \"paving_stones\"\n    }\n  }, {\n    \"type\"
+        : \"Feature\",\n    \"geometry\" : {\n      \"type\" : \"LineString\",\n      \"coordinates\"
+        : [\n        [\n          8.676633,\n          49.4048145\n        ],\n        [\n
+        \         8.676666,\n          49.4048049\n        ],\n        [\n          8.6766556,\n
+        \         49.4047821\n        ],\n        [\n          8.6766441,\n          49.4047595\n
+        \       ],\n        [\n          8.6766329,\n          49.4047362\n        ],\n
+        \       [\n          8.6766229,\n          49.4047152\n        ],\n        [\n
+        \         8.6766096,\n          49.4046874\n        ],\n        [\n          8.6765979,\n
+        \         49.4046634\n        ],\n        [\n          8.6765861,\n          49.4046389\n
+        \       ],\n        [\n          8.6765773,\n          49.4046213\n        ]\n
+        \     ]\n    },\n    \"properties\" : {\n      \"@osmId\" : \"way/721164931\",\n
+        \     \"@snapshotTimestamp\" : \"2026-06-19T10:00:00Z\",\n      \"highway\"
+        : \"path\",\n      \"lit\" : \"yes\",\n      \"surface\" : \"paving_stones\"\n
+        \   }\n  }, {\n    \"type\" : \"Feature\",\n    \"geometry\" : {\n      \"type\"
+        : \"LineString\",\n      \"coordinates\" : [\n        [\n          8.675606,\n
+        \         49.4048068\n        ],\n        [\n          8.6764805,\n          49.4046213\n
+        \       ]\n      ]\n    },\n    \"properties\" : {\n      \"@osmId\" : \"way/721164932\",\n
+        \     \"@snapshotTimestamp\" : \"2026-06-19T10:00:00Z\",\n      \"bench\"
+        : \"no\",\n      \"bin\" : \"yes\",\n      \"description\" : \"nur Ausstieg\",\n
+        \     \"lit\" : \"yes\",\n      \"name\" : \"Heidelberg Hauptbahnhof\",\n
+        \     \"passenger_information_display\" : \"yes\",\n      \"passenger_information_display:speech_output\"
+        : \"no\",\n      \"public_transport\" : \"platform\",\n      \"railway\" :
+        \"platform\",\n      \"ref\" : \"A\",\n      \"shelter\" : \"yes\",\n      \"surface\"
+        : \"paved\",\n      \"tactile_paving\" : \"yes\",\n      \"tram\" : \"yes\",\n
+        \     \"wheelchair\" : \"yes\",\n      \"width\" : \"5\"\n    }\n  }, {\n
+        \   \"type\" : \"Feature\",\n    \"geometry\" : {\n      \"type\" : \"LineString\",\n
+        \     \"coordinates\" : [\n        [\n          8.6756868,\n          49.4049696\n
+        \       ],\n        [\n          8.6766165,\n          49.4047664\n        ]\n
+        \     ]\n    },\n    \"properties\" : {\n      \"@osmId\" : \"way/721164933\",\n
+        \     \"@snapshotTimestamp\" : \"2026-06-19T10:00:00Z\",\n      \"bench\"
+        : \"yes\",\n      \"bin\" : \"yes\",\n      \"bus\" : \"yes\",\n      \"check_date:shelter\"
+        : \"2025-10-06\",\n      \"kerb\" : \"raised\",\n      \"kerb:approach_aid\"
+        : \"no\",\n      \"lit\" : \"yes\",\n      \"name\" : \"Heidelberg Hauptbahnhof\",\n
+        \     \"note\" : \"Richtung Berliner Stra\xDFe / Handschuhsheim, Linien 21,
+        24\",\n      \"passenger_information_display\" : \"yes\",\n      \"passenger_information_display:speech_output\"
+        : \"no\",\n      \"public_transport\" : \"platform\",\n      \"railway\" :
+        \"platform\",\n      \"ref\" : \"E\",\n      \"shelter\" : \"yes\",\n      \"surface\"
+        : \"paved\",\n      \"tactile_paving\" : \"yes\",\n      \"tram\" : \"yes\",\n
+        \     \"wheelchair\" : \"yes\"\n    }\n  }, {\n    \"type\" : \"Feature\",\n
+        \   \"geometry\" : {\n      \"type\" : \"LineString\",\n      \"coordinates\"
+        : [\n        [\n          8.6756212,\n          49.4048434\n        ],\n        [\n
+        \         8.676565,\n          49.4046434\n        ]\n      ]\n    },\n    \"properties\"
+        : {\n      \"@osmId\" : \"way/721164934\",\n      \"@snapshotTimestamp\" :
+        \"2026-06-19T10:00:00Z\",\n      \"bench\" : \"yes\",\n      \"bin\" : \"yes\",\n
+        \     \"lit\" : \"yes\",\n      \"name\" : \"Heidelberg Hauptbahnhof\",\n
+        \     \"note\" : \"Richtung Bismarckplatz, Linien 5, 9, 21\",\n      \"passenger_information_display\"
+        : \"yes\",\n      \"passenger_information_display:speech_output\" : \"no\",\n
+        \     \"public_transport\" : \"platform\",\n      \"railway\" : \"platform\",\n
+        \     \"ref\" : \"B\",\n      \"shelter\" : \"yes\",\n      \"surface\" :
+        \"paved\",\n      \"tactile_paving\" : \"yes\",\n      \"tram\" : \"yes\",\n
+        \     \"wheelchair\" : \"yes\",\n      \"width\" : \"4\"\n    }\n  }, {\n
+        \   \"type\" : \"Feature\",\n    \"geometry\" : {\n      \"type\" : \"LineString\",\n
+        \     \"coordinates\" : [\n        [\n          8.6755781,\n          49.4049361\n
+        \       ],\n        [\n          8.6755429,\n          49.404944\n        ],\n
+        \       [\n          8.6755075,\n          49.4049536\n        ],\n        [\n
+        \         8.6754485,\n          49.4049729\n        ],\n        [\n          8.6754079,\n
+        \         49.404989\n        ],\n        [\n          8.6753646,\n          49.4050093\n
+        \       ],\n        [\n          8.6752815,\n          49.4050575\n        ],\n
+        \       [\n          8.6751507,\n          49.4051324\n        ],\n        [\n
+        \         8.6751277,\n          49.405146\n        ],\n        [\n          8.6750971,\n
+        \         49.4051666\n        ],\n        [\n          8.6750732,\n          49.405184\n
+        \       ],\n        [\n          8.6750496,\n          49.4052023\n        ],\n
+        \       [\n          8.6750288,\n          49.4052198\n        ],\n        [\n
+        \         8.6750123,\n          49.4052377\n        ],\n        [\n          8.6749807,\n
+        \         49.4052771\n        ],\n        [\n          8.6749452,\n          49.4053008\n
+        \       ],\n        [\n          8.6749275,\n          49.4053178\n        ],\n
+        \       [\n          8.6749131,\n          49.4053334\n        ],\n        [\n
+        \         8.6749005,\n          49.4053468\n        ]\n      ]\n    },\n    \"properties\"
+        : {\n      \"@osmId\" : \"way/721199427\",\n      \"@snapshotTimestamp\" :
+        \"2026-06-19T10:00:00Z\",\n      \"access\" : \"no\",\n      \"bus\" : \"designated\",\n
+        \     \"highway\" : \"service\",\n      \"lit\" : \"yes\",\n      \"oneway\"
+        : \"yes\",\n      \"psv\" : \"yes\",\n      \"surface\" : \"asphalt\"\n    }\n
+        \ }, {\n    \"type\" : \"Feature\",\n    \"geometry\" : {\n      \"type\"
+        : \"LineString\",\n      \"coordinates\" : [\n        [\n          8.6756332,\n
+        \         49.4048672\n        ],\n        [\n          8.6765773,\n          49.4046678\n
+        \       ]\n      ]\n    },\n    \"properties\" : {\n      \"@osmId\" : \"way/722759670\",\n
+        \     \"@snapshotTimestamp\" : \"2026-06-19T10:00:00Z\",\n      \"bench\"
+        : \"yes\",\n      \"bin\" : \"yes\",\n      \"bus\" : \"yes\",\n      \"check_date:shelter\"
+        : \"2025-10-06\",\n      \"kerb\" : \"no\",\n      \"lit\" : \"yes\",\n      \"name\"
+        : \"Heidelberg Hauptbahnhof\",\n      \"note\" : \"Richtung Altstadt / Rohrbach,
+        Linien 20, 24, 32, 34, 37, 39A, M5\",\n      \"passenger_information_display\"
+        : \"yes\",\n      \"passenger_information_display:speech_output\" : \"no\",\n
+        \     \"public_transport\" : \"platform\",\n      \"railway\" : \"platform\",\n
+        \     \"ref\" : \"C\",\n      \"shelter\" : \"yes\",\n      \"surface\" :
+        \"paved\",\n      \"tactile_paving\" : \"yes\",\n      \"tram\" : \"yes\",\n
+        \     \"wheelchair\" : \"yes\"\n    }\n  }, {\n    \"type\" : \"Feature\",\n
+        \   \"geometry\" : {\n      \"type\" : \"LineString\",\n      \"coordinates\"
+        : [\n        [\n          8.6756736,\n          49.4049464\n        ],\n        [\n
+        \         8.676604,\n          49.4047431\n        ]\n      ]\n    },\n    \"properties\"
+        : {\n      \"@osmId\" : \"way/722759671\",\n      \"@snapshotTimestamp\" :
+        \"2026-06-19T10:00:00Z\",\n      \"bench\" : \"yes\",\n      \"bin\" : \"yes\",\n
+        \     \"bus\" : \"yes\",\n      \"check_date:shelter\" : \"2025-10-06\",\n
+        \     \"kerb\" : \"raised\",\n      \"kerb:approach_aid\" : \"no\",\n      \"lit\"
+        : \"yes\",\n      \"name\" : \"Heidelberg Hauptbahnhof\",\n      \"note\"
+        : \"Richtung Mannheim / Wieblingen / Uniklinikum, Linien 5, 9, 20, 32, 34,
+        37, 724 , M5\",\n      \"passenger_information_display\" : \"yes\",\n      \"passenger_information_display:speech_output\"
+        : \"no\",\n      \"public_transport\" : \"platform\",\n      \"railway\" :
+        \"platform\",\n      \"ref\" : \"D\",\n      \"shelter\" : \"yes\",\n      \"surface\"
+        : \"paved\",\n      \"tactile_paving\" : \"yes\",\n      \"tram\" : \"yes\",\n
+        \     \"wheelchair\" : \"yes\"\n    }\n  }, {\n    \"type\" : \"Feature\",\n
+        \   \"geometry\" : {\n      \"type\" : \"LineString\",\n      \"coordinates\"
+        : [\n        [\n          8.6749651,\n          49.4053425\n        ],\n        [\n
+        \         8.6749553,\n          49.4055748\n        ],\n        [\n          8.6749505,\n
+        \         49.4057087\n        ]\n      ]\n    },\n    \"properties\" : {\n
+        \     \"@osmId\" : \"way/723737501\",\n      \"@snapshotTimestamp\" : \"2026-06-19T10:00:00Z\",\n
+        \     \"highway\" : \"service\",\n      \"lanes\" : \"1\",\n      \"lit\"
+        : \"yes\",\n      \"oneway\" : \"yes\",\n      \"sidewalk\" : \"right\",\n
+        \     \"sidewalk:right:surface\" : \"paving_stones\",\n      \"surface\" :
+        \"asphalt\",\n      \"vehicle\" : \"destination\",\n      \"width\" : \"2\"\n
+        \   }\n  }, {\n    \"type\" : \"Feature\",\n    \"geometry\" : {\n      \"type\"
+        : \"LineString\",\n      \"coordinates\" : [\n        [\n          8.6749909,\n
+        \         49.4052338\n        ],\n        [\n          8.6749807,\n          49.4052771\n
+        \       ],\n        [\n          8.6749711,\n          49.4053132\n        ],\n
+        \       [\n          8.6749651,\n          49.4053425\n        ]\n      ]\n
+        \   },\n    \"properties\" : {\n      \"@osmId\" : \"way/723737502\",\n      \"@snapshotTimestamp\"
+        : \"2026-06-19T10:00:00Z\",\n      \"highway\" : \"service\",\n      \"lanes\"
+        : \"1\",\n      \"lit\" : \"yes\",\n      \"oneway\" : \"yes\",\n      \"surface\"
+        : \"asphalt\",\n      \"vehicle\" : \"destination\"\n    }\n  }, {\n    \"type\"
+        : \"Feature\",\n    \"geometry\" : {\n      \"type\" : \"LineString\",\n      \"coordinates\"
+        : [\n        [\n          8.6757515,\n          49.4051671\n        ],\n        [\n
+        \         8.675735,\n          49.4051351\n        ],\n        [\n          8.6756997,\n
+        \         49.4050667\n        ],\n        [\n          8.67566,\n          49.4049898\n
+        \       ],\n        [\n          8.6756559,\n          49.4049817\n        ]\n
+        \     ]\n    },\n    \"properties\" : {\n      \"@osmId\" : \"way/723890573\",\n
+        \     \"@snapshotTimestamp\" : \"2026-06-19T10:00:00Z\",\n      \"check_date:surface\"
+        : \"2026-04-15\",\n      \"highway\" : \"footway\",\n      \"lit\" : \"yes\",\n
+        \     \"smoothness\" : \"good\",\n      \"surface\" : \"asphalt\"\n    }\n
+        \ }, {\n    \"type\" : \"Feature\",\n    \"geometry\" : {\n      \"type\"
+        : \"LineString\",\n      \"coordinates\" : [\n        [\n          8.6751115,\n
+        \         49.4052523\n        ],\n        [\n          8.6750334,\n          49.4053014\n
+        \       ],\n        [\n          8.6749711,\n          49.4053132\n        ],\n
+        \       [\n          8.6749525,\n          49.4053157\n        ],\n        [\n
+        \         8.6749275,\n          49.4053178\n        ],\n        [\n          8.67491,\n
+        \         49.4053193\n        ],\n        [\n          8.6749003,\n          49.4053201\n
+        \       ],\n        [\n          8.6748906,\n          49.4053209\n        ],\n
+        \       [\n          8.6748619,\n          49.4053232\n        ],\n        [\n
+        \         8.6747897,\n          49.4053294\n        ],\n        [\n          8.6746999,\n
+        \         49.4053433\n        ]\n      ]\n    },\n    \"properties\" : {\n
+        \     \"@osmId\" : \"way/723890574\",\n      \"@snapshotTimestamp\" : \"2026-06-19T10:00:00Z\",\n
+        \     \"highway\" : \"cycleway\",\n      \"lit\" : \"yes\",\n      \"oneway\"
+        : \"yes\",\n      \"surface\" : \"asphalt\",\n      \"width\" : \"1.5\"\n
+        \   }\n  }, {\n    \"type\" : \"Feature\",\n    \"geometry\" : {\n      \"type\"
+        : \"LineString\",\n      \"coordinates\" : [\n        [\n          8.6769363,\n
+        \         49.4046213\n        ],\n        [\n          8.6768319,\n          49.40466\n
+        \       ],\n        [\n          8.676813,\n          49.4046658\n        ]\n
+        \     ]\n    },\n    \"properties\" : {\n      \"@osmId\" : \"way/724271257\",\n
+        \     \"@snapshotTimestamp\" : \"2026-06-19T10:00:00Z\",\n      \"access\"
+        : \"no\",\n      \"bus\" : \"designated\",\n      \"highway\" : \"service\",\n
+        \     \"lit\" : \"yes\",\n      \"oneway\" : \"yes\",\n      \"psv\" : \"yes\",\n
+        \     \"surface\" : \"asphalt\"\n    }\n  }, {\n    \"type\" : \"Feature\",\n
+        \   \"geometry\" : {\n      \"type\" : \"LineString\",\n      \"coordinates\"
+        : [\n        [\n          8.676813,\n          49.4046658\n        ],\n        [\n
+        \         8.6767927,\n          49.4046397\n        ]\n      ]\n    },\n    \"properties\"
+        : {\n      \"@osmId\" : \"way/724271258\",\n      \"@snapshotTimestamp\" :
+        \"2026-06-19T10:00:00Z\",\n      \"bus\" : \"designated\",\n      \"highway\"
+        : \"service\",\n      \"lit\" : \"yes\",\n      \"oneway\" : \"yes\",\n      \"service\"
+        : \"bus\",\n      \"surface\" : \"asphalt\",\n      \"vehicle\" : \"no\"\n
+        \   }\n  }, {\n    \"type\" : \"Feature\",\n    \"geometry\" : {\n      \"type\"
+        : \"LineString\",\n      \"coordinates\" : [\n        [\n          8.676813,\n
+        \         49.4046658\n        ],\n        [\n          8.6767605,\n          49.4046811\n
+        \       ],\n        [\n          8.6766829,\n          49.4047022\n        ],\n
+        \       [\n          8.6766229,\n          49.4047152\n        ],\n        [\n
+        \         8.6756765,\n          49.4049149\n        ],\n        [\n          8.675627,\n
+        \         49.4049258\n        ],\n        [\n          8.6755781,\n          49.4049361\n
+        \       ]\n      ]\n    },\n    \"properties\" : {\n      \"@osmId\" : \"way/724510545\",\n
+        \     \"@snapshotTimestamp\" : \"2026-06-19T10:00:00Z\",\n      \"access\"
+        : \"no\",\n      \"bus\" : \"designated\",\n      \"highway\" : \"service\",\n
+        \     \"lit\" : \"yes\",\n      \"oneway\" : \"yes\",\n      \"psv\" : \"yes\",\n
+        \     \"surface\" : \"asphalt\"\n    }\n  }, {\n    \"type\" : \"Feature\",\n
+        \   \"geometry\" : {\n      \"type\" : \"LineString\",\n      \"coordinates\"
+        : [\n        [\n          8.6751881,\n          49.4049891\n        ],\n        [\n
+        \         8.6752389,\n          49.4049705\n        ],\n        [\n          8.6752865,\n
+        \         49.4049576\n        ],\n        [\n          8.6753325,\n          49.404947\n
+        \       ],\n        [\n          8.6756095,\n          49.4048919\n        ],\n
+        \       [\n          8.6765434,\n          49.4047012\n        ]\n      ]\n
+        \   },\n    \"properties\" : {\n      \"@osmId\" : \"way/724510551\",\n      \"@snapshotTimestamp\"
+        : \"2026-06-19T10:00:00Z\",\n      \"access\" : \"no\",\n      \"bus\" : \"designated\",\n
+        \     \"highway\" : \"service\",\n      \"lit\" : \"yes\",\n      \"oneway\"
+        : \"yes\",\n      \"psv\" : \"yes\",\n      \"surface\" : \"asphalt\"\n    }\n
+        \ }, {\n    \"type\" : \"Feature\",\n    \"geometry\" : {\n      \"type\"
+        : \"LineString\",\n      \"coordinates\" : [\n        [\n          8.6758409,\n
+        \         49.405585\n        ],\n        [\n          8.6760294,\n          49.405588\n
+        \       ],\n        [\n          8.6761076,\n          49.4055897\n        ]\n
+        \     ]\n    },\n    \"properties\" : {\n      \"@osmId\" : \"way/729103079\",\n
+        \     \"@snapshotTimestamp\" : \"2026-06-19T10:00:00Z\",\n      \"highway\"
+        : \"footway\",\n      \"lit\" : \"24/7\",\n      \"smoothness\" : \"good\",\n
+        \     \"surface\" : \"paving_stones\",\n      \"tunnel\" : \"building_passage\"\n
+        \   }\n  }, {\n    \"type\" : \"Feature\",\n    \"geometry\" : {\n      \"type\"
+        : \"LineString\",\n      \"coordinates\" : [\n        [\n          8.6754695,\n
+        \         49.4055787\n        ],\n        [\n          8.6757339,\n          49.4055825\n
+        \       ]\n      ]\n    },\n    \"properties\" : {\n      \"@osmId\" : \"way/729103080\",\n
+        \     \"@snapshotTimestamp\" : \"2026-06-19T10:00:00Z\",\n      \"highway\"
+        : \"footway\",\n      \"lit\" : \"yes\",\n      \"smoothness\" : \"good\",\n
+        \     \"surface\" : \"paving_stones\",\n      \"tunnel\" : \"building_passage\"\n
+        \   }\n  }, {\n    \"type\" : \"Feature\",\n    \"geometry\" : {\n      \"type\"
+        : \"LineString\",\n      \"coordinates\" : [\n        [\n          8.6760294,\n
+        \         49.405588\n        ],\n        [\n          8.6760303,\n          49.405563\n
+        \       ],\n        [\n          8.6760085,\n          49.405563\n        ]\n
+        \     ]\n    },\n    \"properties\" : {\n      \"@osmId\" : \"way/729103082\",\n
+        \     \"@snapshotTimestamp\" : \"2026-06-19T10:00:00Z\",\n      \"highway\"
+        : \"footway\",\n      \"lit\" : \"24/7\",\n      \"smoothness\" : \"good\",\n
+        \     \"surface\" : \"paving_stones\",\n      \"tunnel\" : \"building_passage\"\n
+        \   }\n  }, {\n    \"type\" : \"Feature\",\n    \"geometry\" : {\n      \"type\"
+        : \"LineString\",\n      \"coordinates\" : [\n        [\n          8.6757339,\n
+        \         49.4055825\n        ],\n        [\n          8.6757879,\n          49.4055837\n
+        \       ],\n        [\n          8.6758409,\n          49.405585\n        ]\n
+        \     ]\n    },\n    \"properties\" : {\n      \"@osmId\" : \"way/739554481\",\n
+        \     \"@snapshotTimestamp\" : \"2026-06-19T10:00:00Z\",\n      \"bicycle\"
+        : \"no\",\n      \"covered\" : \"yes\",\n      \"highway\" : \"footway\",\n
+        \     \"lit\" : \"24/7\",\n      \"name\" : \"Kurf\xFCrsten-Passage\",\n      \"smoothness\"
+        : \"excellent\",\n      \"surface\" : \"paving_stones\",\n      \"tunnel\"
+        : \"building_passage\"\n    }\n  }, {\n    \"type\" : \"Feature\",\n    \"geometry\"
+        : {\n      \"type\" : \"LineString\",\n      \"coordinates\" : [\n        [\n
+        \         8.6754811,\n          49.4053744\n        ],\n        [\n          8.6757967,\n
+        \         49.4053801\n        ],\n        [\n          8.6765109,\n          49.4053933\n
+        \       ]\n      ]\n    },\n    \"properties\" : {\n      \"@osmId\" : \"way/739554482\",\n
+        \     \"@snapshotTimestamp\" : \"2026-06-19T10:00:00Z\",\n      \"bicycle\"
+        : \"no\",\n      \"check_date:surface\" : \"2024-09-22\",\n      \"covered\"
+        : \"yes\",\n      \"highway\" : \"footway\",\n      \"lit\" : \"yes\",\n      \"name\"
+        : \"Kurf\xFCrsten-Passage\",\n      \"smoothness\" : \"excellent\",\n      \"surface\"
+        : \"paving_stones\",\n      \"tunnel\" : \"building_passage\"\n    }\n  },
+        {\n    \"type\" : \"Feature\",\n    \"geometry\" : {\n      \"type\" : \"LineString\",\n
+        \     \"coordinates\" : [\n        [\n          8.6758041,\n          49.4052102\n
+        \       ],\n        [\n          8.6757967,\n          49.4053801\n        ],\n
+        \       [\n          8.6757879,\n          49.4055837\n        ],\n        [\n
+        \         8.6757839,\n          49.4056766\n        ]\n      ]\n    },\n    \"properties\"
+        : {\n      \"@osmId\" : \"way/739554483\",\n      \"@snapshotTimestamp\" :
+        \"2026-06-19T10:00:00Z\",\n      \"bicycle\" : \"no\",\n      \"covered\"
+        : \"yes\",\n      \"highway\" : \"footway\",\n      \"lit\" : \"24/7\",\n
+        \     \"name\" : \"Kurf\xFCrsten-Passage\",\n      \"smoothness\" : \"excellent\",\n
+        \     \"surface\" : \"paving_stones\",\n      \"tunnel\" : \"building_passage\"\n
+        \   }\n  }, {\n    \"type\" : \"Feature\",\n    \"geometry\" : {\n      \"type\"
+        : \"LineString\",\n      \"coordinates\" : [\n        [\n          8.6766441,\n
+        \         49.4047595\n        ],\n        [\n          8.6766165,\n          49.4047664\n
+        \       ]\n      ]\n    },\n    \"properties\" : {\n      \"@osmId\" : \"way/743790845\",\n
+        \     \"@snapshotTimestamp\" : \"2026-06-19T10:00:00Z\",\n      \"highway\"
+        : \"footway\",\n      \"lit\" : \"yes\",\n      \"surface\" : \"paving_stones\"\n
+        \   }\n  }, {\n    \"type\" : \"Feature\",\n    \"geometry\" : {\n      \"type\"
+        : \"LineString\",\n      \"coordinates\" : [\n        [\n          8.6766329,\n
+        \         49.4047362\n        ],\n        [\n          8.676604,\n          49.4047431\n
+        \       ]\n      ]\n    },\n    \"properties\" : {\n      \"@osmId\" : \"way/743790846\",\n
+        \     \"@snapshotTimestamp\" : \"2026-06-19T10:00:00Z\",\n      \"highway\"
+        : \"footway\",\n      \"lit\" : \"yes\",\n      \"surface\" : \"paving_stones\"\n
+        \   }\n  }, {\n    \"type\" : \"Feature\",\n    \"geometry\" : {\n      \"type\"
+        : \"LineString\",\n      \"coordinates\" : [\n        [\n          8.6765979,\n
+        \         49.4046634\n        ],\n        [\n          8.6765773,\n          49.4046678\n
+        \       ]\n      ]\n    },\n    \"properties\" : {\n      \"@osmId\" : \"way/743790847\",\n
+        \     \"@snapshotTimestamp\" : \"2026-06-19T10:00:00Z\",\n      \"highway\"
+        : \"footway\",\n      \"lit\" : \"yes\",\n      \"surface\" : \"paving_stones\"\n
+        \   }\n  }, {\n    \"type\" : \"Feature\",\n    \"geometry\" : {\n      \"type\"
+        : \"LineString\",\n      \"coordinates\" : [\n        [\n          8.6765861,\n
+        \         49.4046389\n        ],\n        [\n          8.676565,\n          49.4046434\n
+        \       ]\n      ]\n    },\n    \"properties\" : {\n      \"@osmId\" : \"way/743790848\",\n
+        \     \"@snapshotTimestamp\" : \"2026-06-19T10:00:00Z\",\n      \"check_date:surface\"
+        : \"2026-03-04\",\n      \"highway\" : \"footway\",\n      \"lit\" : \"yes\",\n
+        \     \"surface\" : \"paving_stones\"\n    }\n  }, {\n    \"type\" : \"Feature\",\n
+        \   \"geometry\" : {\n      \"type\" : \"LineString\",\n      \"coordinates\"
+        : [\n        [\n          8.6755882,\n          49.4048504\n        ],\n        [\n
+        \         8.6756212,\n          49.4048434\n        ]\n      ]\n    },\n    \"properties\"
+        : {\n      \"@osmId\" : \"way/743790850\",\n      \"@snapshotTimestamp\" :
+        \"2026-06-19T10:00:00Z\",\n      \"highway\" : \"footway\",\n      \"lit\"
+        : \"yes\",\n      \"smoothness\" : \"excellent\",\n      \"surface\" : \"paving_stones\"\n
+        \   }\n  }, {\n    \"type\" : \"Feature\",\n    \"geometry\" : {\n      \"type\"
+        : \"LineString\",\n      \"coordinates\" : [\n        [\n          8.6756004,\n
+        \         49.4048742\n        ],\n        [\n          8.6756332,\n          49.4048672\n
+        \       ]\n      ]\n    },\n    \"properties\" : {\n      \"@osmId\" : \"way/743790851\",\n
+        \     \"@snapshotTimestamp\" : \"2026-06-19T10:00:00Z\",\n      \"highway\"
+        : \"footway\",\n      \"lit\" : \"yes\",\n      \"smoothness\" : \"excellent\",\n
+        \     \"surface\" : \"paving_stones\"\n    }\n  }, {\n    \"type\" : \"Feature\",\n
+        \   \"geometry\" : {\n      \"type\" : \"LineString\",\n      \"coordinates\"
+        : [\n        [\n          8.6756409,\n          49.4049527\n        ],\n        [\n
+        \         8.6756736,\n          49.4049464\n        ]\n      ]\n    },\n    \"properties\"
+        : {\n      \"@osmId\" : \"way/743790852\",\n      \"@snapshotTimestamp\" :
+        \"2026-06-19T10:00:00Z\",\n      \"highway\" : \"footway\",\n      \"lit\"
+        : \"yes\",\n      \"smoothness\" : \"excellent\",\n      \"surface\" : \"paving_stones\"\n
+        \   }\n  }, {\n    \"type\" : \"Feature\",\n    \"geometry\" : {\n      \"type\"
+        : \"LineString\",\n      \"coordinates\" : [\n        [\n          8.6756532,\n
+        \         49.4049764\n        ],\n        [\n          8.6756868,\n          49.4049696\n
+        \       ]\n      ]\n    },\n    \"properties\" : {\n      \"@osmId\" : \"way/743790853\",\n
+        \     \"@snapshotTimestamp\" : \"2026-06-19T10:00:00Z\",\n      \"highway\"
+        : \"footway\",\n      \"lit\" : \"yes\",\n      \"smoothness\" : \"excellent\",\n
+        \     \"surface\" : \"paving_stones\"\n    }\n  }, {\n    \"type\" : \"Feature\",\n
+        \   \"geometry\" : {\n      \"type\" : \"LineString\",\n      \"coordinates\"
+        : [\n        [\n          8.6755508,\n          49.404778\n        ],\n        [\n
+        \         8.6754615,\n          49.4047972\n        ],\n        [\n          8.6749879,\n
+        \         49.4048989\n        ]\n      ]\n    },\n    \"properties\" : {\n
+        \     \"@osmId\" : \"way/755763020\",\n      \"@snapshotTimestamp\" : \"2026-06-19T10:00:00Z\",\n
+        \     \"check_date\" : \"2026-04-15\",\n      \"construction\" : \"footway\",\n
+        \     \"highway\" : \"construction\",\n      \"lit\" : \"yes\",\n      \"smoothness\"
+        : \"good\",\n      \"surface\" : \"asphalt\",\n      \"tactile_paving\" :
+        \"yes\"\n    }\n  }, {\n    \"type\" : \"Feature\",\n    \"geometry\" : {\n
+        \     \"type\" : \"LineString\",\n      \"coordinates\" : [\n        [\n          8.6748606,\n
+        \         49.4062241\n        ],\n        [\n          8.6748794,\n          49.4062243\n
+        \       ],\n        [\n          8.6749755,\n          49.4062254\n        ]\n
+        \     ]\n    },\n    \"properties\" : {\n      \"@osmId\" : \"way/775537907\",\n
+        \     \"@snapshotTimestamp\" : \"2026-06-19T10:00:00Z\",\n      \"highway\"
+        : \"footway\",\n      \"lit\" : \"yes\",\n      \"surface\" : \"compacted\"\n
+        \   }\n  }, {\n    \"type\" : \"Feature\",\n    \"geometry\" : {\n      \"type\"
+        : \"LineString\",\n      \"coordinates\" : [\n        [\n          8.6749006,\n
+        \         49.4052199\n        ],\n        [\n          8.6749318,\n          49.4051788\n
+        \       ],\n        [\n          8.6749761,\n          49.4051418\n        ],\n
+        \       [\n          8.6750032,\n          49.405114\n        ],\n        [\n
+        \         8.6750298,\n          49.4050886\n        ],\n        [\n          8.6750395,\n
+        \         49.4050793\n        ],\n        [\n          8.6750914,\n          49.4050434\n
+        \       ],\n        [\n          8.6751164,\n          49.4050298\n        ],\n
+        \       [\n          8.6751881,\n          49.4049891\n        ]\n      ]\n
+        \   },\n    \"properties\" : {\n      \"@osmId\" : \"way/816478075\",\n      \"@snapshotTimestamp\"
+        : \"2026-06-19T10:00:00Z\",\n      \"access\" : \"no\",\n      \"bus\" : \"designated\",\n
+        \     \"highway\" : \"service\",\n      \"lit\" : \"yes\",\n      \"oneway\"
+        : \"yes\",\n      \"psv\" : \"yes\",\n      \"surface\" : \"asphalt\"\n    }\n
+        \ }, {\n    \"type\" : \"Feature\",\n    \"geometry\" : {\n      \"type\"
+        : \"LineString\",\n      \"coordinates\" : [\n        [\n          8.6767927,\n
+        \         49.4046397\n        ],\n        [\n          8.6768396,\n          49.404624\n
+        \       ],\n        [\n          8.6768468,\n          49.4046213\n        ]\n
+        \     ]\n    },\n    \"properties\" : {\n      \"@osmId\" : \"way/819707554\",\n
+        \     \"@snapshotTimestamp\" : \"2026-06-19T10:00:00Z\",\n      \"access\"
+        : \"no\",\n      \"bus\" : \"designated\",\n      \"highway\" : \"service\",\n
+        \     \"lit\" : \"yes\",\n      \"oneway\" : \"yes\",\n      \"psv\" : \"yes\",\n
+        \     \"surface\" : \"asphalt\"\n    }\n  }, {\n    \"type\" : \"Feature\",\n
+        \   \"geometry\" : {\n      \"type\" : \"LineString\",\n      \"coordinates\"
+        : [\n        [\n          8.6771466,\n          49.4047789\n        ],\n        [\n
+        \         8.6770368,\n          49.4048315\n        ],\n        [\n          8.6769508,\n
+        \         49.4048746\n        ],\n        [\n          8.6768731,\n          49.40491\n
+        \       ],\n        [\n          8.6767762,\n          49.4049503\n        ],\n
+        \       [\n          8.6766721,\n          49.4049404\n        ]\n      ]\n
+        \   },\n    \"properties\" : {\n      \"@osmId\" : \"way/1021948925\",\n      \"@snapshotTimestamp\"
+        : \"2026-06-19T10:00:00Z\",\n      \"highway\" : \"cycleway\",\n      \"lit\"
+        : \"yes\",\n      \"oneway\" : \"yes\",\n      \"surface\" : \"asphalt\",\n
+        \     \"width\" : \"2\"\n    }\n  }, {\n    \"type\" : \"Feature\",\n    \"geometry\"
+        : {\n      \"type\" : \"LineString\",\n      \"coordinates\" : [\n        [\n
+        \         8.676707,\n          49.4050559\n        ],\n        [\n          8.6766726,\n
+        \         49.4050372\n        ],\n        [\n          8.6766384,\n          49.4050271\n
+        \       ],\n        [\n          8.6766526,\n          49.404986\n        ]\n
+        \     ]\n    },\n    \"properties\" : {\n      \"@osmId\" : \"way/1021948926\",\n
+        \     \"@snapshotTimestamp\" : \"2026-06-19T10:00:00Z\",\n      \"bicycle\"
+        : \"designated\",\n      \"cycleway:surface\" : \"asphalt\",\n      \"cycleway:width\"
+        : \"2.5\",\n      \"foot\" : \"designated\",\n      \"footway:surface\" :
+        \"asphalt\",\n      \"highway\" : \"path\",\n      \"lit\" : \"yes\",\n      \"oneway\"
+        : \"no\",\n      \"segregated\" : \"yes\",\n      \"source:cycleway:width\"
+        : \"ARCore\",\n      \"surface\" : \"asphalt\"\n    }\n  }, {\n    \"type\"
+        : \"Feature\",\n    \"geometry\" : {\n      \"type\" : \"LineString\",\n      \"coordinates\"
+        : [\n        [\n          8.6768595,\n          49.4050879\n        ],\n        [\n
+        \         8.6768594,\n          49.4050373\n        ],\n        [\n          8.6768601,\n
+        \         49.4050109\n        ],\n        [\n          8.6768731,\n          49.40491\n
+        \       ],\n        [\n          8.6768797,\n          49.4048695\n        ]\n
+        \     ]\n    },\n    \"properties\" : {\n      \"@osmId\" : \"way/1030916969\",\n
+        \     \"@snapshotTimestamp\" : \"2026-06-19T10:00:00Z\",\n      \"bicycle\"
+        : \"yes\",\n      \"cycleway:left\" : \"no\",\n      \"cycleway:right\" :
+        \"lane\",\n      \"cycleway:right:lane\" : \"advisory\",\n      \"destination\"
+        : \"Autobahn;Bruchsal;Speyer\",\n      \"foot\" : \"no\",\n      \"highway\"
+        : \"primary\",\n      \"lanes\" : \"2\",\n      \"lit\" : \"yes\",\n      \"maxspeed\"
+        : \"30\",\n      \"name\" : \"Mittermaierstra\xDFe\",\n      \"name:etymology:wikidata\"
+        : \"Q73096\",\n      \"oneway\" : \"yes\",\n      \"ref\" : \"L 600a\",\n
+        \     \"sidewalk\" : \"no\",\n      \"sidewalk:right:surface\" : \"paving_stones\",\n
+        \     \"source:maxspeed\" : \"sign\",\n      \"surface\" : \"asphalt\"\n    }\n
+        \ }, {\n    \"type\" : \"Feature\",\n    \"geometry\" : {\n      \"type\"
+        : \"LineString\",\n      \"coordinates\" : [\n        [\n          8.6770311,\n
+        \         49.4060993\n        ],\n        [\n          8.6774288,\n          49.4061449\n
+        \       ]\n      ]\n    },\n    \"properties\" : {\n      \"@osmId\" : \"way/1049678715\",\n
+        \     \"@snapshotTimestamp\" : \"2026-06-19T10:00:00Z\",\n      \"cycleway\"
+        : \"lane\",\n      \"cycleway:lane\" : \"advisory\",\n      \"highway\" :
+        \"residential\",\n      \"lanes\" : \"3\",\n      \"lanes:backward\" : \"2\",\n
+        \     \"lanes:forward\" : \"1\",\n      \"lit\" : \"yes\",\n      \"maxspeed\"
+        : \"30\",\n      \"maxspeed:type\" : \"DE:zone30\",\n      \"name\" : \"Alte
+        Eppelheimer Stra\xDFe\",\n      \"name:etymology:wikidata\" : \"Q82539\",\n
+        \     \"parking:both\" : \"no\",\n      \"sidewalk\" : \"both\",\n      \"sidewalk:both:surface\"
+        : \"paving_stones\",\n      \"smoothness\" : \"good\",\n      \"source:maxspeed\"
+        : \"DE:zone30\",\n      \"surface\" : \"asphalt\",\n      \"turn:lanes:backward\"
+        : \"left|through;right\",\n      \"wheelchair\" : \"yes\",\n      \"width\"
+        : \"10\"\n    }\n  }, {\n    \"type\" : \"Feature\",\n    \"geometry\" : {\n
+        \     \"type\" : \"LineString\",\n      \"coordinates\" : [\n        [\n          8.6768306,\n
+        \         49.4064122\n        ],\n        [\n          8.6768349,\n          49.4062454\n
+        \       ],\n        [\n          8.6768401,\n          49.4060893\n        ],\n
+        \       [\n          8.676846,\n          49.4059953\n        ],\n        [\n
+        \         8.6768611,\n          49.4057263\n        ],\n        [\n          8.6768324,\n
+        \         49.4055511\n        ],\n        [\n          8.6767816,\n          49.4054832\n
+        \       ],\n        [\n          8.6767595,\n          49.4054347\n        ],\n
+        \       [\n          8.6767531,\n          49.4053848\n        ],\n        [\n
+        \         8.6767596,\n          49.4053291\n        ],\n        [\n          8.6767674,\n
+        \         49.4052877\n        ],\n        [\n          8.6767753,\n          49.4051944\n
+        \       ],\n        [\n          8.6767735,\n          49.4051237\n        ]\n
+        \     ]\n    },\n    \"properties\" : {\n      \"@osmId\" : \"way/1049679732\",\n
+        \     \"@snapshotTimestamp\" : \"2026-06-19T10:00:00Z\",\n      \"bicycle\"
+        : \"designated\",\n      \"check_date:cycleway:surface\" : \"2023-04-10\",\n
+        \     \"cycleway:surface\" : \"asphalt\",\n      \"cycleway:width\" : \"1.5\",\n
+        \     \"foot\" : \"designated\",\n      \"footway:surface\" : \"paving_stones\",\n
+        \     \"highway\" : \"path\",\n      \"lit\" : \"yes\",\n      \"oneway\"
+        : \"yes\",\n      \"oneway:bicycle\" : \"yes\",\n      \"segregated\" : \"yes\",\n
+        \     \"surface\" : \"paved\"\n    }\n  }, {\n    \"type\" : \"Feature\",\n
+        \   \"geometry\" : {\n      \"type\" : \"LineString\",\n      \"coordinates\"
+        : [\n        [\n          8.6765434,\n          49.4047012\n        ],\n        [\n
+        \         8.6766096,\n          49.4046874\n        ],\n        [\n          8.6766701,\n
+        \         49.404674\n        ],\n        [\n          8.6767432,\n          49.404655\n
+        \       ],\n        [\n          8.6767927,\n          49.4046397\n        ]\n
+        \     ]\n    },\n    \"properties\" : {\n      \"@osmId\" : \"way/1085362058\",\n
+        \     \"@snapshotTimestamp\" : \"2026-06-19T10:00:00Z\",\n      \"access\"
+        : \"no\",\n      \"bus\" : \"designated\",\n      \"highway\" : \"service\",\n
+        \     \"lit\" : \"yes\",\n      \"oneway\" : \"yes\",\n      \"psv\" : \"yes\",\n
+        \     \"surface\" : \"asphalt\"\n    }\n  }, {\n    \"type\" : \"Feature\",\n
+        \   \"geometry\" : {\n      \"type\" : \"LineString\",\n      \"coordinates\"
+        : [\n        [\n          8.6767735,\n          49.4051237\n        ],\n        [\n
+        \         8.6767363,\n          49.4051049\n        ],\n        [\n          8.6767282,\n
+        \         49.4050761\n        ],\n        [\n          8.676707,\n          49.4050559\n
+        \       ]\n      ]\n    },\n    \"properties\" : {\n      \"@osmId\" : \"way/1164826260\",\n
+        \     \"@snapshotTimestamp\" : \"2026-06-19T10:00:00Z\",\n      \"bicycle\"
+        : \"designated\",\n      \"check_date:cycleway:surface\" : \"2023-04-10\",\n
+        \     \"cycleway:surface\" : \"asphalt\",\n      \"cycleway:width\" : \"1.5\",\n
+        \     \"foot\" : \"designated\",\n      \"footway:surface\" : \"paving_stones\",\n
+        \     \"highway\" : \"path\",\n      \"lit\" : \"yes\",\n      \"oneway\"
+        : \"yes\",\n      \"oneway:bicycle\" : \"yes\",\n      \"segregated\" : \"yes\",\n
+        \     \"surface\" : \"paved\"\n    }\n  }, {\n    \"type\" : \"Feature\",\n
+        \   \"geometry\" : {\n      \"type\" : \"LineString\",\n      \"coordinates\"
+        : [\n        [\n          8.6751799,\n          49.4057669\n        ],\n        [\n
+        \         8.6749807,\n          49.4057652\n        ]\n      ]\n    },\n    \"properties\"
+        : {\n      \"@osmId\" : \"way/1223427384\",\n      \"@snapshotTimestamp\"
+        : \"2026-06-19T10:00:00Z\",\n      \"highway\" : \"service\",\n      \"lanes\"
+        : \"1\",\n      \"layer\" : \"-1\",\n      \"lit\" : \"yes\",\n      \"maxheight\"
+        : \"2\",\n      \"oneway\" : \"yes\",\n      \"surface\" : \"concrete\",\n
+        \     \"tunnel\" : \"yes\",\n      \"width\" : \"2\"\n    }\n  }, {\n    \"type\"
+        : \"Feature\",\n    \"geometry\" : {\n      \"type\" : \"LineString\",\n      \"coordinates\"
+        : [\n        [\n          8.6749831,\n          49.4057274\n        ],\n        [\n
+        \         8.6751811,\n          49.4057309\n        ]\n      ]\n    },\n    \"properties\"
+        : {\n      \"@osmId\" : \"way/1223427431\",\n      \"@snapshotTimestamp\"
+        : \"2026-06-19T10:00:00Z\",\n      \"highway\" : \"service\",\n      \"lanes\"
+        : \"1\",\n      \"layer\" : \"-1\",\n      \"lit\" : \"yes\",\n      \"maxheight\"
+        : \"2\",\n      \"oneway\" : \"yes\",\n      \"surface\" : \"concrete\",\n
+        \     \"tunnel\" : \"yes\",\n      \"width\" : \"2\"\n    }\n  }, {\n    \"type\"
+        : \"Feature\",\n    \"geometry\" : {\n      \"type\" : \"LineString\",\n      \"coordinates\"
+        : [\n        [\n          8.6742192,\n          49.4062332\n        ],\n        [\n
+        \         8.674276,\n          49.406194\n        ],\n        [\n          8.6743556,\n
+        \         49.4061913\n        ],\n        [\n          8.674383,\n          49.4062023\n
+        \       ],\n        [\n          8.6744098,\n          49.4062147\n        ],\n
+        \       [\n          8.6744481,\n          49.4062349\n        ],\n        [\n
+        \         8.6744822,\n          49.4062571\n        ],\n        [\n          8.6745057,\n
+        \         49.406275\n        ],\n        [\n          8.6745244,\n          49.4062907\n
+        \       ],\n        [\n          8.6745507,\n          49.4063148\n        ],\n
+        \       [\n          8.6745683,\n          49.4063359\n        ],\n        [\n
+        \         8.6745435,\n          49.4064122\n        ]\n      ]\n    },\n    \"properties\"
+        : {\n      \"@osmId\" : \"way/1230853330\",\n      \"@snapshotTimestamp\"
+        : \"2026-06-19T10:00:00Z\",\n      \"access\" : \"private\",\n      \"bicycle\"
+        : \"no\",\n      \"highway\" : \"service\",\n      \"oneway\" : \"yes\",\n
+        \     \"psv\" : \"yes\"\n    }\n  }, {\n    \"type\" : \"Feature\",\n    \"geometry\"
+        : {\n      \"type\" : \"LineString\",\n      \"coordinates\" : [\n        [\n
+        \         8.6749879,\n          49.4048989\n        ],\n        [\n          8.6749326,\n
+        \         49.4049157\n        ],\n        [\n          8.6748319,\n          49.4049462\n
+        \       ]\n      ]\n    },\n    \"properties\" : {\n      \"@osmId\" : \"way/1256867499\",\n
+        \     \"@snapshotTimestamp\" : \"2026-06-19T10:00:00Z\",\n      \"highway\"
+        : \"path\",\n      \"lit\" : \"yes\",\n      \"smoothness\" : \"excellent\",\n
+        \     \"surface\" : \"asphalt\"\n    }\n  }, {\n    \"type\" : \"Feature\",\n
+        \   \"geometry\" : {\n      \"type\" : \"LineString\",\n      \"coordinates\"
+        : [\n        [\n          8.6747152,\n          49.4049181\n        ],\n        [\n
+        \         8.6744814,\n          49.4049658\n        ],\n        [\n          8.6742192,\n
+        \         49.4050192\n        ]\n      ]\n    },\n    \"properties\" : {\n
+        \     \"@osmId\" : \"way/1283752310\",\n      \"@snapshotTimestamp\" : \"2026-06-19T10:00:00Z\",\n
+        \     \"emergency\" : \"yes\",\n      \"highway\" : \"service\",\n      \"maxaxleload\"
+        : \"10\",\n      \"maxweight\" : \"30\",\n      \"surface\" : \"paving_stones\"\n
+        \   }\n  }, {\n    \"type\" : \"Feature\",\n    \"geometry\" : {\n      \"type\"
+        : \"LineString\",\n      \"coordinates\" : [\n        [\n          8.6748071,\n
+        \         49.4049242\n        ],\n        [\n          8.6747849,\n          49.4049177\n
+        \       ],\n        [\n          8.6747568,\n          49.4049151\n        ],\n
+        \       [\n          8.6747152,\n          49.4049181\n        ]\n      ]\n
+        \   },\n    \"properties\" : {\n      \"@osmId\" : \"way/1283752311\",\n      \"@snapshotTimestamp\"
+        : \"2026-06-19T10:00:00Z\",\n      \"highway\" : \"service\",\n      \"lanes\"
+        : \"1\",\n      \"name\" : \"Willy-Brandt-Platz\",\n      \"name:etymology:wikidata\"
+        : \"Q2514\",\n      \"oneway\" : \"yes\",\n      \"surface\" : \"asphalt\"\n
+        \   }\n  }, {\n    \"type\" : \"Feature\",\n    \"geometry\" : {\n      \"type\"
+        : \"LineString\",\n      \"coordinates\" : [\n        [\n          8.6751811,\n
+        \         49.4057309\n        ],\n        [\n          8.6751987,\n          49.4057498\n
+        \       ],\n        [\n          8.6751799,\n          49.4057669\n        ]\n
+        \     ]\n    },\n    \"properties\" : {\n      \"@osmId\" : \"way/1294882323\",\n
+        \     \"@snapshotTimestamp\" : \"2026-06-19T10:00:00Z\",\n      \"highway\"
+        : \"service\",\n      \"layer\" : \"-1\",\n      \"lit\" : \"yes\",\n      \"maxheight\"
+        : \"2\",\n      \"oneway\" : \"yes\",\n      \"surface\" : \"concrete\",\n
+        \     \"tunnel\" : \"yes\"\n    }\n  }, {\n    \"type\" : \"Feature\",\n    \"geometry\"
+        : {\n      \"type\" : \"LineString\",\n      \"coordinates\" : [\n        [\n
+        \         8.6766526,\n          49.404986\n        ],\n        [\n          8.6766721,\n
+        \         49.4049404\n        ],\n        [\n          8.6766793,\n          49.4049081\n
+        \       ],\n        [\n          8.6766641,\n          49.4048704\n        ],\n
+        \       [\n          8.676633,\n          49.4048145\n        ]\n      ]\n
+        \   },\n    \"properties\" : {\n      \"@osmId\" : \"way/1328540979\",\n      \"@snapshotTimestamp\"
+        : \"2026-06-19T10:00:00Z\",\n      \"bicycle\" : \"designated\",\n      \"cycleway:surface\"
+        : \"asphalt\",\n      \"cycleway:width\" : \"3\",\n      \"foot\" : \"designated\",\n
+        \     \"footway:surface\" : \"asphalt\",\n      \"highway\" : \"path\",\n
+        \     \"lit\" : \"yes\",\n      \"oneway\" : \"no\",\n      \"segregated\"
+        : \"yes\",\n      \"surface\" : \"asphalt\"\n    }\n  }, {\n    \"type\" :
+        \"Feature\",\n    \"geometry\" : {\n      \"type\" : \"LineString\",\n      \"coordinates\"
+        : [\n        [\n          8.6764656,\n          49.4049135\n        ],\n        [\n
+        \         8.6765297,\n          49.4048431\n        ],\n        [\n          8.6765673,\n
+        \         49.4048317\n        ],\n        [\n          8.676633,\n          49.4048145\n
+        \       ]\n      ]\n    },\n    \"properties\" : {\n      \"@osmId\" : \"way/1328540980\",\n
+        \     \"@snapshotTimestamp\" : \"2026-06-19T10:00:00Z\",\n      \"highway\"
+        : \"cycleway\",\n      \"oneway\" : \"yes\",\n      \"surface\" : \"asphalt\",\n
+        \     \"turn\" : \"left\",\n      \"width\" : \"2\"\n    }\n  }, {\n    \"type\"
+        : \"Feature\",\n    \"geometry\" : {\n      \"type\" : \"LineString\",\n      \"coordinates\"
+        : [\n        [\n          8.6750963,\n          49.4051933\n        ],\n        [\n
+        \         8.6750732,\n          49.405184\n        ],\n        [\n          8.6750011,\n
+        \         49.4051554\n        ]\n      ]\n    },\n    \"properties\" : {\n
+        \     \"@osmId\" : \"way/1328540981\",\n      \"@snapshotTimestamp\" : \"2026-06-19T10:00:00Z\",\n
+        \     \"highway\" : \"service\",\n      \"lanes\" : \"1\",\n      \"name\"
+        : \"Willy-Brandt-Platz\",\n      \"name:etymology:wikidata\" : \"Q2514\",\n
+        \     \"oneway\" : \"yes\",\n      \"parking:both\" : \"no\",\n      \"surface\"
+        : \"asphalt\"\n    }\n  }, {\n    \"type\" : \"Feature\",\n    \"geometry\"
+        : {\n      \"type\" : \"LineString\",\n      \"coordinates\" : [\n        [\n
+        \         8.6750011,\n          49.4051554\n        ],\n        [\n          8.6749941,\n
+        \         49.4052088\n        ]\n      ]\n    },\n    \"properties\" : {\n
+        \     \"@osmId\" : \"way/1328540982\",\n      \"@snapshotTimestamp\" : \"2026-06-19T10:00:00Z\",\n
+        \     \"highway\" : \"service\",\n      \"lanes\" : \"1\",\n      \"name\"
+        : \"Willy-Brandt-Platz\",\n      \"name:etymology:wikidata\" : \"Q2514\",\n
+        \     \"oneway\" : \"yes\",\n      \"surface\" : \"asphalt\"\n    }\n  },
+        {\n    \"type\" : \"Feature\",\n    \"geometry\" : {\n      \"type\" : \"LineString\",\n
+        \     \"coordinates\" : [\n        [\n          8.6748071,\n          49.4049242\n
+        \       ],\n        [\n          8.674852,\n          49.4048732\n        ]\n
+        \     ]\n    },\n    \"properties\" : {\n      \"@osmId\" : \"way/1328540985\",\n
+        \     \"@snapshotTimestamp\" : \"2026-06-19T10:00:00Z\",\n      \"highway\"
+        : \"service\",\n      \"lanes\" : \"1\",\n      \"lit\" : \"yes\",\n      \"name\"
+        : \"Willy-Brandt-Platz\",\n      \"name:etymology:wikidata\" : \"Q2514\",\n
+        \     \"oneway\" : \"yes\",\n      \"surface\" : \"asphalt\"\n    }\n  },
+        {\n    \"type\" : \"Feature\",\n    \"geometry\" : {\n      \"type\" : \"LineString\",\n
+        \     \"coordinates\" : [\n        [\n          8.6749915,\n          49.4050438\n
+        \       ],\n        [\n          8.6750298,\n          49.4050886\n        ],\n
+        \       [\n          8.675084,\n          49.4051267\n        ],\n        [\n
+        \         8.6751277,\n          49.405146\n        ],\n        [\n          8.6752352,\n
+        \         49.4051657\n        ]\n      ]\n    },\n    \"properties\" : {\n
+        \     \"@osmId\" : \"way/1328540987\",\n      \"@snapshotTimestamp\" : \"2026-06-19T10:00:00Z\",\n
+        \     \"highway\" : \"service\",\n      \"lanes\" : \"1\",\n      \"name\"
+        : \"Willy-Brandt-Platz\",\n      \"name:etymology:wikidata\" : \"Q2514\",\n
+        \     \"oneway\" : \"yes\",\n      \"surface\" : \"asphalt\"\n    }\n  },
+        {\n    \"type\" : \"Feature\",\n    \"geometry\" : {\n      \"type\" : \"LineString\",\n
+        \     \"coordinates\" : [\n        [\n          8.675426,\n          49.4051987\n
+        \       ],\n        [\n          8.6752731,\n          49.4052009\n        ],\n
+        \       [\n          8.6752141,\n          49.4052022\n        ],\n        [\n
+        \         8.6751525,\n          49.4052008\n        ],\n        [\n          8.6750963,\n
+        \         49.4051933\n        ]\n      ]\n    },\n    \"properties\" : {\n
+        \     \"@osmId\" : \"way/1328540988\",\n      \"@snapshotTimestamp\" : \"2026-06-19T10:00:00Z\",\n
+        \     \"highway\" : \"service\",\n      \"lanes\" : \"1\",\n      \"name\"
+        : \"Kurf\xFCrsten-Anlage\",\n      \"name:etymology:wikidata\" : \"Q22722\",\n
+        \     \"oneway\" : \"yes\",\n      \"surface\" : \"asphalt\",\n      \"turn\"
+        : \"left\"\n    }\n  }, {\n    \"type\" : \"Feature\",\n    \"geometry\" :
+        {\n      \"type\" : \"LineString\",\n      \"coordinates\" : [\n        [\n
+        \         8.6742192,\n          49.4051995\n        ],\n        [\n          8.6743626,\n
+        \         49.4052523\n        ]\n      ]\n    },\n    \"properties\" : {\n
+        \     \"@osmId\" : \"way/1328540991\",\n      \"@snapshotTimestamp\" : \"2026-06-19T10:00:00Z\",\n
+        \     \"bicycle\" : \"designated\",\n      \"highway\" : \"cycleway\",\n      \"lit\"
+        : \"yes\",\n      \"oneway\" : \"yes\",\n      \"placement\" : \"transition\",\n
+        \     \"surface\" : \"paving_stones\"\n    }\n  }, {\n    \"type\" : \"Feature\",\n
+        \   \"geometry\" : {\n      \"type\" : \"LineString\",\n      \"coordinates\"
+        : [\n        [\n          8.6747152,\n          49.4049181\n        ],\n        [\n
+        \         8.6747548,\n          49.4048867\n        ],\n        [\n          8.6748125,\n
+        \         49.404871\n        ],\n        [\n          8.674852,\n          49.4048732\n
+        \       ],\n        [\n          8.6748856,\n          49.4048784\n        ],\n
+        \       [\n          8.6749097,\n          49.4048893\n        ],\n        [\n
+        \         8.6749326,\n          49.4049157\n        ],\n        [\n          8.6749651,\n
+        \         49.4049665\n        ],\n        [\n          8.6749915,\n          49.4050438\n
+        \       ],\n        [\n          8.6750032,\n          49.405114\n        ],\n
+        \       [\n          8.6750011,\n          49.4051554\n        ]\n      ]\n
+        \   },\n    \"properties\" : {\n      \"@osmId\" : \"way/1328540993\",\n      \"@snapshotTimestamp\"
+        : \"2026-06-19T10:00:00Z\",\n      \"highway\" : \"service\",\n      \"lanes\"
+        : \"1\",\n      \"lit\" : \"yes\",\n      \"name\" : \"Willy-Brandt-Platz\",\n
+        \     \"name:etymology:wikidata\" : \"Q2514\",\n      \"oneway\" : \"yes\",\n
+        \     \"surface\" : \"asphalt\"\n    }\n  }, {\n    \"type\" : \"Feature\",\n
+        \   \"geometry\" : {\n      \"type\" : \"LineString\",\n      \"coordinates\"
+        : [\n        [\n          8.6750011,\n          49.4051554\n        ],\n        [\n
+        \         8.6749761,\n          49.4051418\n        ],\n        [\n          8.674964,\n
+        \         49.405132\n        ],\n        [\n          8.6749526,\n          49.4051228\n
+        \       ],\n        [\n          8.6749052,\n          49.4050726\n        ]\n
+        \     ]\n    },\n    \"properties\" : {\n      \"@osmId\" : \"way/1328540994\",\n
+        \     \"@snapshotTimestamp\" : \"2026-06-19T10:00:00Z\",\n      \"highway\"
+        : \"service\",\n      \"lanes\" : \"1\",\n      \"name\" : \"Willy-Brandt-Platz\",\n
+        \     \"name:etymology:wikidata\" : \"Q2514\",\n      \"oneway\" : \"yes\",\n
+        \     \"surface\" : \"asphalt\"\n    }\n  }, {\n    \"type\" : \"Feature\",\n
+        \   \"geometry\" : {\n      \"type\" : \"LineString\",\n      \"coordinates\"
+        : [\n        [\n          8.6749941,\n          49.4052088\n        ],\n        [\n
+        \         8.6749909,\n          49.4052338\n        ]\n      ]\n    },\n    \"properties\"
+        : {\n      \"@osmId\" : \"way/1328754748\",\n      \"@snapshotTimestamp\"
+        : \"2026-06-19T10:00:00Z\",\n      \"highway\" : \"service\",\n      \"lanes\"
+        : \"1\",\n      \"lit\" : \"yes\",\n      \"name\" : \"Willy-Brandt-Platz\",\n
+        \     \"name:etymology:wikidata\" : \"Q2514\",\n      \"oneway\" : \"yes\",\n
+        \     \"parking:both\" : \"no\",\n      \"surface\" : \"asphalt\"\n    }\n
+        \ }, {\n    \"type\" : \"Feature\",\n    \"geometry\" : {\n      \"type\"
+        : \"LineString\",\n      \"coordinates\" : [\n        [\n          8.6761257,\n
+        \         49.4046511\n        ],\n        [\n          8.6761291,\n          49.4046213\n
+        \       ]\n      ]\n    },\n    \"properties\" : {\n      \"@osmId\" : \"way/1344789007\",\n
+        \     \"@snapshotTimestamp\" : \"2026-06-19T10:00:00Z\",\n      \"highway\"
+        : \"footway\",\n      \"lit\" : \"yes\",\n      \"smoothness\" : \"good\",\n
+        \     \"surface\" : \"paving_stones\"\n    }\n  }, {\n    \"type\" : \"Feature\",\n
+        \   \"geometry\" : {\n      \"type\" : \"LineString\",\n      \"coordinates\"
+        : [\n        [\n          8.6745308,\n          49.4053696\n        ],\n        [\n
+        \         8.6745203,\n          49.4054069\n        ]\n      ]\n    },\n    \"properties\"
+        : {\n      \"@osmId\" : \"way/1378108437\",\n      \"@snapshotTimestamp\"
+        : \"2026-06-19T10:00:00Z\",\n      \"highway\" : \"footway\",\n      \"surface\"
+        : \"paving_stones\"\n    }\n  }, {\n    \"type\" : \"Feature\",\n    \"geometry\"
+        : {\n      \"type\" : \"LineString\",\n      \"coordinates\" : [\n        [\n
+        \         8.6744814,\n          49.4049658\n        ],\n        [\n          8.6745062,\n
+        \         49.4050267\n        ]\n      ]\n    },\n    \"properties\" : {\n
+        \     \"@osmId\" : \"way/1425536969\",\n      \"@snapshotTimestamp\" : \"2026-06-19T10:00:00Z\",\n
+        \     \"highway\" : \"path\",\n      \"surface\" : \"paving_stones\"\n    }\n
+        \ }, {\n    \"type\" : \"Feature\",\n    \"geometry\" : {\n      \"type\"
+        : \"LineString\",\n      \"coordinates\" : [\n        [\n          8.6758386,\n
+        \         49.4047151\n        ],\n        [\n          8.6758508,\n          49.4046213\n
+        \       ]\n      ]\n    },\n    \"properties\" : {\n      \"@osmId\" : \"way/1432737022\",\n
+        \     \"@snapshotTimestamp\" : \"2026-06-19T10:00:00Z\",\n      \"handrail\"
+        : \"no\",\n      \"highway\" : \"footway\",\n      \"incline\" : \"2.3%\",\n
+        \     \"incline:across\" : \"0.2%\",\n      \"level\" : \"0\",\n      \"lit\"
+        : \"yes\",\n      \"smoothness\" : \"good\",\n      \"surface\" : \"paving_stones\",\n
+        \     \"tactile_paving\" : \"yes\"\n    }\n  }, {\n    \"type\" : \"Feature\",\n
+        \   \"geometry\" : {\n      \"type\" : \"LineString\",\n      \"coordinates\"
+        : [\n        [\n          8.6749734,\n          49.4063783\n        ],\n        [\n
+        \         8.6758184,\n          49.4063867\n        ]\n      ]\n    },\n    \"properties\"
+        : {\n      \"@osmId\" : \"way/1462100157\",\n      \"@snapshotTimestamp\"
+        : \"2026-06-19T10:00:00Z\",\n      \"access\" : \"permissive\",\n      \"highway\"
+        : \"service\",\n      \"lit\" : \"yes\",\n      \"service\" : \"parking_aisle\",\n
+        \     \"source:geometry\" : \"HiRes aerial imagery\",\n      \"surface\" :
+        \"asphalt\"\n    }\n  }, {\n    \"type\" : \"Feature\",\n    \"geometry\"
+        : {\n      \"type\" : \"LineString\",\n      \"coordinates\" : [\n        [\n
+        \         8.6749404,\n          49.4059908\n        ],\n        [\n          8.6757736,\n
+        \         49.4060017\n        ],\n        [\n          8.6758703,\n          49.406005\n
+        \       ],\n        [\n          8.6768028,\n          49.406019\n        ],\n
+        \       [\n          8.6768344,\n          49.4060063\n        ],\n        [\n
+        \         8.676846,\n          49.4059953\n        ],\n        [\n          8.6769377,\n
+        \         49.4059957\n        ],\n        [\n          8.6770376,\n          49.4059969\n
+        \       ]\n      ]\n    },\n    \"properties\" : {\n      \"@osmId\" : \"way/1493661874\",\n
+        \     \"@snapshotTimestamp\" : \"2026-06-19T10:00:00Z\",\n      \"highway\"
+        : \"footway\",\n      \"smoothness\" : \"good\",\n      \"surface\" : \"asphalt\"\n
+        \   }\n  }, {\n    \"type\" : \"Feature\",\n    \"geometry\" : {\n      \"type\"
+        : \"LineString\",\n      \"coordinates\" : [\n        [\n          8.6756559,\n
+        \         49.4049817\n        ],\n        [\n          8.6756532,\n          49.4049764\n
+        \       ],\n        [\n          8.6756409,\n          49.4049527\n        ],\n
+        \       [\n          8.675627,\n          49.4049258\n        ],\n        [\n
+        \         8.6756095,\n          49.4048919\n        ],\n        [\n          8.6756004,\n
+        \         49.4048742\n        ],\n        [\n          8.6755882,\n          49.4048504\n
+        \       ],\n        [\n          8.6755781,\n          49.4048309\n        ],\n
+        \       [\n          8.675564,\n          49.4048036\n        ],\n        [\n
+        \         8.6755508,\n          49.404778\n        ]\n      ]\n    },\n    \"properties\"
+        : {\n      \"@osmId\" : \"way/1502431569\",\n      \"@snapshotTimestamp\"
+        : \"2026-06-19T10:00:00Z\",\n      \"highway\" : \"footway\",\n      \"lit\"
+        : \"yes\",\n      \"smoothness\" : \"good\",\n      \"surface\" : \"paving_stones\",\n
+        \     \"tactile_paving\" : \"yes\"\n    }\n  }]\n}\n"
+    headers:
+      Access-Control-Allow-Credentials:
+      - 'true'
+      Access-Control-Allow-Headers:
+      - Origin,Accept,X-Requested-With,Content-Type,Access-Control-Request-Method,Access-Control-Request-Headers,Authorization
+      Access-Control-Allow-Methods:
+      - POST, GET
+      Access-Control-Allow-Origin:
+      - '*'
+      Access-Control-Max-Age:
+      - '3600'
+      Connection:
+      - Keep-Alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/geo+json;charset=utf-8
+      Content-disposition:
+      - attachment;filename=ohsome.geojson
+      Date:
+      - Mon, 27 Jul 2026 12:49:21 GMT
+      Keep-Alive:
+      - timeout=5, max=100
+      Server:
+      - Apache/2.4.58 (Ubuntu)
+      Strict-Transport-Security:
+      - max-age=63072000; includeSubdomains;
+      Transfer-Encoding:
+      - chunked
+      vary:
+      - accept-encoding
+    status:
+      code: 200
+      message: ''
+- request:
+    body: bpolys=%7B%22type%22%3A+%22FeatureCollection%22%2C+%22features%22%3A+%5B%7B%22id%22%3A+%220%22%2C+%22type%22%3A+%22Feature%22%2C+%22properties%22%3A+%7B%7D%2C+%22geometry%22%3A+%7B%22type%22%3A+%22MultiPolygon%22%2C+%22coordinates%22%3A+%5B%5B%5B%5B8.6774288%2C+49.4046213%5D%2C+%5B8.6774288%2C+49.4064122%5D%2C+%5B8.6742192%2C+49.4064122%5D%2C+%5B8.6742192%2C+49.4046213%5D%2C+%5B8.6774288%2C+49.4046213%5D%5D%5D%5D%7D%7D%5D%7D&filter=geometry%3Apolygon+and+%28highway%3D%2A+or+route%3Dferry+or+railway%3Dplatform+or+%28waterway%3Dlock_gate+and+foot+in+%28yes%2C+designated%2C+official%2C+permissive%29%29%29+and+not+%28footway%3Dseparate+or+sidewalk%3Dseparate+or+sidewalk%3Aboth%3Dseparate+or+%28sidewalk%3Aright%3Dseparate+and+sidewalk%3Aleft%3Dseparate%29+or+%28sidewalk%3Aright%3Dseparate+and+sidewalk%3Aleft%3Dno%29+or+%28sidewalk%3Aright%3Dno+and+sidewalk%3Aleft%3Dseparate%29%29&properties=tags&clipGeometry=True
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '921'
+      Content-Type:
+      - application/x-www-form-urlencoded
+      host:
+      - ohsome-api.test
+      user-agent:
+      - ohsome-py/0.3.0
+    method: POST
+    uri: http://ohsome-api.test/v1/elements/geometry
+  response:
+    body:
+      string: "{\n  \"attribution\" : {\n    \"url\" : \"https://ohsome.org/copyrights\",\n
+        \   \"text\" : \"\xA9 OpenStreetMap contributors\"\n  },\n  \"apiVersion\"
+        : \"1.10.4\",\n  \"type\" : \"FeatureCollection\",\n  \"features\" : [{\n
+        \   \"type\" : \"Feature\",\n    \"geometry\" : {\n      \"type\" : \"Polygon\",\n
+        \     \"coordinates\" : [\n        [\n          [\n            8.6754678,\n
+        \           49.4046213\n          ],\n          [\n            8.6754568,\n
+        \           49.4047078\n          ],\n          [\n            8.6754488,\n
+        \           49.4047706\n          ],\n          [\n            8.6754615,\n
+        \           49.4047972\n          ],\n          [\n            8.6754733,\n
+        \           49.4048229\n          ],\n          [\n            8.675564,\n
+        \           49.4048036\n          ],\n          [\n            8.6756869,\n
+        \           49.4047774\n          ],\n          [\n            8.6758752,\n
+        \           49.4047373\n          ],\n          [\n            8.6761177,\n
+        \           49.4046856\n          ],\n          [\n            8.6764329,\n
+        \           49.4046213\n          ],\n          [\n            8.6759501,\n
+        \           49.4046213\n          ],\n          [\n            8.6759469,\n
+        \           49.4046446\n          ],\n          [\n            8.6758734,\n
+        \           49.4046404\n          ],\n          [\n            8.675876,\n
+        \           49.4046213\n          ],\n          [\n            8.6754678,\n
+        \           49.4046213\n          ]\n        ]\n      ]\n    },\n    \"properties\"
+        : {\n      \"@osmId\" : \"relation/19646776\",\n      \"@snapshotTimestamp\"
+        : \"2026-06-19T10:00:00Z\",\n      \"highway\" : \"pedestrian\",\n      \"layer\"
+        : \"-1\",\n      \"lit\" : \"yes\",\n      \"name\" : \"Willy-Brandt-Platz\",\n
+        \     \"name:etymology:wikidata\" : \"Q2514\",\n      \"smoothness\" : \"good\",\n
+        \     \"surface\" : \"asphalt\",\n      \"type\" : \"multipolygon\"\n    }\n
+        \ }, {\n    \"type\" : \"Feature\",\n    \"geometry\" : {\n      \"type\"
+        : \"Polygon\",\n      \"coordinates\" : [\n        [\n          [\n            8.6757496,\n
+        \           49.4052204\n          ],\n          [\n            8.6757443,\n
+        \           49.4053447\n          ],\n          [\n            8.6754825,\n
+        \           49.4053399\n          ],\n          [\n            8.6754811,\n
+        \           49.4053744\n          ],\n          [\n            8.6754796,\n
+        \           49.4054087\n          ],\n          [\n            8.6757413,\n
+        \           49.4054135\n          ],\n          [\n            8.6757339,\n
+        \           49.4055825\n          ],\n          [\n            8.6757299,\n
+        \           49.4056756\n          ],\n          [\n            8.6757839,\n
+        \           49.4056766\n          ],\n          [\n            8.6758369,\n
+        \           49.4056776\n          ],\n          [\n            8.6758409,\n
+        \           49.405585\n          ],\n          [\n            8.6758482,\n
+        \           49.4054155\n          ],\n          [\n            8.6765094,\n
+        \           49.4054276\n          ],\n          [\n            8.6765109,\n
+        \           49.4053933\n          ],\n          [\n            8.6765124,\n
+        \           49.4053588\n          ],\n          [\n            8.6758512,\n
+        \           49.4053467\n          ],\n          [\n            8.6758576,\n
+        \           49.4052001\n          ],\n          [\n            8.6758041,\n
+        \           49.4052102\n          ],\n          [\n            8.6757496,\n
+        \           49.4052204\n          ]\n        ]\n      ]\n    },\n    \"properties\"
+        : {\n      \"@osmId\" : \"way/729103081\",\n      \"@snapshotTimestamp\" :
+        \"2026-06-19T10:00:00Z\",\n      \"area\" : \"yes\",\n      \"covered\" :
+        \"yes\",\n      \"highway\" : \"pedestrian\",\n      \"level\" : \"0\",\n
+        \     \"lit\" : \"24/7\",\n      \"name\" : \"Kurf\xFCrsten-Passage\",\n      \"smoothness\"
+        : \"excellent\",\n      \"surface\" : \"paving_stones\"\n    }\n  }]\n}\n"
+    headers:
+      Access-Control-Allow-Credentials:
+      - 'true'
+      Access-Control-Allow-Headers:
+      - Origin,Accept,X-Requested-With,Content-Type,Access-Control-Request-Method,Access-Control-Request-Headers,Authorization
+      Access-Control-Allow-Methods:
+      - POST, GET
+      Access-Control-Allow-Origin:
+      - '*'
+      Access-Control-Max-Age:
+      - '3600'
+      Connection:
+      - Keep-Alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/geo+json;charset=utf-8
+      Content-disposition:
+      - attachment;filename=ohsome.geojson
+      Date:
+      - Mon, 27 Jul 2026 12:49:36 GMT
+      Keep-Alive:
+      - timeout=5, max=100
+      Server:
+      - Apache/2.4.58 (Ubuntu)
+      Strict-Transport-Security:
+      - max-age=63072000; includeSubdomains;
+      Transfer-Encoding:
+      - chunked
+      vary:
+      - accept-encoding
+    status:
+      code: 200
+      message: ''
+version: 1

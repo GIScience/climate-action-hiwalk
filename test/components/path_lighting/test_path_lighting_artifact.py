@@ -10,8 +10,9 @@ def test_build_path_lighting_artifact(default_path_geometry, default_polygon_geo
     light_locations = gpd.GeoDataFrame(
         index=[1, 2, 3],
         data={
-            '@osmId': ['way/1', 'way/2', 'way/3'],
-            '@other_tags': [{'lit': 'yes'}, {'lit': 'automatic'}, {}],
+            'osm_id': ['1', '2', '3'],
+            'osm_type': ['way', 'way', 'way'],
+            'osm_tags': [{'lit': 'yes'}, {'lit': 'automatic'}, {}],
             'path_lighting': [PathLightingCategory.YES, PathLightingCategory.AUTOMATIC, PathLightingCategory.UNKNOWN],
             'path_lighting_rating': [1, 0.8, None],
         },

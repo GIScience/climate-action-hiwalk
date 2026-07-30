@@ -17,7 +17,7 @@ def build_tactile_paving_artifact(tactile_locations: gpd.GeoDataFrame, resources
     )
     tactile_locations['label'] = tactile_locations.tactile_paving.apply(lambda r: r.value)
     return create_vector_artifact(
-        data=tactile_locations[['@osmId', 'color', 'label', 'geometry']],
+        data=tactile_locations[['osm_id', 'osm_type', 'color', 'label', 'geometry']],
         metadata=ArtifactMetadata(
             name='Tactile Paving',
             summary='Does this path have tactile paving?',

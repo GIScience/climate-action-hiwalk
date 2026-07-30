@@ -57,7 +57,7 @@ def get_naturalness(
     """
     naturalness = []
     if not paths.empty:
-        paths.loc[paths['@other_tags'].apply(lambda x: x.get('tunnel')) == 'yes', 'naturalness'] = 0
+        paths.loc[paths['osm_tags'].apply(lambda x: x.get('tunnel')) == 'yes', 'naturalness'] = 0
         paths_ndvi = fetch_naturalness_by_vector(
             naturalness_utility=naturalness_utility,
             time_range=TimeRange(end_date=dt.datetime.now().replace(day=1).date()),
@@ -68,7 +68,7 @@ def get_naturalness(
         naturalness.append(paths_ndvi)
 
     if not polygons.empty:
-        polygons.loc[polygons['@other_tags'].apply(lambda x: x.get('tunnel')) == 'yes', 'naturalness'] = 0
+        polygons.loc[polygons['osm_tags'].apply(lambda x: x.get('tunnel')) == 'yes', 'naturalness'] = 0
         polygons_ndvi = fetch_naturalness_by_vector(
             naturalness_utility=naturalness_utility,
             time_range=TimeRange(end_date=dt.datetime.now().replace(day=1).date()),

@@ -17,7 +17,7 @@ def build_path_lighting_artifact(light_locations: gpd.GeoDataFrame, resources: C
     )
     light_locations['label'] = light_locations.path_lighting.apply(lambda r: r.value)
     return create_vector_artifact(
-        data=light_locations[['@osmId', 'color', 'label', 'geometry']],
+        data=light_locations[['osm_id', 'osm_type', 'color', 'label', 'geometry']],
         metadata=ArtifactMetadata(
             name='Path Lighting',
             summary='How well lit is my path?',

@@ -1,4 +1,5 @@
 import geopandas as gpd
+import geopandas.testing
 import plotly.graph_objects as go
 import shapely
 from climatoology.utility.api import TimeRange
@@ -17,7 +18,7 @@ def test_get_naturalness(operator, naturalness_utility_mock):
     polygon_geom = shapely.Polygon(((12.3, 48.2), (12.3, 48.25), (12.35, 48.25), (12.3, 48.25)))
     paths = gpd.GeoDataFrame(
         index=[1, 2],
-        data={'@other_tags': [{'tunnel': 'yes'}, {}]},
+        data={'osm_tags': [{'tunnel': 'yes'}, {}]},
         geometry=[
             LineString([[12.4, 48.25], [12.4, 48.30]]),
             LineString([[12.41, 48.25], [12.41, 48.30]]),
@@ -26,7 +27,7 @@ def test_get_naturalness(operator, naturalness_utility_mock):
     )
     polygons = gpd.GeoDataFrame(
         index=[1, 2],
-        data={'@other_tags': [{}]},
+        data={'osm_tags': [{}]},
         geometry=[polygon_geom, polygon_geom],
         crs=CAN_DEFAULT_CRS,
     )

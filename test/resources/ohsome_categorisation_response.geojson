@@ -1,13 +1,4 @@
 {
-  "attribution" : {
-    "url" : "https://ohsome.org/copyrights",
-    "text" : "© OpenStreetMap contributors"
-  },
-  "apiVersion" : "1.10.4",
-  "metadata" : {
-    "description" : "OSM data as GeoJSON features.",
-    "requestUrl" : "https://api.ohsome.org/v1/elements/centroid?bboxes=-180%2C-90%2C180%2C90&clipGeometry=false&filter=id%3A(way%2F84908668%2C%20way%2F243233105%2C%20way%2F27797959%2C%20way%2F98453212%2C%20way%2F184725322%2C%20way%2F118975501%2Cway%2F25806383%2C%20way%2F148612595%2C%20way%2F715905259%2Cway%2F25149880%2C%20way%2F14193661%2Cway%2F28890081%2C%20way%2F109096915%2Cway%2F25340617%2C%20way%2F258562284%2C%20way%2F152645928%2Cway%2F400711541%2C%20way%2F24635973%2C%20way%2F25238623%2C%20way%2F87956068)&properties=tags%2Cmetadata&showMetadata=true&time=2024-01-01"
-  },
   "type" : "FeatureCollection",
   "features" : [{
     "type" : "Feature",
@@ -19,20 +10,20 @@
       ]
     },
     "properties" : {
-      "@changesetId" : 125116809,
-      "@lastEdit" : "2022-08-19T16:41:07Z",
-      "@osmId" : "way/14193661",
-      "@osmType" : "way",
-      "@snapshotTimestamp" : "2024-01-01T00:00:00Z",
-      "@version" : 11,
-      "highway" : "living_street",
-      "incline" : "-1%",
-      "lit" : "yes",
-      "name" : "Akademiestraße",
-      "oneway" : "no",
-      "smoothness" : "intermediate",
-      "surface" : "paving_stones",
-      "width" : "2.9"
+      "osm_changeset_id" : 125116809,
+      "last_edit" : "2022-08-19T16:41:07Z",
+      "osm_id" : "14193661",
+      "osm_type" : "way",
+      "osm_tags": {
+        "highway" : "living_street",
+        "incline" : "-1%",
+        "lit" : "yes",
+        "name" : "Akademiestraße",
+        "oneway" : "no",
+        "smoothness" : "intermediate",
+        "surface" : "paving_stones",
+        "width" : "2.9"
+      }
     }
   }, {
     "type" : "Feature",
@@ -44,38 +35,38 @@
       ]
     },
     "properties" : {
-      "@changesetId" : 134552906,
-      "@lastEdit" : "2023-04-05T20:20:15Z",
-      "@osmId" : "way/24635973",
-      "@osmType" : "way",
-      "@snapshotTimestamp" : "2024-01-01T00:00:00Z",
-      "@version" : 26,
-      "TMC:cid_58:tabcd_1:Class" : "Point",
-      "TMC:cid_58:tabcd_1:Direction" : "both",
-      "TMC:cid_58:tabcd_1:LCLversion" : "9.00",
-      "TMC:cid_58:tabcd_1:LocationCode" : "57797",
-      "bicycle" : "no",
-      "foot" : "no",
-      "hazmat:E" : "no",
-      "highway" : "secondary",
-      "lanes" : "2",
-      "layer" : "-1",
-      "lit" : "24/7",
-      "maxspeed" : "50",
-      "name:etymology:wikidata" : "Q1491343",
-      "noname" : "yes",
-      "oneway" : "yes",
-      "parking:both" : "no",
-      "railway" : "abandoned",
-      "ref" : "K 9708",
-      "sidewalk" : "no",
-      "smoothness" : "good",
-      "source:maxspeed" : "DE:urban",
-      "source:railway" : "Messtischblatt 23, Heidelberg 1878",
-      "source_ref" : "https://de.wikipedia.org/wiki/Liste_der_Kreisstra%C3%9Fen_in_Heidelberg",
-      "surface" : "asphalt",
-      "tunnel" : "yes",
-      "tunnel:name" : "Gaisbergtunnel"
+      "osm_changeset_id" : 134552906,
+      "last_edit" : "2023-04-05T20:20:15Z",
+      "osm_id" : "24635973",
+      "osm_type" : "way",
+      "osm_tags": {
+        "TMC:cid_58:tabcd_1:Class" : "Point",
+        "TMC:cid_58:tabcd_1:Direction" : "both",
+        "TMC:cid_58:tabcd_1:LCLversion" : "9.00",
+        "TMC:cid_58:tabcd_1:LocationCode" : "57797",
+        "bicycle" : "no",
+        "foot" : "no",
+        "hazmat:E" : "no",
+        "highway" : "secondary",
+        "lanes" : "2",
+        "layer" : "-1",
+        "lit" : "24/7",
+        "maxspeed" : "50",
+        "name:etymology:wikidata" : "Q1491343",
+        "noname" : "yes",
+        "oneway" : "yes",
+        "parking:both" : "no",
+        "railway" : "abandoned",
+        "ref" : "K 9708",
+        "sidewalk" : "no",
+        "smoothness" : "good",
+        "source:maxspeed" : "DE:urban",
+        "source:railway" : "Messtischblatt 23, Heidelberg 1878",
+        "source_ref" : "https://de.wikipedia.org/wiki/Liste_der_Kreisstra%C3%9Fen_in_Heidelberg",
+        "surface" : "asphalt",
+        "tunnel" : "yes",
+        "tunnel:name" : "Gaisbergtunnel"
+      }
     }
   }, {
     "type" : "Feature",
@@ -87,25 +78,25 @@
       ]
     },
     "properties" : {
-      "@changesetId" : 130949025,
-      "@lastEdit" : "2023-01-06T14:05:35Z",
-      "@osmId" : "way/28890081",
-      "@osmType" : "way",
-      "@snapshotTimestamp" : "2024-01-01T00:00:00Z",
-      "@version" : 15,
-      "foot" : "yes",
-      "highway" : "residential",
-      "lanes" : "1",
-      "lit" : "yes",
-      "maxspeed" : "30",
-      "name" : "Philosophenweg",
-      "oneway" : "yes",
-      "parking:lane:both" : "no",
-      "sidewalk" : "no",
-      "smoothness" : "good",
-      "surface" : "asphalt",
-      "wikidata" : "Q897016",
-      "wikipedia" : "de:Philosophenweg (Heidelberg)"
+      "osm_changeset_id" : 130949025,
+      "last_edit" : "2023-01-06T14:05:35Z",
+      "osm_id" : "28890081",
+      "osm_type" : "way",
+      "osm_tags": {
+        "foot" : "yes",
+        "highway" : "residential",
+        "lanes" : "1",
+        "lit" : "yes",
+        "maxspeed" : "30",
+        "name" : "Philosophenweg",
+        "oneway" : "yes",
+        "parking:lane:both" : "no",
+        "sidewalk" : "no",
+        "smoothness" : "good",
+        "surface" : "asphalt",
+        "wikidata" : "Q897016",
+        "wikipedia" : "de:Philosophenweg (Heidelberg)"
+      }
     }
   }, {
     "type" : "Feature",
@@ -117,20 +108,20 @@
       ]
     },
     "properties" : {
-      "@changesetId" : 140151719,
-      "@lastEdit" : "2023-08-20T21:01:57Z",
-      "@osmId" : "way/118975501",
-      "@osmType" : "way",
-      "@snapshotTimestamp" : "2024-01-01T00:00:00Z",
-      "@version" : 5,
-      "bicycle" : "designated",
-      "foot" : "designated",
-      "highway" : "path",
-      "mapillary" : "1353832788862739",
-      "oneway" : "no",
-      "segregated" : "yes",
-      "surface" : "concrete",
-      "survey:date" : "2023-08-03"
+      "osm_changeset_id" : 140151719,
+      "last_edit" : "2023-08-20T21:01:57Z",
+      "osm_id" : "118975501",
+      "osm_type" : "way",
+      "osm_tags": {
+        "bicycle" : "designated",
+        "foot" : "designated",
+        "highway" : "path",
+        "mapillary" : "1353832788862739",
+        "oneway" : "no",
+        "segregated" : "yes",
+        "surface" : "concrete",
+        "survey:date" : "2023-08-03"
+      }
     }
   }, {
     "type" : "Feature",
@@ -142,15 +133,15 @@
       ]
     },
     "properties" : {
-      "@changesetId" : 123303787,
-      "@lastEdit" : "2022-07-07T07:04:07Z",
-      "@osmId" : "way/152645928",
-      "@osmType" : "way",
-      "@snapshotTimestamp" : "2024-01-01T00:00:00Z",
-      "@version" : 7,
-      "highway" : "residential",
-      "name" : "Child Avenue",
-      "oneway" : "no"
+      "osm_changeset_id" : 123303787,
+      "last_edit" : "2022-07-07T07:04:07Z",
+      "osm_id" : "152645928",
+      "osm_type" : "way",
+      "osm_tags": {
+        "highway" : "residential",
+        "name" : "Child Avenue",
+        "oneway" : "no"
+      }
     }
   }, {
     "type" : "Feature",
@@ -162,16 +153,16 @@
       ]
     },
     "properties" : {
-      "@changesetId" : 123303787,
-      "@lastEdit" : "2022-07-07T07:04:07Z",
-      "@osmId" : "way/152645929",
-      "@osmType" : "way",
-      "@snapshotTimestamp" : "2024-01-01T00:00:00Z",
-      "@version" : 7,
-      "highway" : "residential",
-      "sidewalk":"no",
-      "name" : "Child Avenue",
-      "oneway" : "no"
+      "osm_changeset_id" : 123303787,
+      "last_edit" : "2022-07-07T07:04:07Z",
+      "osm_id" : "152645929",
+      "osm_type" : "way",
+      "osm_tags": {
+        "highway" : "residential",
+        "sidewalk":"no",
+        "name" : "Child Avenue",
+        "oneway" : "no"
+      }
     }
   },{
     "type" : "Feature",
@@ -183,22 +174,22 @@
       ]
     },
     "properties" : {
-      "@changesetId" : 69168812,
-      "@lastEdit" : "2019-04-13T06:06:27Z",
-      "@osmId" : "way/400711541",
-      "@osmType" : "way",
-      "@snapshotTimestamp" : "2024-01-01T00:00:00Z",
-      "@version" : 4,
-      "cycleway:both" : "no",
-      "highway" : "secondary",
-      "lanes" : "2",
-      "maxheight" : "default",
-      "maxspeed:backward" : "70",
-      "maxspeed:forward" : "50",
-      "ref" : "L 637",
-      "sidewalk" : "no",
-      "smoothness" : "good",
-      "surface" : "asphalt"
+      "osm_changeset_id" : 69168812,
+      "last_edit" : "2019-04-13T06:06:27Z",
+      "osm_id" : "400711541",
+      "osm_type" : "way",
+      "osm_tags": {
+        "cycleway:both" : "no",
+        "highway" : "secondary",
+        "lanes" : "2",
+        "maxheight" : "default",
+        "maxspeed:backward" : "70",
+        "maxspeed:forward" : "50",
+        "ref" : "L 637",
+        "sidewalk" : "no",
+        "smoothness" : "good",
+        "surface" : "asphalt"
+      }
     }
   }, {
     "type" : "Feature",
@@ -210,15 +201,15 @@
       ]
     },
     "properties" : {
-      "@changesetId" : 125829012,
-      "@lastEdit" : "2022-09-05T19:58:22Z",
-      "@osmId" : "way/25149880",
-      "@osmType" : "way",
-      "@snapshotTimestamp" : "2024-01-01T00:00:00Z",
-      "@version" : 10,
-      "highway" : "service",
-      "lit" : "yes",
-      "surface" : "paving_stones"
+      "osm_changeset_id" : 125829012,
+      "last_edit" : "2022-09-05T19:58:22Z",
+      "osm_id" : "25149880",
+      "osm_type" : "way",
+      "osm_tags": {
+        "highway" : "service",
+        "lit" : "yes",
+        "surface" : "paving_stones"
+      }
     }
   }, {
     "type" : "Feature",
@@ -230,15 +221,15 @@
       ]
     },
     "properties" : {
-      "@changesetId" : 144883090,
-      "@lastEdit" : "2023-12-07T22:58:14Z",
-      "@osmId" : "way/25238623",
-      "@osmType" : "way",
-      "@snapshotTimestamp" : "2024-01-01T00:00:00Z",
-      "@version" : 6,
-      "access" : "private",
-      "highway" : "service",
-      "service" : "parking_aisle"
+      "osm_changeset_id" : 144883090,
+      "last_edit" : "2023-12-07T22:58:14Z",
+      "osm_id" : "25238623",
+      "osm_type" : "way",
+      "osm_tags": {
+        "access" : "private",
+        "highway" : "service",
+        "service" : "parking_aisle"
+      }
     }
   }, {
     "type" : "Feature",
@@ -250,24 +241,24 @@
       ]
     },
     "properties" : {
-      "@changesetId" : 118226078,
-      "@lastEdit" : "2022-03-08T08:34:30Z",
-      "@osmId" : "way/25340617",
-      "@osmType" : "way",
-      "@snapshotTimestamp" : "2024-01-01T00:00:00Z",
-      "@version" : 11,
-      "cycleway:left" : "no",
-      "cycleway:right" : "separate",
-      "highway" : "residential",
-      "lane_markings" : "no",
-      "lit" : "yes",
-      "maxspeed" : "50",
-      "name" : "Im Neuenheimer Feld",
-      "name:etymology:wikidata" : "Q1980045",
-      "oneway" : "yes",
-      "sidewalk" : "no",
-      "source:maxspeed" : "sign",
-      "surface" : "asphalt"
+      "osm_changeset_id" : 118226078,
+      "last_edit" : "2022-03-08T08:34:30Z",
+      "osm_id" : "25340617",
+      "osm_type" : "way",
+      "osm_tags": {
+        "cycleway:left" : "no",
+        "cycleway:right" : "separate",
+        "highway" : "residential",
+        "lane_markings" : "no",
+        "lit" : "yes",
+        "maxspeed" : "50",
+        "name" : "Im Neuenheimer Feld",
+        "name:etymology:wikidata" : "Q1980045",
+        "oneway" : "yes",
+        "sidewalk" : "no",
+        "source:maxspeed" : "sign",
+        "surface" : "asphalt"
+      }
     }
   }, {
     "type" : "Feature",
@@ -279,20 +270,20 @@
       ]
     },
     "properties" : {
-      "@changesetId" : 93602348,
-      "@lastEdit" : "2020-11-05T12:08:11Z",
-      "@osmId" : "way/25806383",
-      "@osmType" : "way",
-      "@snapshotTimestamp" : "2024-01-01T00:00:00Z",
-      "@version" : 8,
-      "bicycle" : "designated",
-      "foot" : "designated",
-      "highway" : "path",
-      "lcn" : "yes",
-      "lit" : "yes",
-      "segregated" : "no",
-      "smoothness" : "good",
-      "surface" : "asphalt"
+      "osm_changeset_id" : 93602348,
+      "last_edit" : "2020-11-05T12:08:11Z",
+      "osm_id" : "25806383",
+      "osm_type" : "way",
+      "osm_tags": {
+        "bicycle" : "designated",
+        "foot" : "designated",
+        "highway" : "path",
+        "lcn" : "yes",
+        "lit" : "yes",
+        "segregated" : "no",
+        "smoothness" : "good",
+        "surface" : "asphalt"
+      }
     }
   }, {
     "type" : "Feature",
@@ -304,9 +295,11 @@
       ]
     },
     "properties" : {
-      "@changesetId" : 93602348,
-      "@osmId" : "way/25806384",
-      "highway" : "path"
+      "osm_changeset_id" : 93602348,
+      "osm_id" : "25806384",
+      "osm_tags": {
+        "highway" : "path"
+      }
     }
   },{
     "type" : "Feature",
@@ -318,12 +311,14 @@
       ]
     },
     "properties" : {
-      "@changesetId" : 155312847,
-      "@osmId" : "way/721931269",
-      "highway" : "residential",
-      "lanes": 3,
-      "sidewalk": "no",
-      "zone:maxspeed": "DE:urban"
+      "osm_changeset_id" : 155312847,
+      "osm_id" : "721931269",
+      "osm_tags": {
+        "highway" : "residential",
+        "lanes": 3,
+        "sidewalk": "no",
+        "zone:maxspeed": "DE:urban"
+      }
     }
   },{
     "type" : "Feature",
@@ -335,11 +330,13 @@
       ]
     },
     "properties" : {
-      "@changesetId" : 142795555,
-      "@osmId" : "way/1216700677",
-      "highway" : "path",
-      "foot": "yes",
-      "bicycle": "permissive"
+      "osm_changeset_id" : 142795555,
+      "osm_id" : "1216700677",
+      "osm_tags": {
+        "highway" : "path",
+        "foot": "yes",
+        "bicycle": "permissive"
+      }
     }
   },{
     "type" : "Feature",
@@ -351,12 +348,14 @@
       ]
     },
     "properties" : {
-      "@changesetId" : 70101055,
-      "@osmId" : "way/57774238",
-      "highway" : "path",
-      "foot": "official",
-      "bicycle": "official",
-      "segregated": "no"
+      "osm_changeset_id" : 70101055,
+      "osm_id" : "57774238",
+      "osm_tags": {
+        "highway" : "path",
+        "foot": "official",
+        "bicycle": "official",
+        "segregated": "no"
+      }
     }
   },{
     "type" : "Feature",
@@ -368,15 +367,17 @@
       ]
     },
     "properties" : {
-      "@changesetId" : 153010562,
-      "@osmId" : "way/171794750",
-      "highway" : "path",
-      "bicycle": "designated",
-      "segregated": "no",
-      "bridge": "yes",
-      "description": "ramp",
-      "layer": "1",
-      "lcn": "yes"
+      "osm_changeset_id" : 153010562,
+      "osm_id" : "171794750",
+      "osm_tags": {
+        "highway" : "path",
+        "bicycle": "designated",
+        "segregated": "no",
+        "bridge": "yes",
+        "description": "ramp",
+        "layer": "1",
+        "lcn": "yes"
+      }
     }
   },{
     "type" : "Feature",
@@ -388,13 +389,15 @@
       ]
     },
     "properties" : {
-      "@changesetId" : 103794718,
-      "@osmId" : "way/64390823",
-      "highway" : "service",
-      "cycleway:both": "track",
-      "sidewalk": "no",
-      "maxspeed": "30",
-      "surface": "paved"
+      "osm_changeset_id" : 103794718,
+      "osm_id" : "64390823",
+      "osm_tags": {
+        "highway" : "service",
+        "cycleway:both": "track",
+        "sidewalk": "no",
+        "maxspeed": "30",
+        "surface": "paved"
+      }
     }
   },{
     "type" : "Feature",
@@ -406,28 +409,28 @@
       ]
     },
     "properties" : {
-      "@changesetId" : 128411109,
-      "@lastEdit" : "2022-11-02T21:22:12Z",
-      "@osmId" : "way/27797959",
-      "@osmType" : "way",
-      "@snapshotTimestamp" : "2024-01-01T00:00:00Z",
-      "@version" : 21,
-      "area" : "yes",
-      "bench" : "yes",
-      "bin" : "yes",
-      "level" : "-1",
-      "lit" : "yes",
-      "name" : "Heidelberg Hbf Gleis 9/10",
-      "public_transport" : "platform",
-      "railway" : "platform",
-      "ref" : "9;10",
-      "ref:IFOPT" : "de:08221:1160:8:9;de:08221:1160:8:10",
-      "ref:IFOPT:description" : "Gleis 9;Gleis 10",
-      "surface" : "paving_stones",
-      "tactile_paving" : "yes",
-      "train" : "yes",
-      "wheelchair" : "yes",
-      "wheelchair:description" : "Aufzug in der Mitte des Bahnsteiges"
+      "osm_changeset_id" : 128411109,
+      "last_edit" : "2022-11-02T21:22:12Z",
+      "osm_id" : "27797959",
+      "osm_type" : "way",
+      "osm_tags": {
+        "area" : "yes",
+        "bench" : "yes",
+        "bin" : "yes",
+        "level" : "-1",
+        "lit" : "yes",
+        "name" : "Heidelberg Hbf Gleis 9/10",
+        "public_transport" : "platform",
+        "railway" : "platform",
+        "ref" : "9;10",
+        "ref:IFOPT" : "de:08221:1160:8:9;de:08221:1160:8:10",
+        "ref:IFOPT:description" : "Gleis 9;Gleis 10",
+        "surface" : "paving_stones",
+        "tactile_paving" : "yes",
+        "train" : "yes",
+        "wheelchair" : "yes",
+        "wheelchair:description" : "Aufzug in der Mitte des Bahnsteiges"
+      }
     }
   }, {
     "type" : "Feature",
@@ -439,23 +442,23 @@
       ]
     },
     "properties" : {
-      "@changesetId" : 138138706,
-      "@lastEdit" : "2023-07-05T08:54:00Z",
-      "@osmId" : "way/84908668",
-      "@osmType" : "way",
-      "@snapshotTimestamp" : "2024-01-01T00:00:00Z",
-      "@version" : 23,
-      "bicycle:conditional" : "yes @ (Mo-Sa 06:00-11:00)",
-      "highway" : "pedestrian",
-      "lit" : "yes",
-      "maxweight" : "7.5",
-      "motor_vehicle:conditional" : "destination @ (Mo-Sa 06:00-11:00)",
-      "name" : "Hauptstraße",
-      "sloped_curb:start" : "0.02",
-      "smoothness" : "intermediate",
-      "surface" : "paving_stones",
-      "width" : "8",
-      "wikidata" : "Q17142036"
+      "osm_changeset_id" : 138138706,
+      "last_edit" : "2023-07-05T08:54:00Z",
+      "osm_id" : "84908668",
+      "osm_type" : "way",
+      "osm_tags": {
+        "bicycle:conditional" : "yes @ (Mo-Sa 06:00-11:00)",
+        "highway" : "pedestrian",
+        "lit" : "yes",
+        "maxweight" : "7.5",
+        "motor_vehicle:conditional" : "destination @ (Mo-Sa 06:00-11:00)",
+        "name" : "Hauptstraße",
+        "sloped_curb:start" : "0.02",
+        "smoothness" : "intermediate",
+        "surface" : "paving_stones",
+        "width" : "8",
+        "wikidata" : "Q17142036"
+      }
     }
   }, {
     "type" : "Feature",
@@ -467,22 +470,22 @@
       ]
     },
     "properties" : {
-      "@changesetId" : 103205496,
-      "@lastEdit" : "2021-04-19T14:36:01Z",
-      "@osmId" : "way/98453212",
-      "@osmType" : "way",
-      "@snapshotTimestamp" : "2024-01-01T00:00:00Z",
-      "@version" : 11,
-      "bicycle" : "designated",
-      "cycleway:surface" : "asphalt",
-      "foot" : "designated",
-      "footway:surface" : "paving_stones",
-      "highway" : "path",
-      "lcn" : "yes",
-      "lit" : "yes",
-      "oneway" : "yes",
-      "segregated" : "yes",
-      "surface" : "paved"
+      "osm_changeset_id" : 103205496,
+      "last_edit" : "2021-04-19T14:36:01Z",
+      "osm_id" : "98453212",
+      "osm_type" : "way",
+      "osm_tags": {
+        "bicycle" : "designated",
+        "cycleway:surface" : "asphalt",
+        "foot" : "designated",
+        "footway:surface" : "paving_stones",
+        "highway" : "path",
+        "lcn" : "yes",
+        "lit" : "yes",
+        "oneway" : "yes",
+        "segregated" : "yes",
+        "surface" : "paved"
+      }
     }
   }, {
     "type" : "Feature",
@@ -494,21 +497,21 @@
       ]
     },
     "properties" : {
-      "@changesetId" : 121852383,
-      "@lastEdit" : "2022-06-02T13:34:52Z",
-      "@osmId" : "way/109096915",
-      "@osmType" : "way",
-      "@snapshotTimestamp" : "2024-01-01T00:00:00Z",
-      "@version" : 14,
-      "check_date" : "2022-01-07",
-      "highway" : "residential",
-      "sidewalk":"no",
-      "lit" : "yes",
-      "maxspeed" : "20",
-      "name" : "Salomon-Calvi-Straße",
-      "name:etymology:wikidata" : "Q99581",
-      "name:etymology:wikipedia" : "de:Wilhelm Salomon-Calvi",
-      "surface" : "asphalt"
+      "osm_changeset_id" : 121852383,
+      "last_edit" : "2022-06-02T13:34:52Z",
+      "osm_id" : "109096915",
+      "osm_type" : "way",
+      "osm_tags": {
+        "check_date" : "2022-01-07",
+        "highway" : "residential",
+        "sidewalk":"no",
+        "lit" : "yes",
+        "maxspeed" : "20",
+        "name" : "Salomon-Calvi-Straße",
+        "name:etymology:wikidata" : "Q99581",
+        "name:etymology:wikipedia" : "de:Wilhelm Salomon-Calvi",
+        "surface" : "asphalt"
+      }
     }
   }, {
     "type" : "Feature",
@@ -520,21 +523,21 @@
       ]
     },
     "properties" : {
-      "@changesetId" : 137330409,
-      "@lastEdit" : "2023-06-14T13:56:23Z",
-      "@osmId" : "way/148612595",
-      "@osmType" : "way",
-      "@snapshotTimestamp" : "2024-01-01T00:00:00Z",
-      "@version" : 16,
-      "bicycle" : "yes",
-      "highway" : "residential",
-      "lanes" : "2",
-      "lit" : "yes",
-      "maxspeed" : "30",
-      "name" : "Im Neuenheimer Feld",
-      "name:etymology:wikidata" : "Q1980045",
-      "sidewalk" : "both",
-      "surface" : "asphalt"
+      "osm_changeset_id" : 137330409,
+      "last_edit" : "2023-06-14T13:56:23Z",
+      "osm_id" : "148612595",
+      "osm_type" : "way",
+      "osm_tags": {
+        "bicycle" : "yes",
+        "highway" : "residential",
+        "lanes" : "2",
+        "lit" : "yes",
+        "maxspeed" : "30",
+        "name" : "Im Neuenheimer Feld",
+        "name:etymology:wikidata" : "Q1980045",
+        "sidewalk" : "both",
+        "surface" : "asphalt"
+      }
     }
   }, {
     "type" : "Feature",
@@ -546,24 +549,24 @@
       ]
     },
     "properties" : {
-      "@changesetId" : 141868811,
-      "@lastEdit" : "2023-09-28T15:07:20Z",
-      "@osmId" : "way/184725322",
-      "@osmType" : "way",
-      "@snapshotTimestamp" : "2024-01-01T00:00:00Z",
-      "@version" : 16,
-      "cycleway:both" : "no",
-      "highway" : "residential",
-      "lanes" : "2",
-      "lit" : "yes",
-      "name" : "Im Neuenheimer Feld",
-      "name:etymology:wikidata" : "Q1980045",
-      "sidewalk:left" : "separate",
-      "sidewalk:right" : "yes",
-      "smoothness" : "good",
-      "surface" : "asphalt",
-      "zone:maxspeed" : "DE:urban",
-      "zone:traffic" : "DE:urban"
+      "osm_changeset_id" : 141868811,
+      "last_edit" : "2023-09-28T15:07:20Z",
+      "osm_id" : "184725322",
+      "osm_type" : "way",
+      "osm_tags": {
+        "cycleway:both" : "no",
+        "highway" : "residential",
+        "lanes" : "2",
+        "lit" : "yes",
+        "name" : "Im Neuenheimer Feld",
+        "name:etymology:wikidata" : "Q1980045",
+        "sidewalk:left" : "separate",
+        "sidewalk:right" : "yes",
+        "smoothness" : "good",
+        "surface" : "asphalt",
+        "zone:maxspeed" : "DE:urban",
+        "zone:traffic" : "DE:urban"
+      }
     }
   }, {
     "type" : "Feature",
@@ -575,16 +578,16 @@
       ]
     },
     "properties" : {
-      "@changesetId" : 51130782,
-      "@lastEdit" : "2017-08-15T07:27:05Z",
-      "@osmId" : "way/243233105",
-      "@osmType" : "way",
-      "@snapshotTimestamp" : "2024-01-01T00:00:00Z",
-      "@version" : 19,
-      "bicycle" : "no",
-      "highway" : "footway",
-      "lit" : "yes",
-      "surface" : "paving_stones"
+      "osm_changeset_id" : 51130782,
+      "last_edit" : "2017-08-15T07:27:05Z",
+      "osm_id" : "243233105",
+      "osm_type" : "way",
+      "osm_tags": {
+        "bicycle" : "no",
+        "highway" : "footway",
+        "lit" : "yes",
+        "surface" : "paving_stones"
+      }
     }
   }, {
     "type" : "Feature",
@@ -596,22 +599,22 @@
       ]
     },
     "properties" : {
-      "@changesetId" : 116598180,
-      "@lastEdit" : "2022-01-25T19:03:14Z",
-      "@osmId" : "way/258562284",
-      "@osmType" : "way",
-      "@snapshotTimestamp" : "2024-01-01T00:00:00Z",
-      "@version" : 7,
-      "cycleway:both" : "no",
-      "highway" : "tertiary",
-      "lanes" : "2",
-      "lit" : "no",
-      "maxspeed" : "50",
-      "name" : "Steigerweg",
-      "shoulder" : "no",
-      "sidewalk" : "no",
-      "smoothness" : "excellent",
-      "surface" : "asphalt"
+      "osm_changeset_id" : 116598180,
+      "last_edit" : "2022-01-25T19:03:14Z",
+      "osm_id" : "258562284",
+      "osm_type" : "way",
+      "osm_tags": {
+        "cycleway:both" : "no",
+        "highway" : "tertiary",
+        "lanes" : "2",
+        "lit" : "no",
+        "maxspeed" : "50",
+        "name" : "Steigerweg",
+        "shoulder" : "no",
+        "sidewalk" : "no",
+        "smoothness" : "excellent",
+        "surface" : "asphalt"
+      }
     }
   }, {
     "type" : "Feature",
@@ -623,15 +626,15 @@
       ]
     },
     "properties" : {
-      "@changesetId" : 92414183,
-      "@lastEdit" : "2020-10-13T11:39:17Z",
-      "@osmId" : "way/715905259",
-      "@osmType" : "way",
-      "@snapshotTimestamp" : "2024-01-01T00:00:00Z",
-      "@version" : 4,
-      "highway" : "track",
-      "surface" : "gravel",
-      "tracktype" : "grade2"
+      "osm_changeset_id" : 92414183,
+      "last_edit" : "2020-10-13T11:39:17Z",
+      "osm_id" : "715905259",
+      "osm_type" : "way",
+      "osm_tags": {
+        "highway" : "track",
+        "surface" : "gravel",
+        "tracktype" : "grade2"
+      }
     }
   }, {
     "type" : "Feature",
@@ -643,15 +646,15 @@
       ]
     },
     "properties" : {
-      "@changesetId" : 11079346,
-      "@lastEdit" : "2012-03-23T22:46:38Z",
-      "@osmId" : "way/87956068",
-      "@osmType" : "way",
-      "@snapshotTimestamp" : "2024-01-01T00:00:00Z",
-      "@version" : 4,
-      "ford" : "yes",
-      "highway" : "track",
-      "tracktype" : "grade3"
+      "osm_changeset_id" : 11079346,
+      "last_edit" : "2012-03-23T22:46:38Z",
+      "osm_id" : "87956068",
+      "osm_type" : "way",
+      "osm_tags": {
+        "ford" : "yes",
+        "highway" : "track",
+        "tracktype" : "grade3"
+      }
     }
   },{
     "type" : "Feature",
@@ -663,19 +666,19 @@
       ]
     },
     "properties" : {
-      "@changesetId" : 129682831,
-      "@lastEdit" : "2022-12-03T16:44:58Z",
-      "@osmId" : "way/225895739",
-      "@osmType" : "way",
-      "@snapshotTimestamp" : "2024-01-01T00:00:00Z",
-      "@version" : 15,
-      "bus" : "yes",
-      "highway" : "service",
-      "lit" : "yes",
-      "oneway" : "yes",
-      "sidewalk" : "right",
-      "surface" : "asphalt",
-      "vehicle" : "no"
+      "osm_changeset_id" : 129682831,
+      "last_edit" : "2022-12-03T16:44:58Z",
+      "osm_id" : "225895739",
+      "osm_type" : "way",
+      "osm_tags": {
+        "bus" : "yes",
+        "highway" : "service",
+        "lit" : "yes",
+        "oneway" : "yes",
+        "sidewalk" : "right",
+        "surface" : "asphalt",
+        "vehicle" : "no"
+      }
     }
   },{
     "type" : "Feature",
@@ -687,11 +690,12 @@
       ]
     },
     "properties" : {
-      "@osmId" : "way/257385208",
-      "@snapshotTimestamp" : "2024-01-01T00:00:00Z",
-      "highway" : "residential",
-      "maxspeed" : "10",
-      "sidewalk" : "no"
+      "osm_id" : "257385208",
+      "osm_tags": {
+        "highway" : "residential",
+        "maxspeed" : "10",
+        "sidewalk" : "no"
+      }
     }
   },{
     "type" : "Feature",
@@ -703,10 +707,12 @@
       ]
     },
     "properties" : {
-      "@osmId" : "way/1031915576",
-      "highway" : "primary",
-      "maxspeed" : "50",
-      "sidewalk" : "separate"
+      "osm_id" : "1031915576",
+      "osm_tags": {
+        "highway" : "primary",
+        "maxspeed" : "50",
+        "sidewalk" : "separate"
+      }
     }
   }]
 }

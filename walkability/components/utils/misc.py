@@ -8,8 +8,7 @@ import matplotlib as mpl
 import pandas as pd
 import shapely
 from climatoology.base.exception import ClimatoologyUserError, InputValidationError
-from ohsome import OhsomeClient
-from ohsome.exceptions import OhsomeException
+from ohsome_py2.client import OhsomeAPIError, OhsomeClient
 from pydantic_extra_types.color import Color
 
 log = logging.getLogger(__name__)
@@ -165,11 +164,9 @@ TACTILE_PAVING_CATEGORY_RATING_MAP = {
 
 def fetch_osm_data(aoi: shapely.MultiPolygon, osm_filter: str, ohsome: OhsomeClient) -> gpd.GeoDataFrame:
     try:
-        elements = ohsome.elements.geometry.post(
-            bpolys=aoi, clipGeometry=True, properties='tags', filter=osm_filter
-        ).as_dataframe()
+        elements = ohsome.features_extraction(aoi=aoi, osm_filter=osm_filter, clip=True)
     except Exception as e:
-        if isinstance(e, OhsomeException) and e.error_code in [413, 500, 501, 502, 503, 507]:
+        if isinstance(e, OhsomeAPIError):
             raise ClimatoologyUserError('There was an error collecting OSM data. Please try again later.')
         else:
             log.exception('Unexpected error when downloading OSM data.')
@@ -177,8 +174,8 @@ def fetch_osm_data(aoi: shapely.MultiPolygon, osm_filter: str, ohsome: OhsomeCli
                 'Unexpected error when collecting OSM data. Please contact us to find out more.'
             )
 
-    elements = elements.reset_index(drop=False)
-    return elements[['@osmId', 'geometry', '@other_tags']]
+    elements = elements.rename_geometry('geometry')
+    return elements[['osm_id', 'osm_type', 'geometry', 'osm_tags']]
 
 
 def _dict_to_legend(d: dict, cmap_name: str = 'coolwarm_r') -> Dict[str, Color]:
@@ -277,11 +274,9 @@ def safe_string_to_float(potential_number: str | float) -> float:
 
 def check_paths_count_limit(aoi: shapely.MultiPolygon, ohsome: OhsomeClient, count_limit: int) -> None:
     """
-    Check whether paths count is over than limit. (NOTE: just check path_lines)
+    Check whether paths count is over the limit. (NOTE: just check path_lines)
     """
-
-    ohsome_responses = ohsome.elements.count.post(bpolys=aoi, filter=ohsome_filter('line')).data
-    path_lines_count = sum([response['value'] for response in ohsome_responses['result']])
+    path_lines_count = ohsome.features_stats(aoi=aoi, osm_filter=ohsome_filter('line'), measure='count')
     log.info(f'There are {path_lines_count} paths selected.')
     if path_lines_count > count_limit:
         raise InputValidationError(

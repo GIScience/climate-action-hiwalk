@@ -10,7 +10,11 @@ from walkability.components.utils.misc import TactilePavingCategory
 
 def test_get_tactile_paving(default_path_geometry, default_polygon_geometry):
     line_paths = gpd.GeoDataFrame(
-        data={'@osmId': ['way/1', 'way/2'], '@other_tags': [{'tactile_paving': 'yes'}, {'tactile_paving': 'unpaved'}]},
+        data={
+            'osm_id': ['1', '2'],
+            'osm_type': ['way', 'way'],
+            'osm_tags': [{'tactile_paving': 'yes'}, {'tactile_paving': 'unpaved'}],
+        },
         geometry=[
             default_path_geometry,
             default_path_geometry,
@@ -19,7 +23,7 @@ def test_get_tactile_paving(default_path_geometry, default_polygon_geometry):
     )
 
     polygon_paths = gpd.GeoDataFrame(
-        data={'@osmId': ['way/3'], '@other_tags': [{}]},
+        data={'osm_id': ['3'], 'osm_type': ['way'], 'osm_tags': [{}]},
         geometry=[default_polygon_geometry],
         crs=CAN_DEFAULT_CRS,
     )
@@ -27,8 +31,9 @@ def test_get_tactile_paving(default_path_geometry, default_polygon_geometry):
     expected_tactile_paths_all = gpd.GeoDataFrame(
         index=[0, 1, 2],
         data={
-            '@osmId': ['way/1', 'way/2', 'way/3'],
-            '@other_tags': [{'tactile_paving': 'yes'}, {'tactile_paving': 'unpaved'}, {}],
+            'osm_id': ['1', '2', '3'],
+            'osm_type': ['way', 'way', 'way'],
+            'osm_tags': [{'tactile_paving': 'yes'}, {'tactile_paving': 'unpaved'}, {}],
             'geometry': [default_path_geometry, default_path_geometry, default_polygon_geometry],
             'tactile_paving': [
                 TactilePavingCategory.YES,
@@ -49,7 +54,7 @@ def test_tactile_paving_categorisation(default_path_geometry, default_polygon_ge
     geometries = gpd.GeoDataFrame(
         index=[1, 2, 3, 4],
         data={
-            '@other_tags': [
+            'osm_tags': [
                 {'tactile_paving': 'yes'},
                 {'tactile_paving': 'yes', 'tactile_paving: surface': 'unpaved'},
                 {'tactile_paving: surface': 'paving_stones'},
@@ -67,7 +72,7 @@ def test_tactile_paving_categorisation(default_path_geometry, default_polygon_ge
     expected_tactile_paving_categorisation = gpd.GeoDataFrame(
         index=[1, 2, 3, 4],
         data={
-            '@other_tags': [
+            'osm_tags': [
                 {'tactile_paving': 'yes'},
                 {'tactile_paving': 'yes', 'tactile_paving: surface': 'unpaved'},
                 {'tactile_paving: surface': 'paving_stones'},

@@ -1,0 +1,81 @@
+interactions:
+- request:
+    body: bpolys=%7B%22type%22%3A+%22FeatureCollection%22%2C+%22features%22%3A+%5B%7B%22id%22%3A+%220%22%2C+%22type%22%3A+%22Feature%22%2C+%22properties%22%3A+%7B%7D%2C+%22geometry%22%3A+%7B%22type%22%3A+%22Polygon%22%2C+%22coordinates%22%3A+%5B%5B%5B8.6774288%2C+49.4046213%5D%2C+%5B8.6774288%2C+49.4064122%5D%2C+%5B8.6742192%2C+49.4064122%5D%2C+%5B8.6742192%2C+49.4046213%5D%2C+%5B8.6774288%2C+49.4046213%5D%5D%5D%7D%7D%5D%7D&filter=geometry%3Apolygon+and+boundary%3Dadministrative+and+admin_level%3D9&properties=tags&clipGeometry=True
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '527'
+      Content-Type:
+      - application/x-www-form-urlencoded
+      host:
+      - ohsome-api.test
+      user-agent:
+      - ohsome-py/0.3.0
+    method: POST
+    uri: http://ohsome-api.test/v1/elements/geometry
+  response:
+    body:
+      string: "{\n  \"attribution\" : {\n    \"url\" : \"https://ohsome.org/copyrights\",\n
+        \   \"text\" : \"\xA9 OpenStreetMap contributors\"\n  },\n  \"apiVersion\"
+        : \"1.10.4\",\n  \"type\" : \"FeatureCollection\",\n  \"features\" : [{\n
+        \   \"type\" : \"Feature\",\n    \"geometry\" : {\n      \"type\" : \"Polygon\",\n
+        \     \"coordinates\" : [\n        [\n          [\n            8.6758807,\n
+        \           49.4046213\n          ],\n          [\n            8.6742192,\n
+        \           49.4049637\n          ],\n          [\n            8.6742192,\n
+        \           49.4064122\n          ],\n          [\n            8.6774288,\n
+        \           49.4064122\n          ],\n          [\n            8.6774288,\n
+        \           49.4046213\n          ],\n          [\n            8.6758807,\n
+        \           49.4046213\n          ]\n        ]\n      ]\n    },\n    \"properties\"
+        : {\n      \"@osmId\" : \"relation/3283777\",\n      \"@snapshotTimestamp\"
+        : \"2026-06-19T10:00:00Z\",\n      \"admin_level\" : \"9\",\n      \"boundary\"
+        : \"administrative\",\n      \"name\" : \"Bergheim\",\n      \"type\" : \"boundary\"\n
+        \   }\n  }, {\n    \"type\" : \"Feature\",\n    \"geometry\" : {\n      \"type\"
+        : \"Polygon\",\n      \"coordinates\" : [\n        [\n          [\n            8.6742192,\n
+        \           49.4049637\n          ],\n          [\n            8.6758807,\n
+        \           49.4046213\n          ],\n          [\n            8.6742192,\n
+        \           49.4046213\n          ],\n          [\n            8.6742192,\n
+        \           49.4049637\n          ]\n        ]\n      ]\n    },\n    \"properties\"
+        : {\n      \"@osmId\" : \"relation/3283787\",\n      \"@snapshotTimestamp\"
+        : \"2026-06-19T10:00:00Z\",\n      \"admin_level\" : \"9\",\n      \"boundary\"
+        : \"administrative\",\n      \"name\" : \"Weststadt\",\n      \"type\" : \"boundary\"\n
+        \   }\n  }]\n}\n"
+    headers:
+      Access-Control-Allow-Credentials:
+      - 'true'
+      Access-Control-Allow-Headers:
+      - Origin,Accept,X-Requested-With,Content-Type,Access-Control-Request-Method,Access-Control-Request-Headers,Authorization
+      Access-Control-Allow-Methods:
+      - POST, GET
+      Access-Control-Allow-Origin:
+      - '*'
+      Access-Control-Max-Age:
+      - '3600'
+      Connection:
+      - Keep-Alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/geo+json;charset=utf-8
+      Content-disposition:
+      - attachment;filename=ohsome.geojson
+      Date:
+      - Mon, 27 Jul 2026 15:30:01 GMT
+      Keep-Alive:
+      - timeout=5, max=100
+      Server:
+      - Apache/2.4.58 (Ubuntu)
+      Strict-Transport-Security:
+      - max-age=63072000; includeSubdomains;
+      Transfer-Encoding:
+      - chunked
+      vary:
+      - accept-encoding
+    status:
+      code: 200
+      message: ''
+version: 1

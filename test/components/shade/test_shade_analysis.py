@@ -33,7 +33,7 @@ def test_shade_analysis(
 def test_get_shade_for_tunnels():
     shaded_paths = gpd.GeoDataFrame(
         index=[1, 2],
-        data={'@other_tags': [{'tunnel': 'yes'}, {}], 'length': [5560, 5560], 'length_shaded': [1000, 2500]},
+        data={'osm_tags': [{'tunnel': 'yes'}, {}], 'length': [5560, 5560], 'length_shaded': [1000, 2500]},
         geometry=[
             LineString([[12.4, 48.25], [12.4, 48.30]]),
             LineString([[12.41, 48.25], [12.41, 48.30]]),

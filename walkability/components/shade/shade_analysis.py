@@ -35,7 +35,7 @@ def shade_analysis(
 
 
 def get_shade_for_tunnels(shaded_paths: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
-    tunneled_paths = shaded_paths['@other_tags'].apply(lambda x: x.get('tunnel')) == 'yes'
+    tunneled_paths = shaded_paths['osm_tags'].apply(lambda x: x.get('tunnel')) == 'yes'
     shaded_paths.loc[tunneled_paths, 'length_shaded'] = shaded_paths.loc[tunneled_paths, 'length']
     return shaded_paths
 
@@ -47,7 +47,7 @@ def create_shade_paths_vector_artifact(shaded_paths: gpd.GeoDataFrame, resources
         color_by=shaded_paths['prop_shaded'], cmap_name=cmap, min_value=0, max_value=1
     )
     shaded_paths['label'] = shaded_paths['prop_shaded'].apply(lambda x: '{:.0f}%'.format(round(x * 100)))
-    shaded_paths = shaded_paths[['@osmId', 'color', 'label', 'geometry']]
+    shaded_paths = shaded_paths[['osm_id', 'osm_type', 'color', 'label', 'geometry']]
 
     shade_metadata = ArtifactMetadata(
         name='Tree Shaded Paths',

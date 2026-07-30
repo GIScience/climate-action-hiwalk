@@ -1,2 +1,0 @@
-,@osmId,@other_tags,value,geometry
-0,test,{},,"LINESTRING (12.3 48.22, 12.3 48.2205, 12.3005 48.22)"

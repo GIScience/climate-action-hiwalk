@@ -1,4 +1,3 @@
-import json
 import uuid
 from pathlib import Path
 from tempfile import TemporaryDirectory
@@ -8,9 +7,9 @@ from urllib.parse import parse_qsl
 
 import boto3
 import geopandas as gpd
+import numpy as np
 import pandas as pd
 import pytest
-import responses
 import shapely
 from approvaltests import DiffReporter, set_default_reporter
 from botocore import UNSIGNED
@@ -19,9 +18,9 @@ from climatoology.base.baseoperator import AoiProperties
 from climatoology.base.computation import ComputationScope
 from mobility_tools.settings import ORSSettings
 from moto import mock_aws
+from ohsome_py2.client import OhsomeClient
 from rasterio import Affine
 from requests import PreparedRequest
-from responses import matchers
 from shapely.geometry import LineString
 
 from walkability.components.comfort.comfort_poi_filters import PointsOfInterest
@@ -31,8 +30,24 @@ from walkability.components.utils.geometry import CAN_DEFAULT_CRS
 from walkability.components.utils.misc import PathCategory
 from walkability.core.input import ComputeInputWalkability
 from walkability.core.operator_worker import OperatorWalkability
+from walkability.core.settings import Settings
 
 TEST_RESOURCES_DIR = Path('test/resources')
+
+# load_dotenv()  # To load the `OHSOME_BASE_URL` environment variable, for recording new cassettes
+pytest_plugins = ('ohsome_py2.test.fixtures',)
+
+
+@pytest.fixture(scope='session')
+def vcr_config(vcr_config_ohsomepy2):
+    vcr_config_ohsomepy2.update(
+        {
+            'filter_headers': ['authorization'],
+            'cassette_library_dir': 'test/resources/vcr_cassettes',
+        }
+    )
+
+    return vcr_config_ohsomepy2
 
 
 @pytest.fixture
@@ -41,30 +56,13 @@ def expected_compute_input() -> ComputeInputWalkability:
 
 
 @pytest.fixture
-def global_aoi() -> shapely.MultiPolygon:
-    return shapely.MultiPolygon([[[[-90, -180], [90, -180], [90, 180], [-90, 180], [-90, -180]]]])
-
-
-@pytest.fixture
 def default_aoi() -> shapely.MultiPolygon:
-    return shapely.MultiPolygon(
-        polygons=[
-            [
-                [
-                    [12.29, 48.20],
-                    [12.29, 48.34],
-                    [12.48, 48.34],
-                    [12.48, 48.20],
-                    [12.29, 48.20],
-                ]
-            ]  # type: ignore
-        ]
-    )
+    return shapely.MultiPolygon(polygons=[shapely.box(8.6983273, 49.4079880, 8.7108559, 49.4136026)])
 
 
 @pytest.fixture
 def small_aoi() -> shapely.Polygon:
-    return shapely.box(8.689282, 49.416193, 8.693186, 49.419123)
+    return shapely.MultiPolygon([shapely.box(8.6742192, 49.4046213, 8.6774288, 49.4064122)])
 
 
 @pytest.fixture
@@ -77,18 +75,6 @@ def default_aoi_properties() -> AoiProperties:
 def compute_resources():
     with ComputationScope(uuid.uuid4()) as resources:
         yield resources
-
-
-@pytest.fixture
-def responses_mock():
-    with responses.RequestsMock() as rsps:
-        yield rsps
-
-
-@pytest.fixture
-def ordered_responses_mock():
-    with responses.RequestsMock(registry=responses.registries.OrderedRegistry) as rsps:
-        yield rsps
 
 
 @pytest.fixture
@@ -136,11 +122,12 @@ def default_shade_client(default_shade_config):
 
 @pytest.fixture
 def operator(
-    naturalness_utility_mock, default_shade_config, default_ors_settings, default_shade_client
+    naturalness_utility_mock, default_shade_config, default_settings, default_ors_settings, default_shade_client
 ) -> OperatorWalkability:
     with patch('walkability.core.operator_worker.boto3.client', return_value=default_shade_client):
         return OperatorWalkability(
             naturalness_utility=naturalness_utility_mock,
+            hiwalk_settings=default_settings,
             ors_settings=default_ors_settings,
             s3_settings=None,
             shade_config=default_shade_config,
@@ -149,8 +136,25 @@ def operator(
 
 
 @pytest.fixture
+def default_settings() -> Settings:
+    settings = Settings(
+        naturalness_host='mock-naturalness-host',
+        naturalness_port=1234,
+        naturalness_path='mock-naturalness-path',
+        feature_flag_ohsome2=False,
+    )
+    return settings
+
+
+@pytest.fixture
+def default_ohsome_client_v1():
+    return OhsomeClient(user_agent='can-walkability-test', v2=False)
+
+
+@pytest.fixture
 def default_ors_settings() -> ORSSettings:
-    return ORSSettings(ors_base_url='http://localhost:8080/ors', ors_api_key='test-key')
+    # This secret url comes from the vcr_config fixture
+    return ORSSettings(ors_base_url='http://vcr-secret-url', ors_api_key='test-key')
 
 
 @pytest.fixture
@@ -181,42 +185,6 @@ def expected_detour_factors() -> pd.DataFrame:
 
 
 @pytest.fixture
-def ohsome_api(responses_mock):
-    with (
-        open('test/resources/ohsome_line_response.geojson', 'r') as line_file,
-        open('test/resources/ohsome_polygon_response.geojson', 'r') as polygon_file,
-    ):
-        line_body = line_file.read()
-        polygon_body = polygon_file.read()
-
-    responses_mock.post(
-        'https://api.ohsome.org/v1/elements/geometry',
-        body=line_body,
-        match=[filter_start_matcher('geometry:line')],
-    )
-
-    responses_mock.post(
-        'https://api.ohsome.org/v1/elements/geometry',
-        body=polygon_body,
-        match=[filter_start_matcher('geometry:polygon')],
-    )
-    return responses_mock
-
-
-@pytest.fixture
-def ohsome_api_count(responses_mock):
-    with open('test/resources/ohsome_count_response.json', 'rb') as paths_count_file:
-        paths_count_body = paths_count_file.read()
-
-    responses_mock.post(
-        'https://api.ohsome.org/v1/elements/count',
-        body=paths_count_body,
-    )
-
-    return responses_mock
-
-
-@pytest.fixture
 def naturalness_utility_mock():
     with patch('climatoology.utility.naturalness.NaturalnessUtility') as naturalness_utility:
         vectors = gpd.GeoSeries(
@@ -234,75 +202,6 @@ def naturalness_utility_mock():
 
 
 @pytest.fixture
-def ors_elevation_api(responses_mock):
-    responses_mock.post(
-        'https://api.openrouteservice.org/elevation/line',
-        json={
-            'attribution': 'service by https://openrouteservice.org | data by https://srtm.csi.cgiar.org',
-            'geometry': [[12.3, 48.22, 1.0], [12.3005, 48.22, 2.0]],
-            'timestamp': 1738238852,
-            'version': '0.2.1',
-        },
-        match=[
-            matchers.header_matcher({'Authorization': 'test-key'}),
-            matchers.json_params_matcher(
-                {
-                    'format_in': 'polyline',
-                    'format_out': 'polyline',
-                    'dataset': 'srtm',
-                    'geometry': [[12.3, 48.22], [12.3005, 48.22]],
-                }
-            ),
-        ],
-    )
-    return responses_mock
-
-
-@pytest.fixture
-def ors_isochrone_api(responses_mock):
-    with open('test/resources/ors_isochrones.geojson', 'r') as isochrones:
-        isochrones_body = isochrones.read()
-
-    responses_mock.post('http://localhost:8080/ors/v2/isochrones/foot-walking/geojson', body=isochrones_body)
-
-
-@pytest.fixture
-def large_mock_ors_snapping_api(ordered_responses_mock, snapping_response):
-    ordered_responses_mock.add(
-        method='POST', url='http://localhost:8080/ors/v2/snap/foot-walking', json=snapping_response
-    )
-
-
-@pytest.fixture
-def snapping_response():
-    return {
-        'locations': [
-            {'location': [8.690396, 49.418228], 'snapped_distance': 19.2},
-            {'location': [8.690353, 49.417188], 'snapped_distance': 18.76},
-            {'location': [8.689776, 49.416313], 'snapped_distance': 29.88},
-            {'location': [8.692346, 49.416992], 'snapped_distance': 0.43},
-            {'location': [8.693091, 49.418907], 'snapped_distance': 1.28},
-            {'location': [8.692439, 49.418159], 'snapped_distance': 43.83},
-            {'location': [8.691352, 49.419144], 'snapped_distance': 6.04},
-        ]
-    }
-
-
-@pytest.fixture
-def large_mock_ors_directions_api(ordered_responses_mock, ors_directions_responses):
-    for response in ors_directions_responses['responses']:
-        ordered_responses_mock.add(
-            method='POST', url='https://api.openrouteservice.org/v2/directions/foot-walking', json=response
-        )
-
-
-@pytest.fixture
-def ors_directions_responses() -> dict:
-    with open('test/resources/ors_directions_responses.json', 'r') as file:
-        return json.load(file)
-
-
-@pytest.fixture
 def default_path_geometry() -> shapely.LineString:
     return shapely.LineString([(12.3, 48.22), (12.3, 48.2205), (12.3005, 48.22)])
 
@@ -316,13 +215,60 @@ def default_polygon_geometry() -> shapely.Polygon:
 def default_path(default_path_geometry) -> gpd.GeoDataFrame:
     return gpd.GeoDataFrame(
         data={
-            '@osmId': ['test'],
+            'osm_id': ['test'],
+            'osm_type': ['way'],
             'category': [PathCategory.DESIGNATED],
             'rating': [1.0],
-            '@other_tags': [{}],
+            'osm_tags': [{}],
             'length': [122.5],
             'length_shaded': [49],
             'geometry': [default_path_geometry],
+        },
+        crs=CAN_DEFAULT_CRS,
+    )
+
+
+@pytest.fixture
+def default_aoi_paths() -> gpd.GeoDataFrame:
+    """Several paths that cross the space of the default_aoi"""
+    xs = list(np.arange(8.70, 8.71, step=0.002))
+    ys = list(np.arange(49.407, 49.412, step=0.002))
+
+    lines = []
+    for i in range(len(xs)):
+        lines.append(LineString([(xs[i], ys[0]), (xs[i], ys[-1])]))
+
+    for i in range(len(ys)):
+        lines.append(LineString([(xs[0], ys[i]), (xs[-1], ys[i])]))
+
+    gdf = gpd.GeoDataFrame(geometry=lines, crs=CAN_DEFAULT_CRS)
+    gdf = gdf.assign(
+        osm_type='way',
+        rating=1.0,
+        length=100,  # TODO: fix?
+        length_shaded=50,  # TODO: fix
+    )
+    gdf = gdf.reset_index(names='osm_id')
+
+    return gdf
+
+
+@pytest.fixture
+def small_aoi_paths(small_aoi) -> shapely.Polygon:
+    xmin, ymin, xmax, ymax = small_aoi.bounds
+    return gpd.GeoDataFrame(
+        data={
+            'osm_id': ['small1', 'small2'],
+            'osm_type': ['way', 'way'],
+            'category': [PathCategory.DESIGNATED, PathCategory.DESIGNATED],
+            'rating': [1.0, 1.0],
+            'osm_tags': [{}, {}],
+            'length': [122.5, 122.5],
+            'length_shaded': [49, 49],
+            'geometry': [
+                LineString([(xmin, ymin), (xmax, ymax)]),
+                shapely.Polygon([(xmin, ymin), (xmax, ymin), (xmax, ymax), (xmin, ymin)]),
+            ],
         },
         crs=CAN_DEFAULT_CRS,
     )
@@ -345,13 +291,6 @@ def filter_start_matcher(filter_start: str) -> Callable[..., Any]:
 
 
 @pytest.fixture
-def empty_pois(default_path):
-    with patch('walkability.components.comfort.comfort_poi_filters.request_pois') as mock:
-        mock.return_value = gpd.GeoDataFrame()
-        yield mock
-
-
-@pytest.fixture
 def default_max_walking_distance_map() -> dict[PointsOfInterest, float]:
     m_per_minute = 66.666
     return {
@@ -370,7 +309,8 @@ def configure_approvaltests():
 def default_slopes_gdf() -> gpd.GeoDataFrame:
     return gpd.GeoDataFrame(
         data={
-            '@osmId': ['way/1', 'way/1', 'way/2', 'way/3'],
+            'osm_id': ['1', '1', '2', '3'],
+            'osm_type': ['way', 'way', 'way', 'way'],
             'segment_id': [0, 1, 0, 0],
             'segment_length': [10, 10, 10, 10],
             'slope': [1.0, 2.0, 3.0, 10.0],
@@ -398,10 +338,11 @@ def default_shade_path() -> gpd.GeoDataFrame:
     # This LineString transforms to clean coordinates in EPSG:3857, which makes for nice testing with the raster files.
     return gpd.GeoDataFrame(
         data={
-            '@osmId': ['test'],
+            'osm_id': ['test'],
+            'osm_type': ['way'],
             'category': [PathCategory.DESIGNATED],
             'rating': [1.0],
-            '@other_tags': [{}],
+            'osm_tags': [{}],
             'geometry': [LineString([[12.29973287, 48.22], [12.31051265, 48.22]])],
         },
         crs=CAN_DEFAULT_CRS,
@@ -415,10 +356,11 @@ def default_shade_path_small() -> gpd.GeoDataFrame:
     """
     return gpd.GeoDataFrame(
         data={
-            '@osmId': ['test'],
+            'osm_id': ['test'],
+            'osm_type': ['way'],
             'category': [PathCategory.DESIGNATED],
             'rating': [1.0],
-            '@other_tags': [{}],
+            'osm_tags': [{}],
             'geometry': [LineString([[12.30, 48.22], [12.305, 48.22]])],
         },
         crs=CAN_DEFAULT_CRS,

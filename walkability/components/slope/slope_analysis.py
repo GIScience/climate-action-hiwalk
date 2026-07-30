@@ -30,7 +30,7 @@ def compute_slope_analysis(
     log.debug('Computing slopes for paths')
 
     multi_line_paths = paths.loc[paths.category.isin(PathCategory.get_visible())].copy(deep=False)
-    line_string_paths = multi_line_paths.set_index('@osmId').explode(ignore_index=False)
+    line_string_paths = multi_line_paths.set_index('osm_id').explode(ignore_index=False)
     line_string_paths = line_string_paths[line_string_paths.geom_type.str.contains('LineString')].reset_index()
 
     if line_string_paths.empty:
@@ -51,7 +51,7 @@ def compute_slope_analysis(
 
 def merge_similar_slopes(paths: gpd.GeoDataFrame, merging_tolerance: float = 1.0) -> gpd.GeoDataFrame:
     reconstituted_paths = []
-    for osm_id, indices in paths.groupby('@osmId').indices.items():
+    for osm_id, indices in paths.groupby('osm_id').indices.items():
         if len(indices) < 2:
             reconstituted_paths.append(paths.loc[indices])
             continue
@@ -64,7 +64,7 @@ def merge_similar_slopes(paths: gpd.GeoDataFrame, merging_tolerance: float = 1.0
             geometry = linemerge(paths.loc[indices].geometry.to_list())
             if isinstance(geometry, shapely.MultiLineString):
                 geometry = linemerge(geometry)
-            smoothed_path = gpd.GeoDataFrame(data={'@osmId': [osm_id], 'slope': mean_slope}, geometry=[geometry])
+            smoothed_path = gpd.GeoDataFrame(data={'osm_id': [osm_id], 'slope': mean_slope}, geometry=[geometry])
             reconstituted_paths.append(smoothed_path)
             continue
 
