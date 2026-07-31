@@ -29,6 +29,5 @@ RUN if [[ -n "${CI_COMMIT_SHORT_SHA}" ]]; then sed -E -i "s/^(version *= *\"[^+]
 
 RUN poetry install --no-ansi --no-interaction --only-root
 
-ENTRYPOINT ["poetry", "run", "plugin"]
-CMD ["start"]
-
+SHELL ["/bin/bash", "-c"]
+ENTRYPOINT exec poetry run python ${PACKAGE_NAME}/plugin.py
