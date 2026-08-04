@@ -1,4 +1,6 @@
 import geopandas as gpd
+import geopandas.testing
+import pandas as pd
 
 from walkability.components.tactile_paving.tactile_paving_analysis import (
     get_tactile_paving,
@@ -40,7 +42,7 @@ def test_get_tactile_paving(default_path_geometry, default_polygon_geometry):
                 TactilePavingCategory.OTHER_SIGNS,
                 TactilePavingCategory.UNKNOWN,
             ],
-            'tactile_paving_rating': [1, 0.5, None],
+            'tactile_paving_rating': pd.Series([1, 0.5, None]),
         },
         crs=CAN_DEFAULT_CRS,
     )

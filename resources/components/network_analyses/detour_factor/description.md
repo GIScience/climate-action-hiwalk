@@ -7,4 +7,4 @@ Cells are classified as follows:
 - High Detour if it takes on average three times the straight-line distance to reach the corners
 - Unreachable if at least one corner cannot be reached
 
-Cells with a detour factor below 2 are not displayed on the map, as they are considered to have good permeability and are thus not problematic.
+Cells with a detour factor below 2 are not displayed on the map, as they are considered to have good permeability and are thus not problematic. However, they are included in the histogram as the Low Detour class.

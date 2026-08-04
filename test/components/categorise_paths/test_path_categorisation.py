@@ -362,5 +362,5 @@ def test_filter_walkable_paths():
         walkable_categories={PathCategory.SHARED_WITH_MOTORIZED_TRAFFIC_MEDIUM_SPEED},
     )
 
-    gpd.testing.assert_geodataframe_equal(should_be_same, to_be_kept)
+    gpd.testing.assert_geodataframe_equal(should_be_same.copy(), to_be_kept.copy())
     assert should_be_empty.empty
