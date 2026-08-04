@@ -13,7 +13,7 @@ and this project mostly adheres to [Semantic Versioning](https://semver.org/spec
 
 ### Fixed
 - Remove the tree shade indicator from the comfort tag list ([#356](https://gitlab.heigit.org/climate-action/plugins/walkability/-/work_items/356))
-
+- Define a fixed scale for the detour factor chart and change the histogram to a bar chart ([#365](https://gitlab.heigit.org/climate-action/plugins/walkability/-/work_items/365))
 
 ## [4.1.1](https://gitlab.heigit.org/climate-action/plugins/walkability/-/releases/4.1.1) - 2026-07-22
 
