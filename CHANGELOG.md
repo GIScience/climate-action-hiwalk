@@ -9,11 +9,16 @@ and this project mostly adheres to [Semantic Versioning](https://semver.org/spec
 
 ### Added
 - An indicator mapping out the locations and walking distances to sheltered benches ([#331](https://gitlab.heigit.org/climate-action/plugins/walkability/-/work_items/331))
+- Add average value to the detour factor histogram artifact ([#361](https://gitlab.heigit.org/climate-action/plugins/walkability/-/work_items/361))
 - Add tactile paving paths as an optional indicator ([#323](https://gitlab.heigit.org/climate-action/plugins/walkability/-/work_items/323))
 
 ### Fixed
 - Remove the tree shade indicator from the comfort tag list ([#356](https://gitlab.heigit.org/climate-action/plugins/walkability/-/work_items/356))
 - Define a fixed scale for the detour factor chart and change the histogram to a bar chart ([#365](https://gitlab.heigit.org/climate-action/plugins/walkability/-/work_items/365))
+
+### Changed
+- Use internal `ohsome-py2` library to query from ohsome API v1, to ease the migration to ohsome API v2 ([#360](https://gitlab.heigit.org/climate-action/plugins/walkability/-/work_items/360))
+
 
 ## [4.1.1](https://gitlab.heigit.org/climate-action/plugins/walkability/-/releases/4.1.1) - 2026-07-22
 
@@ -31,10 +36,6 @@ and this project mostly adheres to [Semantic Versioning](https://semver.org/spec
 ### Fixed
 - Catch 413 error and also handle unknown ohsome
   errors ([#353](https://gitlab.heigit.org/climate-action/plugins/walkability/-/work_items/353))
-
-### Changed
-- Use internal `ohsome-py2` library to query from ohsome API v1, to ease the migration to ohsome API v2 ([#360](https://gitlab.heigit.org/climate-action/plugins/walkability/-/work_items/360))
-
 
 ## [4.0.3](https://gitlab.heigit.org/climate-action/plugins/walkability/-/releases/4.0.3) - 2026-07-02
 

@@ -42,7 +42,7 @@ def test_get_tactile_paving(default_path_geometry, default_polygon_geometry):
                 TactilePavingCategory.OTHER_SIGNS,
                 TactilePavingCategory.UNKNOWN,
             ],
-            'tactile_paving_rating': pd.Series([1, 0.5, None]),
+            'tactile_paving_rating': pd.Series([1, 0.5, None], dtype=object),
         },
         crs=CAN_DEFAULT_CRS,
     )
