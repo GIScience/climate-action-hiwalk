@@ -34,7 +34,7 @@ def test_get_path_lighting(default_path_geometry, default_polygon_geometry):
             'osm_tags': [{'lit': 'yes'}, {'lit': 'automatic'}, {}],
             'geometry': [default_path_geometry, default_path_geometry, default_polygon_geometry],
             'path_lighting': [PathLightingCategory.YES, PathLightingCategory.AUTOMATIC, PathLightingCategory.UNKNOWN],
-            'path_lighting_rating': pd.Series([1, 0.8, None]),
+            'path_lighting_rating': pd.Series([1, 0.8, None], dtype=object),
         },
         crs=CAN_DEFAULT_CRS,
     )
