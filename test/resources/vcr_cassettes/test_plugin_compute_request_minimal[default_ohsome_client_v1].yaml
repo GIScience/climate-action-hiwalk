@@ -1,5 +1,64 @@
 interactions:
 - request:
+    body: bpolys=%7B%22type%22%3A+%22FeatureCollection%22%2C+%22features%22%3A+%5B%7B%22id%22%3A+%220%22%2C+%22type%22%3A+%22Feature%22%2C+%22properties%22%3A+%7B%7D%2C+%22geometry%22%3A+%7B%22type%22%3A+%22MultiPolygon%22%2C+%22coordinates%22%3A+%5B%5B%5B%5B8.6774288%2C+49.4046213%5D%2C+%5B8.6774288%2C+49.4064122%5D%2C+%5B8.6742192%2C+49.4064122%5D%2C+%5B8.6742192%2C+49.4046213%5D%2C+%5B8.6774288%2C+49.4046213%5D%5D%5D%5D%7D%7D%5D%7D&filter=geometry%3Aline+and+%28highway%3D%2A+or+route%3Dferry+or+railway%3Dplatform+or+%28waterway%3Dlock_gate+and+foot+in+%28yes%2C+designated%2C+official%2C+permissive%29%29%29+and+not+%28footway%3Dseparate+or+sidewalk%3Dseparate+or+sidewalk%3Aboth%3Dseparate+or+%28sidewalk%3Aright%3Dseparate+and+sidewalk%3Aleft%3Dseparate%29+or+%28sidewalk%3Aright%3Dseparate+and+sidewalk%3Aleft%3Dno%29+or+%28sidewalk%3Aright%3Dno+and+sidewalk%3Aleft%3Dseparate%29%29
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '884'
+      Content-Type:
+      - application/x-www-form-urlencoded
+      host:
+      - vcr-secret-url
+      user-agent:
+      - ohsome-py/0.3.0
+    method: POST
+    uri: http://vcr-secret-url/v1/elements/count
+  response:
+    body:
+      string: "{\n  \"attribution\" : {\n    \"url\" : \"https://ohsome.org/copyrights\",\n
+        \   \"text\" : \"\xA9 OpenStreetMap contributors\"\n  },\n  \"apiVersion\"
+        : \"1.10.4\",\n  \"result\" : [ {\n    \"timestamp\" : \"2026-06-19T10:00:00Z\",\n
+        \   \"value\" : 129.0\n  } ]\n}"
+    headers:
+      Access-Control-Allow-Credentials:
+      - 'true'
+      Access-Control-Allow-Headers:
+      - Origin,Accept,X-Requested-With,Content-Type,Access-Control-Request-Method,Access-Control-Request-Headers,Authorization
+      Access-Control-Allow-Methods:
+      - POST, GET
+      Access-Control-Allow-Origin:
+      - '*'
+      Access-Control-Max-Age:
+      - '3600'
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Connection:
+      - Keep-Alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json
+      Date:
+      - Thu, 30 Jul 2026 15:16:42 GMT
+      Keep-Alive:
+      - timeout=5, max=100
+      Server:
+      - Apache/2.4.58 (Ubuntu)
+      Strict-Transport-Security:
+      - max-age=63072000; includeSubdomains;
+      Transfer-Encoding:
+      - chunked
+      vary:
+      - accept-encoding
+    status:
+      code: 200
+      message: ''
+- request:
     body: bpolys=%7B%22type%22%3A+%22FeatureCollection%22%2C+%22features%22%3A+%5B%7B%22id%22%3A+%220%22%2C+%22type%22%3A+%22Feature%22%2C+%22properties%22%3A+%7B%7D%2C+%22geometry%22%3A+%7B%22type%22%3A+%22MultiPolygon%22%2C+%22coordinates%22%3A+%5B%5B%5B%5B8.6774288%2C+49.4046213%5D%2C+%5B8.6774288%2C+49.4064122%5D%2C+%5B8.6742192%2C+49.4064122%5D%2C+%5B8.6742192%2C+49.4046213%5D%2C+%5B8.6774288%2C+49.4046213%5D%5D%5D%5D%7D%7D%5D%7D&filter=geometry%3Aline+and+%28highway%3D%2A+or+route%3Dferry+or+railway%3Dplatform+or+%28waterway%3Dlock_gate+and+foot+in+%28yes%2C+designated%2C+official%2C+permissive%29%29%29+and+not+%28footway%3Dseparate+or+sidewalk%3Dseparate+or+sidewalk%3Aboth%3Dseparate+or+%28sidewalk%3Aright%3Dseparate+and+sidewalk%3Aleft%3Dseparate%29+or+%28sidewalk%3Aright%3Dseparate+and+sidewalk%3Aleft%3Dno%29+or+%28sidewalk%3Aright%3Dno+and+sidewalk%3Aleft%3Dseparate%29%29&properties=tags&clipGeometry=True
     headers:
       Accept:
@@ -13,11 +72,11 @@ interactions:
       Content-Type:
       - application/x-www-form-urlencoded
       host:
-      - ohsome-api.test
+      - vcr-secret-url
       user-agent:
       - ohsome-py/0.3.0
     method: POST
-    uri: http://ohsome-api.test/v1/elements/geometry
+    uri: http://vcr-secret-url/v1/elements/geometry
   response:
     body:
       string: "{\n  \"attribution\" : {\n    \"url\" : \"https://ohsome.org/copyrights\",\n
@@ -1274,7 +1333,7 @@ interactions:
       Content-disposition:
       - attachment;filename=ohsome.geojson
       Date:
-      - Mon, 27 Jul 2026 12:49:21 GMT
+      - Thu, 30 Jul 2026 15:16:43 GMT
       Keep-Alive:
       - timeout=5, max=100
       Server:
@@ -1302,11 +1361,11 @@ interactions:
       Content-Type:
       - application/x-www-form-urlencoded
       host:
-      - ohsome-api.test
+      - vcr-secret-url
       user-agent:
       - ohsome-py/0.3.0
     method: POST
-    uri: http://ohsome-api.test/v1/elements/geometry
+    uri: http://vcr-secret-url/v1/elements/geometry
   response:
     body:
       string: "{\n  \"attribution\" : {\n    \"url\" : \"https://ohsome.org/copyrights\",\n
@@ -1380,7 +1439,65 @@ interactions:
       Content-disposition:
       - attachment;filename=ohsome.geojson
       Date:
-      - Mon, 27 Jul 2026 12:49:36 GMT
+      - Thu, 30 Jul 2026 15:17:11 GMT
+      Keep-Alive:
+      - timeout=5, max=100
+      Server:
+      - Apache/2.4.58 (Ubuntu)
+      Strict-Transport-Security:
+      - max-age=63072000; includeSubdomains;
+      Transfer-Encoding:
+      - chunked
+      vary:
+      - accept-encoding
+    status:
+      code: 200
+      message: ''
+- request:
+    body: bpolys=%7B%22type%22%3A+%22FeatureCollection%22%2C+%22features%22%3A+%5B%7B%22id%22%3A+%220%22%2C+%22type%22%3A+%22Feature%22%2C+%22properties%22%3A+%7B%7D%2C+%22geometry%22%3A+%7B%22type%22%3A+%22MultiPolygon%22%2C+%22coordinates%22%3A+%5B%5B%5B%5B8.6774288%2C+49.4046213%5D%2C+%5B8.6774288%2C+49.4064122%5D%2C+%5B8.6742192%2C+49.4064122%5D%2C+%5B8.6742192%2C+49.4046213%5D%2C+%5B8.6774288%2C+49.4046213%5D%5D%5D%5D%7D%7D%5D%7D&filter=geometry%3Apolygon+and+boundary%3Dadministrative+and+admin_level%3D1&properties=tags&clipGeometry=True
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '538'
+      Content-Type:
+      - application/x-www-form-urlencoded
+      host:
+      - vcr-secret-url
+      user-agent:
+      - ohsome-py/0.3.0
+    method: POST
+    uri: http://vcr-secret-url/v1/elements/geometry
+  response:
+    body:
+      string: "{\n  \"attribution\" : {\n    \"url\" : \"https://ohsome.org/copyrights\",\n
+        \   \"text\" : \"\xA9 OpenStreetMap contributors\"\n  },\n  \"apiVersion\"
+        : \"1.10.4\",\n  \"type\" : \"FeatureCollection\",\n  \"features\" : []\n}\n"
+    headers:
+      Access-Control-Allow-Credentials:
+      - 'true'
+      Access-Control-Allow-Headers:
+      - Origin,Accept,X-Requested-With,Content-Type,Access-Control-Request-Method,Access-Control-Request-Headers,Authorization
+      Access-Control-Allow-Methods:
+      - POST, GET
+      Access-Control-Allow-Origin:
+      - '*'
+      Access-Control-Max-Age:
+      - '3600'
+      Connection:
+      - Keep-Alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/geo+json;charset=utf-8
+      Content-disposition:
+      - attachment;filename=ohsome.geojson
+      Date:
+      - Thu, 30 Jul 2026 15:17:31 GMT
       Keep-Alive:
       - timeout=5, max=100
       Server:

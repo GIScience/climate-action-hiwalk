@@ -7,7 +7,8 @@ from climatoology.base.exception import ClimatoologyUserError
 
 
 @pytest.mark.vcr
-def test_get_paths(operator, small_aoi):
+def test_get_paths(operator, small_aoi, parametrized_ohsome_client):
+    operator.ohsome = parametrized_ohsome_client
     required_columns = {
         'osm_id',
         'osm_type',
@@ -29,6 +30,7 @@ def test_get_paths(operator, small_aoi):
 
 
 def test_get_paths_with_erroneous_clipping(operator):
+    # No difference between ohsome v1 and v2
     mocked_paths_response = gpd.read_file('test/resources/ohsome_erroneous_clipping.geojson').rename_geometry('geom')
     operator.ohsome.features_extraction = Mock(return_value=mocked_paths_response)
 
@@ -54,6 +56,7 @@ def test_get_paths_with_erroneous_clipping(operator):
 
 
 def test_get_paths_empty_ohsome_response(operator, default_aoi):
+    # No difference between ohsome v1 and v2
     with patch('walkability.core.operator_worker.fetch_osm_data') as mock:
         mock.return_value = gpd.GeoDataFrame(columns=['osm_id', 'osm_type', 'geometry', 'osm_tags'])
         with pytest.raises(
@@ -65,6 +68,7 @@ def test_get_paths_empty_ohsome_response(operator, default_aoi):
 
 # There are paths in the AOI, but they are removed by path_categorisation because they are in PathCategory.INACCESSIBLE
 def test_get_paths_inaccessible_ohsome_response(default_path_geometry, operator, default_aoi):
+    # No difference between ohsome v1 and v2
     with patch('walkability.core.operator_worker.fetch_osm_data') as mock:
         mock.return_value = gpd.GeoDataFrame(
             data={

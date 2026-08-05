@@ -15,13 +15,13 @@ from walkability.components.utils.misc import PathCategory, PavementQuality
 
 
 @pytest.mark.vcr
-def test_summarise_by_area(operator, small_aoi, small_aoi_paths):
+def test_summarise_by_area(parametrized_ohsome_client, small_aoi, small_aoi_paths):
     computed_charts = summarise_by_area(
         paths=small_aoi_paths,
         aoi=small_aoi,
         admin_level=9,
         projected_crs=CRS.from_user_input(32632),
-        ohsome_client=operator.ohsome,
+        ohsome_client=parametrized_ohsome_client,
     )
 
     assert isinstance(computed_charts, dict)
@@ -32,10 +32,11 @@ def test_summarise_by_area(operator, small_aoi, small_aoi_paths):
     assert computed_charts['Weststadt']['data'][0]['x'] == (100,)
 
 
-def test_summarise_by_area_no_boundaries(operator, default_aoi, default_path_geometry):
+def test_summarise_by_area_no_boundaries(default_ohsome_client_v2, default_aoi, default_path_geometry):
+    # Ohsome response is mocked, so don't parametrize
     empty_boundary_response = gpd.GeoDataFrame(columns=['geom']).set_geometry('geom')
     features_extraction_mock = Mock(return_value=empty_boundary_response)
-    operator.ohsome.features_extraction = features_extraction_mock
+    default_ohsome_client_v2.features_extraction = features_extraction_mock
 
     input_paths = gpd.GeoDataFrame(
         data={
@@ -51,16 +52,17 @@ def test_summarise_by_area_no_boundaries(operator, default_aoi, default_path_geo
         aoi=default_aoi,
         admin_level=9,
         projected_crs=CRS.from_user_input(32632),
-        ohsome_client=operator.ohsome,
+        ohsome_client=default_ohsome_client_v2,
     )
 
     assert computed_charts == dict()
 
 
-def test_summarise_by_area_mixed_geometry_boundaries(operator, default_aoi):
+def test_summarise_by_area_mixed_geometry_boundaries(default_ohsome_client_v2, default_aoi):
+    # Ohsome response is mocked, so don't parametrize
     extracted_features = gpd.read_file('test/resources/ohsome_boundaries_mixed_geometries.geojson')
     features_extraction_mock = Mock(return_value=extracted_features.rename_geometry('geom'))
-    operator.ohsome.features_extraction = features_extraction_mock
+    default_ohsome_client_v2.features_extraction = features_extraction_mock
 
     input_paths = gpd.GeoDataFrame(
         data={
@@ -75,17 +77,18 @@ def test_summarise_by_area_mixed_geometry_boundaries(operator, default_aoi):
         aoi=default_aoi,
         admin_level=9,
         projected_crs=CRS.from_user_input(32632),
-        ohsome_client=operator.ohsome,
+        ohsome_client=default_ohsome_client_v2,
     )
 
     assert len(computed_charts.items()) == 1
     assert isinstance(computed_charts['Innenstadt West'], go.Figure)
 
 
-def test_summarise_by_area_boundaries_no_name(operator, default_aoi, default_path_geometry):
+def test_summarise_by_area_boundaries_no_name(default_ohsome_client_v2, default_aoi, default_path_geometry):
+    # Ohsome response is mocked, so don't parametrize
     extracted_features = gpd.read_file('test/resources/ohsome_admin_response_no_name.geojson')
     features_extraction_mock = Mock(return_value=extracted_features.rename_geometry('geom'))
-    operator.ohsome.features_extraction = features_extraction_mock
+    default_ohsome_client_v2.features_extraction = features_extraction_mock
 
     input_paths = gpd.GeoDataFrame(
         data={
@@ -100,15 +103,14 @@ def test_summarise_by_area_boundaries_no_name(operator, default_aoi, default_pat
         aoi=default_aoi,
         admin_level=9,
         projected_crs=CRS.from_user_input(32632),
-        ohsome_client=operator.ohsome,
+        ohsome_client=default_ohsome_client_v2,
     )
 
     assert computed_charts == dict()
 
 
-@pytest.mark.default_cassette('default_aoi_summarise_by_area.yaml')
 @pytest.mark.vcr
-def test_summarise_by_area_two_path_categories(operator, default_aoi, default_path_geometry):
+def test_summarise_by_area_two_path_categories(parametrized_ohsome_client, default_aoi, default_path_geometry):
     input_paths = gpd.GeoDataFrame(
         data={
             'category': [PathCategory.UNKNOWN, PathCategory.DESIGNATED],
@@ -121,16 +123,15 @@ def test_summarise_by_area_two_path_categories(operator, default_aoi, default_pa
         aoi=default_aoi,
         admin_level=9,
         projected_crs=CRS.from_user_input(32632),
-        ohsome_client=operator.ohsome,
+        ohsome_client=parametrized_ohsome_client,
     )
 
     assert all(chart['data'][0]['name'] == 'Pedestrians Exclusive' for _, chart in computed_charts.items())
     assert all(chart['data'][1]['name'] == 'Unknown' for _, chart in computed_charts.items())
 
 
-@pytest.mark.default_cassette('default_aoi_summarise_by_area.yaml')
 @pytest.mark.vcr
-def test_summarise_by_area_order_by_category_rating(operator, default_aoi, default_path_geometry):
+def test_summarise_by_area_order_by_category_rating(parametrized_ohsome_client, default_aoi, default_path_geometry):
     input_paths = gpd.GeoDataFrame(
         data={
             'category': [PathCategory.UNKNOWN, PathCategory.DESIGNATED, PathCategory.DESIGNATED_SHARED_WITH_BIKES],
@@ -143,7 +144,7 @@ def test_summarise_by_area_order_by_category_rating(operator, default_aoi, defau
         aoi=default_aoi,
         admin_level=9,
         projected_crs=CRS.from_user_input(32632),
-        ohsome_client=operator.ohsome,
+        ohsome_client=parametrized_ohsome_client,
     )
 
     assert all(chart['data'][0]['name'] == 'Bikes' for _, chart in computed_charts.items())

@@ -11,6 +11,7 @@ from ohsome.exceptions import OhsomeException
 from ohsome_py2.client import OhsomeClient
 from pandas.testing import assert_series_equal
 from pydantic_extra_types.color import Color
+from shapely import box
 
 from walkability.components.utils.misc import (
     check_paths_count_limit,
@@ -22,13 +23,13 @@ from walkability.components.utils.misc import (
 
 
 @pytest.mark.vcr
-def test_fetch_osm_data(small_aoi, default_ohsome_client_v1):
+def test_fetch_osm_data(small_aoi, parametrized_ohsome_client):
     # Basic test that could probably be deleted (it is a very short function that just calls external code)
 
     computed_osm_data = fetch_osm_data(
         aoi=small_aoi,
         osm_filter='geometry:polygon and highway=*',
-        ohsome=default_ohsome_client_v1,
+        ohsome=parametrized_ohsome_client,
     )
 
     assert isinstance(computed_osm_data, gpd.GeoDataFrame)
@@ -49,6 +50,7 @@ class MockElements:
 
 @patch.object(OhsomeClient, attribute='features_extraction', new=MockElements())
 def test_fetch_osm_data_ohsome_error(default_aoi, default_ohsome_client_v1):
+    # We won't test this with V2 because it doesn't need the API, just the mocks defined above
     with pytest.raises(ClimatoologyUserError):
         fetch_osm_data(
             aoi=default_aoi,
@@ -72,12 +74,13 @@ def test_ohsome_filter(geometry_type):
 
 
 @pytest.mark.vcr
-def test_check_paths_count_limit(default_aoi, default_ohsome_client_v1):
+def test_check_paths_count_limit(parametrized_ohsome_client):
+    big_aoi = box(8.5, 49.0, 9.0, 49.5)
     with pytest.raises(InputValidationError):
         check_paths_count_limit(
-            aoi=default_aoi,
+            aoi=big_aoi,
             count_limit=5000,
-            ohsome=default_ohsome_client_v1,
+            ohsome=parametrized_ohsome_client,
         )
 
 

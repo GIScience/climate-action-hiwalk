@@ -20,15 +20,15 @@ from walkability.components.utils.geometry import CAN_DEFAULT_CRS
 
 
 @pytest.mark.vcr
-def test_distance_enrich_paths(default_aoi_paths, default_aoi, operator):
+def test_distance_enrich_paths(default_aoi_paths, default_aoi, parametrized_ohsome_client, default_ors_settings):
     """Test distance_enrich_paths with several POIs and with proper isochrones."""
     bins = [100, 200, 300, 400, 500]
     received = distance_enrich_paths(
         paths=default_aoi_paths,
         aoi=default_aoi,
         poi_type=PointsOfInterest.DRINKING_WATER,
-        ohsome_client=operator.ohsome,
-        ors_settings=operator.ors_settings,
+        ohsome_client=parametrized_ohsome_client,
+        ors_settings=default_ors_settings,
         bins=bins,
     )
 
@@ -36,18 +36,20 @@ def test_distance_enrich_paths(default_aoi_paths, default_aoi, operator):
     assert all(received['value'].isin(valid_values))
 
 
-def test_distance_enrich_paths_one_poi(default_aoi_paths, default_aoi, operator):
+def test_distance_enrich_paths_one_poi(default_aoi_paths, default_aoi, default_ohsome_client_v2, default_ors_settings):
     """Test distance_enrich_paths with just one POI returned, and approximate isochrones (i.e. with buffer)."""
+    # Ohsome response is mocked, so don't parametrize
+
     single_poi = gpd.GeoDataFrame(data={'value': [0]}, geometry=[Point(8.70026, 49.40951)], crs=CAN_DEFAULT_CRS)
 
     with patch('walkability.components.comfort.comfort_poi_filters.request_pois', return_value=single_poi):
-        operator.ors_settings.ors_isochrone_max_request_number = 0  # approximate isochrones with a buffer
+        default_ors_settings.ors_isochrone_max_request_number = 0  # approximate isochrones with a buffer
         received = distance_enrich_paths(
             paths=default_aoi_paths,
             aoi=default_aoi,
             poi_type=PointsOfInterest.DRINKING_WATER,
-            ohsome_client=operator.ohsome,
-            ors_settings=operator.ors_settings,
+            ohsome_client=default_ohsome_client_v2,
+            ors_settings=default_ors_settings,
             bins=[50],
         )
 
@@ -55,14 +57,17 @@ def test_distance_enrich_paths_one_poi(default_aoi_paths, default_aoi, operator)
     assert all(received['value'].isin(valid_values))
 
 
-def test_distance_enrich_paths_empty_request(default_aoi_paths, default_aoi, operator, default_ohsome_client_v1):
+def test_distance_enrich_paths_empty_response(
+    default_aoi_paths, default_aoi, default_ors_settings, default_ohsome_client_v2
+):
+    # It doesn't matter which ohsome client we have, because we mock an empty response
     with patch('walkability.components.comfort.comfort_poi_filters.request_pois', return_value=gpd.GeoDataFrame()):
         received = distance_enrich_paths(
             default_aoi_paths,
             default_aoi,
             poi_type=PointsOfInterest.DRINKING_WATER,
-            ohsome_client=default_ohsome_client_v1,
-            ors_settings=operator.ors_settings,
+            ohsome_client=default_ohsome_client_v2,
+            ors_settings=default_ors_settings,
             bins=[100, 200, 300, 400, 500],
         )
     assert all(received['value'].isna())

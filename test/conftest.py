@@ -16,6 +16,7 @@ from botocore import UNSIGNED
 from botocore.config import Config
 from climatoology.base.baseoperator import AoiProperties
 from climatoology.base.computation import ComputationScope
+from dotenv import load_dotenv
 from mobility_tools.settings import ORSSettings
 from moto import mock_aws
 from ohsome_py2.client import OhsomeClient
@@ -34,7 +35,7 @@ from walkability.core.settings import Settings
 
 TEST_RESOURCES_DIR = Path('test/resources')
 
-# load_dotenv()  # To load the `OHSOME_BASE_URL` environment variable, for recording new cassettes
+load_dotenv()  # To load the `OHSOME_BASE_URL` environment variable, for recording new cassettes
 pytest_plugins = ('ohsome_py2.test.fixtures',)
 
 
@@ -149,6 +150,16 @@ def default_settings() -> Settings:
 @pytest.fixture
 def default_ohsome_client_v1():
     return OhsomeClient(user_agent='can-walkability-test', v2=False)
+
+
+@pytest.fixture
+def default_ohsome_client_v2():
+    return OhsomeClient(user_agent='can-walkability-test', v2=True)
+
+
+@pytest.fixture(params=['default_ohsome_client_v2', 'default_ohsome_client_v1'])
+def parametrized_ohsome_client(request):
+    return request.getfixturevalue(request.param)
 
 
 @pytest.fixture
