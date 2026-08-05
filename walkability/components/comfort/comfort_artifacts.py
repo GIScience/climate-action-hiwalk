@@ -101,6 +101,7 @@ def build_isodistance_artifact(
 def clean_data(
     data: gpd.GeoDataFrame, max_walking_distance: float, min_value: float, poi_type: PointsOfInterest
 ) -> gpd.GeoDataFrame:
+    data = data[['value', 'geometry']]
     data['label'] = data.apply(assign_label, poi_type=poi_type, max_walking_distance=max_walking_distance, axis=1)
 
     data = assign_color(data, max_walking_distance=max_walking_distance, min_value=min_value, poi_type=poi_type)

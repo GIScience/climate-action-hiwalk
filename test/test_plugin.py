@@ -29,7 +29,9 @@ def test_plugin_compute_request_minimal(
     small_aoi,
     default_aoi_properties,
     compute_resources,
+    parametrized_ohsome_client,
 ):
+    operator.ohsome = parametrized_ohsome_client
     computed_artifacts = operator.compute(
         resources=compute_resources,
         aoi=small_aoi,
@@ -105,6 +107,7 @@ def test_plugin_compute_request_all_optionals(
     ors_isochrone_api,
     slopes_mock,
 ):
+    # Too complex to test ohsome v2 with mocks
     with (
         open('test/resources/ohsome_admin_response.geojson', 'r') as admin_file,
         open('test/resources/ohsome_drinking_water.geojson', 'r') as drinking_water,

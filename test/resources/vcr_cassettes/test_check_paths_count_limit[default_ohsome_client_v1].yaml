@@ -1,6 +1,6 @@
 interactions:
 - request:
-    body: bpolys=%7B%22type%22%3A+%22FeatureCollection%22%2C+%22features%22%3A+%5B%7B%22id%22%3A+%220%22%2C+%22type%22%3A+%22Feature%22%2C+%22properties%22%3A+%7B%7D%2C+%22geometry%22%3A+%7B%22type%22%3A+%22MultiPolygon%22%2C+%22coordinates%22%3A+%5B%5B%5B%5B12.29%2C+48.2%5D%2C+%5B12.29%2C+48.34%5D%2C+%5B12.48%2C+48.34%5D%2C+%5B12.48%2C+48.2%5D%2C+%5B12.29%2C+48.2%5D%5D%5D%5D%7D%7D%5D%7D&filter=geometry%3Apolygon+and+boundary%3Dadministrative+and+admin_level%3D9&properties=tags&clipGeometry=True
+    body: bpolys=%7B%22type%22%3A+%22FeatureCollection%22%2C+%22features%22%3A+%5B%7B%22id%22%3A+%220%22%2C+%22type%22%3A+%22Feature%22%2C+%22properties%22%3A+%7B%7D%2C+%22geometry%22%3A+%7B%22type%22%3A+%22Polygon%22%2C+%22coordinates%22%3A+%5B%5B%5B9.0%2C+49.0%5D%2C+%5B9.0%2C+49.5%5D%2C+%5B8.5%2C+49.5%5D%2C+%5B8.5%2C+49.0%5D%2C+%5B9.0%2C+49.0%5D%5D%5D%7D%7D%5D%7D&filter=geometry%3Aline+and+%28highway%3D%2A+or+route%3Dferry+or+railway%3Dplatform+or+%28waterway%3Dlock_gate+and+foot+in+%28yes%2C+designated%2C+official%2C+permissive%29%29%29+and+not+%28footway%3Dseparate+or+sidewalk%3Dseparate+or+sidewalk%3Aboth%3Dseparate+or+%28sidewalk%3Aright%3Dseparate+and+sidewalk%3Aleft%3Dseparate%29+or+%28sidewalk%3Aright%3Dseparate+and+sidewalk%3Aleft%3Dno%29+or+%28sidewalk%3Aright%3Dno+and+sidewalk%3Aleft%3Dseparate%29%29
     headers:
       Accept:
       - '*/*'
@@ -9,20 +9,21 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '490'
+      - '813'
       Content-Type:
       - application/x-www-form-urlencoded
       host:
-      - ohsome-api.test
+      - vcr-secret-url
       user-agent:
       - ohsome-py/0.3.0
     method: POST
-    uri: http://ohsome-api.test/v1/elements/geometry
+    uri: http://vcr-secret-url/v1/elements/count
   response:
     body:
       string: "{\n  \"attribution\" : {\n    \"url\" : \"https://ohsome.org/copyrights\",\n
         \   \"text\" : \"\xA9 OpenStreetMap contributors\"\n  },\n  \"apiVersion\"
-        : \"1.10.4\",\n  \"type\" : \"FeatureCollection\",\n  \"features\" : []\n}\n"
+        : \"1.10.4\",\n  \"result\" : [ {\n    \"timestamp\" : \"2026-06-19T10:00:00Z\",\n
+        \   \"value\" : 175151.0\n  } ]\n}"
     headers:
       Access-Control-Allow-Credentials:
       - 'true'
@@ -34,16 +35,16 @@ interactions:
       - '*'
       Access-Control-Max-Age:
       - '3600'
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
       Connection:
       - Keep-Alive
       Content-Encoding:
       - gzip
       Content-Type:
-      - application/geo+json;charset=utf-8
-      Content-disposition:
-      - attachment;filename=ohsome.geojson
+      - application/json
       Date:
-      - Mon, 27 Jul 2026 15:30:14 GMT
+      - Thu, 30 Jul 2026 14:38:24 GMT
       Keep-Alive:
       - timeout=5, max=100
       Server:

@@ -37,7 +37,7 @@ def compute_slope_analysis(
         raise ClimatoologyUserError('No linear paths to calculate slope for.')
 
     # Calculate the slope for each path segment.
-    paths_with_slopes = get_paths_slopes(line_string_paths, s3settings, segment_length=15)
+    paths_with_slopes = get_paths_slopes(line_string_paths, s3settings, segment_length=15, id_col='osm_id')
     paths_with_slopes['slope'] = paths_with_slopes['slope'].abs()
 
     smoothed_slopes = merge_similar_slopes(paths_with_slopes)

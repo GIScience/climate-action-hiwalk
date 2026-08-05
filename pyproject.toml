@@ -12,14 +12,13 @@ dependencies = [
     "pydantic-settings (>=2.1.0,<3.0.0)",
     "shapely (>=2.0.2,<3.0.0)",
     "pyyaml (>=6.0.1,<7.0.0)",
-    "ohsome (>=0.4.0,<1.0.0)",
     "matplotlib (>=3.8.3,<4.0.0)",
     "pytest (>=9.0.0,<10.0.0)",
     "openrouteservice (>=2.3.3,<3.0.0)",
     "h3pandas (>=0.3.0,<1.0.0)",
     "numpy (>=2.3.3,<3.0.0)",
-    "mobility-tools @ git+https://gitlab.heigit.org/climate-action/utilities/mobility-tools.git@2.0.2",
-    "ohsome-py2 @ git+https://gitlab.heigit.org/climate-action/utilities/ohsome-py2.git@0.2.0",
+    "mobility-tools @ git+https://gitlab.heigit.org/climate-action/utilities/mobility-tools.git@2.0.3",
+    "ohsome-py2 @ git+https://gitlab.heigit.org/climate-action/utilities/ohsome-py2.git@0.2.1",
     "boto3 (>=1.40.7)",
     "botocore (>=1.40.7)",
     "rasterio (>=1.5.0,<2.0.0)"
@@ -35,6 +34,7 @@ pytest-recording = "^0.13.4"
 approvaltests = "^18.0.1"
 pytest-approvaltests = "^0.2.4"
 moto = "^5.2.1"
+python-dotenv = "^1.2.2"
 
 
 [tool.poetry.group.dev.dependencies]

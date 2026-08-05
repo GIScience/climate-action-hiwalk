@@ -62,19 +62,19 @@ def request_pois(aoi: shapely.MultiPolygon, poi: PointsOfInterest, ohsome_client
 def get_ohsome_filter(poi: PointsOfInterest):
     match poi:
         case PointsOfInterest.DRINKING_WATER:
-            return '(amenity=drinking_water or drinking_water=yes) and not access in (private, no, customers)'
+            return '(amenity=drinking_water or drinking_water=yes) and not (access=private or access=no or access=customers)'  # workaround for https://github.com/GIScience/ohsome-filter-to-sql/pull/44
         case PointsOfInterest.SEATING:
             return str(
                 '(amenity=bench '
                 'or amenity=table or amenity=lounger or tourism=picnic_site '
                 'or ((amenity=shelter or public_transport=platform or highway=bus_stop) and bench=yes) '
                 'or (leisure=picnic_table and not bench=no)) '
-                'and (not "bench:type"=stand_up) and not access in (private, no, customers) and (not seasonal=yes)'
+                'and (not "bench:type"=stand_up) and not (access=private or access=no or access=customers) and (not seasonal=yes)'
             )
         case PointsOfInterest.PUBLIC_TOILET:
             return str(
                 'amenity=toilets '
-                'and not access in (private, no, customers, destination, permit) '
+                'and not (access=private or access=no or access=customers or access=destination or access=permit) '
                 'and not locked=* and not centralkey=* and not seasonal=yes'
             )
         case PointsOfInterest.SHELTERED_BENCH:
@@ -84,7 +84,7 @@ def get_ohsome_filter(poi: PointsOfInterest):
                 'or ((highway=bus_stop or public_transport=platform) and (covered=yes or shelter=yes) and bench=yes) '
                 'or (leisure=picnic_table and not bench=no and (covered=yes or shelter=yes)) '
                 'or (tourism=picnic_site and (covered=yes or shelter=yes))) '
-                'and (not "bench:type"=stand_up) and not access in (private, no, customers) and (not seasonal=yes)'
+                'and (not "bench:type"=stand_up) and not (access=private or access=no or access=customers) and (not seasonal=yes)'
             )
         case _:
             raise NotImplementedError('POI type has no ohsome filter')
