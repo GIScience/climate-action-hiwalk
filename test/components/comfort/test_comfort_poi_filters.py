@@ -105,7 +105,7 @@ def test_real_isochrones_one_bin_failure(default_ors_settings):
 
     with responses.RequestsMock(registry=OrderedRegistry) as mock:
         mock.post(
-            'http://vcr-secret-url/v2/isochrones/foot-walking/geojson',
+            'https://api.openrouteservice.org/v2/isochrones/foot-walking/geojson',
             json={
                 'error': {'code': 3099, 'message': 'Unable to build an isochrone map.'},
             },
@@ -113,10 +113,10 @@ def test_real_isochrones_one_bin_failure(default_ors_settings):
         )
 
         mock.post(
-            'http://vcr-secret-url/v2/isochrones/foot-walking/geojson',
+            'https://api.openrouteservice.org/v2/isochrones/foot-walking/geojson',
             body=working_isochrones,
         )
-        mock.post('http://vcr-secret-url/v2/isochrones/foot-walking/geojson', body=working_isochrones)
+        mock.post('https://api.openrouteservice.org/v2/isochrones/foot-walking/geojson', body=working_isochrones)
 
         received = real_isochrones(pois=pois, bins=[0, 1, 2], ors_settings=ors_settings_low_batch)
 

@@ -45,6 +45,7 @@ def vcr_config(vcr_config_ohsomepy2):
         {
             'filter_headers': ['authorization'],
             'cassette_library_dir': 'test/resources/vcr_cassettes',
+            'match_on': ['method', 'scheme', 'host', 'port', 'path', 'query', 'body'],
         }
     )
 
@@ -165,8 +166,10 @@ def parametrized_ohsome_client(request):
 
 @pytest.fixture
 def default_ors_settings() -> ORSSettings:
-    # This secret url comes from the vcr_config fixture
-    return ORSSettings(ors_base_url='http://vcr-secret-url', ors_api_key='test-key')
+    ors_settings = ORSSettings()
+    if ors_settings.ors_api_key is None:
+        ors_settings.ors_api_key = 'test-api-key'
+    return ors_settings
 
 
 @pytest.fixture

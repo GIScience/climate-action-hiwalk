@@ -1,6 +1,6 @@
 interactions:
 - request:
-    body: bpolys=%7B%22type%22%3A+%22FeatureCollection%22%2C+%22features%22%3A+%5B%7B%22id%22%3A+%220%22%2C+%22type%22%3A+%22Feature%22%2C+%22properties%22%3A+%7B%7D%2C+%22geometry%22%3A+%7B%22type%22%3A+%22Polygon%22%2C+%22coordinates%22%3A+%5B%5B%5B8.6774288%2C+49.4046213%5D%2C+%5B8.6774288%2C+49.4064122%5D%2C+%5B8.6742192%2C+49.4064122%5D%2C+%5B8.6742192%2C+49.4046213%5D%2C+%5B8.6774288%2C+49.4046213%5D%5D%5D%7D%7D%5D%7D&filter=geometry%3Apolygon+and+highway%3D%2A&properties=tags&clipGeometry=True
+    body: bpolys=%7B%22type%22%3A+%22FeatureCollection%22%2C+%22features%22%3A+%5B%7B%22id%22%3A+%220%22%2C+%22type%22%3A+%22Feature%22%2C+%22properties%22%3A+%7B%7D%2C+%22geometry%22%3A+%7B%22type%22%3A+%22MultiPolygon%22%2C+%22coordinates%22%3A+%5B%5B%5B%5B8.6774288%2C+49.4046213%5D%2C+%5B8.6774288%2C+49.4064122%5D%2C+%5B8.6742192%2C+49.4064122%5D%2C+%5B8.6742192%2C+49.4046213%5D%2C+%5B8.6774288%2C+49.4046213%5D%5D%5D%5D%7D%7D%5D%7D&filter=geometry%3Apolygon+and+highway%3D%2A&properties=tags&clipGeometry=True
     headers:
       Accept:
       - '*/*'
@@ -9,15 +9,13 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '495'
+      - '506'
       Content-Type:
       - application/x-www-form-urlencoded
-      host:
-      - ohsome-api.test
       user-agent:
       - ohsome-py/0.3.0
     method: POST
-    uri: http://ohsome-api.test/v1/elements/geometry
+    uri: https://api.ohsome.org/v1/elements/geometry
   response:
     body:
       string: "{\n  \"attribution\" : {\n    \"url\" : \"https://ohsome.org/copyrights\",\n
@@ -41,7 +39,7 @@ interactions:
         \           49.4046213\n          ],\n          [\n            8.6754678,\n
         \           49.4046213\n          ]\n        ]\n      ]\n    },\n    \"properties\"
         : {\n      \"@osmId\" : \"relation/19646776\",\n      \"@snapshotTimestamp\"
-        : \"2026-06-19T10:00:00Z\",\n      \"highway\" : \"pedestrian\",\n      \"layer\"
+        : \"2026-07-27T09:00:00Z\",\n      \"highway\" : \"pedestrian\",\n      \"layer\"
         : \"-1\",\n      \"lit\" : \"yes\",\n      \"name\" : \"Willy-Brandt-Platz\",\n
         \     \"name:etymology:wikidata\" : \"Q2514\",\n      \"smoothness\" : \"good\",\n
         \     \"surface\" : \"asphalt\",\n      \"type\" : \"multipolygon\"\n    }\n
@@ -67,7 +65,7 @@ interactions:
         \           49.4052102\n          ],\n          [\n            8.6757496,\n
         \           49.4052204\n          ]\n        ]\n      ]\n    },\n    \"properties\"
         : {\n      \"@osmId\" : \"way/729103081\",\n      \"@snapshotTimestamp\" :
-        \"2026-06-19T10:00:00Z\",\n      \"area\" : \"yes\",\n      \"covered\" :
+        \"2026-07-27T09:00:00Z\",\n      \"area\" : \"yes\",\n      \"covered\" :
         \"yes\",\n      \"highway\" : \"pedestrian\",\n      \"level\" : \"0\",\n
         \     \"lit\" : \"24/7\",\n      \"name\" : \"Kurf\xFCrsten-Passage\",\n      \"smoothness\"
         : \"excellent\",\n      \"surface\" : \"paving_stones\"\n    }\n  }]\n}\n"
@@ -91,7 +89,7 @@ interactions:
       Content-disposition:
       - attachment;filename=ohsome.geojson
       Date:
-      - Tue, 28 Jul 2026 11:04:16 GMT
+      - Wed, 12 Aug 2026 10:01:24 GMT
       Keep-Alive:
       - timeout=5, max=100
       Server:
