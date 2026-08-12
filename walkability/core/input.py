@@ -5,8 +5,6 @@ from pydantic import BaseModel, Field
 
 from walkability.core.settings import FeatureFlags
 
-feature_flags = FeatureFlags()
-
 
 class WalkabilityIndicators(Enum):
     SLOPE = 'Slope'
@@ -18,6 +16,17 @@ class WalkabilityIndicators(Enum):
     TACTILE_PAVING = 'Tactile Paving'
 
 
+# These indicators will not be available for selection if `FEATURE_FLAG_EXPERIMENTAL=False`
+EXPERIMENTAL_INDICATORS = {WalkabilityIndicators.TACTILE_PAVING}
+
+feature_flags = FeatureFlags()
+optional_indicators_schema = None
+if not feature_flags.experimental:
+    optional_indicators_schema = {
+        'enum': [opt.value for opt in WalkabilityIndicators if opt not in EXPERIMENTAL_INDICATORS]
+    }
+
+
 class ComputeInputWalkability(BaseModel):
     optional_indicators: Set[WalkabilityIndicators] = Field(
         title='Optional indicators',
@@ -26,11 +35,5 @@ class ComputeInputWalkability(BaseModel):
         examples=[set()],
         default=set(),
         # Override the json schema to hide the shade option if the feature flag is not activated
-        json_schema_extra={
-            'enum': [
-                opt.value
-                for opt in WalkabilityIndicators
-                if (opt != WalkabilityIndicators.SHADE or feature_flags.shade)
-            ]
-        },
+        json_schema_extra=optional_indicators_schema,
     )

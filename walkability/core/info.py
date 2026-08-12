@@ -4,16 +4,17 @@ from pathlib import Path
 
 from climatoology.base.plugin_info import Concern, CustomAOI, PluginAuthor, PluginInfo, generate_plugin_info
 
-from walkability.core.input import ComputeInputWalkability, WalkabilityIndicators
-from walkability.core.settings import FeatureFlags
-
-feature_flags = FeatureFlags()
+from walkability.core.input import EXPERIMENTAL_INDICATORS, ComputeInputWalkability, WalkabilityIndicators
 
 log = logging.getLogger(__name__)
 
 
-def get_info() -> PluginInfo:
-    methodology_path = Path('resources/info/methodology.md')
+def get_info(*, feature_flag_experimental: bool) -> PluginInfo:
+    exclude_indicators = {WalkabilityIndicators.SLOPE}
+    if not feature_flag_experimental:
+        exclude_indicators = exclude_indicators.union(EXPERIMENTAL_INDICATORS)
+
+    demo_optional_indicators = set(WalkabilityIndicators).difference(exclude_indicators)
 
     info = generate_plugin_info(
         name='hiWalk',
@@ -68,17 +69,8 @@ def get_info() -> PluginInfo:
         concerns={Concern.MOBILITY_PEDESTRIAN},
         purpose=Path('resources/info/purpose.md'),
         teaser='Assess the safety, comfort, and quality of walkable infrastructure in an area of interest.',
-        methodology=methodology_path,
-        demo_input_parameters=ComputeInputWalkability(
-            optional_indicators={
-                WalkabilityIndicators.NATURALNESS,
-                WalkabilityIndicators.DETOURS,
-                WalkabilityIndicators.COMFORT,
-                WalkabilityIndicators.SHADE,
-                WalkabilityIndicators.LIGHT,
-                WalkabilityIndicators.TACTILE_PAVING,
-            }
-        ),
+        methodology=Path('resources/info/methodology.md'),
+        demo_input_parameters=ComputeInputWalkability(optional_indicators=demo_optional_indicators),
         demo_aoi=CustomAOI(name='Heidelberg', path='resources/info/heidelberg_aoi.geojson'),
         computation_shelf_life=timedelta(weeks=24),
     )

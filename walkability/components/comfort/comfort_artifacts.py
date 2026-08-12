@@ -24,15 +24,20 @@ def compute_comfort_artifacts(
     max_walking_distance_map: dict[PointsOfInterest, float],
     ohsome_client: OhsomeClient,
     ors_settings: ORSSettings,
+    feature_flag_experimental: bool,
     resources: ComputationResources,
 ) -> list[Artifact]:
     artifacts = []
-    for poi_type in [
+
+    poi_types = [
         PointsOfInterest.DRINKING_WATER,
         PointsOfInterest.SEATING,
         PointsOfInterest.PUBLIC_TOILET,
-        PointsOfInterest.SHELTERED_BENCH,
-    ]:
+    ]
+    if feature_flag_experimental:
+        poi_types.append(PointsOfInterest.SHELTERED_BENCH)
+
+    for poi_type in poi_types:
         log.debug(f'Computing Comfort for {poi_type}')
         max_walking_distance = max_walking_distance_map[poi_type]
         bin_size = int(max_walking_distance / N_BINS)

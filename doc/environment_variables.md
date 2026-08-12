@@ -12,12 +12,14 @@ For a full list of options please see the [documentation in climatoology](https:
 ## `.env`
 This file contains miscellaneous settings, including options for the Naturalness Utility.
 
-| Variable           | Description                                                                                                | Required | Default |
-|--------------------|------------------------------------------------------------------------------------------------------------|----------|---------|
-| `NATURALNESS_HOST` | Host for the [Naturalness Utility](https://gitlab.heigit.org/climate-action/utilities/naturalness-utility) | True     | -       |
-| `NATURALNESS_PORT` | Port for the Naturalness Utility                                                                           | True     | -       |
-| `NATURALNESS_PATH` | URL path to the Naturalness api endpoint                                                                   | True     | -       |
-| `MAX_PATH_LIMIT`   | If number of paths in the AOI exceeds this limit, computation is aborted                                   | False    | 100000  |
+| Variable               | Description                                                                                                | Required | Default |
+| ---------------------- | ---------------------------------------------------------------------------------------------------------- | -------- | ------- |
+| `NATURALNESS_HOST`     | Host for the [Naturalness Utility](https://gitlab.heigit.org/climate-action/utilities/naturalness-utility) | True     | -       |
+| `NATURALNESS_PORT`     | Port for the Naturalness Utility                                                                           | True     | -       |
+| `NATURALNESS_PATH`     | URL path to the Naturalness api endpoint                                                                   | True     | -       |
+| `MAX_PATH_LIMIT`       | If number of paths in the AOI exceeds this limit, computation is aborted                                   | False    | 100000  |
+| `FEATURE_FLAG_OHSOME2` | If `True`, uses the ohsome2 API, and `OHSOME_BASE_URL` must also be set                                    | False    | False   |
+| `OHSOME_BASE_URL`      | The base url for connection to the ohsome2 API. Only used if `FEATURE_FLAG_OHSOME2==True`                  | False    | -       |
 
 ## `.env.ors`
 This file contains options pertaining to the [openrouteservice](https://openrouteservice.org/)(ORS).
@@ -25,7 +27,7 @@ The options are defined in [mobility-tools](https://gitlab.heigit.org/climate-ac
 
 
 | Variable                            | Description                                                           | Required                             | Default |
-|-------------------------------------|-----------------------------------------------------------------------|--------------------------------------|---------|
+| ----------------------------------- | --------------------------------------------------------------------- | ------------------------------------ | ------- |
 | `ORS_BASE_URL`                      | URL of the ORS api if you do not want to use the public ORS api       | False                                | `None`  |
 | `ORS_API_KEY`                       | API key for the ORS api                                               | only for public openrouteservice API | `None`  |
 | `ORS_SNAPPING_RATE_LIMIT`           | Quota for snapping endpoint requests to the ORS                       | False                                | 100     |
@@ -42,7 +44,7 @@ The options are defined in [mobility-tools](https://gitlab.heigit.org/climate-ac
 Some defaults are defined in `.env.s3_template` and can be copied over.
 
 | Variable              | Description                                              | Required | Default |
-|-----------------------|----------------------------------------------------------|----------|---------|
+| --------------------- | -------------------------------------------------------- | -------- | ------- |
 | `S3_ENDPOINT`         | Endpoint to s3 storage with pmtile elevation data        | True     | -       |
 | `S3_ACCESS_KEY`       | Access key for s3 storage                                | True     | -       |
 | `S3_SECRET_KEY`       | Secret key for s3 storage                                | True     | -       |
@@ -52,9 +54,10 @@ Some defaults are defined in `.env.s3_template` and can be copied over.
 | `S3_DEFAULT_FILENAME` | Filename for the global fallback elevation pmtiles in s3 | True     | -       |
 
 ## `.env.feature`
-Feature flags can be set in this file.
-The possible feature flags are defined in the [settings](../walkability/core/settings.py).
 
-| Variable              | Description                            | Required | Default |
-|-----------------------|----------------------------------------|----------|---------|
-| `FEATURE_FLAG_SHADE`  | Feature flag to enable shade indicator | False    | `False` |
+Feature flags can be set in this file. The possible feature flags are defined in the
+[settings](../walkability/core/settings.py).
+
+| Variable                                      | Description                                             | Required | Default |
+| --------------------------------------------- | ------------------------------------------------------- | -------- | ------- |
+| `EXPERIMENTAL` or `FEATURE_FLAG_EXPERIMENTAL` | If `True` include all experimental features and results | False    | False   |

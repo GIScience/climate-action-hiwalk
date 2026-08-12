@@ -53,6 +53,7 @@ class OperatorWalkability(BaseOperator[ComputeInputWalkability]):
         s3_settings: S3Settings,
         shade_config: S3ShadeConfig,
         max_path_limit: int,
+        feature_flag_experimental: bool,
     ):
         super().__init__()
         self.naturalness_utility = naturalness_utility
@@ -92,8 +93,10 @@ class OperatorWalkability(BaseOperator[ComputeInputWalkability]):
 
         self.max_path_limit = max_path_limit
 
+        self.feature_flag_experimental = feature_flag_experimental
+
     def info(self) -> PluginInfo:
-        return get_info()
+        return get_info(feature_flag_experimental=self.feature_flag_experimental)
 
     def compute(  # dead: disable
         self,
@@ -192,6 +195,7 @@ class OperatorWalkability(BaseOperator[ComputeInputWalkability]):
                     max_walking_distance_map=self.max_walking_distance_map,
                     ohsome_client=self.ohsome,
                     ors_settings=self.ors_settings,
+                    feature_flag_experimental=self.feature_flag_experimental,
                     resources=resources,
                 )
                 artifacts.extend(comfort_artifacts)
