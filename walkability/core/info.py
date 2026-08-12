@@ -13,10 +13,7 @@ log = logging.getLogger(__name__)
 
 
 def get_info() -> PluginInfo:
-    if feature_flags.shade:
-        methodology_path = Path('resources/info/methodology_shade.md')
-    else:
-        methodology_path = Path('resources/info/methodology.md')
+    methodology_path = Path('resources/info/methodology.md')
 
     info = generate_plugin_info(
         name='hiWalk',
