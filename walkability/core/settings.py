@@ -1,5 +1,6 @@
 from typing import Optional
 
+from pydantic import AliasChoices, Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -16,6 +17,10 @@ class Settings(BaseSettings):
 
 
 class FeatureFlags(BaseSettings):
-    shade: bool = False
+    experimental: bool = Field(
+        default=False,
+        description='Whether to turn on experimental features and results',
+        alias=AliasChoices('EXPERIMENTAL', 'FEATURE_FLAG_EXPERIMENTAL'),
+    )
 
-    model_config = SettingsConfigDict(env_file='.env.feature', env_prefix='feature_flag_')  # dead: disable
+    model_config = SettingsConfigDict(env_file='.env.feature')  # dead: disable

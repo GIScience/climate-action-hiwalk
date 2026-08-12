@@ -133,6 +133,7 @@ def operator(
             s3_settings=None,
             shade_config=default_shade_config,
             max_path_limit=100000,
+            feature_flag_experimental=True,
         )  # type: ignore
 
 

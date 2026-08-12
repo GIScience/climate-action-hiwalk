@@ -6,7 +6,7 @@ from mobility_tools.settings import ORSSettings, S3Settings
 
 from walkability.components.shade.utility.config import S3ShadeConfig
 from walkability.core.operator_worker import OperatorWalkability
-from walkability.core.settings import Settings
+from walkability.core.settings import FeatureFlags, Settings
 
 log = logging.getLogger(__name__)
 
@@ -16,6 +16,7 @@ def init_plugin(
     initialised_ors_settings: ORSSettings,
     s3_settings: S3Settings,
     shade_config: S3ShadeConfig,
+    feature_flags: FeatureFlags,
 ) -> int | None:
     naturalness_utility = NaturalnessUtility(
         base_url=f'http://{initialised_settings.naturalness_host}:{initialised_settings.naturalness_port}{initialised_settings.naturalness_path}',
@@ -28,6 +29,7 @@ def init_plugin(
         s3_settings=s3_settings,
         shade_config=shade_config,
         max_path_limit=initialised_settings.max_path_limit,
+        feature_flag_experimental=feature_flags.experimental,
     )
 
     log.info(f'Starting plugin: {operator.info().name}')
@@ -41,11 +43,13 @@ if __name__ == '__main__':
     shade_config = S3ShadeConfig(cache_dir='cache/tree_canopies')
     ors_settings = ORSSettings()
     s3_settings = S3Settings()  # type: ignore
+    feature_flag_settings = FeatureFlags()
 
     exit_code = init_plugin(
         initialised_settings=settings,
         initialised_ors_settings=ors_settings,
         s3_settings=s3_settings,
         shade_config=shade_config,
+        feature_flags=feature_flag_settings,
     )
     log.info(f'Plugin exited with exit code {exit_code}')
