@@ -5,13 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project mostly adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://gitlab.heigit.org/climate-action/plugins/walkability/-/compare/4.1.1...main)
+## [Unreleased](https://gitlab.heigit.org/climate-action/plugins/walkability/-/compare/4.2.0...main)
+
+## [4.2.0](https://gitlab.heigit.org/climate-action/plugins/walkability/-/releases/4.2.0) - 2026-08-12
 
 ### Added
-- \[Experimental\] An indicator mapping out the locations and walking distances to sheltered benches ([#331](https://gitlab.heigit.org/climate-action/plugins/walkability/-/work_items/331))
 - Add average value to the detour factor histogram artifact ([#361](https://gitlab.heigit.org/climate-action/plugins/walkability/-/work_items/361))
+- Option to use ohsome API v2 (by setting `FEATURE_FLAG_OHSOME2` and `OHSOME_BASE_URL`) ([#360](https://gitlab.heigit.org/climate-action/plugins/walkability/-/work_items/360))
+- `FEATURE_FLAG_EXPERIMENTAL` environment variable to enable development of experimental features without always deploying them ([#374](https://gitlab.heigit.org/climate-action/plugins/walkability/-/work_items/374))
+- \[Experimental\] An indicator mapping out the locations and walking distances to sheltered benches ([#331](https://gitlab.heigit.org/climate-action/plugins/walkability/-/work_items/331))
 - \[Experimental\] Add tactile paving paths as an optional indicator ([#323](https://gitlab.heigit.org/climate-action/plugins/walkability/-/work_items/323))
-- `FEATURE_FLAG_EXPERIMENTAL` environment variable to enable running experimental features in devel/staging but not prod ([#374](https://gitlab.heigit.org/climate-action/plugins/walkability/-/work_items/374))
 
 ### Fixed
 - Remove the tree shade indicator from the comfort tag list ([#356](https://gitlab.heigit.org/climate-action/plugins/walkability/-/work_items/356))
@@ -19,13 +22,12 @@ and this project mostly adheres to [Semantic Versioning](https://semver.org/spec
 - Define a fixed scale for the detour factor chart and change the histogram to a bar chart ([#365](https://gitlab.heigit.org/climate-action/plugins/walkability/-/work_items/365))
 
 ### Changed
-- Use internal `ohsome-py2` library to query from ohsome API v1, to ease the migration to ohsome API v2 ([#360](https://gitlab.heigit.org/climate-action/plugins/walkability/-/work_items/360))
 - Demo computation uses smaller AOI, but includes all optional indicators except for slope ([#382](https://gitlab.heigit.org/climate-action/plugins/walkability/-/work_items/382))
 - Update methodology with latest optional indicators ([#386](https://gitlab.heigit.org/climate-action/plugins/walkability/-/work_items/386))
 
 ### Removed
-- methodology_shade.md that was used only if shade feature flag was on ([#386](https://gitlab.heigit.org/climate-action/plugins/walkability/-/work_items/386))
 - `FEATURE_FLAG_SHADE` as an environment variable, because shade is now stable on prod ([#374](https://gitlab.heigit.org/climate-action/plugins/walkability/-/work_items/374))
+- methodology_shade.md that was used only if shade feature flag was on ([#386](https://gitlab.heigit.org/climate-action/plugins/walkability/-/work_items/386))
 
 
 ## [4.1.1](https://gitlab.heigit.org/climate-action/plugins/walkability/-/releases/4.1.1) - 2026-07-22
