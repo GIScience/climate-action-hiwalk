@@ -20,6 +20,10 @@ and this project mostly adheres to [Semantic Versioning](https://semver.org/spec
 ### Changed
 - Use internal `ohsome-py2` library to query from ohsome API v1, to ease the migration to ohsome API v2 ([#360](https://gitlab.heigit.org/climate-action/plugins/walkability/-/work_items/360))
 - Demo computation uses smaller AOI, but includes all optional indicators except for slope ([#382](https://gitlab.heigit.org/climate-action/plugins/walkability/-/work_items/382))
+- Update methodology with latest optional indicators ([#386](https://gitlab.heigit.org/climate-action/plugins/walkability/-/work_items/386))
+
+### Removed
+- methodology_shade.md that was used only if shade feature flag was on ([#386](https://gitlab.heigit.org/climate-action/plugins/walkability/-/work_items/386))
 
 
 ## [4.1.1](https://gitlab.heigit.org/climate-action/plugins/walkability/-/releases/4.1.1) - 2026-07-22
