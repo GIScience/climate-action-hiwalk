@@ -2,7 +2,7 @@ import logging
 from datetime import timedelta
 from pathlib import Path
 
-from climatoology.base.plugin_info import Concern, PluginAuthor, PluginInfo, generate_plugin_info
+from climatoology.base.plugin_info import Concern, CustomAOI, PluginAuthor, PluginInfo, generate_plugin_info
 
 from walkability.core.input import ComputeInputWalkability, WalkabilityIndicators
 from walkability.core.settings import FeatureFlags
@@ -72,7 +72,17 @@ def get_info() -> PluginInfo:
         purpose=Path('resources/info/purpose.md'),
         teaser='Assess the safety, comfort, and quality of walkable infrastructure in an area of interest.',
         methodology=methodology_path,
-        demo_input_parameters=ComputeInputWalkability(optional_indicators={e for e in WalkabilityIndicators}),
+        demo_input_parameters=ComputeInputWalkability(
+            optional_indicators={
+                WalkabilityIndicators.NATURALNESS,
+                WalkabilityIndicators.DETOURS,
+                WalkabilityIndicators.COMFORT,
+                WalkabilityIndicators.SHADE,
+                WalkabilityIndicators.LIGHT,
+                WalkabilityIndicators.TACTILE_PAVING,
+            }
+        ),
+        demo_aoi=CustomAOI(name='Heidelberg', path='resources/info/heidelberg_aoi.geojson'),
         computation_shelf_life=timedelta(weeks=24),
     )
     log.info(f'Return info {info.model_dump()}')
