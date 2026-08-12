@@ -2334,7 +2334,7 @@ urllib3 = ">=2.5.0,<3.0.0"
 
 [[package]]
 name = "ohsome-py2"
-version = "0.2.1"
+version = "0.2.2"
 description = "Basic Python wrappers for querying data from ohsome API v2"
 optional = false
 python-versions = ">=3.13"
@@ -2353,8 +2353,8 @@ shapely = ">=2.1.2"
 [package.source]
 type = "git"
 url = "https://gitlab.heigit.org/climate-action/utilities/ohsome-py2.git"
-reference = "0.2.1"
-resolved_reference = "65cf5ccace44c41b72472977ed9d171226414fd5"
+reference = "0.2.2"
+resolved_reference = "3b8f0c95e9b56c6df1bbf54b8924ef1d55f0452f"
 
 [[package]]
 name = "openrouteservice"
@@ -4541,4 +4541,4 @@ files = [
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.13.5,<3.14"
-content-hash = "38c7ca328d60cc7ddf03b3f544ce58adfd080267b25acc1f62481f66f303d92f"
+content-hash = "42fe04051e45b3b0c3c3d0ca1ae521464c6b562fea0a10706abd8f15631acadb"

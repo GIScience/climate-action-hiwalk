@@ -18,22 +18,22 @@ interactions:
       content-type:
       - application/json
       host:
-      - vcr-secret-url
+      - http://ohsome-secret-url
       user-agent:
       - can-walkability-test
     method: POST
-    uri: http://vcr-secret-url/ohsome-api/v2/stats/features/count.json
+    uri: http://ohsome-secret-url/stats/features/count.json
   response:
     body:
-      string: "{\"apiVersion\":\"2.0.0a5\",\"attribution\":{\"url\":\"https://ohsome.org/copyrights\",\"text\":\"\xA9
-        OpenStreetMap contributors\"},\"result\":{\"timestamp\":[\"2007-10-08T00:00:00Z\",\"2026-07-30T14:36:47Z\"],\"value\":[2382,175628]}}"
+      string: "{\"apiVersion\":\"2.0.0a6\",\"attribution\":{\"url\":\"https://ohsome.org/copyrights\",\"text\":\"\xA9
+        OpenStreetMap contributors\"},\"result\":{\"timestamp\":[\"2007-10-08T00:00:00Z\",\"2026-08-12T09:59:56Z\"],\"value\":[2382,175748]}}"
     headers:
       content-length:
       - '210'
       content-type:
       - application/json
       date:
-      - Thu, 30 Jul 2026 14:38:15 GMT
+      - Wed, 12 Aug 2026 10:01:24 GMT
       server:
       - uvicorn
     status:

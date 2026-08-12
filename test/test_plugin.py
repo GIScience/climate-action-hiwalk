@@ -94,7 +94,7 @@ def ors_isochrone_api(responses_mock):
     with open('test/resources/ors_isochrones.geojson', 'r') as isochrones:
         isochrones_body = isochrones.read()
 
-    responses_mock.post('http://vcr-secret-url/v2/isochrones/foot-walking/geojson', body=isochrones_body)
+    responses_mock.post('https://api.openrouteservice.org/v2/isochrones/foot-walking/geojson', body=isochrones_body)
 
 
 def test_plugin_compute_request_all_optionals(
