@@ -4,7 +4,7 @@ from pathlib import Path
 
 from climatoology.base.plugin_info import Concern, PluginAuthor, PluginInfo, generate_plugin_info
 
-from walkability.core.input import ComputeInputWalkability
+from walkability.core.input import ComputeInputWalkability, WalkabilityIndicators
 from walkability.core.settings import FeatureFlags
 
 feature_flags = FeatureFlags()
@@ -72,7 +72,7 @@ def get_info() -> PluginInfo:
         purpose=Path('resources/info/purpose.md'),
         teaser='Assess the safety, comfort, and quality of walkable infrastructure in an area of interest.',
         methodology=methodology_path,
-        demo_input_parameters=ComputeInputWalkability(),
+        demo_input_parameters=ComputeInputWalkability(optional_indicators={e for e in WalkabilityIndicators}),
         computation_shelf_life=timedelta(weeks=24),
     )
     log.info(f'Return info {info.model_dump()}')
