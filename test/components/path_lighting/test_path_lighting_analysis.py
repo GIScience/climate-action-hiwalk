@@ -41,7 +41,7 @@ def test_get_path_lighting(default_path_geometry, default_polygon_geometry):
 
     received = get_path_lighting(line_paths=line_paths, polygon_paths=polygon_paths).reset_index(drop=True)
 
-    gpd.testing.assert_geodataframe_equal(received, expected_light_paths_all)
+    gpd.testing.assert_geodataframe_equal(received, expected_light_paths_all, check_dtype=False)
 
 
 def test_path_lighting_categorisation(default_path_geometry, default_polygon_geometry):

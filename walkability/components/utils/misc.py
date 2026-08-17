@@ -24,6 +24,7 @@ class Topics(StrEnum):
     COMFORT = 'comfort'
     SHADE = 'shade'
     SAFETY = 'safety'
+    ATTRACTIVENESS = 'attractiveness'
 
 
 class PathCategory(Enum):

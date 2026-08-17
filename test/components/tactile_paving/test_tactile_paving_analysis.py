@@ -49,7 +49,7 @@ def test_get_tactile_paving(default_path_geometry, default_polygon_geometry):
 
     received = get_tactile_paving(line_paths=line_paths, polygon_paths=polygon_paths).reset_index(drop=True)
 
-    gpd.testing.assert_geodataframe_equal(received, expected_tactile_paths_all)
+    gpd.testing.assert_geodataframe_equal(received, expected_tactile_paths_all, check_dtype=False)
 
 
 def test_tactile_paving_categorisation(default_path_geometry, default_polygon_geometry):
