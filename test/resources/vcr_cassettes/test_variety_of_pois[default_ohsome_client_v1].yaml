@@ -1,0 +1,914 @@
+interactions:
+- request:
+    body: bpolys=%7B%22type%22%3A+%22FeatureCollection%22%2C+%22features%22%3A+%5B%7B%22id%22%3A+%220%22%2C+%22type%22%3A+%22Feature%22%2C+%22properties%22%3A+%7B%7D%2C+%22geometry%22%3A+%7B%22type%22%3A+%22Polygon%22%2C+%22coordinates%22%3A+%5B%5B%5B8.679063919738896%2C+49.40415084734862%5D%2C+%5B8.678837779097238%2C+49.40583706838322%5D%2C+%5B8.67637116867987%2C+49.40643785189488%5D%2C+%5B8.67413080382136%2C+49.40535240849951%5D%2C+%5B8.674357047104092%2C+49.40366620725092%5D%2C+%5B8.676823552607251%2C+49.403065429610486%5D%2C+%5B8.679063919738896%2C+49.40415084734862%5D%5D%5D%7D%7D%5D%7D&filter=amenity%3Dschool&properties=tags&clipGeometry=True
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '645'
+      Content-Type:
+      - application/x-www-form-urlencoded
+      user-agent:
+      - ohsome-py/0.3.0
+    method: POST
+    uri: https://api.ohsome.org/v1/elements/centroid
+  response:
+    body:
+      string: "{\n  \"attribution\" : {\n    \"url\" : \"https://ohsome.org/copyrights\",\n
+        \   \"text\" : \"\xA9 OpenStreetMap contributors\"\n  },\n  \"apiVersion\"
+        : \"1.10.4\",\n  \"type\" : \"FeatureCollection\",\n  \"features\" : []\n}\n"
+    headers:
+      Access-Control-Allow-Credentials:
+      - 'true'
+      Access-Control-Allow-Headers:
+      - Origin,Accept,X-Requested-With,Content-Type,Access-Control-Request-Method,Access-Control-Request-Headers,Authorization
+      Access-Control-Allow-Methods:
+      - POST, GET
+      Access-Control-Allow-Origin:
+      - '*'
+      Access-Control-Max-Age:
+      - '3600'
+      Connection:
+      - Keep-Alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/geo+json;charset=utf-8
+      Content-disposition:
+      - attachment;filename=ohsome.geojson
+      Date:
+      - Mon, 17 Aug 2026 14:46:03 GMT
+      Keep-Alive:
+      - timeout=5, max=100
+      Server:
+      - Apache/2.4.58 (Ubuntu)
+      Strict-Transport-Security:
+      - max-age=63072000; includeSubdomains;
+      Transfer-Encoding:
+      - chunked
+      vary:
+      - accept-encoding
+    status:
+      code: 200
+      message: ''
+- request:
+    body: bpolys=%7B%22type%22%3A+%22FeatureCollection%22%2C+%22features%22%3A+%5B%7B%22id%22%3A+%220%22%2C+%22type%22%3A+%22Feature%22%2C+%22properties%22%3A+%7B%7D%2C+%22geometry%22%3A+%7B%22type%22%3A+%22Polygon%22%2C+%22coordinates%22%3A+%5B%5B%5B8.679063919738896%2C+49.40415084734862%5D%2C+%5B8.678837779097238%2C+49.40583706838322%5D%2C+%5B8.67637116867987%2C+49.40643785189488%5D%2C+%5B8.67413080382136%2C+49.40535240849951%5D%2C+%5B8.674357047104092%2C+49.40366620725092%5D%2C+%5B8.676823552607251%2C+49.403065429610486%5D%2C+%5B8.679063919738896%2C+49.40415084734862%5D%5D%5D%7D%7D%5D%7D&filter=amenity+in+%28childcare%2C+nursery%2C+kindergarten%2C+toy_library%29+or+leisure+in+%28playground%2C+indoor_play%29&properties=tags&clipGeometry=True
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '743'
+      Content-Type:
+      - application/x-www-form-urlencoded
+      user-agent:
+      - ohsome-py/0.3.0
+    method: POST
+    uri: https://api.ohsome.org/v1/elements/centroid
+  response:
+    body:
+      string: "{\n  \"attribution\" : {\n    \"url\" : \"https://ohsome.org/copyrights\",\n
+        \   \"text\" : \"\xA9 OpenStreetMap contributors\"\n  },\n  \"apiVersion\"
+        : \"1.10.4\",\n  \"type\" : \"FeatureCollection\",\n  \"features\" : [{\n
+        \   \"type\" : \"Feature\",\n    \"geometry\" : {\n      \"type\" : \"Point\",\n
+        \     \"coordinates\" : [\n        8.6786338,\n        49.4056591\n      ]\n
+        \   },\n    \"properties\" : {\n      \"@osmId\" : \"way/340408306\",\n      \"@snapshotTimestamp\"
+        : \"2026-07-27T09:00:00Z\",\n      \"access\" : \"yes\",\n      \"leisure\"
+        : \"playground\"\n    }\n  }]\n}\n"
+    headers:
+      Access-Control-Allow-Credentials:
+      - 'true'
+      Access-Control-Allow-Headers:
+      - Origin,Accept,X-Requested-With,Content-Type,Access-Control-Request-Method,Access-Control-Request-Headers,Authorization
+      Access-Control-Allow-Methods:
+      - POST, GET
+      Access-Control-Allow-Origin:
+      - '*'
+      Access-Control-Max-Age:
+      - '3600'
+      Connection:
+      - Keep-Alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/geo+json;charset=utf-8
+      Content-disposition:
+      - attachment;filename=ohsome.geojson
+      Date:
+      - Mon, 17 Aug 2026 14:46:17 GMT
+      Keep-Alive:
+      - timeout=5, max=100
+      Server:
+      - Apache/2.4.58 (Ubuntu)
+      Strict-Transport-Security:
+      - max-age=63072000; includeSubdomains;
+      Transfer-Encoding:
+      - chunked
+      vary:
+      - accept-encoding
+    status:
+      code: 200
+      message: ''
+- request:
+    body: bpolys=%7B%22type%22%3A+%22FeatureCollection%22%2C+%22features%22%3A+%5B%7B%22id%22%3A+%220%22%2C+%22type%22%3A+%22Feature%22%2C+%22properties%22%3A+%7B%7D%2C+%22geometry%22%3A+%7B%22type%22%3A+%22Polygon%22%2C+%22coordinates%22%3A+%5B%5B%5B8.679063919738896%2C+49.40415084734862%5D%2C+%5B8.678837779097238%2C+49.40583706838322%5D%2C+%5B8.67637116867987%2C+49.40643785189488%5D%2C+%5B8.67413080382136%2C+49.40535240849951%5D%2C+%5B8.674357047104092%2C+49.40366620725092%5D%2C+%5B8.676823552607251%2C+49.403065429610486%5D%2C+%5B8.679063919738896%2C+49.40415084734862%5D%5D%5D%7D%7D%5D%7D&filter=amenity+in+%28doctors%2C+clinic%2C+dentist%2C+pharmacy%29+or+healthcare+in+%28doctor%2C+dentist%2C+pharmacy%29&properties=tags&clipGeometry=True
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '739'
+      Content-Type:
+      - application/x-www-form-urlencoded
+      user-agent:
+      - ohsome-py/0.3.0
+    method: POST
+    uri: https://api.ohsome.org/v1/elements/centroid
+  response:
+    body:
+      string: "{\n  \"attribution\" : {\n    \"url\" : \"https://ohsome.org/copyrights\",\n
+        \   \"text\" : \"\xA9 OpenStreetMap contributors\"\n  },\n  \"apiVersion\"
+        : \"1.10.4\",\n  \"type\" : \"FeatureCollection\",\n  \"features\" : []\n}\n"
+    headers:
+      Access-Control-Allow-Credentials:
+      - 'true'
+      Access-Control-Allow-Headers:
+      - Origin,Accept,X-Requested-With,Content-Type,Access-Control-Request-Method,Access-Control-Request-Headers,Authorization
+      Access-Control-Allow-Methods:
+      - POST, GET
+      Access-Control-Allow-Origin:
+      - '*'
+      Access-Control-Max-Age:
+      - '3600'
+      Connection:
+      - Keep-Alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/geo+json;charset=utf-8
+      Content-disposition:
+      - attachment;filename=ohsome.geojson
+      Date:
+      - Mon, 17 Aug 2026 14:46:31 GMT
+      Keep-Alive:
+      - timeout=5, max=100
+      Server:
+      - Apache/2.4.58 (Ubuntu)
+      Strict-Transport-Security:
+      - max-age=63072000; includeSubdomains;
+      Transfer-Encoding:
+      - chunked
+      vary:
+      - accept-encoding
+    status:
+      code: 200
+      message: ''
+- request:
+    body: bpolys=%7B%22type%22%3A+%22FeatureCollection%22%2C+%22features%22%3A+%5B%7B%22id%22%3A+%220%22%2C+%22type%22%3A+%22Feature%22%2C+%22properties%22%3A+%7B%7D%2C+%22geometry%22%3A+%7B%22type%22%3A+%22Polygon%22%2C+%22coordinates%22%3A+%5B%5B%5B8.679063919738896%2C+49.40415084734862%5D%2C+%5B8.678837779097238%2C+49.40583706838322%5D%2C+%5B8.67637116867987%2C+49.40643785189488%5D%2C+%5B8.67413080382136%2C+49.40535240849951%5D%2C+%5B8.674357047104092%2C+49.40366620725092%5D%2C+%5B8.676823552607251%2C+49.403065429610486%5D%2C+%5B8.679063919738896%2C+49.40415084734862%5D%5D%5D%7D%7D%5D%7D&filter=amenity+in+%28marketplace%2C+post_office%2C+post_box%2C+atm%2C+bank%29+or+craft+in+%28shoemaker%2C+tailor%2C+electronics_repair%2C+photographer%29+or+shop+in+%28supermarket%2C+convenience%2C+cheese%2C+coffee%2C+deli%2C+farm%2C+frozen_food%2C+health_food%2C+organic%2C+water%2C+bakery%2C+butcher%2C+dairy%2C+food%2C+greengrocer%2C+grocery%2C+seafood%2C+alcohol%2C+beverages%2C+chocolate%2C+ice_cream%2C+pastry%2C+spices%2C+tea%2C+wine%2C+confectionery%2C+drugstore%2C+chemist%2C+hairdresser%2C+dry_cleaning%2C+copyshop%29&properties=tags&clipGeometry=True
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '1149'
+      Content-Type:
+      - application/x-www-form-urlencoded
+      user-agent:
+      - ohsome-py/0.3.0
+    method: POST
+    uri: https://api.ohsome.org/v1/elements/centroid
+  response:
+    body:
+      string: "{\n  \"attribution\" : {\n    \"url\" : \"https://ohsome.org/copyrights\",\n
+        \   \"text\" : \"\xA9 OpenStreetMap contributors\"\n  },\n  \"apiVersion\"
+        : \"1.10.4\",\n  \"type\" : \"FeatureCollection\",\n  \"features\" : [{\n
+        \   \"type\" : \"Feature\",\n    \"geometry\" : {\n      \"type\" : \"Point\",\n
+        \     \"coordinates\" : [\n        8.6753794,\n        49.404139\n      ]\n
+        \   },\n    \"properties\" : {\n      \"@osmId\" : \"way/462362623\",\n      \"@snapshotTimestamp\"
+        : \"2026-07-27T09:00:00Z\",\n      \"addr:city\" : \"Heidelberg\",\n      \"addr:country\"
+        : \"DE\",\n      \"addr:housenumber\" : \"5\",\n      \"addr:postcode\" :
+        \"69115\",\n      \"addr:street\" : \"Willy-Brandt-Platz\",\n      \"brand\"
+        : \"Rossmann\",\n      \"brand:wikidata\" : \"Q316004\",\n      \"brand:wikipedia\"
+        : \"de:Dirk Rossmann GmbH\",\n      \"check_date:opening_hours\" : \"2025-07-03\",\n
+        \     \"contact:phone\" : \"+49 6221 601263\",\n      \"contact:website\"
+        : \"https://www.rossmann.de\",\n      \"indoor\" : \"room\",\n      \"level\"
+        : \"0\",\n      \"name\" : \"Rossmann Express\",\n      \"opening_hours\"
+        : \"Mo-Fr 06:30-22:00; Sa 06:30-22:00; Su 08:00-22:00; PH 08:00-22:00\",\n
+        \     \"operator\" : \"Dirk Rossmann GmbH\",\n      \"ref:shop:num\" : \"2813\",\n
+        \     \"ref:vatin\" : \"DE115055186\",\n      \"room\" : \"shop\",\n      \"self_checkout\"
+        : \"yes\",\n      \"self_checkout:handheld\" : \"no\",\n      \"self_checkout:self_scan\"
+        : \"yes\",\n      \"shop\" : \"chemist\",\n      \"toilets:wheelchair\" :
+        \"no\",\n      \"wheelchair\" : \"yes\",\n      \"wheelchair:description\"
+        : \"Regale sind f\xFCr Rollstuhlfahrer nur bis zur 3. Reihe von oben erreichbar.\"\n
+        \   }\n  }, {\n    \"type\" : \"Feature\",\n    \"geometry\" : {\n      \"type\"
+        : \"Point\",\n      \"coordinates\" : [\n        8.6759646,\n        49.4045581\n
+        \     ]\n    },\n    \"properties\" : {\n      \"@osmId\" : \"way/462362631\",\n
+        \     \"@snapshotTimestamp\" : \"2026-07-27T09:00:00Z\",\n      \"addr:city\"
+        : \"Heidelberg\",\n      \"addr:country\" : \"DE\",\n      \"addr:housenumber\"
+        : \"5\",\n      \"addr:postcode\" : \"69115\",\n      \"addr:street\" : \"Willy-Brandt-Platz\",\n
+        \     \"amenity\" : \"bank\",\n      \"atm\" : \"yes\",\n      \"brand\" :
+        \"Reisebank\",\n      \"brand:wikidata\" : \"Q1421107\",\n      \"check_date:opening_hours\"
+        : \"2025-08-30\",\n      \"indoor\" : \"room\",\n      \"level\" : \"0\",\n
+        \     \"name\" : \"Reisebank\",\n      \"opening_hours\" : \"Mo-Fr 09:00-19:00;
+        Sa 09:00-14:30,15:00-17:00\",\n      \"room\" : \"office\",\n      \"website\"
+        : \"https://www.reisebank.de/\",\n      \"wheelchair\" : \"yes\"\n    }\n
+        \ }, {\n    \"type\" : \"Feature\",\n    \"geometry\" : {\n      \"type\"
+        : \"Point\",\n      \"coordinates\" : [\n        8.6756934,\n        49.4045422\n
+        \     ]\n    },\n    \"properties\" : {\n      \"@osmId\" : \"way/462362693\",\n
+        \     \"@snapshotTimestamp\" : \"2026-07-27T09:00:00Z\",\n      \"addr:city\"
+        : \"Heidelberg\",\n      \"addr:country\" : \"DE\",\n      \"addr:housenumber\"
+        : \"5\",\n      \"addr:postcode\" : \"69115\",\n      \"addr:street\" : \"Willy-Brandt-Platz\",\n
+        \     \"brand\" : \"B\xE4ckerei Riegler\",\n      \"diet:vegan\" : \"yes\",\n
+        \     \"diet:vegetarian\" : \"yes\",\n      \"indoor\" : \"room\",\n      \"indoor_seating\"
+        : \"no\",\n      \"level\" : \"0\",\n      \"name\" : \"Riegler\",\n      \"opening_hours\"
+        : \"Mo-Fr 05:00-19:00, Sa 05:00-18:00, Su,PH 07:00-17:00\",\n      \"opening_hours:signed\"
+        : \"no\",\n      \"operator\" : \"B\xE4ckerei Riegler GmbH\",\n      \"outdoor_seating\"
+        : \"no\",\n      \"payment:credit_cards\" : \"yes\",\n      \"payment:debit_cards\"
+        : \"yes\",\n      \"phone\" : \"+49 6221 6539736\",\n      \"room\" : \"shop\",\n
+        \     \"shop\" : \"bakery\",\n      \"takeaway\" : \"only\",\n      \"website\"
+        : \"https://baeckerei-riegler.de/\",\n      \"wheelchair\" : \"yes\"\n    }\n
+        \ }, {\n    \"type\" : \"Feature\",\n    \"geometry\" : {\n      \"type\"
+        : \"Point\",\n      \"coordinates\" : [\n        8.6757289,\n        49.4041992\n
+        \     ]\n    },\n    \"properties\" : {\n      \"@osmId\" : \"way/462362710\",\n
+        \     \"@snapshotTimestamp\" : \"2026-07-27T09:00:00Z\",\n      \"addr:city\"
+        : \"Heidelberg\",\n      \"addr:country\" : \"DE\",\n      \"addr:housenumber\"
+        : \"5\",\n      \"addr:postcode\" : \"69115\",\n      \"addr:street\" : \"Willy-Brandt-Platz\",\n
+        \     \"brand\" : \"Le Crobag\",\n      \"brand:wikidata\" : \"Q1558025\",\n
+        \     \"brand:wikipedia\" : \"de:Le Crobag\",\n      \"changing_table\" :
+        \"no\",\n      \"check_date\" : \"2026-07-02\",\n      \"check_date:smoking\"
+        : \"2025-02-28\",\n      \"indoor\" : \"room\",\n      \"indoor_seating\"
+        : \"yes\",\n      \"level\" : \"0\",\n      \"name\" : \"Le Crobag\",\n      \"opening_hours\"
+        : \"PH,Mo-Su 05:00-21:00\",\n      \"outdoor_seating\" : \"no\",\n      \"room\"
+        : \"shop\",\n      \"shop\" : \"bakery\",\n      \"smoking\" : \"no\",\n      \"website\"
+        : \"https://www.lecrobag.de/\",\n      \"wheelchair\" : \"yes\"\n    }\n  },
+        {\n    \"type\" : \"Feature\",\n    \"geometry\" : {\n      \"type\" : \"Point\",\n
+        \     \"coordinates\" : [\n        8.6767573,\n        49.4056558\n      ]\n
+        \   },\n    \"properties\" : {\n      \"@osmId\" : \"node/269385017\",\n      \"@snapshotTimestamp\"
+        : \"2026-07-27T09:00:00Z\",\n      \"addr:city\" : \"Heidelberg\",\n      \"addr:country\"
+        : \"DE\",\n      \"addr:housenumber\" : \"62\",\n      \"addr:postcode\" :
+        \"69115\",\n      \"addr:street\" : \"Kurf\xFCrsten-Anlage\",\n      \"amenity\"
+        : \"post_office\",\n      \"brand\" : \"Deutsche Post\",\n      \"name\" :
+        \"Post, Lotto & Tabak Store\",\n      \"opening_hours\" : \"Mo-Fr 08:30-18:00;
+        Sa 08:30-12:30\",\n      \"operator\" : \"Deutsche Post\",\n      \"operator:wikidata\"
+        : \"Q157645\",\n      \"shop\" : \"newsagent\",\n      \"wheelchair\" : \"yes\"\n
+        \   }\n  }, {\n    \"type\" : \"Feature\",\n    \"geometry\" : {\n      \"type\"
+        : \"Point\",\n      \"coordinates\" : [\n        8.6758721,\n        49.4046422\n
+        \     ]\n    },\n    \"properties\" : {\n      \"@osmId\" : \"node/283171223\",\n
+        \     \"@snapshotTimestamp\" : \"2026-07-27T09:00:00Z\",\n      \"amenity\"
+        : \"post_box\",\n      \"brand\" : \"Deutsche Post\",\n      \"check_date:collection_times\"
+        : \"2024-06-06\",\n      \"collection_times\" : \"Mo-Fr 13:45,17:00,18:30;
+        Sa 15:00; Su 11:00\",\n      \"note\" : \"Briefkasten am Nordeingang von Hbf
+        mit Sp\xE4tleerung\",\n      \"operator\" : \"Deutsche Post\",\n      \"operator:wikidata\"
+        : \"Q157645\",\n      \"ref\" : \"Willy-Brandt-Platz, 69115 Heidelberg\"\n
+        \   }\n  }, {\n    \"type\" : \"Feature\",\n    \"geometry\" : {\n      \"type\"
+        : \"Point\",\n      \"coordinates\" : [\n        8.6768032,\n        49.4055971\n
+        \     ]\n    },\n    \"properties\" : {\n      \"@osmId\" : \"node/1727214055\",\n
+        \     \"@snapshotTimestamp\" : \"2026-07-27T09:00:00Z\",\n      \"amenity\"
+        : \"post_box\",\n      \"brand\" : \"Deutsche Post\",\n      \"check_date:collection_times\"
+        : \"2026-03-25\",\n      \"collection_times\" : \"Mo-Fr 17:30; Sa 12:00; Su
+        10:45\",\n      \"operator\" : \"Deutsche Post\",\n      \"ref\" : \"Mittermaierstra\xDFe,
+        69115 Heidelberg\"\n    }\n  }, {\n    \"type\" : \"Feature\",\n    \"geometry\"
+        : {\n      \"type\" : \"Point\",\n      \"coordinates\" : [\n        8.6754055,\n
+        \       49.4054526\n      ]\n    },\n    \"properties\" : {\n      \"@osmId\"
+        : \"node/1727214075\",\n      \"@snapshotTimestamp\" : \"2026-07-27T09:00:00Z\",\n
+        \     \"addr:city\" : \"Heidelberg\",\n      \"addr:country\" : \"DE\",\n
+        \     \"addr:housenumber\" : \"62\",\n      \"addr:postcode\" : \"69115\",\n
+        \     \"addr:street\" : \"Kurf\xFCrsten-Anlage\",\n      \"check_date:opening_hours\"
+        : \"2025-09-05\",\n      \"female\" : \"yes\",\n      \"male\" : \"yes\",\n
+        \     \"name\" : \"Meister Friseur\",\n      \"opening_hours\" : \"Tu-Fr 09:00-19:00;
+        Sa 09:00-17:00; Mo off\",\n      \"phone\" : \"+49 6221 602292\",\n      \"shop\"
+        : \"hairdresser\",\n      \"wheelchair\" : \"limited\"\n    }\n  }, {\n    \"type\"
+        : \"Feature\",\n    \"geometry\" : {\n      \"type\" : \"Point\",\n      \"coordinates\"
+        : [\n        8.6756786,\n        49.4056291\n      ]\n    },\n    \"properties\"
+        : {\n      \"@osmId\" : \"node/2397805652\",\n      \"@snapshotTimestamp\"
+        : \"2026-07-27T09:00:00Z\",\n      \"check_date:opening_hours\" : \"2026-03-04\",\n
+        \     \"name\" : \"Anatolia Markt\",\n      \"opening_hours\" : \"Mo-Sa 08:00-20:00\",\n
+        \     \"payment:credit_cards\" : \"yes\",\n      \"payment:debit_cards\" :
+        \"yes\",\n      \"shop\" : \"greengrocer\",\n      \"wheelchair\" : \"yes\"\n
+        \   }\n  }, {\n    \"type\" : \"Feature\",\n    \"geometry\" : {\n      \"type\"
+        : \"Point\",\n      \"coordinates\" : [\n        8.6759975,\n        49.403941\n
+        \     ]\n    },\n    \"properties\" : {\n      \"@osmId\" : \"node/2407028346\",\n
+        \     \"@snapshotTimestamp\" : \"2026-07-27T09:00:00Z\",\n      \"amenity\"
+        : \"atm\",\n      \"brand\" : \"Reisebank\",\n      \"brand:wikidata\" : \"Q1421107\",\n
+        \     \"cash_in\" : \"no\",\n      \"check_date\" : \"2026-07-06\",\n      \"level\"
+        : \"0\",\n      \"operator\" : \"Reisebank\",\n      \"operator:wikidata\"
+        : \"Q1421107\",\n      \"wheelchair\" : \"yes\"\n    }\n  }, {\n    \"type\"
+        : \"Feature\",\n    \"geometry\" : {\n      \"type\" : \"Point\",\n      \"coordinates\"
+        : [\n        8.6759159,\n        49.4055354\n      ]\n    },\n    \"properties\"
+        : {\n      \"@osmId\" : \"node/2424867163\",\n      \"@snapshotTimestamp\"
+        : \"2026-07-27T09:00:00Z\",\n      \"addr:city\" : \"Heidelberg\",\n      \"addr:country\"
+        : \"DE\",\n      \"addr:housenumber\" : \"62\",\n      \"addr:postcode\" :
+        \"69115\",\n      \"addr:street\" : \"Kurf\xFCrsten-Anlage\",\n      \"indoor_seating\"
+        : \"yes\",\n      \"name\" : \"Insel Backwaren\",\n      \"opening_hours\"
+        : \"Mo-Fr 07:00-16:00; PH off\",\n      \"outdoor_seating\" : \"no\",\n      \"shop\"
+        : \"bakery\",\n      \"smoking\" : \"no\",\n      \"wheelchair\" : \"yes\"\n
+        \   }\n  }, {\n    \"type\" : \"Feature\",\n    \"geometry\" : {\n      \"type\"
+        : \"Point\",\n      \"coordinates\" : [\n        8.6760433,\n        49.404568\n
+        \     ]\n    },\n    \"properties\" : {\n      \"@osmId\" : \"node/2424870946\",\n
+        \     \"@snapshotTimestamp\" : \"2026-07-27T09:00:00Z\",\n      \"amenity\"
+        : \"atm\",\n      \"cash_in\" : \"no\",\n      \"check_date\" : \"2024-06-06\",\n
+        \     \"indoor\" : \"no\",\n      \"operator\" : \"ReiseBank\",\n      \"wheelchair\"
+        : \"limited\"\n    }\n  }, {\n    \"type\" : \"Feature\",\n    \"geometry\"
+        : {\n      \"type\" : \"Point\",\n      \"coordinates\" : [\n        8.6765463,\n
+        \       49.4044309\n      ]\n    },\n    \"properties\" : {\n      \"@osmId\"
+        : \"node/3851931092\",\n      \"@snapshotTimestamp\" : \"2026-07-27T09:00:00Z\",\n
+        \     \"amenity\" : \"atm\",\n      \"brand\" : \"Volksbank\",\n      \"cash_in\"
+        : \"no\",\n      \"check_date\" : \"2026-04-14\",\n      \"indoor\" : \"no\",\n
+        \     \"opening_hours\" : \"24/7\",\n      \"operator\" : \"Heidelberger Volksbank\",\n
+        \     \"wheelchair\" : \"yes\"\n    }\n  }, {\n    \"type\" : \"Feature\",\n
+        \   \"geometry\" : {\n      \"type\" : \"Point\",\n      \"coordinates\" :
+        [\n        8.675685,\n        49.4041578\n      ]\n    },\n    \"properties\"
+        : {\n      \"@osmId\" : \"node/5128109091\",\n      \"@snapshotTimestamp\"
+        : \"2026-07-27T09:00:00Z\",\n      \"amenity\" : \"atm\",\n      \"brand\"
+        : \"ReiseBank\",\n      \"cash_in\" : \"no\",\n      \"check_date\" : \"2026-07-06\",\n
+        \     \"level\" : \"0\",\n      \"opening_hours\" : \"24/7\",\n      \"operator\"
+        : \"ReiseBank\"\n    }\n  }]\n}\n"
+    headers:
+      Access-Control-Allow-Credentials:
+      - 'true'
+      Access-Control-Allow-Headers:
+      - Origin,Accept,X-Requested-With,Content-Type,Access-Control-Request-Method,Access-Control-Request-Headers,Authorization
+      Access-Control-Allow-Methods:
+      - POST, GET
+      Access-Control-Allow-Origin:
+      - '*'
+      Access-Control-Max-Age:
+      - '3600'
+      Connection:
+      - Keep-Alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/geo+json;charset=utf-8
+      Content-disposition:
+      - attachment;filename=ohsome.geojson
+      Date:
+      - Mon, 17 Aug 2026 14:46:44 GMT
+      Keep-Alive:
+      - timeout=5, max=100
+      Server:
+      - Apache/2.4.58 (Ubuntu)
+      Strict-Transport-Security:
+      - max-age=63072000; includeSubdomains;
+      Transfer-Encoding:
+      - chunked
+      vary:
+      - accept-encoding
+    status:
+      code: 200
+      message: ''
+- request:
+    body: bpolys=%7B%22type%22%3A+%22FeatureCollection%22%2C+%22features%22%3A+%5B%7B%22id%22%3A+%220%22%2C+%22type%22%3A+%22Feature%22%2C+%22properties%22%3A+%7B%7D%2C+%22geometry%22%3A+%7B%22type%22%3A+%22Polygon%22%2C+%22coordinates%22%3A+%5B%5B%5B8.679063919738896%2C+49.40415084734862%5D%2C+%5B8.678837779097238%2C+49.40583706838322%5D%2C+%5B8.67637116867987%2C+49.40643785189488%5D%2C+%5B8.67413080382136%2C+49.40535240849951%5D%2C+%5B8.674357047104092%2C+49.40366620725092%5D%2C+%5B8.676823552607251%2C+49.403065429610486%5D%2C+%5B8.679063919738896%2C+49.40415084734862%5D%5D%5D%7D%7D%5D%7D&filter=highway%3Dbus_stop+or+railway+in+%28tram_stop%2C+station%2C+halt%2C+stop%29+or+station%3Dsubway&properties=tags&clipGeometry=True
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '724'
+      Content-Type:
+      - application/x-www-form-urlencoded
+      user-agent:
+      - ohsome-py/0.3.0
+    method: POST
+    uri: https://api.ohsome.org/v1/elements/centroid
+  response:
+    body:
+      string: "{\n  \"attribution\" : {\n    \"url\" : \"https://ohsome.org/copyrights\",\n
+        \   \"text\" : \"\xA9 OpenStreetMap contributors\"\n  },\n  \"apiVersion\"
+        : \"1.10.4\",\n  \"type\" : \"FeatureCollection\",\n  \"features\" : [{\n
+        \   \"type\" : \"Feature\",\n    \"geometry\" : {\n      \"type\" : \"Point\",\n
+        \     \"coordinates\" : [\n        8.6769361,\n        49.4043518\n      ]\n
+        \   },\n    \"properties\" : {\n      \"@osmId\" : \"node/309414394\",\n      \"@snapshotTimestamp\"
+        : \"2026-07-27T09:00:00Z\",\n      \"bench\" : \"yes\",\n      \"bin\" : \"yes\",\n
+        \     \"bus\" : \"yes\",\n      \"check_date:shelter\" : \"2024-05-22\",\n
+        \     \"highway\" : \"bus_stop\",\n      \"lit\" : \"yes\",\n      \"name\"
+        : \"Heidelberg Hauptbahnhof (Steig L)\",\n      \"network\" : \"Verkehrsverbund
+        Rhein-Neckar\",\n      \"network:guid\" : \"DE-BW-VRN\",\n      \"network:short\"
+        : \"VRN\",\n      \"network:wikidata\" : \"Q1553051\",\n      \"network:wikipedia\"
+        : \"de:Verkehrsverbund Rhein-Neckar\",\n      \"note\" : \"Linien 33 (Emmertsgrund),
+        39A (EMBL/Mombertplatz, Randzeiten, direkt zu Alois-Link-Platz ohne Bismarckplatz),
+        720 (St. Leon-Rot), 721 (Walldorf), M3 (Kirchheim)\",\n      \"public_transport\"
+        : \"platform\",\n      \"railway:ref:DBAG\" : \"RH B\",\n      \"ref\" : \"L\",\n
+        \     \"ref:RNV:RBL\" : \"BHHF\",\n      \"shelter\" : \"yes\",\n      \"tactile_paving\"
+        : \"yes\",\n      \"wheelchair\" : \"limited\"\n    }\n  }, {\n    \"type\"
+        : \"Feature\",\n    \"geometry\" : {\n      \"type\" : \"Point\",\n      \"coordinates\"
+        : [\n        8.6779356,\n        49.404146\n      ]\n    },\n    \"properties\"
+        : {\n      \"@osmId\" : \"node/309414400\",\n      \"@snapshotTimestamp\"
+        : \"2026-07-27T09:00:00Z\",\n      \"bench\" : \"no\",\n      \"bin\" : \"yes\",\n
+        \     \"bus\" : \"yes\",\n      \"highway\" : \"bus_stop\",\n      \"lit\"
+        : \"yes\",\n      \"name\" : \"Heidelberg Hauptbahnhof (Steig P)\",\n      \"network\"
+        : \"Verkehrsverbund Rhein-Neckar\",\n      \"network:guid\" : \"DE-BW-VRN\",\n
+        \     \"network:short\" : \"VRN\",\n      \"network:wikidata\" : \"Q1553051\",\n
+        \     \"network:wikipedia\" : \"de:Verkehrsverbund Rhein-Neckar\",\n      \"note\"
+        : \"Linien 20 (nur Randzeiten), 33 (Ziegelhausen K\xF6pfel), 39A (nur Einstieg,
+        Richtung Bismarckplatz), 717 (Stadtwerke), 720 (Bismarckplatz), 721 (nur Ausstieg,
+        Randzeiten), 757 (Stadtwerke)\",\n      \"public_transport\" : \"platform\",\n
+        \     \"railway:ref:DBAG\" : \"RH B\",\n      \"ref\" : \"P\",\n      \"ref:RNV:RBL\"
+        : \"BHHF\",\n      \"shelter\" : \"yes\",\n      \"source\" : \"survey\",\n
+        \     \"tactile_paving\" : \"yes\",\n      \"wheelchair\" : \"limited\"\n
+        \   }\n  }, {\n    \"type\" : \"Feature\",\n    \"geometry\" : {\n      \"type\"
+        : \"Point\",\n      \"coordinates\" : [\n        8.6782558,\n        49.4042065\n
+        \     ]\n    },\n    \"properties\" : {\n      \"@osmId\" : \"node/309414403\",\n
+        \     \"@snapshotTimestamp\" : \"2026-07-27T09:00:00Z\",\n      \"bench\"
+        : \"yes\",\n      \"bin\" : \"yes\",\n      \"bus\" : \"yes\",\n      \"check_date:shelter\"
+        : \"2024-07-06\",\n      \"highway\" : \"bus_stop\",\n      \"lit\" : \"yes\",\n
+        \     \"name\" : \"Heidelberg Hauptbahnhof (Steig Q)\",\n      \"network\"
+        : \"Verkehrsverbund Rhein-Neckar\",\n      \"network:guid\" : \"DE-BW-VRN\",\n
+        \     \"network:short\" : \"VRN\",\n      \"network:wikidata\" : \"Q1553051\",\n
+        \     \"network:wikipedia\" : \"de:Verkehrsverbund Rhein-Neckar\",\n      \"note\"
+        : \"Linien 735 (Heiligkreuzsteinach, Start- und Endhaltestelle)\",\n      \"public_transport\"
+        : \"platform\",\n      \"railway:ref:DBAG\" : \"RH B\",\n      \"ref\" : \"Q\",\n
+        \     \"ref:RNV:RBL\" : \"BHHF\",\n      \"shelter\" : \"yes\",\n      \"source\"
+        : \"survey\",\n      \"tactile_paving\" : \"yes\",\n      \"wheelchair\" :
+        \"limited\"\n    }\n  }, {\n    \"type\" : \"Feature\",\n    \"geometry\"
+        : {\n      \"type\" : \"Point\",\n      \"coordinates\" : [\n        8.6787123,\n
+        \       49.4047148\n      ]\n    },\n    \"properties\" : {\n      \"@osmId\"
+        : \"node/2382067411\",\n      \"@snapshotTimestamp\" : \"2026-07-27T09:00:00Z\",\n
+        \     \"bench\" : \"no\",\n      \"bin\" : \"yes\",\n      \"bus\" : \"yes\",\n
+        \     \"check_date:shelter\" : \"2024-08-07\",\n      \"highway\" : \"bus_stop\",\n
+        \     \"lit\" : \"yes\",\n      \"name:signed\" : \"no\",\n      \"network\"
+        : \"Verkehrsverbund Rhein-Neckar\",\n      \"network:guid\" : \"DE-BW-VRN\",\n
+        \     \"network:short\" : \"VRN\",\n      \"network:wikidata\" : \"Q1553051\",\n
+        \     \"network:wikipedia\" : \"de:Verkehrsverbund Rhein-Neckar\",\n      \"note\"
+        : \"Pauseposition mit Haltestellenschild ausgeschildert (auf der Innenseite
+        (links der oneways Ri Hbf) der Strasse!)\",\n      \"public_transport\" :
+        \"no\",\n      \"shelter\" : \"no\",\n      \"source\" : \"survey\",\n      \"tactile_paving\"
+        : \"no\",\n      \"wheelchair\" : \"yes\"\n    }\n  }, {\n    \"type\" : \"Feature\",\n
+        \   \"geometry\" : {\n      \"type\" : \"Point\",\n      \"coordinates\" :
+        [\n        8.6756055,\n        49.4034255\n      ]\n    },\n    \"properties\"
+        : {\n      \"@osmId\" : \"node/2820941789\",\n      \"@snapshotTimestamp\"
+        : \"2026-07-27T09:00:00Z\",\n      \"level\" : \"-1\",\n      \"local_ref\"
+        : \"5\",\n      \"name\" : \"Heidelberg Hauptbahnhof\",\n      \"operator\"
+        : \"DB InfraGO AG\",\n      \"public_transport\" : \"stop_position\",\n      \"railway\"
+        : \"stop\",\n      \"ref:IFOPT\" : \"de:08221:1160:4:5\",\n      \"ref:IFOPT:description\"
+        : \"Gleis 5\",\n      \"train\" : \"yes\"\n    }\n  }, {\n    \"type\" : \"Feature\",\n
+        \   \"geometry\" : {\n      \"type\" : \"Point\",\n      \"coordinates\" :
+        [\n        8.6754223,\n        49.4034737\n      ]\n    },\n    \"properties\"
+        : {\n      \"@osmId\" : \"node/2820941790\",\n      \"@snapshotTimestamp\"
+        : \"2026-07-27T09:00:00Z\",\n      \"addr:city\" : \"Heidelberg\",\n      \"addr:housenumber\"
+        : \"5\",\n      \"addr:postcode\" : \"69115\",\n      \"addr:street\" : \"Willy-Brandt-Platz\",\n
+        \     \"departures_board\" : \"realtime\",\n      \"departures_board:speech_output\"
+        : \"no\",\n      \"name\" : \"Heidelberg Hauptbahnhof\",\n      \"operator\"
+        : \"DB InfraGO AG\",\n      \"phone\" : \"+49 6221 525355\",\n      \"public_transport\"
+        : \"station\",\n      \"railway\" : \"station\",\n      \"railway:ref\" :
+        \"RH\",\n      \"railway:station_category\" : \"2\",\n      \"ref:ESTW\" :
+        \"30\",\n      \"ref:IFOPT\" : \"de:08221:1160\",\n      \"ref:ibnr\" : \"8000156\",\n
+        \     \"ref:station\" : \"2628\",\n      \"short_name\" : \"Heidelberg Hbf\",\n
+        \     \"start_date\" : \"1955\",\n      \"toilets:wheelchair\" : \"yes\",\n
+        \     \"train\" : \"yes\",\n      \"uic_ref\" : \"8014021\",\n      \"url\"
+        : \"https://www.bahnhof.de/heidelberg-hbf\",\n      \"wheelchair\" : \"yes\",\n
+        \     \"wikidata\" : \"Q467998\",\n      \"wikimedia_commons\" : \"Category:Heidelberg
+        Hauptbahnhof\",\n      \"wikipedia\" : \"de:Heidelberg Hauptbahnhof\"\n    }\n
+        \ }, {\n    \"type\" : \"Feature\",\n    \"geometry\" : {\n      \"type\"
+        : \"Point\",\n      \"coordinates\" : [\n        8.675732,\n        49.403532\n
+        \     ]\n    },\n    \"properties\" : {\n      \"@osmId\" : \"node/2820941791\",\n
+        \     \"@snapshotTimestamp\" : \"2026-07-27T09:00:00Z\",\n      \"local_ref\"
+        : \"4\",\n      \"name\" : \"Heidelberg Hauptbahnhof\",\n      \"operator\"
+        : \"DB InfraGO AG\",\n      \"public_transport\" : \"stop_position\",\n      \"railway\"
+        : \"stop\",\n      \"ref:IFOPT\" : \"de:08221:1160:4:4\",\n      \"ref:IFOPT:description\"
+        : \"Gleis 4\",\n      \"train\" : \"yes\"\n    }\n  }, {\n    \"type\" : \"Feature\",\n
+        \   \"geometry\" : {\n      \"type\" : \"Point\",\n      \"coordinates\" :
+        [\n        8.6757577,\n        49.403568\n      ]\n    },\n    \"properties\"
+        : {\n      \"@osmId\" : \"node/2820941792\",\n      \"@snapshotTimestamp\"
+        : \"2026-07-27T09:00:00Z\",\n      \"local_ref\" : \"3\",\n      \"name\"
+        : \"Heidelberg Hauptbahnhof\",\n      \"operator\" : \"DB InfraGO AG\",\n
+        \     \"public_transport\" : \"stop_position\",\n      \"railway\" : \"stop\",\n
+        \     \"ref:IFOPT\" : \"de:08221:1160:3:3\",\n      \"ref:IFOPT:description\"
+        : \"Gleis 3\",\n      \"train\" : \"yes\"\n    }\n  }, {\n    \"type\" : \"Feature\",\n
+        \   \"geometry\" : {\n      \"type\" : \"Point\",\n      \"coordinates\" :
+        [\n        8.6758721,\n        49.4036826\n      ]\n    },\n    \"properties\"
+        : {\n      \"@osmId\" : \"node/2820941793\",\n      \"@snapshotTimestamp\"
+        : \"2026-07-27T09:00:00Z\",\n      \"level\" : \"-1\",\n      \"local_ref\"
+        : \"2\",\n      \"name\" : \"Heidelberg Hauptbahnhof\",\n      \"operator\"
+        : \"DB InfraGO AG\",\n      \"public_transport\" : \"stop_position\",\n      \"railway\"
+        : \"stop\",\n      \"ref:IFOPT\" : \"de:08221:1160:3:2\",\n      \"ref:IFOPT:description\"
+        : \"Gleis 2\",\n      \"train\" : \"yes\"\n    }\n  }, {\n    \"type\" : \"Feature\",\n
+        \   \"geometry\" : {\n      \"type\" : \"Point\",\n      \"coordinates\" :
+        [\n        8.6759071,\n        49.4037183\n      ]\n    },\n    \"properties\"
+        : {\n      \"@osmId\" : \"node/2820941794\",\n      \"@snapshotTimestamp\"
+        : \"2026-07-27T09:00:00Z\",\n      \"level\" : \"-1\",\n      \"local_ref\"
+        : \"1\",\n      \"name\" : \"Heidelberg Hauptbahnhof\",\n      \"operator\"
+        : \"DB InfraGO AG\",\n      \"public_transport\" : \"stop_position\",\n      \"railway\"
+        : \"stop\",\n      \"ref:IFOPT\" : \"de:08221:1160:1:1\",\n      \"ref:IFOPT:description\"
+        : \"Gleis 1\",\n      \"train\" : \"yes\"\n    }\n  }, {\n    \"type\" : \"Feature\",\n
+        \   \"geometry\" : {\n      \"type\" : \"Point\",\n      \"coordinates\" :
+        [\n        8.6767936,\n        49.4043066\n      ]\n    },\n    \"properties\"
+        : {\n      \"@osmId\" : \"node/3265385990\",\n      \"@snapshotTimestamp\"
+        : \"2026-07-27T09:00:00Z\",\n      \"bus\" : \"yes\",\n      \"highway\" :
+        \"bus_stop\",\n      \"name\" : \"Heidelberg Hauptbahnhof, K\",\n      \"network\"
+        : \"Verkehrsverbund Rhein-Neckar\",\n      \"network:guid\" : \"DE-BW-VRN\",\n
+        \     \"network:short\" : \"VRN\",\n      \"network:wikidata\" : \"Q1553051\",\n
+        \     \"network:wikipedia\" : \"de:Verkehrsverbund Rhein-Neckar\",\n      \"public_transport\"
+        : \"stop_position\",\n      \"ref\" : \"K\"\n    }\n  }, {\n    \"type\" :
+        \"Feature\",\n    \"geometry\" : {\n      \"type\" : \"Point\",\n      \"coordinates\"
+        : [\n        8.6761107,\n        49.4048051\n      ]\n    },\n    \"properties\"
+        : {\n      \"@osmId\" : \"node/6779583616\",\n      \"@snapshotTimestamp\"
+        : \"2026-07-27T09:00:00Z\",\n      \"description\" : \"seit 11. September
+        2019 in Betrieb\",\n      \"name\" : \"Heidelberg Hauptbahnhof\",\n      \"railway\"
+        : \"tram_stop\",\n      \"shelter\" : \"yes\"\n    }\n  }, {\n    \"type\"
+        : \"Feature\",\n    \"geometry\" : {\n      \"type\" : \"Point\",\n      \"coordinates\"
+        : [\n        8.67651,\n        49.4046347\n      ]\n    },\n    \"properties\"
+        : {\n      \"@osmId\" : \"node/6792277306\",\n      \"@snapshotTimestamp\"
+        : \"2026-07-27T09:00:00Z\",\n      \"name\" : \"Heidelberg Hauptbahnhof, B\",\n
+        \     \"public_transport\" : \"stop_position\",\n      \"railway\" : \"tram_stop\",\n
+        \     \"tram\" : \"yes\"\n    }\n  }, {\n    \"type\" : \"Feature\",\n    \"geometry\"
+        : {\n      \"type\" : \"Point\",\n      \"coordinates\" : [\n        8.6757202,\n
+        \       49.4049779\n      ]\n    },\n    \"properties\" : {\n      \"@osmId\"
+        : \"node/6792277309\",\n      \"@snapshotTimestamp\" : \"2026-07-27T09:00:00Z\",\n
+        \     \"name\" : \"Heidelberg Hauptbahnhof, E\",\n      \"public_transport\"
+        : \"stop_position\",\n      \"railway\" : \"tram_stop\",\n      \"tram\" :
+        \"yes\"\n    }\n  }, {\n    \"type\" : \"Feature\",\n    \"geometry\" : {\n
+        \     \"type\" : \"Point\",\n      \"coordinates\" : [\n        8.678579,\n
+        \       49.4042619\n      ]\n    },\n    \"properties\" : {\n      \"@osmId\"
+        : \"node/9415529593\",\n      \"@snapshotTimestamp\" : \"2026-07-27T09:00:00Z\",\n
+        \     \"bench\" : \"yes\",\n      \"bin\" : \"yes\",\n      \"bus\" : \"yes\",\n
+        \     \"check_date:shelter\" : \"2024-07-06\",\n      \"highway\" : \"bus_stop\",\n
+        \     \"lit\" : \"yes\",\n      \"name\" : \"Heidelberg Hauptbahnhof (Steig
+        R)\",\n      \"network\" : \"Verkehrsverbund Rhein-Neckar\",\n      \"network:guid\"
+        : \"DE-BW-VRN\",\n      \"network:short\" : \"VRN\",\n      \"network:wikidata\"
+        : \"Q1553051\",\n      \"network:wikipedia\" : \"de:Verkehrsverbund Rhein-Neckar\",\n
+        \     \"note\" : \"752 (M\xFCckenloch, Start- und Endhaltestelle), 754 (Sch\xF6nbrunn,
+        Start- und Endhaltestelle), 755 (Sinsheim, Start- und Endhaltestelle)\",\n
+        \     \"public_transport\" : \"platform\",\n      \"railway:ref:DBAG\" : \"RH
+        B\",\n      \"ref\" : \"R\",\n      \"ref:RNV:RBL\" : \"BHHF\",\n      \"shelter\"
+        : \"yes\",\n      \"source\" : \"survey\",\n      \"tactile_paving\" : \"yes\",\n
+        \     \"wheelchair\" : \"limited\"\n    }\n  }]\n}\n"
+    headers:
+      Access-Control-Allow-Credentials:
+      - 'true'
+      Access-Control-Allow-Headers:
+      - Origin,Accept,X-Requested-With,Content-Type,Access-Control-Request-Method,Access-Control-Request-Headers,Authorization
+      Access-Control-Allow-Methods:
+      - POST, GET
+      Access-Control-Allow-Origin:
+      - '*'
+      Access-Control-Max-Age:
+      - '3600'
+      Connection:
+      - Keep-Alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/geo+json;charset=utf-8
+      Content-disposition:
+      - attachment;filename=ohsome.geojson
+      Date:
+      - Mon, 17 Aug 2026 14:46:59 GMT
+      Keep-Alive:
+      - timeout=5, max=100
+      Server:
+      - Apache/2.4.58 (Ubuntu)
+      Strict-Transport-Security:
+      - max-age=63072000; includeSubdomains;
+      Transfer-Encoding:
+      - chunked
+      vary:
+      - accept-encoding
+    status:
+      code: 200
+      message: ''
+- request:
+    body: bpolys=%7B%22type%22%3A+%22FeatureCollection%22%2C+%22features%22%3A+%5B%7B%22id%22%3A+%220%22%2C+%22type%22%3A+%22Feature%22%2C+%22properties%22%3A+%7B%7D%2C+%22geometry%22%3A+%7B%22type%22%3A+%22Polygon%22%2C+%22coordinates%22%3A+%5B%5B%5B8.679063919738896%2C+49.40415084734862%5D%2C+%5B8.678837779097238%2C+49.40583706838322%5D%2C+%5B8.67637116867987%2C+49.40643785189488%5D%2C+%5B8.67413080382136%2C+49.40535240849951%5D%2C+%5B8.674357047104092%2C+49.40366620725092%5D%2C+%5B8.676823552607251%2C+49.403065429610486%5D%2C+%5B8.679063919738896%2C+49.40415084734862%5D%5D%5D%7D%7D%5D%7D&filter=%28leisure+in+%28garden%2C+nature_reserve%2C+park%29+or+natural+in+%28park%2C+beach%29+or+landuse+in+%28grass%2C+forest%29%29+and+access%21%3Dprivate+and+access%21%3Dno+and+garden%3Atype%21%3Dresidential&properties=tags&clipGeometry=True
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '832'
+      Content-Type:
+      - application/x-www-form-urlencoded
+      user-agent:
+      - ohsome-py/0.3.0
+    method: POST
+    uri: https://api.ohsome.org/v1/elements/centroid
+  response:
+    body:
+      string: "{\n  \"attribution\" : {\n    \"url\" : \"https://ohsome.org/copyrights\",\n
+        \   \"text\" : \"\xA9 OpenStreetMap contributors\"\n  },\n  \"apiVersion\"
+        : \"1.10.4\",\n  \"type\" : \"FeatureCollection\",\n  \"features\" : [{\n
+        \   \"type\" : \"Feature\",\n    \"geometry\" : {\n      \"type\" : \"Point\",\n
+        \     \"coordinates\" : [\n        8.6784349,\n        49.4045657\n      ]\n
+        \   },\n    \"properties\" : {\n      \"@osmId\" : \"relation/18092541\",\n
+        \     \"@snapshotTimestamp\" : \"2026-07-27T09:00:00Z\",\n      \"leisure\"
+        : \"park\",\n      \"name\" : \"Bella Park\",\n      \"type\" : \"multipolygon\"\n
+        \   }\n  }, {\n    \"type\" : \"Feature\",\n    \"geometry\" : {\n      \"type\"
+        : \"Point\",\n      \"coordinates\" : [\n        8.6783936,\n        49.4039832\n
+        \     ]\n    },\n    \"properties\" : {\n      \"@osmId\" : \"way/113581136\",\n
+        \     \"@snapshotTimestamp\" : \"2026-07-27T09:00:00Z\",\n      \"leisure\"
+        : \"park\"\n    }\n  }, {\n    \"type\" : \"Feature\",\n    \"geometry\" :
+        {\n      \"type\" : \"Point\",\n      \"coordinates\" : [\n        8.6743169,\n
+        \       49.4053466\n      ]\n    },\n    \"properties\" : {\n      \"@osmId\"
+        : \"way/1322944591\",\n      \"@snapshotTimestamp\" : \"2026-07-27T09:00:00Z\",\n
+        \     \"landuse\" : \"grass\"\n    }\n  }, {\n    \"type\" : \"Feature\",\n
+        \   \"geometry\" : {\n      \"type\" : \"Point\",\n      \"coordinates\" :
+        [\n        8.6746418,\n        49.4053196\n      ]\n    },\n    \"properties\"
+        : {\n      \"@osmId\" : \"way/1322944592\",\n      \"@snapshotTimestamp\"
+        : \"2026-07-27T09:00:00Z\",\n      \"landuse\" : \"grass\"\n    }\n  }, {\n
+        \   \"type\" : \"Feature\",\n    \"geometry\" : {\n      \"type\" : \"Point\",\n
+        \     \"coordinates\" : [\n        8.6778307,\n        49.4045278\n      ]\n
+        \   },\n    \"properties\" : {\n      \"@osmId\" : \"way/1328540974\",\n      \"@snapshotTimestamp\"
+        : \"2026-07-27T09:00:00Z\",\n      \"landuse\" : \"grass\"\n    }\n  }, {\n
+        \   \"type\" : \"Feature\",\n    \"geometry\" : {\n      \"type\" : \"Point\",\n
+        \     \"coordinates\" : [\n        8.6779152,\n        49.4043359\n      ]\n
+        \   },\n    \"properties\" : {\n      \"@osmId\" : \"way/1328540975\",\n      \"@snapshotTimestamp\"
+        : \"2026-07-27T09:00:00Z\",\n      \"landuse\" : \"grass\"\n    }\n  }]\n}\n"
+    headers:
+      Access-Control-Allow-Credentials:
+      - 'true'
+      Access-Control-Allow-Headers:
+      - Origin,Accept,X-Requested-With,Content-Type,Access-Control-Request-Method,Access-Control-Request-Headers,Authorization
+      Access-Control-Allow-Methods:
+      - POST, GET
+      Access-Control-Allow-Origin:
+      - '*'
+      Access-Control-Max-Age:
+      - '3600'
+      Connection:
+      - Keep-Alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/geo+json;charset=utf-8
+      Content-disposition:
+      - attachment;filename=ohsome.geojson
+      Date:
+      - Mon, 17 Aug 2026 14:47:13 GMT
+      Keep-Alive:
+      - timeout=5, max=100
+      Server:
+      - Apache/2.4.58 (Ubuntu)
+      Strict-Transport-Security:
+      - max-age=63072000; includeSubdomains;
+      Transfer-Encoding:
+      - chunked
+      vary:
+      - accept-encoding
+    status:
+      code: 200
+      message: ''
+- request:
+    body: bpolys=%7B%22type%22%3A+%22FeatureCollection%22%2C+%22features%22%3A+%5B%7B%22id%22%3A+%220%22%2C+%22type%22%3A+%22Feature%22%2C+%22properties%22%3A+%7B%7D%2C+%22geometry%22%3A+%7B%22type%22%3A+%22Polygon%22%2C+%22coordinates%22%3A+%5B%5B%5B8.679063919738896%2C+49.40415084734862%5D%2C+%5B8.678837779097238%2C+49.40583706838322%5D%2C+%5B8.67637116867987%2C+49.40643785189488%5D%2C+%5B8.67413080382136%2C+49.40535240849951%5D%2C+%5B8.674357047104092%2C+49.40366620725092%5D%2C+%5B8.676823552607251%2C+49.403065429610486%5D%2C+%5B8.679063919738896%2C+49.40415084734862%5D%5D%5D%7D%7D%5D%7D&filter=amenity+in+%28cinema%2C+library%2C+public_bookcase%2C+community_centre%2C+planetarium%2C+theatre%2C+arts_centre%29+or+leisure+in+%28fitness_centre%2C+fitness_station%2C+sports_centre%2C+swimming_pool%29+or+museum%3Dculture+or+tourism%3Dmuseum&properties=tags&clipGeometry=True
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '871'
+      Content-Type:
+      - application/x-www-form-urlencoded
+      user-agent:
+      - ohsome-py/0.3.0
+    method: POST
+    uri: https://api.ohsome.org/v1/elements/centroid
+  response:
+    body:
+      string: "{\n  \"attribution\" : {\n    \"url\" : \"https://ohsome.org/copyrights\",\n
+        \   \"text\" : \"\xA9 OpenStreetMap contributors\"\n  },\n  \"apiVersion\"
+        : \"1.10.4\",\n  \"type\" : \"FeatureCollection\",\n  \"features\" : []\n}\n"
+    headers:
+      Access-Control-Allow-Credentials:
+      - 'true'
+      Access-Control-Allow-Headers:
+      - Origin,Accept,X-Requested-With,Content-Type,Access-Control-Request-Method,Access-Control-Request-Headers,Authorization
+      Access-Control-Allow-Methods:
+      - POST, GET
+      Access-Control-Allow-Origin:
+      - '*'
+      Access-Control-Max-Age:
+      - '3600'
+      Connection:
+      - Keep-Alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/geo+json;charset=utf-8
+      Content-disposition:
+      - attachment;filename=ohsome.geojson
+      Date:
+      - Mon, 17 Aug 2026 14:47:28 GMT
+      Keep-Alive:
+      - timeout=5, max=100
+      Server:
+      - Apache/2.4.58 (Ubuntu)
+      Strict-Transport-Security:
+      - max-age=63072000; includeSubdomains;
+      Transfer-Encoding:
+      - chunked
+      vary:
+      - accept-encoding
+    status:
+      code: 200
+      message: ''
+- request:
+    body: bpolys=%7B%22type%22%3A+%22FeatureCollection%22%2C+%22features%22%3A+%5B%7B%22id%22%3A+%220%22%2C+%22type%22%3A+%22Feature%22%2C+%22properties%22%3A+%7B%7D%2C+%22geometry%22%3A+%7B%22type%22%3A+%22Polygon%22%2C+%22coordinates%22%3A+%5B%5B%5B8.679063919738896%2C+49.40415084734862%5D%2C+%5B8.678837779097238%2C+49.40583706838322%5D%2C+%5B8.67637116867987%2C+49.40643785189488%5D%2C+%5B8.67413080382136%2C+49.40535240849951%5D%2C+%5B8.674357047104092%2C+49.40366620725092%5D%2C+%5B8.676823552607251%2C+49.403065429610486%5D%2C+%5B8.679063919738896%2C+49.40415084734862%5D%5D%5D%7D%7D%5D%7D&filter=amenity+in+%28restaurant%2C+fast_food%2C+food_court%2C+canteen%2C+cafe%2C+pub%2C+bar%2C+biergarten%29&properties=tags&clipGeometry=True
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '730'
+      Content-Type:
+      - application/x-www-form-urlencoded
+      user-agent:
+      - ohsome-py/0.3.0
+    method: POST
+    uri: https://api.ohsome.org/v1/elements/centroid
+  response:
+    body:
+      string: "{\n  \"attribution\" : {\n    \"url\" : \"https://ohsome.org/copyrights\",\n
+        \   \"text\" : \"\xA9 OpenStreetMap contributors\"\n  },\n  \"apiVersion\"
+        : \"1.10.4\",\n  \"type\" : \"FeatureCollection\",\n  \"features\" : [{\n
+        \   \"type\" : \"Feature\",\n    \"geometry\" : {\n      \"type\" : \"Point\",\n
+        \     \"coordinates\" : [\n        8.67598,\n        49.4044808\n      ]\n
+        \   },\n    \"properties\" : {\n      \"@osmId\" : \"way/462362636\",\n      \"@snapshotTimestamp\"
+        : \"2026-07-27T09:00:00Z\",\n      \"addr:city\" : \"Heidelberg\",\n      \"addr:country\"
+        : \"DE\",\n      \"addr:housenumber\" : \"5\",\n      \"addr:postcode\" :
+        \"69115\",\n      \"addr:street\" : \"Willy-Brandt-Platz\",\n      \"amenity\"
+        : \"fast_food\",\n      \"brand\" : \"Asiahung\",\n      \"brand:wikidata\"
+        : \"Q100406310\",\n      \"changing_table\" : \"no\",\n      \"check_date:opening_hours\"
+        : \"2025-08-30\",\n      \"cuisine\" : \"asian\",\n      \"diet:vegan\" :
+        \"yes\",\n      \"diet:vegetarian\" : \"yes\",\n      \"indoor\" : \"room\",\n
+        \     \"indoor_seating\" : \"yes\",\n      \"internet_access\" : \"no\",\n
+        \     \"level\" : \"0\",\n      \"name\" : \"Asiahung\",\n      \"opening_hours\"
+        : \"Mo-Su 10:00-20:00\",\n      \"outdoor_seating\" : \"no\",\n      \"room\"
+        : \"shop\",\n      \"smoking\" : \"no\",\n      \"takeaway\" : \"yes\",\n
+        \     \"wheelchair\" : \"yes\"\n    }\n  }, {\n    \"type\" : \"Feature\",\n
+        \   \"geometry\" : {\n      \"type\" : \"Point\",\n      \"coordinates\" :
+        [\n        8.6760026,\n        49.4044147\n      ]\n    },\n    \"properties\"
+        : {\n      \"@osmId\" : \"way/462362717\",\n      \"@snapshotTimestamp\" :
+        \"2026-07-27T09:00:00Z\",\n      \"addr:city\" : \"Heidelberg\",\n      \"addr:country\"
+        : \"DE\",\n      \"addr:housenumber\" : \"5\",\n      \"addr:postcode\" :
+        \"69115\",\n      \"addr:street\" : \"Willy-Brandt-Platz\",\n      \"amenity\"
+        : \"fast_food\",\n      \"brand\" : \"Yorma's\",\n      \"brand:wikidata\"
+        : \"Q2600868\",\n      \"check_date\" : \"2026-06-29\",\n      \"cuisine\"
+        : \"bakery;sandwich;coffee\",\n      \"delivery\" : \"no\",\n      \"diet:gluten_free\"
+        : \"no\",\n      \"diet:halal\" : \"no\",\n      \"diet:kosher\" : \"no\",\n
+        \     \"diet:vegan\" : \"yes\",\n      \"diet:vegetarian\" : \"yes\",\n      \"drive_through\"
+        : \"no\",\n      \"indoor\" : \"room\",\n      \"indoor_seating\" : \"no\",\n
+        \     \"internet_access\" : \"no\",\n      \"level\" : \"0\",\n      \"name\"
+        : \"Yorma's\",\n      \"opening_hours\" : \"Mo-Fr 05:30-21:00; PH,Su 06:00-21:00;
+        Sa 05:00-21:00\",\n      \"operator\" : \"YORMA'S\",\n      \"outdoor_seating\"
+        : \"no\",\n      \"payment:cards\" : \"yes\",\n      \"payment:cash\" : \"yes\",\n
+        \     \"payment:qr_code\" : \"no\",\n      \"room\" : \"shop\",\n      \"shop\"
+        : \"kiosk\",\n      \"smoking\" : \"no\",\n      \"surveillance\" : \"indoor\",\n
+        \     \"takeaway\" : \"only\",\n      \"website\" : \"https://www.yormas.de/\",\n
+        \     \"wheelchair\" : \"yes\"\n    }\n  }, {\n    \"type\" : \"Feature\",\n
+        \   \"geometry\" : {\n      \"type\" : \"Point\",\n      \"coordinates\" :
+        [\n        8.6752473,\n        49.4054553\n      ]\n    },\n    \"properties\"
+        : {\n      \"@osmId\" : \"node/1727214043\",\n      \"@snapshotTimestamp\"
+        : \"2026-07-27T09:00:00Z\",\n      \"addr:city\" : \"Heidelberg\",\n      \"addr:country\"
+        : \"DE\",\n      \"addr:housenumber\" : \"62\",\n      \"addr:postcode\" :
+        \"69115\",\n      \"addr:street\" : \"Kurf\xFCrsten-Anlage\",\n      \"amenity\"
+        : \"restaurant\",\n      \"check_date:opening_hours\" : \"2025-09-05\",\n
+        \     \"cuisine\" : \"asian\",\n      \"indoor_seating\" : \"yes\",\n      \"name\"
+        : \"Asia Bistro\",\n      \"opening_hours\" : \"Su 12:00-22:00; Mo-Fr 11:00-15:30,17:00-22:00;
+        Sa off\",\n      \"outdoor_seating\" : \"yes\",\n      \"smoking\" : \"no\",\n
+        \     \"website\" : \"https://asiabistro.metro.rest/\",\n      \"wheelchair\"
+        : \"limited\"\n    }\n  }, {\n    \"type\" : \"Feature\",\n    \"geometry\"
+        : {\n      \"type\" : \"Point\",\n      \"coordinates\" : [\n        8.6756892,\n
+        \       49.4052906\n      ]\n    },\n    \"properties\" : {\n      \"@osmId\"
+        : \"node/1798539837\",\n      \"@snapshotTimestamp\" : \"2026-07-27T09:00:00Z\",\n
+        \     \"addr:city\" : \"Heidelberg\",\n      \"addr:country\" : \"DE\",\n
+        \     \"addr:housenumber\" : \"62\",\n      \"addr:postcode\" : \"69115\",\n
+        \     \"addr:street\" : \"Kurf\xFCrsten-Anlage\",\n      \"amenity\" : \"bar\",\n
+        \     \"check_date\" : \"2026-06-29\",\n      \"food\" : \"snacks\",\n      \"indoor_seating\"
+        : \"yes\",\n      \"min_age\" : \"18\",\n      \"name\" : \"Boulevard\",\n
+        \     \"opening_hours\" : \"Mo-Fr,Su 10:00-02:00; Fr-Sa 10:00-05:00\",\n      \"operator\"
+        : \"Ivica Babic; Zoran Dzever\",\n      \"outdoor_seating\" : \"yes\",\n      \"payment:cash\"
+        : \"only\",\n      \"phone\" : \"+49 6221 6735950\",\n      \"smoking\" :
+        \"dedicated\",\n      \"toilets:wheelchair\" : \"no\",\n      \"wheelchair\"
+        : \"yes\"\n    }\n  }, {\n    \"type\" : \"Feature\",\n    \"geometry\" :
+        {\n      \"type\" : \"Point\",\n      \"coordinates\" : [\n        8.6759129,\n
+        \       49.4056328\n      ]\n    },\n    \"properties\" : {\n      \"@osmId\"
+        : \"node/1939602667\",\n      \"@snapshotTimestamp\" : \"2026-07-27T09:00:00Z\",\n
+        \     \"addr:city\" : \"Heidelberg\",\n      \"addr:housenumber\" : \"62\",\n
+        \     \"addr:postcode\" : \"69115\",\n      \"addr:street\" : \"Kurf\xFCrsten-Anlage\",\n
+        \     \"amenity\" : \"fast_food\",\n      \"check_date:opening_hours\" : \"2026-03-04\",\n
+        \     \"cuisine\" : \"kebab;pizza\",\n      \"indoor_seating\" : \"yes\",\n
+        \     \"name\" : \"Piroz\",\n      \"opening_hours\" : \"Mo-Sa 11:00-22:00;
+        Su,PH off\",\n      \"outdoor_seating\" : \"patio\",\n      \"smoking\" :
+        \"outside\",\n      \"takeaway\" : \"yes\",\n      \"toilets:wheelchair\"
+        : \"no\",\n      \"wheelchair\" : \"yes\"\n    }\n  }, {\n    \"type\" : \"Feature\",\n
+        \   \"geometry\" : {\n      \"type\" : \"Point\",\n      \"coordinates\" :
+        [\n        8.6760104,\n        49.4046284\n      ]\n    },\n    \"properties\"
+        : {\n      \"@osmId\" : \"node/12032988388\",\n      \"@snapshotTimestamp\"
+        : \"2026-07-27T09:00:00Z\",\n      \"amenity\" : \"fast_food\",\n      \"check_date:opening_hours\"
+        : \"2024-07-21\",\n      \"cuisine\" : \"chicken\",\n      \"indoor_seating\"
+        : \"no\",\n      \"name\" : \"Canaar\",\n      \"opening_hours:signed\" :
+        \"no\",\n      \"outdoor_seating\" : \"yes\",\n      \"street_vendor\" : \"yes\"\n
+        \   }\n  }]\n}\n"
+    headers:
+      Access-Control-Allow-Credentials:
+      - 'true'
+      Access-Control-Allow-Headers:
+      - Origin,Accept,X-Requested-With,Content-Type,Access-Control-Request-Method,Access-Control-Request-Headers,Authorization
+      Access-Control-Allow-Methods:
+      - POST, GET
+      Access-Control-Allow-Origin:
+      - '*'
+      Access-Control-Max-Age:
+      - '3600'
+      Connection:
+      - Keep-Alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/geo+json;charset=utf-8
+      Content-disposition:
+      - attachment;filename=ohsome.geojson
+      Date:
+      - Mon, 17 Aug 2026 14:47:42 GMT
+      Keep-Alive:
+      - timeout=5, max=100
+      Server:
+      - Apache/2.4.58 (Ubuntu)
+      Strict-Transport-Security:
+      - max-age=63072000; includeSubdomains;
+      Transfer-Encoding:
+      - chunked
+      vary:
+      - accept-encoding
+    status:
+      code: 200
+      message: ''
+- request:
+    body: bpolys=%7B%22type%22%3A+%22FeatureCollection%22%2C+%22features%22%3A+%5B%7B%22id%22%3A+%220%22%2C+%22type%22%3A+%22Feature%22%2C+%22properties%22%3A+%7B%7D%2C+%22geometry%22%3A+%7B%22type%22%3A+%22Polygon%22%2C+%22coordinates%22%3A+%5B%5B%5B8.679063919738896%2C+49.40415084734862%5D%2C+%5B8.678837779097238%2C+49.40583706838322%5D%2C+%5B8.67637116867987%2C+49.40643785189488%5D%2C+%5B8.67413080382136%2C+49.40535240849951%5D%2C+%5B8.674357047104092%2C+49.40366620725092%5D%2C+%5B8.676823552607251%2C+49.403065429610486%5D%2C+%5B8.679063919738896%2C+49.40415084734862%5D%5D%5D%7D%7D%5D%7D&filter=amenity%3Dveterinary+or+leisure%3Ddog_park+or+%28amenity%3Dwaste_basket+and+waste%3Ddog_excrement%29+or+%28amenity%3Dvending_machine+and+vending%3Dexcrement_bags%29+or+shop%3Dpet_grooming&properties=tags&clipGeometry=True
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '816'
+      Content-Type:
+      - application/x-www-form-urlencoded
+      user-agent:
+      - ohsome-py/0.3.0
+    method: POST
+    uri: https://api.ohsome.org/v1/elements/centroid
+  response:
+    body:
+      string: "{\n  \"attribution\" : {\n    \"url\" : \"https://ohsome.org/copyrights\",\n
+        \   \"text\" : \"\xA9 OpenStreetMap contributors\"\n  },\n  \"apiVersion\"
+        : \"1.10.4\",\n  \"type\" : \"FeatureCollection\",\n  \"features\" : []\n}\n"
+    headers:
+      Access-Control-Allow-Credentials:
+      - 'true'
+      Access-Control-Allow-Headers:
+      - Origin,Accept,X-Requested-With,Content-Type,Access-Control-Request-Method,Access-Control-Request-Headers,Authorization
+      Access-Control-Allow-Methods:
+      - POST, GET
+      Access-Control-Allow-Origin:
+      - '*'
+      Access-Control-Max-Age:
+      - '3600'
+      Connection:
+      - Keep-Alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/geo+json;charset=utf-8
+      Content-disposition:
+      - attachment;filename=ohsome.geojson
+      Date:
+      - Mon, 17 Aug 2026 14:47:57 GMT
+      Keep-Alive:
+      - timeout=5, max=100
+      Server:
+      - Apache/2.4.58 (Ubuntu)
+      Strict-Transport-Security:
+      - max-age=63072000; includeSubdomains;
+      Transfer-Encoding:
+      - chunked
+      vary:
+      - accept-encoding
+    status:
+      code: 200
+      message: ''
+version: 1

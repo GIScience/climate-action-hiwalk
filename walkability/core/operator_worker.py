@@ -37,6 +37,7 @@ from walkability.components.utils.misc import (
     fetch_osm_data,
     ohsome_filter,
 )
+from walkability.components.variety_of_pois.variety_of_poi_analysis import variety_of_pois_analysis
 from walkability.core.info import get_info
 from walkability.core.input import ComputeInputWalkability, WalkabilityIndicators
 from walkability.core.settings import Settings
@@ -236,6 +237,17 @@ class OperatorWalkability(BaseOperator[ComputeInputWalkability]):
                 artifacts.extend(shade_artifacts)
                 log.info('Tree Shade Computed')
 
+        if WalkabilityIndicators.VARIETY_OF_POIS in params.optional_indicators:
+            with self.catch_exceptions(indicator_name='Variety of POIs', resources=resources):
+                log.info('Computing Variety of POIs')
+                variety_of_pois_artifacts = variety_of_pois_analysis(
+                    aoi=aoi,
+                    aoi_properties=aoi_properties,
+                    ohsome_client=self.ohsome,
+                    resources=resources,
+                )
+                artifacts.extend(variety_of_pois_artifacts)
+                log.info('Variety of POIs Computed')
         return artifacts
 
     def _get_paths(self, aoi: shapely.MultiPolygon) -> tuple[gpd.GeoDataFrame, gpd.GeoDataFrame]:

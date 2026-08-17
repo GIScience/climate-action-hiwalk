@@ -7,6 +7,9 @@ and this project mostly adheres to [Semantic Versioning](https://semver.org/spec
 
 ## [Unreleased](https://gitlab.heigit.org/climate-action/plugins/walkability/-/compare/4.2.0...main)
 
+### Added
+- Add indicator on variety of POIs ([#330](https://gitlab.heigit.org/climate-action/plugins/walkability/-/work_items/330))
+
 ## [4.2.0](https://gitlab.heigit.org/climate-action/plugins/walkability/-/releases/4.2.0) - 2026-08-12
 
 ### Added
