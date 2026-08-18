@@ -102,8 +102,8 @@ def create_tile_windows(
     bounds: tuple[float, float, float, float], resolution: float, max_length_pixels: int
 ) -> gpd.GeoSeries:
     """
-    Create windows provided `bounds`, such that each window has an edge length of less than `max_length_pixels`, at the
-    given `resolution` (also in pixels).
+    Create windows for the provided `bounds`, such that each window has an edge length of greater than the `resolution`
+    and less than `max_length_pixels` at the given `resolution` (also in pixels).
     """
     min_x, min_y, max_x, max_y = [b for b in bounds]
 
@@ -113,6 +113,8 @@ def create_tile_windows(
 
         vals = list(np.arange(minv, maxv, step=max_length_pixels * resolution))
         if vals[-1] != maxv:
+            if abs((maxv - vals[-1]) / resolution) < 1:
+                maxv += resolution
             vals.append(maxv)
         return vals
 
@@ -207,6 +209,9 @@ def compute_coverage(
 
     covered_paths = gpd.GeoDataFrame.from_features(zstat, crs=shade_profile['crs'])
     covered_paths['prop_shaded'] = covered_paths['count'] / covered_paths[['count', 'nodata']].sum(axis='columns')
+    covered_paths = covered_paths.dropna(
+        subset=['prop_shaded']
+    )  # Hotfix for https://gitlab.heigit.org/climate-action/plugins/walkability/-/work_items/358, should be addressed with https://gitlab.heigit.org/climate-action/plugins/walkability/-/work_items/318
     covered_paths = covered_paths.drop(columns=['count', 'nodata'])
     covered_paths = covered_paths.to_crs(crs_in)
 
