@@ -116,6 +116,21 @@ def test_create_tile_windows_bounds_smaller_than_resolution():
     assert_geoseries_equal(expected, received)
 
 
+def test_create_tile_windows_multiple_tiles_always_bigger_than_resolution():
+    input_bounds = (1369300, 6143300, 1369400, 6143501)  # y is 1px to big for the resolution x max_length_pixels
+
+    expected = gpd.GeoSeries(
+        [
+            shapely.geometry.box(1369300, 6143300, 1369400, 6143500),
+            shapely.geometry.box(1369300, 6143500, 1369400, 6143511),  #  maxy has been buffered by 1px
+        ],
+        index=['0_0', '0_1'],
+    )
+    received = create_tile_windows(bounds=input_bounds, resolution=10, max_length_pixels=20)
+
+    assert_geoseries_equal(expected, received)
+
+
 def test_mask_and_crop_with_mask_file():
     received_masked_data, _ = mask_and_crop(
         raster_file=TEST_RESOURCES_DIR / 'shade/mock_tree_raster2.tif',

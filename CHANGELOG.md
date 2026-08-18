@@ -5,10 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project mostly adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://gitlab.heigit.org/climate-action/plugins/walkability/-/compare/4.2.0...main)
+## [Unreleased](https://gitlab.heigit.org/climate-action/plugins/walkability/-/compare/4.2.1...main)
+
+## [4.2.1](https://gitlab.heigit.org/climate-action/plugins/walkability/-/releases/4.2.1) - 2026-08-18
 
 ### Added
 - Add indicator on variety of POIs ([#330](https://gitlab.heigit.org/climate-action/plugins/walkability/-/work_items/330))
+
+### Fixed
+- Handle emtpy canopy_data tiles in tree shade computation ([#358](https://gitlab.heigit.org/climate-action/plugins/walkability/-/work_items/358))
 
 ## [4.2.0](https://gitlab.heigit.org/climate-action/plugins/walkability/-/releases/4.2.0) - 2026-08-12
 

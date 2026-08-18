@@ -18,7 +18,7 @@ class WalkabilityIndicators(Enum):
 
 
 # These indicators will not be available for selection if `FEATURE_FLAG_EXPERIMENTAL=False`
-EXPERIMENTAL_INDICATORS = {WalkabilityIndicators.TACTILE_PAVING}
+EXPERIMENTAL_INDICATORS = {WalkabilityIndicators.TACTILE_PAVING, WalkabilityIndicators.VARIETY_OF_POIS}
 
 feature_flags = FeatureFlags()
 optional_indicators_schema = None
