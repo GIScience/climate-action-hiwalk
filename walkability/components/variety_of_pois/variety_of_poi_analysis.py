@@ -4,6 +4,7 @@ from pathlib import Path
 import geopandas as gpd
 import h3
 import matplotlib
+import matplotlib.colors as mcolors
 import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
@@ -155,7 +156,10 @@ def create_poi_summary_chart(summary: pd.DataFrame) -> go.Figure:
     :param summary: pd.DataFrame with total number of POIs per category in the entire AOI
     :return: Bar chart showing total number of POIs per category in the entire AOI
     """
-    fig = go.Figure(data=[go.Bar(x=summary['poi_category'], y=summary['poi_sum'], marker_color='#808080')])
+    tab10 = matplotlib.colormaps['tab10']
+    color_map = {cat: mcolors.to_hex(tab10(i)) for i, cat in enumerate(summary['poi_category'])}
+    colors = summary['poi_category'].map(color_map)
+    fig = go.Figure(data=[go.Bar(x=summary['poi_category'], y=summary['poi_sum'], marker_color=colors)])
     return fig
 
 

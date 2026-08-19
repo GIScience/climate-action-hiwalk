@@ -27,6 +27,13 @@ POI_CATEGORIES = [
         ohsome_filter='amenity in (childcare, nursery, kindergarten, toy_library) or leisure in (playground, indoor_play)',
     ),
     POICategory(
+        type='green or natural spaces',
+        ohsome_filter=str(
+            '(leisure in (garden, nature_reserve, park) or natural in (park, beach) or landuse in (grass, forest)) '
+            'and access!=private and access!=no and garden:type!=residential'
+        ),
+    ),
+    POICategory(
         type='healthcare',
         ohsome_filter='amenity in (doctors, clinic, dentist, pharmacy) or healthcare in (doctor, dentist, pharmacy)',
     ),
@@ -44,13 +51,6 @@ POI_CATEGORIES = [
     POICategory(
         type='public transport',
         ohsome_filter='highway=bus_stop or railway in (tram_stop, station, halt, stop) or station=subway',
-    ),
-    POICategory(
-        type='green or natural spaces',
-        ohsome_filter=str(
-            '(leisure in (garden, nature_reserve, park) or natural in (park, beach) or landuse in (grass, forest)) '
-            'and access!=private and access!=no and garden:type!=residential'
-        ),
     ),
     POICategory(
         type='culture/leisure',
