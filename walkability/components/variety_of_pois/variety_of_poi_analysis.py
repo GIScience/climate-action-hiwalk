@@ -5,7 +5,6 @@ import geopandas as gpd
 import h3
 import matplotlib
 import matplotlib.colors as mcolors
-import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
 import shapely
@@ -43,9 +42,8 @@ def variety_of_pois_analysis(
     number_of_categories_artifact = build_number_of_categories_artifact(data=variety_of_pois, resources=resources)
 
     number_of_pois_summary_chart = create_poi_summary_chart(summary=summary)
-    evenness = calculate_evenness(summary=summary)
     variety_of_pois_summary_artifact = build_variety_of_pois_summary_artifact(
-        fig=number_of_pois_summary_chart, evenness=evenness, aoi_properties=aoi_properties, resources=resources
+        fig=number_of_pois_summary_chart, aoi_properties=aoi_properties, resources=resources
     )
 
     return [number_of_pois_artifact, number_of_categories_artifact, variety_of_pois_summary_artifact]
@@ -121,34 +119,6 @@ def get_hex_grids(aoi: shapely.MultiPolygon, hex_resolution: int = 9) -> gpd.Geo
     hexagon_features = gpd.GeoDataFrame(features, geometry='geometry', crs=4326)
 
     return hexagon_features
-
-
-def calculate_evenness(summary: pd.DataFrame) -> dict[str, float | int]:
-    """
-    Calculate evenness of POI distribution across the categories
-    Evenness = H' / log(N)
-    where H' is the Shannon diversity index and N is the number of categories.
-
-    :param summary: pd.DataFrame with total number of POIs per category in the entire AOI
-    :return: Dict with evenness, number of categories with 0 POIs, and total number of categories
-    """
-    num_zero_categories = len(summary[summary['poi_sum'] == 0])
-
-    nonzero_summary = summary[summary['poi_sum'] > 0]
-    num_nonzero_categories = len(nonzero_summary)
-
-    if num_nonzero_categories <= 1:
-        evenness = 0.0  # Evenness is undefined for 0 or 1 category, return 0
-    else:
-        proportions = nonzero_summary['poi_sum'] / nonzero_summary['poi_sum'].sum()
-        h_shannon = -np.sum(proportions * np.log(proportions))
-        evenness = h_shannon / np.log(num_nonzero_categories)
-
-    return {
-        'evenness': evenness,
-        'num_zero_categories': num_zero_categories,
-        'num_categories': num_nonzero_categories + num_zero_categories,
-    }
 
 
 def create_poi_summary_chart(summary: pd.DataFrame) -> go.Figure:
@@ -233,28 +203,19 @@ def build_number_of_categories_artifact(
 
 
 def build_variety_of_pois_summary_artifact(
-    fig: go.Figure, evenness: dict[str, float | int], aoi_properties: AoiProperties, resources: ComputationResources
+    fig: go.Figure, aoi_properties: AoiProperties, resources: ComputationResources
 ) -> Artifact:
     """
     Build chart artifact showing the total number of POIs per category in the entire AOI
 
     :param fig: Bar chart showing total number of POIs per category in the entire AOI
-    :param evenness: Dict with evenness, number of categories with 0 POIs, and total number of categories
     :param aoi_properties: Name and unique identifier of the computation area
     :param resources: Computation resources
     :return: Chart artifact showing the total number of POIs per category in the entire AOI
     """
     summary_chart_metadata = ArtifactMetadata(
         name='Number of POIs by Category',
-        summary=f'How many POIs per category are in {aoi_properties.name}? '
-        f'The relative diversity index for {aoi_properties.name} is {round(evenness["evenness"], 2)}. '
-        'View the detailed description for details on the relative diversity index.',
-        description=f'Relative diversity index for {aoi_properties.name} = {round(evenness["evenness"], 2)} '
-        f'(with {evenness["num_zero_categories"]} / {evenness["num_categories"]} categories having 0 POIs).\n\nThe '
-        'relative diversity index (Peet 1975) shows how evenly the POIs are distributed across the categories. It '
-        'has a range from 0 to 1 with values close to 0 representing a very uneven distribution and values close to 1 '
-        'representing a very even distribution (i.e. all POI categories have the same number of POIs). Categories with '
-        '0 POIs are excluded from the calculation of the relative diversity index.',
+        summary=f'How many POIs per category are in {aoi_properties.name}?',
         tags={Topics.ATTRACTIVENESS},
         primary=False,
     )

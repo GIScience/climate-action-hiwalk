@@ -3,7 +3,6 @@ import plotly.graph_objects as go
 import pytest
 
 from walkability.components.variety_of_pois.variety_of_poi_analysis import (
-    calculate_evenness,
     create_poi_summary_chart,
     get_hex_grids,
     get_variety_of_pois,
@@ -42,22 +41,3 @@ def test_create_poi_summary_chart():
     assert isinstance(bar_chart, go.Figure)
     assert bar_chart['data'][0]['x'][0] == 'education'
     assert bar_chart['data'][0]['x'][1] == 'childcare'
-
-
-def test_calculate_evenness():
-    summary = pd.DataFrame(
-        {
-            'poi_category': ['education', 'childcare', 'healthcare'],
-            'poi_sum': [2, 0, 8],
-        }
-    )
-
-    expected_result = {
-        'evenness': 0.721928,
-        'num_zero_categories': 1,
-        'num_categories': 3,
-    }
-
-    evenness_result = calculate_evenness(summary)
-
-    assert pytest.approx(evenness_result, abs=0.00001) == expected_result
