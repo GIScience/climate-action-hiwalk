@@ -10,6 +10,9 @@ and this project mostly adheres to [Semantic Versioning](https://semver.org/spec
 ### Changed
 - Color categories individually in POI summary chart ([#390](https://gitlab.heigit.org/climate-action/plugins/walkability/-/work_items/390))
 
+### Removed
+- Relative diversity index below POI summary artifact ([#391](https://gitlab.heigit.org/climate-action/plugins/walkability/-/work_items/391))
+
 ## [4.2.1](https://gitlab.heigit.org/climate-action/plugins/walkability/-/releases/4.2.1) - 2026-08-18
 
 ### Added
