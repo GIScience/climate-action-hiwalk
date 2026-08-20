@@ -5,7 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project mostly adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://gitlab.heigit.org/climate-action/plugins/walkability/-/compare/4.2.1...main)
+## [Unreleased](https://gitlab.heigit.org/climate-action/plugins/walkability/-/compare/4.2.2...main)
+
+## [4.2.2](https://gitlab.heigit.org/climate-action/plugins/walkability/-/releases/4.2.2) - 2026-08-20
+
+### Fixed
+- updated ohsome-py2 for compatability with the latest ohsome v2 API release candidate
 
 ### Changed
 - Color categories individually in POI summary chart ([#390](https://gitlab.heigit.org/climate-action/plugins/walkability/-/work_items/390))

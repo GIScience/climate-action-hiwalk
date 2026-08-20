@@ -5,7 +5,7 @@ interactions:
       foot in (yes, designated, official, permissive))) and not (footway=separate
       or sidewalk=separate or sidewalk:both=separate or (sidewalk:right=separate and
       sidewalk:left=separate) or (sidewalk:right=separate and sidewalk:left=no) or
-      (sidewalk:right=no and sidewalk:left=separate))","timeSeries":{"start":"earliest","end":"latest"}}'
+      (sidewalk:right=no and sidewalk:left=separate))","clip":true,"time":"latest"}'
     headers:
       accept:
       - '*/*'
@@ -14,7 +14,7 @@ interactions:
       connection:
       - keep-alive
       content-length:
-      - '530'
+      - '509'
       content-type:
       - application/json
       host:
@@ -25,17 +25,17 @@ interactions:
     uri: http://ohsome-secret-url/stats/features/count.json
   response:
     body:
-      string: "{\"apiVersion\":\"2.0.0a6\",\"attribution\":{\"url\":\"https://ohsome.org/copyrights\",\"text\":\"\xA9
-        OpenStreetMap contributors\"},\"result\":{\"timestamp\":[\"2007-10-08T00:00:00Z\",\"2026-08-12T09:59:56Z\"],\"value\":[2382,175748]}}"
+      string: "{\"apiVersion\":\"2.0.0a6+bbe2115\",\"attribution\":{\"url\":\"https://ohsome.org/copyrights\",\"text\":\"\xA9
+        OpenStreetMap contributors\"},\"result\":{\"timestamp\":[\"2026-08-20T12:18:29Z\"],\"value\":[175794]}}"
     headers:
       content-length:
-      - '210'
+      - '190'
       content-type:
       - application/json
       date:
-      - Wed, 12 Aug 2026 10:01:24 GMT
+      - Thu, 20 Aug 2026 12:21:08 GMT
       server:
-      - uvicorn
+      - hypercorn-h11
     status:
       code: 200
       message: OK
