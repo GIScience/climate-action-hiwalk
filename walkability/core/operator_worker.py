@@ -238,8 +238,8 @@ class OperatorWalkability(BaseOperator[ComputeInputWalkability]):
                 log.info('Tree Shade Computed')
 
         if WalkabilityIndicators.VARIETY_OF_POIS in params.optional_indicators:
-            with self.catch_exceptions(indicator_name='Variety of POIs', resources=resources):
-                log.info('Computing Variety of POIs')
+            with self.catch_exceptions(indicator_name='Point of Interest Variety', resources=resources):
+                log.info('Computing Point of Interest Variety')
                 variety_of_pois_artifacts = variety_of_pois_analysis(
                     aoi=aoi,
                     aoi_properties=aoi_properties,
@@ -247,7 +247,7 @@ class OperatorWalkability(BaseOperator[ComputeInputWalkability]):
                     resources=resources,
                 )
                 artifacts.extend(variety_of_pois_artifacts)
-                log.info('Variety of POIs Computed')
+                log.info('Point of Interest Variety Computed')
         return artifacts
 
     def _get_paths(self, aoi: shapely.MultiPolygon) -> tuple[gpd.GeoDataFrame, gpd.GeoDataFrame]:

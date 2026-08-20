@@ -14,7 +14,7 @@ class WalkabilityIndicators(Enum):
     SHADE = 'Tree Shade'
     LIGHT = 'Path Lighting'
     TACTILE_PAVING = 'Tactile Paving'
-    VARIETY_OF_POIS = 'Variety of POIs'
+    VARIETY_OF_POIS = 'Point of Interest Variety'
 
 
 # These indicators will not be available for selection if `FEATURE_FLAG_EXPERIMENTAL=False`
