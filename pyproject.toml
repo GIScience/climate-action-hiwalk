@@ -21,7 +21,8 @@ dependencies = [
     "ohsome-py2 @ git+https://gitlab.heigit.org/climate-action/utilities/ohsome-py2.git@0.3.1",
     "boto3 (>=1.40.7)",
     "botocore (>=1.40.7)",
-    "rasterio (>=1.5.0,<2.0.0)"
+    "rasterio (>=1.5.0,<2.0.0)",
+    "ohsome-filter-to-sql (>=0.14.0,<0.15.0)"
 ]
 
 [project.urls]

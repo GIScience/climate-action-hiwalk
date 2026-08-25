@@ -147,11 +147,11 @@ PATH_LIGHTING_CATEGORY_RATING_MAP = {
 
 
 class TactilePavingCategory(Enum):
-    YES = 'yes'
-    OTHER_SIGNS = 'other signs'
-    PARTIAL = 'partial / incorrect'
-    NO = 'no'
-    UNKNOWN = 'unknown'
+    YES = 'Yes'
+    OTHER_SIGNS = 'Other Signs'
+    PARTIAL = 'Partial / Incorrect'
+    NO = 'No'
+    UNKNOWN = 'Unknown'
 
 
 TACTILE_PAVING_CATEGORY_RATING_MAP = {
@@ -163,17 +163,20 @@ TACTILE_PAVING_CATEGORY_RATING_MAP = {
 }
 
 
+class TactilePavingInfrastructureCategory(Enum):
+    CROSSINGS = 'Crossings'
+    PLATFORMS = 'Platforms'
+    STAIRS = 'Stairs'
+
+
 def fetch_osm_data(aoi: shapely.MultiPolygon, osm_filter: str, ohsome: OhsomeClient) -> gpd.GeoDataFrame:
     try:
         elements = ohsome.features_extraction(aoi=aoi, osm_filter=osm_filter, clip=True)
-    except Exception as e:
-        if isinstance(e, OhsomeAPIError):
-            raise ClimatoologyUserError('There was an error collecting OSM data. Please try again later.')
-        else:
-            log.exception('Unexpected error when downloading OSM data.')
-            raise ClimatoologyUserError(
-                'Unexpected error when collecting OSM data. Please contact us to find out more.'
-            )
+    except OhsomeAPIError:
+        raise ClimatoologyUserError('There was an error collecting OSM data. Please try again later.')
+    except Exception:
+        log.exception('Unexpected error when downloading OSM data.')
+        raise ClimatoologyUserError('Unexpected error when collecting OSM data. Please contact us to find out more.')
 
     elements = elements.rename_geometry('geometry')
     return elements[['osm_id', 'osm_type', 'geometry', 'osm_tags']]

@@ -217,8 +217,8 @@ class OperatorWalkability(BaseOperator[ComputeInputWalkability]):
             with self.catch_exceptions(indicator_name='Tactile Paving Indicator', resources=resources):
                 log.info('Computing Tactile Paving Indicator')
                 tactile_paving_artifact = tactile_paving_analysis(
-                    line_paths=line_paths,
-                    polygon_paths=polygon_paths,
+                    aoi=aoi,
+                    ohsome=self.ohsome,
                     resources=resources,
                 )
                 artifacts.extend(tactile_paving_artifact)
@@ -252,8 +252,8 @@ class OperatorWalkability(BaseOperator[ComputeInputWalkability]):
 
     def _get_paths(self, aoi: shapely.MultiPolygon) -> tuple[gpd.GeoDataFrame, gpd.GeoDataFrame]:
         log.debug('Extracting paths')
-        line_paths = fetch_osm_data(aoi, ohsome_filter('line'), self.ohsome)
-        polygon_paths = fetch_osm_data(aoi, ohsome_filter('polygon'), self.ohsome)
+        line_paths = fetch_osm_data(aoi=aoi, osm_filter=ohsome_filter('line'), ohsome=self.ohsome)
+        polygon_paths = fetch_osm_data(aoi=aoi, osm_filter=ohsome_filter('polygon'), ohsome=self.ohsome)
 
         line_paths = self.clean_geometries(aoi, line_paths, 'LineString')
         polygon_paths = self.clean_geometries(aoi, polygon_paths, 'Polygon')

@@ -7,6 +7,12 @@ and this project mostly adheres to [Semantic Versioning](https://semver.org/spec
 
 ## [Unreleased](https://gitlab.heigit.org/climate-action/plugins/walkability/-/compare/4.2.2...main)
 
+### Added
+- Tactile Paving summary chart ([#376](https://gitlab.heigit.org/climate-action/plugins/walkability/-/work_items/376))
+
+### Changed
+- Add crossings to tactile paving analysis and otherwise limit it to platforms and stairs, simplify tactile paving categorisation ([#376](https://gitlab.heigit.org/climate-action/plugins/walkability/-/work_items/376))
+
 ## [4.2.2](https://gitlab.heigit.org/climate-action/plugins/walkability/-/releases/4.2.2) - 2026-08-20
 
 ### Fixed
