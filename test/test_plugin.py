@@ -73,6 +73,7 @@ def ohsome_api(responses_mock):
         body=polygon_body,
         match=[filter_start_matcher('geometry:polygon')],
     )
+
     return responses_mock
 
 
@@ -111,9 +112,11 @@ def test_plugin_compute_request_all_optionals(
     with (
         open('test/resources/ohsome_admin_response.geojson', 'r') as admin_file,
         open('test/resources/ohsome_drinking_water.geojson', 'r') as drinking_water,
+        open('test/resources/ohsome_crossing_response.geojson', 'r') as crossings,
     ):
         admin_body = admin_file.read()
         drinking_water_body = drinking_water.read()
+        crossings_body = crossings.read()
     ohsome_api.post(
         'https://api.ohsome.org/v1/elements/geometry',
         body=admin_body,
@@ -122,6 +125,10 @@ def test_plugin_compute_request_all_optionals(
     ohsome_api.post(
         'https://api.ohsome.org/v1/elements/centroid',
         body=drinking_water_body,
+    )
+    ohsome_api.post(
+        'https://api.ohsome.org/v1/elements/geometry',
+        body=crossings_body,
     )
 
     expected_compute_input = expected_compute_input.model_copy(deep=True)
@@ -150,6 +157,6 @@ def test_plugin_compute_request_all_optionals(
 
     assert compute_resources.artifact_errors == {'Detour Factors': ''}
 
-    assert len(computed_artifacts) == 23
+    assert len(computed_artifacts) == 24
     for artifact in computed_artifacts:
         assert isinstance(artifact, Artifact)

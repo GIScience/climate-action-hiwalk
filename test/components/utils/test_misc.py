@@ -4,10 +4,9 @@ import geopandas as gpd
 import geopandas.testing
 import pandas as pd
 import pytest
-from approvaltests import verify
-from approvaltests.namer import NamerFactory
 from climatoology.base.exception import ClimatoologyUserError, InputValidationError
 from ohsome.exceptions import OhsomeException
+from ohsome_filter_to_sql import validate_filter
 from ohsome_py2.client import OhsomeClient
 from pandas.testing import assert_series_equal
 from pydantic_extra_types.color import Color
@@ -70,7 +69,7 @@ def test_generate_colors():
 
 @pytest.mark.parametrize('geometry_type', ['line', 'polygon'])
 def test_ohsome_filter(geometry_type):
-    verify(ohsome_filter(geometry_type), options=NamerFactory.with_parameters(geometry_type))
+    validate_filter(ohsome_filter(geometry_type))
 
 
 @pytest.mark.vcr
