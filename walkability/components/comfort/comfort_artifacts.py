@@ -10,7 +10,7 @@ from mobility_tools.settings import ORSSettings
 from ohsome import OhsomeClient
 from pydantic_extra_types.color import Color
 
-from walkability.components.comfort.comfort_poi_filters import PointsOfInterest, distance_enrich_paths
+from walkability.components.comfort.comfort_poi_filters import PointsOfInterest, distance_enrich_paths, request_pois
 from walkability.components.utils.geometry import get_buffered_aoi
 from walkability.components.utils.misc import Topics, generate_colors
 
@@ -24,20 +24,15 @@ def compute_comfort_artifacts(
     max_walking_distance_map: dict[PointsOfInterest, float],
     ohsome_client: OhsomeClient,
     ors_settings: ORSSettings,
-    feature_flag_experimental: bool,
     resources: ComputationResources,
 ) -> list[Artifact]:
     artifacts = []
 
-    poi_types = [
+    for poi_type in [
         PointsOfInterest.DRINKING_WATER,
         PointsOfInterest.SEATING,
         PointsOfInterest.PUBLIC_TOILET,
-    ]
-    if feature_flag_experimental:
-        poi_types.append(PointsOfInterest.SHELTERED_BENCH)
-
-    for poi_type in poi_types:
+    ]:
         log.debug(f'Computing Comfort for {poi_type}')
         max_walking_distance = max_walking_distance_map[poi_type]
         bin_size = int(max_walking_distance / N_BINS)
@@ -55,12 +50,35 @@ def compute_comfort_artifacts(
         )
         enriched_paths = enriched_paths.clip(aoi)
 
-        isodistance_artifact = build_isodistance_artifact(
-            resources=resources,
+        cleaned_data = clean_data(
             data=enriched_paths,
             max_walking_distance=max_walking_distance,
+            min_value=min(bins),
             poi_type=poi_type,
-            bins=bins,
+        )
+
+        if poi_type == PointsOfInterest.SEATING:
+            sheltered_benches = request_pois(
+                aoi=buffered_aoi,
+                poi=PointsOfInterest.SHELTERED_BENCH,
+                ohsome_client=ohsome_client,
+            )
+
+            sheltered_benches = sheltered_benches.clip(aoi)
+            sheltered_benches['value'] = 0
+            sheltered_benches['poi_type'] = PointsOfInterest.SHELTERED_BENCH.value
+            sheltered_benches['label'] = PointsOfInterest.SHELTERED_BENCH.value
+            sheltered_benches['color'] = Color('brown')
+
+            cleaned_data = pd.concat(
+                [cleaned_data, sheltered_benches],
+                ignore_index=True,
+            )
+
+        isodistance_artifact = build_isodistance_artifact(
+            resources=resources,
+            cleaned_data=cleaned_data,
+            poi_type=poi_type,
             max_isochrone_request=ors_settings.ors_isochrone_max_request_number,
         )
         artifacts.append(isodistance_artifact)
@@ -71,14 +89,11 @@ def compute_comfort_artifacts(
 def build_isodistance_artifact(
     # TODO write test for this function
     resources: ComputationResources,
-    data: gpd.GeoDataFrame,
+    cleaned_data: gpd.GeoDataFrame,
     poi_type: PointsOfInterest,
-    bins: list[int],
-    max_walking_distance: float,
     max_isochrone_request: int,
 ) -> Artifact:
     log.debug('Building isodistance artifact')
-    cleaned_data = clean_data(data, max_walking_distance, min_value=min(bins), poi_type=poi_type)
 
     legend = {}
     unique_labels = cleaned_data.sort_values('value').label.unique()
@@ -127,8 +142,6 @@ def assign_color(
             point_color = Color('darkblue')
         case PointsOfInterest.PUBLIC_TOILET:
             point_color = Color('purple')
-        case PointsOfInterest.SHELTERED_BENCH:
-            point_color = Color('brown')
         case _:
             raise NotImplementedError('POI not supported by coloring function')
     data.loc[data.geom_type == 'Point', 'color'] = point_color
