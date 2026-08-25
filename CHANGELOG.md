@@ -12,6 +12,7 @@ and this project mostly adheres to [Semantic Versioning](https://semver.org/spec
 
 ### Changed
 - Add crossings to tactile paving analysis and otherwise limit it to platforms and stairs, simplify tactile paving categorisation ([#376](https://gitlab.heigit.org/climate-action/plugins/walkability/-/work_items/376))
+- Remove the sheltered benches artifact and add them as points to the benches artifact ([#385](https://gitlab.heigit.org/climate-action/plugins/walkability/-/work_items/385))
 
 ## [4.2.2](https://gitlab.heigit.org/climate-action/plugins/walkability/-/releases/4.2.2) - 2026-08-20
 
