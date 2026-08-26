@@ -25,15 +25,15 @@ interactions:
     uri: http://ohsome-secret-url/stats/features/count.json
   response:
     body:
-      string: "{\"apiVersion\":\"2.0.0a8\",\"attribution\":{\"url\":\"https://ohsome.org/copyrights\",\"text\":\"\xA9
-        OpenStreetMap contributors\"},\"result\":{\"timestamp\":[\"2026-08-25T09:13:18Z\"],\"value\":[175836]}}"
+      string: "{\"apiVersion\":\"2.0.0rc1\",\"attribution\":{\"url\":\"https://ohsome.org/copyrights\",\"text\":\"\xA9
+        OpenStreetMap contributors\"},\"result\":{\"timestamp\":[\"2026-08-26T06:30:39Z\"],\"value\":[175843]}}"
     headers:
       content-length:
-      - '182'
+      - '183'
       content-type:
       - application/json
       date:
-      - Tue, 25 Aug 2026 09:15:10 GMT
+      - Wed, 26 Aug 2026 16:31:39 GMT
       server:
       - hypercorn-h2
     status:

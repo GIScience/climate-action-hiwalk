@@ -5,12 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project mostly adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://gitlab.heigit.org/climate-action/plugins/walkability/-/compare/4.2.2...main)
+## [Unreleased](https://gitlab.heigit.org/climate-action/plugins/walkability/-/compare/4.2.3...main)
+
+
+## [4.2.3](https://gitlab.heigit.org/climate-action/plugins/walkability/-/releases/4.2.3) - 2026-08-26
 
 ### Added
 - Tactile Paving summary chart ([#376](https://gitlab.heigit.org/climate-action/plugins/walkability/-/work_items/376))
 
 ### Changed
+- Update ohsome py2 for the new API schema
 - Add crossings to tactile paving analysis and otherwise limit it to platforms and stairs, simplify tactile paving categorisation ([#376](https://gitlab.heigit.org/climate-action/plugins/walkability/-/work_items/376))
 - Remove the sheltered benches artifact and add them as points to the benches artifact ([#385](https://gitlab.heigit.org/climate-action/plugins/walkability/-/work_items/385))
 
