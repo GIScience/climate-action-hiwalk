@@ -7,6 +7,8 @@ and this project mostly adheres to [Semantic Versioning](https://semver.org/spec
 
 ## [Unreleased](https://gitlab.heigit.org/climate-action/plugins/walkability/-/compare/4.2.3...main)
 
+### Changed
+- Remove tactile paving and variety of POIs from experimental indicators
 
 ## [4.2.3](https://gitlab.heigit.org/climate-action/plugins/walkability/-/releases/4.2.3) - 2026-08-26
 
