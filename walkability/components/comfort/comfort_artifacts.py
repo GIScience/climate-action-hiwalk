@@ -3,8 +3,15 @@ import logging
 import geopandas as gpd
 import numpy as np
 import pandas as pd
+import plotly.graph_objects as go
 import shapely
-from climatoology.base.artifact_creators import Artifact, ArtifactMetadata, Legend, create_vector_artifact
+from climatoology.base.artifact_creators import (
+    Artifact,
+    ArtifactMetadata,
+    Legend,
+    create_plotly_chart_artifact,
+    create_vector_artifact,
+)
 from climatoology.base.computation import ComputationResources
 from mobility_tools.settings import ORSSettings
 from ohsome import OhsomeClient
@@ -70,10 +77,17 @@ def compute_comfort_artifacts(
             sheltered_benches['label'] = PointsOfInterest.SHELTERED_BENCH.value
             sheltered_benches['color'] = Color('brown')
 
+            bench_intersections = gpd.sjoin(cleaned_data, sheltered_benches, how='left', predicate='intersects')
+            cleaned_data = cleaned_data.loc[bench_intersections['index_right'].isna()].copy()
+
             cleaned_data = pd.concat(
                 [cleaned_data, sheltered_benches],
                 ignore_index=True,
             )
+            cleaned_data['label'] = cleaned_data['label'].replace({'benches': 'unsheltered benches'})
+
+            bench_chart_artifact = build_benches_chart_artifact(benches_data=cleaned_data, resources=resources)
+            artifacts.append(bench_chart_artifact)
 
         isodistance_artifact = build_isodistance_artifact(
             resources=resources,
@@ -118,6 +132,40 @@ def build_isodistance_artifact(
     )
 
 
+def build_benches_chart_artifact(benches_data: gpd.GeoDataFrame, resources: ComputationResources) -> Artifact:
+    unsheltered_count = len(benches_data[benches_data['label'] == 'unsheltered benches'])
+    sheltered_count = len(benches_data[benches_data['label'] == 'sheltered benches'])
+
+    summary = pd.DataFrame(
+        {
+            'bench_type': [
+                'Unsheltered',
+                'Sheltered',
+            ],
+            'count': [
+                unsheltered_count,
+                sheltered_count,
+            ],
+        }
+    )
+    summary['percent'] = summary['count'] / summary['count'].sum() * 100
+    summary = summary.set_index('bench_type')
+    bench_chart = create_bench_chart_plot(summary=summary)
+
+    bench_chart_metadata = ArtifactMetadata(
+        name='Share of Sheltered Benches',
+        summary='How many benches are sheltered?',
+        tags={Topics.COMFORT},
+        primary=False,
+    )
+    bench_chart = create_plotly_chart_artifact(
+        figure=bench_chart,
+        metadata=bench_chart_metadata,
+        resources=resources,
+    )
+    return bench_chart
+
+
 def clean_data(
     data: gpd.GeoDataFrame, max_walking_distance: float, min_value: float, poi_type: PointsOfInterest
 ) -> gpd.GeoDataFrame:
@@ -137,7 +185,7 @@ def assign_color(
     )
     match poi_type:
         case PointsOfInterest.SEATING:
-            point_color = Color('black')
+            point_color = Color('grey')
         case PointsOfInterest.DRINKING_WATER:
             point_color = Color('darkblue')
         case PointsOfInterest.PUBLIC_TOILET:
@@ -155,3 +203,38 @@ def assign_label(row: pd.Series, poi_type: PointsOfInterest, max_walking_distanc
             return poi_type.value
         case _:
             return f'> {int(max_walking_distance)}m' if np.isnan(row['value']) else f'< {int(row["value"])}m'
+
+
+def create_bench_chart_plot(summary: pd.DataFrame) -> go.Figure:
+    colors = ['grey', 'brown']
+
+    data = go.Figure()
+    for i, (category, row) in enumerate(summary.iterrows()):
+        data.add_trace(
+            go.Bar(
+                x=[row['percent']],
+                name=category,
+                orientation='h',
+                marker_color=colors[i],
+                hovertemplate=f'{category}: {int(row["count"])} ({row["percent"]:.1f}%)<extra></extra>',
+                showlegend=True,
+                legendrank=len(summary) - i,
+            )
+        )
+        data.update_layout(
+            barmode='stack',
+            height=300,
+            margin=dict(t=30, b=80, l=30, r=30),
+            xaxis_title=f'Percentage of unsheltered and sheltered benches. {summary["count"].iloc[1]} out of {summary["count"].sum()} benches are sheltered.',
+            yaxis=dict(showticklabels=False),
+            legend=dict(
+                orientation='h',
+                yanchor='top',
+                y=-1,
+                xanchor='center',
+                x=0.45,
+                font=dict(size=12),
+            ),
+        )
+
+    return data

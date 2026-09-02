@@ -7,6 +7,8 @@ and this project mostly adheres to [Semantic Versioning](https://semver.org/spec
 
 ## [Unreleased](https://gitlab.heigit.org/climate-action/plugins/walkability/-/compare/4.2.3...main)
 
+### Added
+- Add horizontal bar chart visualizing share of sheltered benches ([#384](https://gitlab.heigit.org/climate-action/plugins/walkability/-/work_items/384))
 ### Changed
 - Remove tactile paving and variety of POIs from experimental indicators
 
