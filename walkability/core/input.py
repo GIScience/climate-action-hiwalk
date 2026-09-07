@@ -15,6 +15,7 @@ class WalkabilityIndicators(Enum):
     LIGHT = 'Path Lighting'
     TACTILE_PAVING = 'Tactile Paving'
     VARIETY_OF_POIS = 'Point of Interest Variety'
+    CROSSINGS = 'Pedestrian Crossings'
 
 
 # These indicators will not be available for selection if `FEATURE_FLAG_EXPERIMENTAL=False`

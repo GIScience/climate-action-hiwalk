@@ -166,7 +166,7 @@ def parametrized_ohsome_client(request):
 
 @pytest.fixture
 def default_ors_settings() -> ORSSettings:
-    ors_settings = ORSSettings()
+    ors_settings = ORSSettings(ors_base_url=None)
     if ors_settings.ors_api_key is None:
         ors_settings.ors_api_key = 'test-api-key'
     return ors_settings

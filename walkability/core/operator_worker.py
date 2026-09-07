@@ -22,6 +22,7 @@ from walkability.components.categorise_paths.path_categorisation_artifacts impor
 from walkability.components.categorise_paths.path_summarisation import summarise_aoi, summarise_by_area
 from walkability.components.comfort.comfort_artifacts import compute_comfort_artifacts
 from walkability.components.comfort.comfort_poi_filters import PointsOfInterest
+from walkability.components.crossings.crossing_analysis import crossing_analysis
 from walkability.components.naturalness.naturalness_analysis import naturalness_analysis
 from walkability.components.network_analyses.detour_analysis import detour_factor_analysis
 from walkability.components.path_lighting.path_lighting_analysis import path_lighting_analysis
@@ -152,9 +153,11 @@ class OperatorWalkability(BaseOperator[ComputeInputWalkability]):
             walkable_categories=WALKABLE_CATEGORIES,
         )
         line_paths = next(line_paths)
+        # TODO this check presumes that all optional artifacts are dependent on the line_paths, however, this is not true anymore (crossings, tactile_pavement)
         if line_paths.empty:
             return artifacts
 
+        # TODO all these indicators have basically the same boiler plate and function, maybe there's an option to streamline and simplify
         if WalkabilityIndicators.DETOURS in params.optional_indicators:
             with self.catch_exceptions(indicator_name='Detour Factors', resources=resources):
                 detour_artifacts = detour_factor_analysis(
@@ -246,12 +249,17 @@ class OperatorWalkability(BaseOperator[ComputeInputWalkability]):
                 )
                 artifacts.extend(variety_of_pois_artifacts)
                 log.info('Point of Interest Variety Computed')
+        if WalkabilityIndicators.CROSSINGS in params.optional_indicators:
+            with self.catch_exceptions(indicator_name='Pedestrian Crossings', resources=resources):
+                log.info('Computing Pedestrian Crossings')
+                crossing_map_artifact = crossing_analysis(aoi=aoi, ohsome_client=self.ohsome, resources=resources)
+                artifacts.append(crossing_map_artifact)
         return artifacts
 
     def _get_paths(self, aoi: shapely.MultiPolygon) -> tuple[gpd.GeoDataFrame, gpd.GeoDataFrame]:
         log.debug('Extracting paths')
-        line_paths = fetch_osm_data(aoi=aoi, osm_filter=ohsome_filter('line'), ohsome=self.ohsome)
-        polygon_paths = fetch_osm_data(aoi=aoi, osm_filter=ohsome_filter('polygon'), ohsome=self.ohsome)
+        line_paths = fetch_osm_data(aoi=aoi, osm_filter=ohsome_filter('line'), ohsome_client=self.ohsome)
+        polygon_paths = fetch_osm_data(aoi=aoi, osm_filter=ohsome_filter('polygon'), ohsome_client=self.ohsome)
 
         line_paths = self.clean_geometries(aoi, line_paths, 'LineString')
         polygon_paths = self.clean_geometries(aoi, polygon_paths, 'Polygon')
