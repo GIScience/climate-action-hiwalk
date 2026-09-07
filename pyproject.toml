@@ -7,7 +7,7 @@ readme = "README.md"
 
 requires-python = ">=3.13.5,<3.14"
 dependencies = [
-    "climatoology @ git+https://gitlab.heigit.org/climate-action/climatoology.git@7.2.0",
+    "climatoology @ git+https://gitlab.heigit.org/climate-action/climatoology@7.4.1",
     "pydantic (>=2.12.5,<3.0.0)",
     "pydantic-settings (>=2.1.0,<3.0.0)",
     "shapely (>=2.0.2,<3.0.0)",
@@ -23,7 +23,6 @@ dependencies = [
     "botocore (>=1.40.7)",
     "rasterio (>=1.5.0,<2.0.0)",
     "ohsome-filter-to-sql (>=0.14.0,<0.15.0)",
-    "affine (<3.0.0)"
 ]
 
 [project.urls]
