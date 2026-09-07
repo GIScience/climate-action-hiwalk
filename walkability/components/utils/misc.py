@@ -27,6 +27,10 @@ class Topics(StrEnum):
     ATTRACTIVENESS = 'attractiveness'
 
 
+# TODO I think having all these enums collected here is getting a bit ridiculous i think they need formatting
+# TODO if you're at it also think if they all need a rating map, or if it would make sense to redo the colouring
+
+
 class PathCategory(Enum):
     DESIGNATED = 'Pedestrians Exclusive'
     DESIGNATED_SHARED_WITH_BIKES = 'Bikes'
@@ -169,9 +173,16 @@ class TactilePavingInfrastructureCategory(Enum):
     STAIRS = 'Stairs'
 
 
-def fetch_osm_data(aoi: shapely.MultiPolygon, osm_filter: str, ohsome: OhsomeClient) -> gpd.GeoDataFrame:
+class CrossingType(Enum):
+    TrafficSignals = 'traffic signals'
+    Marked = 'marked'
+    Unmarked = 'unmarked'
+    Other = 'other'
+
+
+def fetch_osm_data(aoi: shapely.MultiPolygon, osm_filter: str, ohsome_client: OhsomeClient) -> gpd.GeoDataFrame:
     try:
-        elements = ohsome.features_extraction(aoi=aoi, osm_filter=osm_filter, clip=True)
+        elements = ohsome_client.features_extraction(aoi=aoi, osm_filter=osm_filter, clip=True)
     except OhsomeAPIError:
         raise ClimatoologyUserError('There was an error collecting OSM data. Please try again later.')
     except Exception:
@@ -182,34 +193,34 @@ def fetch_osm_data(aoi: shapely.MultiPolygon, osm_filter: str, ohsome: OhsomeCli
     return elements[['osm_id', 'osm_type', 'geometry', 'osm_tags']]
 
 
-def _dict_to_legend(d: dict, cmap_name: str = 'coolwarm_r') -> Dict[str, Color]:
+def _dict_to_legend(d: dict, cmap_name: str = 'coolwarm_r') -> dict[str, Color]:
     data = pd.DataFrame.from_records(data=list(d.items()), columns=['category', 'rating'])
     data['color'] = generate_colors(color_by=data.rating, cmap_name=cmap_name, min_value=0.0, max_value=1.0)
     data['category'] = data.category.apply(lambda cat: cat.value)
     return dict(zip(data['category'], data['color']))
 
 
-def get_path_rating_legend() -> Dict[str, Color]:
+def get_path_rating_legend() -> dict[str, Color]:
     return _dict_to_legend(PATH_RATING_MAP, cmap_name='coolwarm_r')
 
 
-def get_surface_quality_legend() -> Dict[str, Color]:
+def get_surface_quality_legend() -> dict[str, Color]:
     return _dict_to_legend(PAVEMENT_QUALITY_RATING_MAP, cmap_name='coolwarm_r')
 
 
-def get_smoothness_legend() -> Dict[str, Color]:
+def get_smoothness_legend() -> dict[str, Color]:
     return _dict_to_legend(SMOOTHNESS_CATEGORY_RATING_MAP, cmap_name='coolwarm_r')
 
 
-def get_surface_type_legend() -> Dict[str, Color]:
+def get_surface_type_legend() -> dict[str, Color]:
     return _dict_to_legend(SURFACE_TYPE_RATING_MAP, cmap_name='tab10')
 
 
-def get_path_lighting_legend() -> Dict[str, Color]:
+def get_path_lighting_legend() -> dict[str, Color]:
     return _dict_to_legend(PATH_LIGHTING_CATEGORY_RATING_MAP, cmap_name='coolwarm_r')
 
 
-def get_tactile_paving_legend() -> Dict[str, Color]:
+def get_tactile_paving_legend() -> dict[str, Color]:
     return _dict_to_legend(TACTILE_PAVING_CATEGORY_RATING_MAP, cmap_name='coolwarm_r')
 
 

@@ -28,7 +28,7 @@ def test_fetch_osm_data(small_aoi, parametrized_ohsome_client):
     computed_osm_data = fetch_osm_data(
         aoi=small_aoi,
         osm_filter='geometry:polygon and highway=*',
-        ohsome=parametrized_ohsome_client,
+        ohsome_client=parametrized_ohsome_client,
     )
 
     assert isinstance(computed_osm_data, gpd.GeoDataFrame)
@@ -54,7 +54,7 @@ def test_fetch_osm_data_ohsome_error(default_aoi, default_ohsome_client_v1):
         fetch_osm_data(
             aoi=default_aoi,
             osm_filter='dummy=yes',
-            ohsome=default_ohsome_client_v1,
+            ohsome_client=default_ohsome_client_v1,
         )
 
 

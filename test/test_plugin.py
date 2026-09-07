@@ -157,6 +157,6 @@ def test_plugin_compute_request_all_optionals(
 
     assert compute_resources.artifact_errors == {'Detour Factors': ''}
 
-    assert len(computed_artifacts) == 24
+    assert len(computed_artifacts) == 25
     for artifact in computed_artifacts:
         assert isinstance(artifact, Artifact)

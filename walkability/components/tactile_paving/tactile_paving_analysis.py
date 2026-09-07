@@ -44,9 +44,11 @@ def tactile_paving_analysis(
 
 def get_tactile_paving_osm_data(aoi: shapely.MultiPolygon, ohsome: OhsomeClient) -> gpd.GeoDataFrame:
     log.debug('Extracting OSM data for tactile paving analysis')
-    tactile_line_paths = fetch_osm_data(aoi=aoi, osm_filter=tactile_paving_ohsome_filter('line'), ohsome=ohsome)
-    tactile_polygon_paths = fetch_osm_data(aoi=aoi, osm_filter=tactile_paving_ohsome_filter('polygon'), ohsome=ohsome)
-    crossings = fetch_osm_data(aoi=aoi, osm_filter='highway=crossing', ohsome=ohsome)
+    tactile_line_paths = fetch_osm_data(aoi=aoi, osm_filter=tactile_paving_ohsome_filter('line'), ohsome_client=ohsome)
+    tactile_polygon_paths = fetch_osm_data(
+        aoi=aoi, osm_filter=tactile_paving_ohsome_filter('polygon'), ohsome_client=ohsome
+    )
+    crossings = fetch_osm_data(aoi=aoi, osm_filter='highway=crossing', ohsome_client=ohsome)
 
     log.debug('Finished extracting OSM data for tactile paving analysis')
 

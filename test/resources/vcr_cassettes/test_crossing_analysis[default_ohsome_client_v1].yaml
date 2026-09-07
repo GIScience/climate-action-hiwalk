@@ -1,0 +1,218 @@
+interactions:
+- request:
+    body: bpolys=%7B%22type%22%3A+%22FeatureCollection%22%2C+%22features%22%3A+%5B%7B%22id%22%3A+%220%22%2C+%22type%22%3A+%22Feature%22%2C+%22properties%22%3A+%7B%7D%2C+%22geometry%22%3A+%7B%22type%22%3A+%22MultiPolygon%22%2C+%22coordinates%22%3A+%5B%5B%5B%5B8.7108559%2C+49.407988%5D%2C+%5B8.7108559%2C+49.4136026%5D%2C+%5B8.6983273%2C+49.4136026%5D%2C+%5B8.6983273%2C+49.407988%5D%2C+%5B8.7108559%2C+49.407988%5D%5D%5D%5D%7D%7D%5D%7D&filter=highway%3Dcrossing&properties=tags&clipGeometry=True
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '485'
+      Content-Type:
+      - application/x-www-form-urlencoded
+      user-agent:
+      - ohsome-py/0.3.0
+    method: POST
+    uri: https://api.ohsome.org/v1/elements/geometry
+  response:
+    body:
+      string: "{\n  \"attribution\" : {\n    \"url\" : \"https://ohsome.org/copyrights\",\n
+        \   \"text\" : \"\xA9 OpenStreetMap contributors\"\n  },\n  \"apiVersion\"
+        : \"1.10.4\",\n  \"type\" : \"FeatureCollection\",\n  \"features\" : [{\n
+        \   \"type\" : \"Feature\",\n    \"geometry\" : {\n      \"type\" : \"Point\",\n
+        \     \"coordinates\" : [\n        8.7068472,\n        49.4092015\n      ]\n
+        \   },\n    \"properties\" : {\n      \"@osmId\" : \"node/17392238\",\n      \"@snapshotTimestamp\"
+        : \"2026-07-27T09:00:00Z\",\n      \"button_operated\" : \"no\",\n      \"crossing\"
+        : \"traffic_signals\",\n      \"crossing:island\" : \"no\",\n      \"highway\"
+        : \"crossing\",\n      \"kerb\" : \"lowered\",\n      \"tactile_paving\" :
+        \"no\",\n      \"traffic_calming\" : \"no\",\n      \"traffic_sign\" : \"DE:274.1[20]\",\n
+        \     \"traffic_signals:sound\" : \"yes\",\n      \"traffic_signals:vibration\"
+        : \"yes\"\n    }\n  }, {\n    \"type\" : \"Feature\",\n    \"geometry\" :
+        {\n      \"type\" : \"Point\",\n      \"coordinates\" : [\n        8.7013347,\n
+        \       49.4126656\n      ]\n    },\n    \"properties\" : {\n      \"@osmId\"
+        : \"node/135742806\",\n      \"@snapshotTimestamp\" : \"2026-07-27T09:00:00Z\",\n
+        \     \"button_operated\" : \"yes\",\n      \"crossing\" : \"traffic_signals\",\n
+        \     \"crossing:island\" : \"no\",\n      \"highway\" : \"crossing\",\n      \"kerb\"
+        : \"lowered\",\n      \"tactile_paving\" : \"yes\",\n      \"traffic_calming\"
+        : \"no\",\n      \"traffic_signals:sound\" : \"yes\",\n      \"traffic_signals:vibration\"
+        : \"no\"\n    }\n  }, {\n    \"type\" : \"Feature\",\n    \"geometry\" : {\n
+        \     \"type\" : \"Point\",\n      \"coordinates\" : [\n        8.7105407,\n
+        \       49.4135708\n      ]\n    },\n    \"properties\" : {\n      \"@osmId\"
+        : \"node/441682268\",\n      \"@snapshotTimestamp\" : \"2026-07-27T09:00:00Z\",\n
+        \     \"bicycle\" : \"yes\",\n      \"button_operated\" : \"yes\",\n      \"crossing\"
+        : \"traffic_signals\",\n      \"crossing:island\" : \"no\",\n      \"highway\"
+        : \"crossing\",\n      \"kerb\" : \"lowered\",\n      \"tactile_paving\" :
+        \"yes\",\n      \"traffic_calming\" : \"no\",\n      \"traffic_signals:sound\"
+        : \"yes\",\n      \"traffic_signals:vibration\" : \"no\"\n    }\n  }, {\n
+        \   \"type\" : \"Feature\",\n    \"geometry\" : {\n      \"type\" : \"Point\",\n
+        \     \"coordinates\" : [\n        8.699332,\n        49.4124145\n      ]\n
+        \   },\n    \"properties\" : {\n      \"@osmId\" : \"node/441682286\",\n      \"@snapshotTimestamp\"
+        : \"2026-07-27T09:00:00Z\",\n      \"button_operated\" : \"no\",\n      \"crossing\"
+        : \"traffic_signals\",\n      \"highway\" : \"crossing\",\n      \"tactile_paving\"
+        : \"yes\",\n      \"traffic_signals:sound\" : \"yes\",\n      \"traffic_signals:vibration\"
+        : \"yes\"\n    }\n  }, {\n    \"type\" : \"Feature\",\n    \"geometry\" :
+        {\n      \"type\" : \"Point\",\n      \"coordinates\" : [\n        8.7058023,\n
+        \       49.413319\n      ]\n    },\n    \"properties\" : {\n      \"@osmId\"
+        : \"node/572102677\",\n      \"@snapshotTimestamp\" : \"2026-07-27T09:00:00Z\",\n
+        \     \"button_operated\" : \"yes\",\n      \"crossing\" : \"traffic_signals\",\n
+        \     \"crossing:island\" : \"no\",\n      \"highway\" : \"crossing\",\n      \"kerb\"
+        : \"lowered\",\n      \"tactile_paving\" : \"yes\",\n      \"traffic_signals:sound\"
+        : \"yes\",\n      \"traffic_signals:vibration\" : \"no\"\n    }\n  }, {\n
+        \   \"type\" : \"Feature\",\n    \"geometry\" : {\n      \"type\" : \"Point\",\n
+        \     \"coordinates\" : [\n        8.7056,\n        49.4090256\n      ]\n
+        \   },\n    \"properties\" : {\n      \"@osmId\" : \"node/778268708\",\n      \"@snapshotTimestamp\"
+        : \"2026-07-27T09:00:00Z\",\n      \"bicycle\" : \"yes\",\n      \"button_operated\"
+        : \"yes\",\n      \"crossing\" : \"traffic_signals\",\n      \"crossing:island\"
+        : \"yes\",\n      \"highway\" : \"crossing\",\n      \"supervised\" : \"no\",\n
+        \     \"tactile_paving\" : \"no\",\n      \"traffic_calming\" : \"no\",\n
+        \     \"traffic_signals:sound\" : \"no\",\n      \"traffic_signals:vibration\"
+        : \"no\"\n    }\n  }, {\n    \"type\" : \"Feature\",\n    \"geometry\" : {\n
+        \     \"type\" : \"Point\",\n      \"coordinates\" : [\n        8.7056092,\n
+        \       49.4089483\n      ]\n    },\n    \"properties\" : {\n      \"@osmId\"
+        : \"node/778268747\",\n      \"@snapshotTimestamp\" : \"2026-07-27T09:00:00Z\",\n
+        \     \"bicycle\" : \"yes\",\n      \"button_operated\" : \"yes\",\n      \"crossing\"
+        : \"traffic_signals\",\n      \"highway\" : \"crossing\",\n      \"supervised\"
+        : \"no\",\n      \"tactile_paving\" : \"no\",\n      \"traffic_signals:sound\"
+        : \"no\",\n      \"traffic_signals:vibration\" : \"no\"\n    }\n  }, {\n    \"type\"
+        : \"Feature\",\n    \"geometry\" : {\n      \"type\" : \"Point\",\n      \"coordinates\"
+        : [\n        8.7049108,\n        49.4087826\n      ]\n    },\n    \"properties\"
+        : {\n      \"@osmId\" : \"node/1470714689\",\n      \"@snapshotTimestamp\"
+        : \"2026-07-27T09:00:00Z\",\n      \"button_operated\" : \"yes\",\n      \"crossing\"
+        : \"traffic_signals\",\n      \"highway\" : \"crossing\",\n      \"tactile_paving\"
+        : \"no\",\n      \"traffic_signals:sound\" : \"yes\",\n      \"traffic_signals:vibration\"
+        : \"yes\"\n    }\n  }, {\n    \"type\" : \"Feature\",\n    \"geometry\" :
+        {\n      \"type\" : \"Point\",\n      \"coordinates\" : [\n        8.7049611,\n
+        \       49.4088298\n      ]\n    },\n    \"properties\" : {\n      \"@osmId\"
+        : \"node/1470714693\",\n      \"@snapshotTimestamp\" : \"2026-07-27T09:00:00Z\",\n
+        \     \"button_operated\" : \"yes\",\n      \"crossing\" : \"traffic_signals\",\n
+        \     \"highway\" : \"crossing\",\n      \"tactile_paving\" : \"no\",\n      \"traffic_signals:sound\"
+        : \"yes\",\n      \"traffic_signals:vibration\" : \"yes\"\n    }\n  }, {\n
+        \   \"type\" : \"Feature\",\n    \"geometry\" : {\n      \"type\" : \"Point\",\n
+        \     \"coordinates\" : [\n        8.7049782,\n        49.4088976\n      ]\n
+        \   },\n    \"properties\" : {\n      \"@osmId\" : \"node/1470714697\",\n
+        \     \"@snapshotTimestamp\" : \"2026-07-27T09:00:00Z\",\n      \"button_operated\"
+        : \"yes\",\n      \"crossing\" : \"traffic_signals\",\n      \"crossing:island\"
+        : \"yes\",\n      \"highway\" : \"crossing\",\n      \"kerb\" : \"lowered\",\n
+        \     \"tactile_paving\" : \"yes\",\n      \"traffic_calming\" : \"no\",\n
+        \     \"traffic_sign\" : \"DE:276\",\n      \"traffic_signals:sound\" : \"yes\",\n
+        \     \"traffic_signals:vibration\" : \"yes\"\n    }\n  }, {\n    \"type\"
+        : \"Feature\",\n    \"geometry\" : {\n      \"type\" : \"Point\",\n      \"coordinates\"
+        : [\n        8.7049686,\n        49.4089809\n      ]\n    },\n    \"properties\"
+        : {\n      \"@osmId\" : \"node/1470714705\",\n      \"@snapshotTimestamp\"
+        : \"2026-07-27T09:00:00Z\",\n      \"button_operated\" : \"yes\",\n      \"crossing\"
+        : \"traffic_signals\",\n      \"highway\" : \"crossing\",\n      \"tactile_paving\"
+        : \"no\",\n      \"traffic_signals:sound\" : \"yes\",\n      \"traffic_signals:vibration\"
+        : \"yes\"\n    }\n  }, {\n    \"type\" : \"Feature\",\n    \"geometry\" :
+        {\n      \"type\" : \"Point\",\n      \"coordinates\" : [\n        8.7069847,\n
+        \       49.4091653\n      ]\n    },\n    \"properties\" : {\n      \"@osmId\"
+        : \"node/1470714721\",\n      \"@snapshotTimestamp\" : \"2026-07-27T09:00:00Z\",\n
+        \     \"button_operated\" : \"yes\",\n      \"crossing\" : \"traffic_signals\",\n
+        \     \"crossing:island\" : \"yes\",\n      \"highway\" : \"crossing\",\n
+        \     \"kerb\" : \"lowered\",\n      \"tactile_paving\" : \"no\",\n      \"traffic_calming\"
+        : \"no\",\n      \"traffic_signals:sound\" : \"yes\",\n      \"traffic_signals:vibration\"
+        : \"yes\"\n    }\n  }, {\n    \"type\" : \"Feature\",\n    \"geometry\" :
+        {\n      \"type\" : \"Point\",\n      \"coordinates\" : [\n        8.7076917,\n
+        \       49.4134024\n      ]\n    },\n    \"properties\" : {\n      \"@osmId\"
+        : \"node/1826840675\",\n      \"@snapshotTimestamp\" : \"2026-07-27T09:00:00Z\",\n
+        \     \"button_operated\" : \"no\",\n      \"crossing\" : \"traffic_signals\",\n
+        \     \"crossing:island\" : \"no\",\n      \"highway\" : \"crossing\",\n      \"kerb\"
+        : \"flush\",\n      \"source:position\" : \"HiRes aerial imagery\",\n      \"tactile_paving\"
+        : \"no\",\n      \"traffic_signals:sound\" : \"no\",\n      \"traffic_signals:vibration\"
+        : \"no\"\n    }\n  }, {\n    \"type\" : \"Feature\",\n    \"geometry\" : {\n
+        \     \"type\" : \"Point\",\n      \"coordinates\" : [\n        8.7079042,\n
+        \       49.4134429\n      ]\n    },\n    \"properties\" : {\n      \"@osmId\"
+        : \"node/1826840690\",\n      \"@snapshotTimestamp\" : \"2026-07-27T09:00:00Z\",\n
+        \     \"bicycle\" : \"yes\",\n      \"button_operated\" : \"yes\",\n      \"check_date:crossing\"
+        : \"2022-05-12\",\n      \"crossing\" : \"traffic_signals\",\n      \"crossing:island\"
+        : \"yes\",\n      \"highway\" : \"crossing\",\n      \"kerb\" : \"lowered\",\n
+        \     \"source:position\" : \"HiRes aerial imagery\",\n      \"tactile_paving\"
+        : \"no\",\n      \"traffic_signals:sound\" : \"no\",\n      \"traffic_signals:vibration\"
+        : \"no\"\n    }\n  }, {\n    \"type\" : \"Feature\",\n    \"geometry\" : {\n
+        \     \"type\" : \"Point\",\n      \"coordinates\" : [\n        8.705394,\n
+        \       49.4095595\n      ]\n    },\n    \"properties\" : {\n      \"@osmId\"
+        : \"node/2018025604\",\n      \"@snapshotTimestamp\" : \"2026-07-27T09:00:00Z\",\n
+        \     \"crossing\" : \"uncontrolled\",\n      \"crossing:markings\" : \"zebra\",\n
+        \     \"highway\" : \"crossing\",\n      \"kerb\" : \"lowered\",\n      \"source\"
+        : \"HiRes aerial imagery\",\n      \"tactile_paving\" : \"no\"\n    }\n  },
+        {\n    \"type\" : \"Feature\",\n    \"geometry\" : {\n      \"type\" : \"Point\",\n
+        \     \"coordinates\" : [\n        8.6993528,\n        49.4123588\n      ]\n
+        \   },\n    \"properties\" : {\n      \"@osmId\" : \"node/2184899914\",\n
+        \     \"@snapshotTimestamp\" : \"2026-07-27T09:00:00Z\",\n      \"button_operated\"
+        : \"yes\",\n      \"crossing\" : \"traffic_signals\",\n      \"crossing:island\"
+        : \"no\",\n      \"highway\" : \"crossing\",\n      \"kerb\" : \"lowered\",\n
+        \     \"tactile_paving\" : \"yes\",\n      \"traffic_calming\" : \"no\",\n
+        \     \"traffic_signals:sound\" : \"yes\",\n      \"traffic_signals:vibration\"
+        : \"no\"\n    }\n  }, {\n    \"type\" : \"Feature\",\n    \"geometry\" : {\n
+        \     \"type\" : \"Point\",\n      \"coordinates\" : [\n        8.699275,\n
+        \       49.4122933\n      ]\n    },\n    \"properties\" : {\n      \"@osmId\"
+        : \"node/2280283612\",\n      \"@snapshotTimestamp\" : \"2026-07-27T09:00:00Z\",\n
+        \     \"button_operated\" : \"no\",\n      \"crossing\" : \"traffic_signals\",\n
+        \     \"highway\" : \"crossing\",\n      \"source:position\" : \"HiRes aerial
+        imagery\",\n      \"tactile_paving\" : \"yes\",\n      \"traffic_signals:sound\"
+        : \"yes\",\n      \"traffic_signals:vibration\" : \"yes\"\n    }\n  }, {\n
+        \   \"type\" : \"Feature\",\n    \"geometry\" : {\n      \"type\" : \"Point\",\n
+        \     \"coordinates\" : [\n        8.6994239,\n        49.4123254\n      ]\n
+        \   },\n    \"properties\" : {\n      \"@osmId\" : \"node/2280283618\",\n
+        \     \"@snapshotTimestamp\" : \"2026-07-27T09:00:00Z\",\n      \"button_operated\"
+        : \"no\",\n      \"crossing\" : \"traffic_signals\",\n      \"highway\" :
+        \"crossing\",\n      \"source:position\" : \"HiRes aerial imagery\",\n      \"tactile_paving\"
+        : \"yes\",\n      \"traffic_signals:sound\" : \"yes\",\n      \"traffic_signals:vibration\"
+        : \"yes\"\n    }\n  }, {\n    \"type\" : \"Feature\",\n    \"geometry\" :
+        {\n      \"type\" : \"Point\",\n      \"coordinates\" : [\n        8.7005594,\n
+        \       49.4086849\n      ]\n    },\n    \"properties\" : {\n      \"@osmId\"
+        : \"node/2319093201\",\n      \"@snapshotTimestamp\" : \"2026-07-27T09:00:00Z\",\n
+        \     \"button_operated\" : \"yes\",\n      \"crossing\" : \"traffic_signals\",\n
+        \     \"crossing:island\" : \"no\",\n      \"highway\" : \"crossing\",\n      \"source:position\"
+        : \"HiRes aerial imagery\",\n      \"tactile_paving\" : \"no\",\n      \"traffic_calming\"
+        : \"no\",\n      \"traffic_signals:sound\" : \"no\",\n      \"traffic_signals:vibration\"
+        : \"no\"\n    }\n  }, {\n    \"type\" : \"Feature\",\n    \"geometry\" : {\n
+        \     \"type\" : \"Point\",\n      \"coordinates\" : [\n        8.6989632,\n
+        \       49.4084078\n      ]\n    },\n    \"properties\" : {\n      \"@osmId\"
+        : \"node/2319413839\",\n      \"@snapshotTimestamp\" : \"2026-07-27T09:00:00Z\",\n
+        \     \"crossing\" : \"uncontrolled\",\n      \"crossing:markings\" : \"zebra\",\n
+        \     \"highway\" : \"crossing\",\n      \"source:position\" : \"HiRes aerial
+        imagery\",\n      \"tactile_paving\" : \"no\"\n    }\n  }, {\n    \"type\"
+        : \"Feature\",\n    \"geometry\" : {\n      \"type\" : \"Point\",\n      \"coordinates\"
+        : [\n        8.7011844,\n        49.4126481\n      ]\n    },\n    \"properties\"
+        : {\n      \"@osmId\" : \"node/13649411435\",\n      \"@snapshotTimestamp\"
+        : \"2026-07-27T09:00:00Z\",\n      \"button_operated\" : \"yes\",\n      \"crossing\"
+        : \"traffic_signals\",\n      \"crossing:island\" : \"no\",\n      \"highway\"
+        : \"crossing\",\n      \"tactile_paving\" : \"yes\",\n      \"traffic_signals:sound\"
+        : \"yes\",\n      \"traffic_signals:vibration\" : \"yes\"\n    }\n  }]\n}\n"
+    headers:
+      Access-Control-Allow-Credentials:
+      - 'true'
+      Access-Control-Allow-Headers:
+      - Origin,Accept,X-Requested-With,Content-Type,Access-Control-Request-Method,Access-Control-Request-Headers,Authorization
+      Access-Control-Allow-Methods:
+      - POST, GET
+      Access-Control-Allow-Origin:
+      - '*'
+      Access-Control-Max-Age:
+      - '3600'
+      Connection:
+      - Keep-Alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/geo+json;charset=utf-8
+      Content-disposition:
+      - attachment;filename=ohsome.geojson
+      Date:
+      - Tue, 25 Aug 2026 14:30:23 GMT
+      Keep-Alive:
+      - timeout=5, max=100
+      Server:
+      - Apache/2.4.58 (Ubuntu)
+      Strict-Transport-Security:
+      - max-age=63072000; includeSubdomains;
+      Transfer-Encoding:
+      - chunked
+      vary:
+      - accept-encoding
+    status:
+      code: 200
+      message: ''
+version: 1
