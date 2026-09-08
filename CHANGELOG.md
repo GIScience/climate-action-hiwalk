@@ -13,6 +13,7 @@ and this project mostly adheres to [Semantic Versioning](https://semver.org/spec
 
 ### Changed
 - Remove tactile paving and variety of POIs from experimental indicators
+- Renamed settings in `.env.base_template` and `.env.s3_template` in line with changes in mobility-tools and climatoology
 
 ## [4.2.3](https://gitlab.heigit.org/climate-action/plugins/walkability/-/releases/4.2.3) - 2026-08-26
 
