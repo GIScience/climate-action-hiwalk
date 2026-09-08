@@ -31,7 +31,7 @@ def build_crossing_artifact(data: gpd.GeoDataFrame, resources: ComputationResour
         name='Pedestrian Crossings',
         summary='Map of pedestrian crossings by type',
         primary=False,
-        tags=set(Topics.SAFETY),
+        tags={Topics.SAFETY},
     )
     legend = Legend(legend_data={key.value: value for key, value in CROSSING_COLORS.items()})
     return create_vector_artifact(
