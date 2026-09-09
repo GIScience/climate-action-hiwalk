@@ -34,7 +34,6 @@ from walkability.components.tactile_paving.tactile_paving_analysis import tactil
 from walkability.components.utils.geometry import get_utm_zone
 from walkability.components.utils.misc import (
     WALKABLE_CATEGORIES,
-    check_paths_count_limit,
     fetch_osm_data,
     ohsome_filter,
 )
@@ -112,9 +111,6 @@ class OperatorWalkability(BaseOperator[ComputeInputWalkability]):
         log.info(f'Handling compute request: {params.model_dump()} in context: {resources}')
 
         artifacts = []
-
-        if self.max_path_limit > 0:
-            check_paths_count_limit(aoi=aoi, ohsome=self.ohsome, count_limit=self.max_path_limit)
 
         line_paths, polygon_paths = self._get_paths(aoi=aoi)
 

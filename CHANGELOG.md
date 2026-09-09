@@ -10,10 +10,14 @@ and this project mostly adheres to [Semantic Versioning](https://semver.org/spec
 ### Added
 - Minimal Pedestrian Crossing Indicator [#294](https://gitlab.heigit.org/climate-action/plugins/walkability/-/work_items/294)
 - Add horizontal bar chart visualizing share of sheltered benches ([#384](https://gitlab.heigit.org/climate-action/plugins/walkability/-/work_items/384))
+- AOI area constraint ([#398](https://gitlab.heigit.org/climate-action/plugins/walkability/-/work_items/398)
 
 ### Changed
 - Remove tactile paving and variety of POIs from experimental indicators
 - Renamed settings in `.env.base_template` and `.env.s3_template` in line with changes in mobility-tools and climatoology
+
+### Removed
+- Path count limit check
 
 ## [4.2.3](https://gitlab.heigit.org/climate-action/plugins/walkability/-/releases/4.2.3) - 2026-08-26
 

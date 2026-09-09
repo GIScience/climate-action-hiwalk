@@ -2,6 +2,7 @@ import logging
 from datetime import timedelta
 from pathlib import Path
 
+from climatoology.base.aoi import AreaConstraint
 from climatoology.base.plugin_info import Concern, CustomAOI, PluginAuthor, PluginInfo, generate_plugin_info
 
 from walkability.core.input import EXPERIMENTAL_INDICATORS, ComputeInputWalkability, WalkabilityIndicators
@@ -15,6 +16,12 @@ def get_info(*, feature_flag_experimental: bool) -> PluginInfo:
         exclude_indicators = exclude_indicators.union(EXPERIMENTAL_INDICATORS)
 
     demo_optional_indicators = set(WalkabilityIndicators).difference(exclude_indicators)
+
+    aoi_constraints = [
+        [
+            AreaConstraint(max_area=500),
+        ]
+    ]
 
     info = generate_plugin_info(
         name='hiWalk',
@@ -73,6 +80,7 @@ def get_info(*, feature_flag_experimental: bool) -> PluginInfo:
         demo_input_parameters=ComputeInputWalkability(optional_indicators=demo_optional_indicators),
         demo_aoi=CustomAOI(name='Heidelberg', path='resources/info/heidelberg_aoi.geojson'),
         computation_shelf_life=timedelta(weeks=24),
+        aoi_constraints=aoi_constraints,
     )
     log.info(f'Return info {info.model_dump()}')
 
