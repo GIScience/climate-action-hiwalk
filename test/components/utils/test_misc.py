@@ -1,19 +1,16 @@
 from unittest.mock import patch
 
 import geopandas as gpd
-import geopandas.testing
 import pandas as pd
 import pytest
-from climatoology.base.exception import ClimatoologyUserError, InputValidationError
+from climatoology.base.exception import ClimatoologyUserError
 from ohsome.exceptions import OhsomeException
 from ohsome_filter_to_sql import validate_filter
 from ohsome_py2.client import OhsomeClient
 from pandas.testing import assert_series_equal
 from pydantic_extra_types.color import Color
-from shapely import box
 
 from walkability.components.utils.misc import (
-    check_paths_count_limit,
     fetch_osm_data,
     generate_colors,
     ohsome_filter,
@@ -70,17 +67,6 @@ def test_generate_colors():
 @pytest.mark.parametrize('geometry_type', ['line', 'polygon'])
 def test_ohsome_filter(geometry_type):
     validate_filter(ohsome_filter(geometry_type))
-
-
-@pytest.mark.vcr
-def test_check_paths_count_limit(parametrized_ohsome_client):
-    big_aoi = box(8.5, 49.0, 9.0, 49.5)
-    with pytest.raises(InputValidationError):
-        check_paths_count_limit(
-            aoi=big_aoi,
-            count_limit=5000,
-            ohsome=parametrized_ohsome_client,
-        )
 
 
 def test_sanitize_filenames():
