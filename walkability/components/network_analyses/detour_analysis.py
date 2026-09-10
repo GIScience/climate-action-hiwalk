@@ -38,9 +38,9 @@ def detour_factor_analysis(
 
     hexcell_artifact = build_detour_factor_artifact(detour_factor_data=detour_factors, resources=resources)
 
-    summary, avg_value = summarise_detour(detour_factors)
+    summary = summarise_detour(detour_factors)
     n_inf = sum(np.isinf(detour_factors['detour_factor']))
-    summary_artifact = build_detour_summary_artifact(summary, avg_value, n_inf, resources=resources)
+    summary_artifact = build_detour_summary_artifact(summary, n_inf, resources=resources)
 
     return [hexcell_artifact, summary_artifact]
 
@@ -105,14 +105,12 @@ def apply_labels(detour_category: DetourCategory) -> str:
             return 'Unreachable'
 
 
-def build_detour_summary_artifact(
-    aoi_aggregate: go.Figure, avg_value: float, n_inf: int, resources: ComputationResources
-) -> Artifact:
+def build_detour_summary_artifact(aoi_aggregate: go.Figure, n_inf: int, resources: ComputationResources) -> Artifact:
     return create_plotly_chart_artifact(
         figure=aoi_aggregate,
         metadata=ArtifactMetadata(
             name='Histogram of Detour Factors',
-            summary=f'The average detour factor for this area is {avg_value}. The histogram above shows the distribution of detour factor values.',
+            summary='How are detour factor values distributed?',
             description=f'The area contains {n_inf} (partly) unreachable hexagon{"" if n_inf == 1 else "s"}.',
             filename='aggregation_aoi_detour',
             primary=True,
@@ -160,11 +158,12 @@ def summarise_detour(
         title=dict(
             subtitle=dict(text='Percentage', font=dict(size=14)),
         ),
-        xaxis_title='Detour Class',
+        xaxis_title=f'<br>The average detour factor for this area is {avg_value}.<br>'
+        f'The histogram above shows the distribution of detour factor values.',
         yaxis_title=None,
-        margin=dict(t=30, b=60, l=80, r=30),
+        margin=dict(t=30, b=60, l=50, r=30),
     )
-    return bar_fig, avg_value
+    return bar_fig
 
 
 DETOUR_FACTOR_COLOR_MAP = {

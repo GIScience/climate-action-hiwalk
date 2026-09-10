@@ -78,11 +78,9 @@ def test_summarise_detour(default_polygon_geometry):
         },
         crs=CAN_DEFAULT_CRS,
     )
-    expected_avg_value = 4.75
 
-    chart, avg_value = summarise_detour(detour_factor_data=input_hexgrid)
+    chart = summarise_detour(detour_factor_data=input_hexgrid)
 
-    assert expected_avg_value == avg_value
     assert isinstance(chart, go.Figure)
     np.testing.assert_array_equal(
         chart['data'][0]['x'], (['Low Detour (0 to 1.99)', 'Medium Detour (2.0 to 2.99)', 'High Detour (>= 3)'])
@@ -99,11 +97,9 @@ def test_summarise_detour_inf(default_polygon_geometry):
         },
         crs=CAN_DEFAULT_CRS,
     )
-    expected_avg_value = 2
 
-    chart, avg_value = summarise_detour(detour_factor_data=input_hexgrid)
+    chart = summarise_detour(detour_factor_data=input_hexgrid)
 
-    assert expected_avg_value == avg_value
     assert isinstance(chart, go.Figure)
     np.testing.assert_array_equal(
         chart['data'][0]['x'],
