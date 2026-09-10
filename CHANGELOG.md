@@ -5,12 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project mostly adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://gitlab.heigit.org/climate-action/plugins/walkability/-/compare/4.2.3...main)
+## [Unreleased](https://gitlab.heigit.org/climate-action/plugins/walkability/-/compare/4.3.0...main)
+
+## [4.3.0](https://gitlab.heigit.org/climate-action/plugins/walkability/-/releases/4.3.0) - 2026-09-10
 
 ### Added
 - Minimal Pedestrian Crossing Indicator [#294](https://gitlab.heigit.org/climate-action/plugins/walkability/-/work_items/294)
 - Add horizontal bar chart visualizing share of sheltered benches ([#384](https://gitlab.heigit.org/climate-action/plugins/walkability/-/work_items/384))
 - AOI area constraint ([#398](https://gitlab.heigit.org/climate-action/plugins/walkability/-/work_items/398)
+- Add a summary chart for the specific POIs in the comfort factor artifacts ([#378](https://gitlab.heigit.org/climate-action/plugins/walkability/-/work_items/378))
 
 ### Changed
 - Remove tactile paving and variety of POIs from experimental indicators

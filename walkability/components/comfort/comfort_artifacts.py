@@ -18,7 +18,7 @@ from ohsome import OhsomeClient
 from pydantic_extra_types.color import Color
 
 from walkability.components.comfort.comfort_poi_filters import PointsOfInterest, distance_enrich_paths, request_pois
-from walkability.components.utils.geometry import get_buffered_aoi
+from walkability.components.utils.geometry import CAN_DEFAULT_CRS, get_buffered_aoi, get_utm_zone
 from walkability.components.utils.misc import Topics, generate_colors
 
 log = logging.getLogger(__name__)
@@ -34,7 +34,7 @@ def compute_comfort_artifacts(
     resources: ComputationResources,
 ) -> list[Artifact]:
     artifacts = []
-
+    comfort_summary = pd.DataFrame()
     for poi_type in [
         PointsOfInterest.DRINKING_WATER,
         PointsOfInterest.SEATING,
@@ -96,7 +96,17 @@ def compute_comfort_artifacts(
             max_isochrone_request=ors_settings.ors_isochrone_max_request_number,
         )
         artifacts.append(isodistance_artifact)
-
+        comfort_summary = pd.concat(
+            [comfort_summary, cleaned_data],
+            ignore_index=True,
+        )
+        comfort_summary = comfort_summary[comfort_summary.geom_type.isin(['Point'])]
+    comfort_chart_artifact = build_comfort_chart_artifact(
+        aoi=aoi,
+        comfort_summary=comfort_summary,
+        resources=resources,
+    )
+    artifacts.append(comfort_chart_artifact)
     return artifacts
 
 
@@ -115,21 +125,83 @@ def build_isodistance_artifact(
         legend_color = cleaned_data.loc[cleaned_data['label'] == label, 'color'].mode().loc[0]
         legend.update({label: legend_color})
 
-    return create_vector_artifact(
-        data=cleaned_data,
-        metadata=ArtifactMetadata(
-            name=f'Distance to {poi_type.value.title()}',
-            summary=f'How far is it to {poi_type.value.capitalize()}?',
-            description=f'If there are fewer than {max_isochrone_request} {poi_type.value.title()} in the area of interest, '
-            f'actual walking distances are computed. Otherwise, straight line distances are used.',
-            filename=f'isodistance_{poi_type.value.replace(" ", "_")}',
-            tags={Topics.COMFORT},
-        ),
-        resources=resources,
-        legend=Legend(
-            legend_data=legend,
-        ),
+    if poi_type == PointsOfInterest.SEATING:
+        isodistance_artifact = create_vector_artifact(
+            data=cleaned_data,
+            metadata=ArtifactMetadata(
+                name=f'Distance to {poi_type.value.title()}',
+                summary=f'How far is it to {poi_type.value.capitalize()}?',
+                description=f'If there are fewer than {max_isochrone_request} {poi_type.value.title()} in the area of interest, '
+                f'actual walking distances are computed. Otherwise, straight line distances are used.\n\n'
+                f'This map includes both sheltered and unsheltered benches.\n\n'
+                f'Benches: We define benches as seating locations explicitly tagged as benches, '
+                f'as well as public facilities such as transport platforms, picnic tables, and picnic sites '
+                f'that do not explicitly exclude the presence of benches.\n\n'
+                f'Sheltered benches: Sheltered benches are benches from the categories defined above '
+                f'that also provide some form of overhead shelter or cover. A bench is considered sheltered '
+                f'when it includes either the tag covered=yes or shelter=yes, or when it is located inside '
+                f'a shelter facility tagged with amenity=shelter.\n\n'
+                f'Unsheltered benches: All benches that do not meet the sheltered-bench criteria '
+                f'are classified as unsheltered benches.\n\n',
+                filename=f'isodistance_{poi_type.value.replace(" ", "_")}',
+                tags={Topics.COMFORT},
+            ),
+            resources=resources,
+            legend=Legend(
+                legend_data=legend,
+            ),
+        )
+    else:
+        isodistance_artifact = create_vector_artifact(
+            data=cleaned_data,
+            metadata=ArtifactMetadata(
+                name=f'Distance to {poi_type.value.title()}',
+                summary=f'How far is it to {poi_type.value.capitalize()}?',
+                description=f'If there are fewer than {max_isochrone_request} {poi_type.value.title()} in the area of interest, '
+                f'actual walking distances are computed. Otherwise, straight line distances are used.',
+                filename=f'isodistance_{poi_type.value.replace(" ", "_")}',
+                tags={Topics.COMFORT},
+            ),
+            resources=resources,
+            legend=Legend(
+                legend_data=legend,
+            ),
+        )
+    return isodistance_artifact
+
+
+def build_comfort_chart_artifact(
+    aoi: shapely.MultiPolygon,
+    comfort_summary: gpd.GeoDataFrame,
+    resources: ComputationResources,
+) -> Artifact:
+    summary = pd.DataFrame(
+        {
+            'poi_type': ['sheltered benches', 'drinking water locations', 'public toilets'],
+            'count': [
+                len(comfort_summary[comfort_summary['label'] == 'sheltered benches']),
+                len(comfort_summary[comfort_summary['label'] == 'drinking water locations']),
+                len(comfort_summary[comfort_summary['label'] == 'public toilets']),
+            ],
+        }
     )
+    aoi_crs = get_utm_zone(aoi)
+    aoi_projected = gpd.GeoSeries(data=aoi, crs=CAN_DEFAULT_CRS).to_crs(aoi_crs)
+    summary['density'] = summary['count'] / (aoi_projected[0].area / 1000000)
+    comfort_chart = create_comfort_chart_plot(summary=summary)
+
+    comfort_chart_metadata = ArtifactMetadata(
+        name='Density of Public Comfort Infrastructure',
+        summary='How well-equipped is my area with public comfort infrastructure?',
+        tags={Topics.COMFORT},
+        primary=False,
+    )
+    comfort_chart = create_plotly_chart_artifact(
+        figure=comfort_chart,
+        metadata=comfort_chart_metadata,
+        resources=resources,
+    )
+    return comfort_chart
 
 
 def build_benches_chart_artifact(benches_data: gpd.GeoDataFrame, resources: ComputationResources) -> Artifact:
@@ -237,4 +309,28 @@ def create_bench_chart_plot(summary: pd.DataFrame) -> go.Figure:
             ),
         )
 
+    return data
+
+
+def create_comfort_chart_plot(summary: pd.DataFrame) -> go.Figure:
+    colors = ['brown', 'darkblue', 'purple']
+    data = go.Figure()
+    for i, row in summary.iterrows():
+        data.add_trace(
+            go.Bar(
+                x=[row['poi_type'].capitalize()],
+                y=[row['density']],
+                name=row['poi_type'],
+                marker_color=colors[i],
+                hovertemplate=f'Number of {row["poi_type"]}: {int(row["count"])} ({row["density"]:.2f} {row["poi_type"]} per km²)<extra></extra>',
+            )
+        )
+        data.update_layout(
+            margin=dict(t=30, b=80, l=30, r=30),
+            yaxis_title='Facilities per km²',
+            xaxis_title=f'In this area, there are {summary["count"].iloc[0]} sheltered benches, {summary["count"].iloc[1]} drinking water locations, and '
+            f'{summary["count"].iloc[2]} public toilets.',
+            yaxis=dict(),
+            showlegend=False,
+        )
     return data
