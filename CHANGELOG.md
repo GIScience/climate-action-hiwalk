@@ -7,6 +7,10 @@ and this project mostly adheres to [Semantic Versioning](https://semver.org/spec
 
 ## [Unreleased](https://gitlab.heigit.org/climate-action/plugins/walkability/-/compare/4.3.0...main)
 
+### Changed
+
+- Set different color for path category "Cars of unknown speed"  ([#402](https://gitlab.heigit.org/climate-action/plugins/walkability/-/work_items/402))
+
 ## [4.3.0](https://gitlab.heigit.org/climate-action/plugins/walkability/-/releases/4.3.0) - 2026-09-10
 
 ### Added

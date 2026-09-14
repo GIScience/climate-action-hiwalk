@@ -58,7 +58,7 @@ PATH_RATING_MAP = {
     PathCategory.SHARED_WITH_MOTORIZED_TRAFFIC_MEDIUM_SPEED: 0.4,
     PathCategory.SHARED_WITH_MOTORIZED_TRAFFIC_HIGH_SPEED: 0.2,
     PathCategory.SHARED_WITH_MOTORIZED_TRAFFIC_VERY_HIGH_SPEED: 0.0,
-    PathCategory.SHARED_WITH_MOTORIZED_TRAFFIC_UNKNOWN_SPEED: 0.0,
+    PathCategory.SHARED_WITH_MOTORIZED_TRAFFIC_UNKNOWN_SPEED: -1,
     PathCategory.UNKNOWN: None,
 }
 
@@ -230,6 +230,7 @@ def generate_colors(
     min_value: Numeric | None = None,
     max_value: Numeric | None = None,
     bad_color='#808080',
+    under_color: str = 'red',
 ) -> pd.Series:
     """
     Function to generate a list of colors based on a linear normalization for each element in `color_by`.
@@ -246,7 +247,7 @@ def generate_colors(
     norm = mpl.colors.Normalize(vmin=min_value, vmax=max_value)
     cmap = mpl.colormaps[cmap_name]
 
-    cmap.set_extremes(bad=bad_color)
+    cmap.set_extremes(bad=bad_color, under=under_color)
 
     mapped_colors = [Color(mpl.colors.to_hex(col)) for col in cmap(norm(color_by))]
     colors = pd.Series(data=mapped_colors, index=color_by.index)
