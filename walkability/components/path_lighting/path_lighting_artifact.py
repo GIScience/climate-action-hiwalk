@@ -2,7 +2,14 @@ import logging
 from pathlib import Path
 
 import geopandas as gpd
-from climatoology.base.artifact_creators import Artifact, ArtifactMetadata, Legend, create_vector_artifact
+import plotly.graph_objects as go
+from climatoology.base.artifact_creators import (
+    Artifact,
+    ArtifactMetadata,
+    Legend,
+    create_plotly_chart_artifact,
+    create_vector_artifact,
+)
 from climatoology.base.computation import ComputationResources
 
 from walkability.components.utils.misc import Topics, generate_colors, get_path_lighting_legend
@@ -28,4 +35,17 @@ def build_path_lighting_artifact(light_locations: gpd.GeoDataFrame, resources: C
         ),
         resources=resources,
         legend=Legend(legend_data=get_path_lighting_legend()),
+    )
+
+
+def build_path_lighting_chart_artifact(figure: go.Figure, resources: ComputationResources) -> Artifact:
+    return create_plotly_chart_artifact(
+        figure=figure,
+        metadata=ArtifactMetadata(
+            name='Distribution of Path Lighting',
+            summary='What proportion of paths are well-lit?',
+            tags={Topics.SAFETY, Topics.SUMMARY},
+            primary=False,
+        ),
+        resources=resources,
     )
