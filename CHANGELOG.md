@@ -10,6 +10,7 @@ and this project mostly adheres to [Semantic Versioning](https://semver.org/spec
 ### Changed
 
 - Set different color for path category "Cars of unknown speed"  ([#402](https://gitlab.heigit.org/climate-action/plugins/walkability/-/work_items/402))
+- reduced size of docker image by using python-slim, multi-stage build, and including only the required files
 
 ## [4.3.0](https://gitlab.heigit.org/climate-action/plugins/walkability/-/releases/4.3.0) - 2026-09-10
 
