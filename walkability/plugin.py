@@ -36,7 +36,7 @@ def init_plugin(
     return start_plugin(operator=operator)
 
 
-if __name__ == '__main__':
+def main():
     # We require the user to provide the settings as environment variables or in the .env file
     # noinspection PyArgumentList
     settings = Settings()  # type: ignore
@@ -53,3 +53,7 @@ if __name__ == '__main__':
         feature_flags=feature_flag_settings,
     )
     log.info(f'Plugin exited with exit code {exit_code}')
+
+
+if __name__ == '__main__':
+    main()

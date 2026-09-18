@@ -28,6 +28,9 @@ dependencies = [
 [project.urls]
 repository = "https://gitlab.heigit.org/climate-action/plugins/walkability"
 
+[project.scripts]
+plugin = "walkability.plugin:main"
+
 [tool.poetry.group.test.dependencies]
 responses = "^0.26.0"
 pytest-cov = "^7.0.0"
