@@ -2451,14 +2451,14 @@ urllib3 = ">=2.5.0,<3.0.0"
 
 [[package]]
 name = "ohsome-filter-to-sql"
-version = "0.14.0"
+version = "0.16.0"
 description = "Translate ohsome API filter to SQL WHERE clause ready to be used with ohsomeDB"
 optional = false
 python-versions = "<3.15,>=3.13"
 groups = ["main"]
 files = [
-    {file = "ohsome_filter_to_sql-0.14.0-py3-none-any.whl", hash = "sha256:d12a7119d69b651fdfb194d90c2a0ff138bb7accf93b0db21d38770670ff4029"},
-    {file = "ohsome_filter_to_sql-0.14.0.tar.gz", hash = "sha256:2a11d46bbe65c5c13a6b0f4d30563ae300c63dd3b0cca1d02d76e543aedf7196"},
+    {file = "ohsome_filter_to_sql-0.16.0-py3-none-any.whl", hash = "sha256:eb6ed0d1728395fd5e0d8e269dc0d7ae3b59590e0e71c70efb2e73e8ea8af57c"},
+    {file = "ohsome_filter_to_sql-0.16.0.tar.gz", hash = "sha256:6a08d8afab86471a8c9bb00264d3800d85bf536d7b3ba8fe7b364c2e7de92bd6"},
 ]
 
 [package.dependencies]
@@ -4633,4 +4633,4 @@ files = [
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.13.5,<3.14"
-content-hash = "11b9d627b9aa82fec1f28289ba82b3a09f7b3763361444bde4911835f146f4a5"
+content-hash = "0fed8380b1476502ac56d6fd9e3eb769c09f4b9899352f22425819ae94838bb7"
