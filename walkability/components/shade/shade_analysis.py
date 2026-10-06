@@ -87,7 +87,7 @@ def create_shade_paths_chart_artifact(shaded_paths: gpd.GeoDataFrame, resources:
     shade_chart_metadata = ArtifactMetadata(
         name='Distribution of Tree Shaded Paths',
         summary='What length of paths is shaded?',
-        tags={Topics.SHADE},
+        tags={Topics.SHADE, Topics.SUMMARY},
         primary=False,
     )
     shade_chart_artifact = create_plotly_chart_artifact(

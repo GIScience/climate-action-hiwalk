@@ -46,7 +46,7 @@ def build_tactile_paving_chart_artifact(figure: go.Figure, resources: Computatio
             summary='What percentage of crossings, platforms, and stairs have tactile paving?',
             filename='tactile_paving_summary',
             primary=False,
-            tags={Topics.SAFETY},
+            tags={Topics.SAFETY, Topics.SUMMARY},
         ),
         resources=resources,
     )

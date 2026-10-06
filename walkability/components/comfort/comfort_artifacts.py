@@ -193,7 +193,7 @@ def build_comfort_chart_artifact(
     comfort_chart_metadata = ArtifactMetadata(
         name='Density of Public Comfort Infrastructure',
         summary='How well-equipped is my area with public comfort infrastructure?',
-        tags={Topics.COMFORT},
+        tags={Topics.COMFORT, Topics.SUMMARY},
         primary=False,
     )
     comfort_chart = create_plotly_chart_artifact(
@@ -227,7 +227,7 @@ def build_benches_chart_artifact(benches_data: gpd.GeoDataFrame, resources: Comp
     bench_chart_metadata = ArtifactMetadata(
         name='Share of Sheltered Benches',
         summary='How many benches are sheltered?',
-        tags={Topics.COMFORT},
+        tags={Topics.COMFORT, Topics.SUMMARY},
         primary=False,
     )
     bench_chart = create_plotly_chart_artifact(
