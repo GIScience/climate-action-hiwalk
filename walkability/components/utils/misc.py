@@ -27,10 +27,6 @@ class Topics(StrEnum):
     ATTRACTIVENESS = 'attractiveness'
 
 
-# TODO I think having all these enums collected here is getting a bit ridiculous i think they need formatting
-# TODO if you're at it also think if they all need a rating map, or if it would make sense to redo the colouring
-
-
 class PathCategory(Enum):
     DESIGNATED = 'Pedestrians Exclusive'
     DESIGNATED_SHARED_WITH_BIKES = 'Bikes'

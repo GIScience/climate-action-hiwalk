@@ -260,8 +260,8 @@ def default_aoi_paths() -> gpd.GeoDataFrame:
     gdf = gdf.assign(
         osm_type='way',
         rating=1.0,
-        length=100,  # TODO: fix?
-        length_shaded=50,  # TODO: fix
+        length=100,
+        length_shaded=50,
     )
     gdf = gdf.reset_index(names='osm_id')
 

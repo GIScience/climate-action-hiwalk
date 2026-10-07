@@ -149,11 +149,10 @@ class OperatorWalkability(BaseOperator[ComputeInputWalkability]):
             walkable_categories=WALKABLE_CATEGORIES,
         )
         line_paths = next(line_paths)
-        # TODO this check presumes that all optional artifacts are dependent on the line_paths, however, this is not true anymore (crossings, tactile_pavement)
+
         if line_paths.empty:
             return artifacts
 
-        # TODO all these indicators have basically the same boiler plate and function, maybe there's an option to streamline and simplify
         if WalkabilityIndicators.DETOURS in params.optional_indicators:
             with self.catch_exceptions(indicator_name='Detour Factors', resources=resources):
                 detour_artifacts = detour_factor_analysis(
