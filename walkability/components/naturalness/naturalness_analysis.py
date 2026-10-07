@@ -98,7 +98,7 @@ def fetch_naturalness_by_vector(
         max_raster_size=500,
     )
 
-    naturalness_gdf = naturalness_gdf.rename(columns={agg_stat: 'naturalness'})
+    naturalness_gdf = naturalness_gdf.rename(columns={agg_stat: 'naturalness'}).dropna(subset=['naturalness'])
     return naturalness_gdf
 
 

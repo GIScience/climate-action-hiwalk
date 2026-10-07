@@ -111,7 +111,6 @@ def compute_comfort_artifacts(
 
 
 def build_isodistance_artifact(
-    # TODO write test for this function
     resources: ComputationResources,
     cleaned_data: gpd.GeoDataFrame,
     poi_type: PointsOfInterest,
