@@ -27,7 +27,7 @@ log = logging.getLogger(__name__)
 def compute_slope_analysis(
     paths: gpd.GeoDataFrame, s3settings: S3Settings, resources: ComputationResources
 ) -> list[Artifact]:
-    log.debug('Computing slopes for paths')
+    log.info('Computing slopes for paths')
 
     multi_line_paths = paths.loc[paths.category.isin(PathCategory.get_visible())].copy(deep=False)
     line_string_paths = multi_line_paths.set_index('osm_id').explode(ignore_index=False)
@@ -42,7 +42,7 @@ def compute_slope_analysis(
 
     smoothed_slopes = merge_similar_slopes(paths_with_slopes)
     slope_artifact = build_slope_artifact(path_slopes_data=smoothed_slopes, resources=resources)
-
+    log.info('Finished Slope computation')
     slope_summary = summarise_slope(paths_with_slopes)
     slope_summary_artifact = build_slope_summary_artifact(slope_summary, resources)
 
@@ -79,6 +79,7 @@ def build_slope_artifact(
     resources: ComputationResources,
     cmap_name: str = 'coolwarm',
 ) -> Artifact:
+    log.debug('Building slope artifact')
     legend_lower_bound, legend_upper_bound = 0, 12
     path_slopes_data['color'] = generate_colors(
         path_slopes_data['slope'],
