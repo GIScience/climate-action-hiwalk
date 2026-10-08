@@ -8,7 +8,7 @@ unit_tests:
   stage: test
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-    - if: $CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == 'push'
+    - if: $CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"
   image:
     name: python:3.13
   variables:
@@ -45,14 +45,15 @@ test_coverage_threshold:
     - unit_tests
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-    - if: $CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == 'push'
+    - if: $CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"
   image:
     name: python:3.13
   before_script:
     - apt-get update && apt-get install -y bc
   script:
     - coverage="$(grep -oP '<coverage[^>]+line-rate="\K[0-9.]+' "coverage.xml")"
-    - if (( $(echo "$coverage < 0.8" | bc -l) )); then
+    - |
+      if (( $(echo "$coverage < 0.8" | bc -l) )); then
         echo "Code coverage is only $(echo "$coverage*100" | bc)%. We recommend a minimum of 80%." && exit 1;
       else
         exit 0;
@@ -106,8 +107,6 @@ build_staging:
         --push \
         .
 
-
-
 build_release:
   stage: build
   tags: [ k8s ]
@@ -118,7 +117,7 @@ build_release:
     - echo ${CI_DOCKER_TOKEN} | docker --config ~/ca_config login ${REGISTRY_URL} -u ${CI_DOCKER_USER} --password-stdin
     - docker --config ~/ca_config buildx create --use --name=kube --driver remote tcp://amd64-buildkit-service.ci-cd.svc:1234
   script:
-   - |
+    - |
       docker --config ~/ca_config \
         buildx build \
         --builder=kube \
@@ -126,7 +125,6 @@ build_release:
         --tag ${REGISTRY_URL}/${GROUP_NAME}/${CI_PROJECT_NAME}:${CI_COMMIT_TAG} \
         --push \
         .
-
 
 deploy_staging:
   stage: deploy
