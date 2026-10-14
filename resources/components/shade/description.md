@@ -6,3 +6,5 @@ This represents the shade provided by trees during peak solar hours (i.e., when 
 Tunnels are always classed as shaded, to avoid marking them based on the landscape above.
 
 Shade provided by other means, such as shelters or buildings, is not captured by this indicator.
+
+Tree coverage and height are derived from the [Meta CHMv2 canopy height data](https://registry.opendata.aws/dataforgood-fb-forests/)
