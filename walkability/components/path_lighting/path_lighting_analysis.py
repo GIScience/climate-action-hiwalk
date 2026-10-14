@@ -18,11 +18,10 @@ log = logging.getLogger(__name__)
 
 
 def path_lighting_analysis(
-    line_paths: gpd.GeoDataFrame,
-    polygon_paths: gpd.GeoDataFrame,
+    paths: gpd.GeoDataFrame,
     resources: ComputationResources,
 ) -> list[Artifact]:
-    light_paths_all = get_path_lighting(line_paths=line_paths, polygon_paths=polygon_paths)
+    light_paths_all = get_path_lighting(paths=paths)
     light_path_artifact = build_path_lighting_artifact(light_locations=light_paths_all, resources=resources)
 
     light_chart = summarise_path_lighting(light_paths_all)
@@ -31,16 +30,9 @@ def path_lighting_analysis(
     return [light_path_artifact, light_chart_artifact]
 
 
-def get_path_lighting(line_paths: GeoDataFrame, polygon_paths: GeoDataFrame) -> GeoDataFrame:
-    light_path = []
-    if not line_paths.empty:
-        paths_light = path_lighting_categorisation(geometries=line_paths)
-        light_path.append(paths_light)
-    if not polygon_paths.empty:
-        polygons_light = path_lighting_categorisation(geometries=polygon_paths)
-        light_path.append(polygons_light)
-    light_paths_all: gpd.GeoDataFrame = pd.concat(light_path)
-    return light_paths_all
+def get_path_lighting(paths: gpd.GeoDataFrame) -> GeoDataFrame:
+    paths_light = path_lighting_categorisation(geometries=paths)
+    return paths_light
 
 
 def path_lighting_categorisation(

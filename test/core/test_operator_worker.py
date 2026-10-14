@@ -23,10 +23,9 @@ def test_get_paths(operator, small_aoi, parametrized_ohsome_client):
         'surface_rating',
         'geometry',
     }
-    computed_lines, computed_polygons = operator._get_paths(aoi=small_aoi)
+    received = operator._get_paths(aoi=small_aoi)
 
-    assert set(computed_lines.columns) >= required_columns
-    assert set(computed_polygons.columns) >= required_columns
+    assert set(received.columns) >= required_columns
 
 
 def test_get_paths_with_erroneous_clipping(operator):

@@ -15,6 +15,7 @@ and this project mostly adheres to [Semantic Versioning](https://semver.org/spec
 - Update CI and Dockerfile to simplify and correct poetry installing location
 - Update the walkable paths with the public transport platforms ([#396](https://gitlab.heigit.org/climate-action/plugins/walkability/-/work_items/396))
 - instead of requesting sheltered benches separately we now filter benches into sheltered and unsheltered based on their osm tags, ([#423](https://gitlab.heigit.org/climate-action/plugins/walkability/-/work_items/423))
+- paths are now concatenated instead of handing around polygon and line paths separately, functions filter where necessary and raise errors if there is no suitable paths.
 
 ## [4.3.0](https://gitlab.heigit.org/climate-action/plugins/walkability/-/releases/4.3.0) - 2026-09-10
 

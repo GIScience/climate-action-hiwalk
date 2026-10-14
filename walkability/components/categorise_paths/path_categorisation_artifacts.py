@@ -2,7 +2,6 @@ import logging
 from pathlib import Path
 
 import geopandas as gpd
-import pandas as pd
 import plotly.graph_objects as go
 from climatoology.base.artifact_creators import (
     ArtifactMetadata,
@@ -30,8 +29,7 @@ from walkability.components.utils.misc import (
 
 
 def build_path_categorisation_artifact(
-    paths_line: gpd.GeoDataFrame,
-    paths_polygon: gpd.GeoDataFrame,
+    paths: gpd.GeoDataFrame,
     areal_summaries: dict[str, go.Figure],
     aoi_summary_category_stacked_bar: go.Figure,
     aoi_summary_quality_stacked_bar: go.Figure,
@@ -40,20 +38,17 @@ def build_path_categorisation_artifact(
 ) -> list[Artifact]:
     logging.debug('Building paths artifacts')
 
-    walkable_paths = build_walkable_paths_artifact(
-        paths_line=paths_line, paths_polygon=paths_polygon, resources=resources
-    )
+    walkable_paths = build_walkable_paths_artifact(paths=paths, resources=resources)
 
     surface_quality = build_surface_quality_artifact(
-        paths_line=paths_line,
-        paths_polygon=paths_polygon,
+        paths=paths,
         walkable_categories=walkable_categories,
         resources=resources,
     )
 
-    smoothness = build_smoothness_artifact(paths_line=paths_line, paths_polygon=paths_polygon, resources=resources)
+    smoothness = build_smoothness_artifact(paths=paths, resources=resources)
 
-    surface_type = build_surface_artifact(paths_line=paths_line, paths_polygon=paths_polygon, resources=resources)
+    surface_type = build_surface_artifact(paths=paths, resources=resources)
 
     summary_artifacts = []
     if areal_summaries:
@@ -77,18 +72,12 @@ def build_path_categorisation_artifact(
     ] + summary_artifacts
 
 
-def build_walkable_paths_artifact(
-    paths_line: gpd.GeoDataFrame, paths_polygon: gpd.GeoDataFrame, resources: ComputationResources
-) -> Artifact:
-    walkable_paths: gpd.GeoDataFrame = pd.concat([paths_line, paths_polygon], ignore_index=True)  # type: ignore
-
-    walkable_paths['color'] = generate_colors(
-        walkable_paths.rating, min_value=0.0, max_value=1.0, cmap_name='coolwarm_r'
-    )
-    walkable_paths['label'] = walkable_paths['category'].apply(lambda x: x.value)
+def build_walkable_paths_artifact(paths: gpd.GeoDataFrame, resources: ComputationResources) -> Artifact:
+    paths['color'] = generate_colors(paths.rating, min_value=0.0, max_value=1.0, cmap_name='coolwarm_r')
+    paths['label'] = paths['category'].apply(lambda x: x.value)
 
     return create_vector_artifact(
-        data=walkable_paths[['osm_id', 'osm_type', 'color', 'label', 'geometry']],
+        data=paths[['osm_id', 'osm_type', 'color', 'label', 'geometry']],
         metadata=ArtifactMetadata(
             name='Path Categories',
             summary=Path(
@@ -118,22 +107,18 @@ def generate_detailed_pavement_quality_mapping_info() -> str:
 
 
 def build_surface_quality_artifact(
-    paths_line: gpd.GeoDataFrame,
-    paths_polygon: gpd.GeoDataFrame,
+    paths: gpd.GeoDataFrame,
     walkable_categories: set[PathCategory],
     resources: ComputationResources,
 ) -> Artifact | None:
-    paths_line = next(subset_walkable_paths(paths_line, walkable_categories=walkable_categories))
-    surface_quality_locations: gpd.GeoDataFrame = pd.concat([paths_line, paths_polygon], ignore_index=True)  # type: ignore
-    if surface_quality_locations.empty:
+    paths = next(subset_walkable_paths(paths, walkable_categories=walkable_categories))
+    if paths.empty:
         return
-    surface_quality_locations['color'] = generate_colors(
-        surface_quality_locations.quality_rating, min_value=0.0, max_value=1.0, cmap_name='coolwarm_r'
-    )
-    surface_quality_locations['label'] = surface_quality_locations.quality.apply(lambda r: r.value)
+    paths['color'] = generate_colors(paths.quality_rating, min_value=0.0, max_value=1.0, cmap_name='coolwarm_r')
+    paths['label'] = paths.quality.apply(lambda r: r.value)
 
     return create_vector_artifact(
-        data=surface_quality_locations[['osm_id', 'osm_type', 'color', 'label', 'geometry']],
+        data=paths[['osm_id', 'osm_type', 'color', 'label', 'geometry']],
         metadata=ArtifactMetadata(
             name='Surface Quality',
             summary=Path('resources/components/categorise_paths/surface_quality_caption.md').read_text(),
@@ -147,16 +132,11 @@ def build_surface_quality_artifact(
     )
 
 
-def build_smoothness_artifact(
-    paths_line: gpd.GeoDataFrame, paths_polygon: gpd.GeoDataFrame, resources: ComputationResources
-) -> Artifact:
-    smoothness_locations: gpd.GeoDataFrame = pd.concat([paths_line, paths_polygon], ignore_index=True)  # type: ignore
-    smoothness_locations['color'] = generate_colors(
-        smoothness_locations.smoothness_rating, cmap_name='coolwarm_r', min_value=0.0, max_value=1.0
-    )
-    smoothness_locations['label'] = smoothness_locations.smoothness.apply(lambda r: r.value)
+def build_smoothness_artifact(paths: gpd.GeoDataFrame, resources: ComputationResources) -> Artifact:
+    paths['color'] = generate_colors(paths.smoothness_rating, cmap_name='coolwarm_r', min_value=0.0, max_value=1.0)
+    paths['label'] = paths.smoothness.apply(lambda r: r.value)
     return create_vector_artifact(
-        data=smoothness_locations[['osm_id', 'osm_type', 'color', 'label', 'geometry']],
+        data=paths[['osm_id', 'osm_type', 'color', 'label', 'geometry']],
         metadata=ArtifactMetadata(
             name='Smoothness',
             summary=Path('resources/components/categorise_paths/smoothness_caption.md').read_text(),
@@ -170,16 +150,11 @@ def build_smoothness_artifact(
     )
 
 
-def build_surface_artifact(
-    paths_line: gpd.GeoDataFrame, paths_polygon: gpd.GeoDataFrame, resources: ComputationResources
-) -> Artifact:
-    surface_locations: gpd.GeoDataFrame = pd.concat([paths_line, paths_polygon], ignore_index=True)  # type: ignore
-    surface_locations['color'] = generate_colors(
-        surface_locations.surface_rating, cmap_name='tab10', min_value=0.0, max_value=1.0
-    )
-    surface_locations['label'] = surface_locations.surface.apply(lambda r: r.value)
+def build_surface_artifact(paths: gpd.GeoDataFrame, resources: ComputationResources) -> Artifact:
+    paths['color'] = generate_colors(paths.surface_rating, cmap_name='tab10', min_value=0.0, max_value=1.0)
+    paths['label'] = paths.surface.apply(lambda r: r.value)
     return create_vector_artifact(
-        data=surface_locations[['osm_id', 'osm_type', 'color', 'label', 'geometry']],
+        data=paths[['osm_id', 'osm_type', 'color', 'label', 'geometry']],
         metadata=ArtifactMetadata(
             name='Surface Type',
             summary=Path('resources/components/categorise_paths/surface_caption.md').read_text(),

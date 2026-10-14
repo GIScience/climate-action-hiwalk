@@ -30,7 +30,7 @@ def summarise_by_area(
     log.info('Summarising walkability stats by area')
 
     stats = paths.copy()
-    stats = stats.loc[stats.geometry.geom_type.isin(('MultiLineString', 'LineString'))]
+    stats = stats.loc[stats.geometry.geom_type == 'LineString']
 
     log.info('Querying admin boundaries from ohsome')
     minimum_keys = ['admin_level', 'name']
@@ -119,6 +119,8 @@ def summarise_aoi(
     length_resolution_m: int = 1000,
 ) -> Tuple[go.Figure, go.Figure]:
     log.info('Summarising walkability stats (Walkable Path Categories and Surface Quality)')
+
+    paths = paths[paths.geom_type.isin(['LineString', 'MultiLineString'])]
 
     stats = calculate_length(length_resolution_m, paths, projected_crs)
 

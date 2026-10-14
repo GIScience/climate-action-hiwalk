@@ -21,16 +21,13 @@ log = logging.getLogger(__name__)
 
 
 def naturalness_analysis(
-    line_paths: gpd.GeoDataFrame,
-    polygon_paths: gpd.GeoDataFrame,
+    paths: gpd.GeoDataFrame,
     index: NaturalnessIndex,
     resources: ComputationResources,
     naturalness_utility: NaturalnessUtility,
 ) -> list[Artifact]:
     log.info('Computing naturalness')
-    naturalness = get_naturalness(
-        paths=line_paths, polygons=polygon_paths, index=index, naturalness_utility=naturalness_utility
-    )
+    naturalness = get_naturalness(paths=paths, index=index, naturalness_utility=naturalness_utility)
     naturalness_artifact = build_naturalness_artifact(naturalness, resources)
     log.info('Finished computing Naturalness')
 
@@ -43,7 +40,6 @@ def naturalness_analysis(
 
 def get_naturalness(
     paths: gpd.GeoDataFrame,
-    polygons: gpd.GeoDataFrame,
     index: NaturalnessIndex,
     naturalness_utility: NaturalnessUtility,
 ) -> gpd.GeoDataFrame:
@@ -55,18 +51,22 @@ def get_naturalness(
     :param paths:
     :return: RasterInfo objects with NDVI values along streets and places
     """
+
+    line_paths = paths[paths.geom_type.isin(['LineString'])]
+
     naturalness = []
-    if not paths.empty:
-        paths.loc[paths['osm_tags'].apply(lambda x: x.get('tunnel')) == 'yes', 'naturalness'] = 0
+    if not line_paths.empty:
+        line_paths.loc[line_paths['osm_tags'].apply(lambda x: x.get('tunnel')) == 'yes', 'naturalness'] = 0
         paths_ndvi = fetch_naturalness_by_vector(
             naturalness_utility=naturalness_utility,
             time_range=TimeRange(end_date=dt.datetime.now().replace(day=1).date()),
-            vectors=[paths.geometry],
+            vectors=[line_paths.geometry],
             index=index,
         )
-        paths_ndvi.loc[paths[paths['naturalness'] == 0].index, 'naturalness'] = 0
+        paths_ndvi.loc[line_paths[line_paths['naturalness'] == 0].index, 'naturalness'] = 0
         naturalness.append(paths_ndvi)
 
+    polygons = paths[paths.geom_type.isin(['Polygon', 'MultiPolygon'])]
     if not polygons.empty:
         polygons.loc[polygons['osm_tags'].apply(lambda x: x.get('tunnel')) == 'yes', 'naturalness'] = 0
         polygons_ndvi = fetch_naturalness_by_vector(

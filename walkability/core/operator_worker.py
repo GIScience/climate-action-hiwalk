@@ -4,6 +4,7 @@ import os
 
 import boto3
 import geopandas as gpd
+import pandas as pd
 import shapely.ops
 from botocore import UNSIGNED
 from botocore.config import Config
@@ -112,12 +113,12 @@ class OperatorWalkability(BaseOperator[ComputeInputWalkability]):
 
         artifacts = []
 
-        line_paths, polygon_paths = self._get_paths(aoi=aoi)
+        paths = self._get_paths(aoi=aoi)
 
         with self.catch_exceptions(indicator_name='Sub-district areal summary charts', resources=resources):
             areal_summaries = dict()  # Empty dict in case summaries fail
             areal_summaries = summarise_by_area(
-                paths=line_paths,
+                paths=paths,
                 aoi=aoi,
                 admin_level=self.admin_level,
                 projected_crs=get_utm_zone(aoi),
@@ -131,11 +132,10 @@ class OperatorWalkability(BaseOperator[ComputeInputWalkability]):
                 (
                     aoi_summary_category_stacked_bar,
                     aoi_summary_quality_stacked_bar,
-                ) = summarise_aoi(paths=line_paths, projected_crs=get_utm_zone(aoi))
+                ) = summarise_aoi(paths=paths, projected_crs=get_utm_zone(aoi))
 
         path_artifacts = build_path_categorisation_artifact(
-            paths_line=line_paths,
-            paths_polygon=polygon_paths,
+            paths=paths,
             areal_summaries=areal_summaries,
             aoi_summary_category_stacked_bar=aoi_summary_category_stacked_bar,
             aoi_summary_quality_stacked_bar=aoi_summary_quality_stacked_bar,
@@ -144,20 +144,17 @@ class OperatorWalkability(BaseOperator[ComputeInputWalkability]):
         )
         artifacts.extend(path_artifacts)
 
-        line_paths = subset_walkable_paths(
-            line_paths,
+        paths = subset_walkable_paths(
+            paths,
             walkable_categories=WALKABLE_CATEGORIES,
         )
-        line_paths = next(line_paths)
-
-        if line_paths.empty:
-            return artifacts
+        paths = next(paths)
 
         if WalkabilityIndicators.DETOURS in params.optional_indicators:
             with self.catch_exceptions(indicator_name='Detour Factors', resources=resources):
                 detour_artifacts = detour_factor_analysis(
                     aoi=aoi,
-                    paths=line_paths,
+                    paths=paths,
                     ors_settings=self.ors_settings,
                     resources=resources,
                 )
@@ -167,8 +164,7 @@ class OperatorWalkability(BaseOperator[ComputeInputWalkability]):
         if WalkabilityIndicators.NATURALNESS in params.optional_indicators:
             with self.catch_exceptions(indicator_name='Greenness', resources=resources):
                 naturalness_artifacts = naturalness_analysis(
-                    line_paths=line_paths,
-                    polygon_paths=polygon_paths,
+                    paths=paths,
                     index=NaturalnessIndex.NDVI,
                     resources=resources,
                     naturalness_utility=self.naturalness_utility,
@@ -179,16 +175,14 @@ class OperatorWalkability(BaseOperator[ComputeInputWalkability]):
         # disabled for now to no show silly results until we manage to build a proper utility for it
         if WalkabilityIndicators.SLOPE in params.optional_indicators:
             with self.catch_exceptions(indicator_name='Slope', resources=resources):
-                slope_artifacts = compute_slope_analysis(
-                    paths=line_paths, s3settings=self.s3_settings, resources=resources
-                )
+                slope_artifacts = compute_slope_analysis(paths=paths, s3settings=self.s3_settings, resources=resources)
                 artifacts.extend(slope_artifacts)
 
         if WalkabilityIndicators.COMFORT in params.optional_indicators:
             with self.catch_exceptions(indicator_name='Comfort Indicators', resources=resources):
                 log.info('Computing Comfort Indicators')
                 comfort_artifacts = compute_comfort_artifacts(
-                    paths=line_paths,
+                    paths=paths,
                     aoi=aoi,
                     max_walking_distance_map=self.max_walking_distance_map,
                     ohsome_client=self.ohsome,
@@ -202,8 +196,7 @@ class OperatorWalkability(BaseOperator[ComputeInputWalkability]):
             with self.catch_exceptions(indicator_name='Path Lighting Indicator', resources=resources):
                 log.info('Computing Path Lighting Indicator')
                 light_path_artifact = path_lighting_analysis(
-                    line_paths=line_paths,
-                    polygon_paths=polygon_paths,
+                    paths=paths,
                     resources=resources,
                 )
                 artifacts.extend(light_path_artifact)
@@ -224,7 +217,7 @@ class OperatorWalkability(BaseOperator[ComputeInputWalkability]):
             with self.catch_exceptions(indicator_name='Tree Shade', resources=resources):
                 log.info('Computing Tree Shade')
                 shade_artifacts = shade_analysis(
-                    paths=line_paths,
+                    paths=paths,
                     tile_spec=self.shade_tiles,
                     shade_client=self.shade_client,
                     shade_config=self.shade_config,
@@ -251,7 +244,7 @@ class OperatorWalkability(BaseOperator[ComputeInputWalkability]):
                 artifacts.append(crossing_map_artifact)
         return artifacts
 
-    def _get_paths(self, aoi: shapely.MultiPolygon) -> tuple[gpd.GeoDataFrame, gpd.GeoDataFrame]:
+    def _get_paths(self, aoi: shapely.MultiPolygon) -> gpd.GeoDataFrame:
         log.debug('Extracting paths')
         line_paths = fetch_osm_data(aoi=aoi, osm_filter=ohsome_filter('line'), ohsome_client=self.ohsome)
         polygon_paths = fetch_osm_data(aoi=aoi, osm_filter=ohsome_filter('polygon'), ohsome_client=self.ohsome)
@@ -263,13 +256,14 @@ class OperatorWalkability(BaseOperator[ComputeInputWalkability]):
 
         line_paths = path_categorisation(geometries=line_paths)
         polygon_paths = path_categorisation(geometries=polygon_paths)
+        paths: gpd.GeoDataFrame = pd.concat([line_paths, polygon_paths])
 
-        if line_paths.empty and polygon_paths.empty:
+        if paths.empty:
             raise ClimatoologyUserError(
                 'No accessible paths for walking were found in your area. Please select a larger area'
             )
 
-        return line_paths, polygon_paths
+        return paths
 
     def clean_geometries(self, aoi: shapely.MultiPolygon, geometries: gpd.GeoDataFrame, geom_name: str):
         geometries = geometries.explode(ignore_index=True)

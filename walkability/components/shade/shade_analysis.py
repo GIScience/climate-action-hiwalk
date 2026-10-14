@@ -7,6 +7,7 @@ import plotly.graph_objects as go
 from climatoology.base.artifact import ArtifactMetadata, ContinuousLegendData, Legend
 from climatoology.base.artifact_creators import Artifact, create_plotly_chart_artifact, create_vector_artifact
 from climatoology.base.computation import ComputationResources
+from climatoology.base.exception import ClimatoologyUserError
 from climatoology.base.logging import get_climatoology_logger
 
 from walkability.components.shade.utility.analysis import get_shaded_path_stats
@@ -23,8 +24,13 @@ def shade_analysis(
     shade_config: S3ShadeConfig,
     resources: ComputationResources,
 ) -> list[Artifact]:
+    line_paths = paths[paths.geom_type == 'LineString']
+
+    if line_paths.empty:
+        raise ClimatoologyUserError('Could not compute shade as there are no suitable paths.')
+
     shaded_paths = get_shaded_path_stats(
-        paths=paths, tile_spec=tile_spec, shade_client=shade_client, shade_config=shade_config
+        paths=line_paths, tile_spec=tile_spec, shade_client=shade_client, shade_config=shade_config
     )
     shaded_paths = get_shade_for_tunnels(shaded_paths)
 

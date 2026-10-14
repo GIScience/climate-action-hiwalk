@@ -1,5 +1,6 @@
 import geopandas as gpd
 import geopandas.testing
+import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
 from climatoology.base.artifact import Artifact
@@ -27,7 +28,8 @@ def test_path_lighting_analysis(default_path_geometry, default_polygon_geometry,
         crs=CAN_DEFAULT_CRS,
     )
 
-    artifacts = path_lighting_analysis(line_paths=line_paths, polygon_paths=polygon_paths, resources=compute_resources)
+    paths = pd.concat([line_paths, polygon_paths])
+    artifacts = path_lighting_analysis(paths=paths, resources=compute_resources)
 
     assert len(artifacts) == 2
     assert all(isinstance(artifact, Artifact) for artifact in artifacts)
@@ -57,12 +59,13 @@ def test_get_path_lighting(default_path_geometry, default_polygon_geometry):
             'osm_tags': [{'lit': 'yes'}, {'lit': 'automatic'}, {}],
             'geometry': [default_path_geometry, default_path_geometry, default_polygon_geometry],
             'path_lighting': [PathLightingCategory.YES, PathLightingCategory.AUTOMATIC, PathLightingCategory.UNKNOWN],
-            'path_lighting_rating': pd.Series([1, 0.8, None], dtype=object),
+            'path_lighting_rating': pd.Series([1, 0.8, np.nan], dtype=object),
         },
         crs=CAN_DEFAULT_CRS,
     )
 
-    received = get_path_lighting(line_paths=line_paths, polygon_paths=polygon_paths).reset_index(drop=True)
+    paths = pd.concat([line_paths, polygon_paths])
+    received = get_path_lighting(paths=paths).reset_index(drop=True)
 
     gpd.testing.assert_geodataframe_equal(received, expected_light_paths_all, check_dtype=False)
 

@@ -1,5 +1,6 @@
 import geopandas as gpd
 import geopandas.testing
+import pandas as pd
 import plotly.graph_objects as go
 import shapely
 from climatoology.utility.api import TimeRange
@@ -16,7 +17,7 @@ from walkability.components.utils.geometry import CAN_DEFAULT_CRS
 
 def test_get_naturalness(operator, naturalness_utility_mock):
     polygon_geom = shapely.Polygon(((12.3, 48.2), (12.3, 48.25), (12.35, 48.25), (12.3, 48.25)))
-    paths = gpd.GeoDataFrame(
+    line_paths = gpd.GeoDataFrame(
         index=[1, 2],
         data={'osm_tags': [{'tunnel': 'yes'}, {}]},
         geometry=[
@@ -31,8 +32,10 @@ def test_get_naturalness(operator, naturalness_utility_mock):
         geometry=[polygon_geom, polygon_geom],
         crs=CAN_DEFAULT_CRS,
     )
+
+    paths = pd.concat([line_paths, polygons])
     computed_naturalness = get_naturalness(
-        paths=paths, polygons=polygons, index=NaturalnessIndex.NDVI, naturalness_utility=operator.naturalness_utility
+        paths=paths, index=NaturalnessIndex.NDVI, naturalness_utility=operator.naturalness_utility
     )
     computed_paths = computed_naturalness.loc[computed_naturalness.geometry.type == 'LineString'].drop_duplicates(
         subset='geometry'
