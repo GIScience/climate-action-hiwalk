@@ -13,6 +13,7 @@ and this project mostly adheres to [Semantic Versioning](https://semver.org/spec
 - Reduced size of docker image by using python-slim, multi-stage build, and including only the required files
 - Fix the greenness indicator failure caused by nan values ([347](https://gitlab.heigit.org/climate-action/plugins/walkability/-/work_items/347#note_115090))
 - Update CI and Dockerfile to simplify and correct poetry installing location
+- Update the walkable paths with the public transport platforms ([#396](https://gitlab.heigit.org/climate-action/plugins/walkability/-/work_items/396))
 
 ## [4.3.0](https://gitlab.heigit.org/climate-action/plugins/walkability/-/releases/4.3.0) - 2026-09-10
 

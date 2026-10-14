@@ -269,7 +269,7 @@ def ohsome_filter(geometry_type: str) -> str:
 
     return str(
         f'geometry:{geometry_type} and '
-        '(highway=* or route=ferry or railway=platform or '
+        '(highway=* or route=ferry or railway=platform or public_transport=platform or '
         '(waterway=lock_gate and foot in (yes, designated, official, permissive))) and not '
         '(footway=separate or sidewalk=separate or sidewalk:both=separate or '
         '(sidewalk:right=separate and sidewalk:left=separate) or '
