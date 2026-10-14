@@ -68,7 +68,7 @@ def summarise_by_area(
                 ascending=False,
             )
 
-            summary = group.groupby(['rating', 'category'], sort=True, dropna=False)['length'].sum().reset_index()
+            summary = group.groupby(['rating', 'category'], sort=False, dropna=False)['length'].sum().reset_index()
             total_length = summary['length'].sum()
             summary['percent'] = summary['length'] / total_length * 100
             stacked_bar_colors = [
@@ -138,7 +138,7 @@ def summarise_aoi(
     )
 
     # Path category stacked bar chart
-    summary = stats.groupby(['path_rating', 'category'], sort=True, dropna=False)['length'].sum().reset_index()
+    summary = stats.groupby(['path_rating', 'category'], sort=False, dropna=False)['length'].sum().reset_index()
     total_length = summary['length'].sum()
     summary['percent'] = summary['length'] / total_length * 100
     stacked_bar_colors = [
@@ -185,7 +185,7 @@ def summarise_aoi(
 
     # Pavement quality stacked bar chart
     summary = (
-        stats.groupby(['pavement_quality_rating', 'quality'], sort=True, dropna=False)['length'].sum().reset_index()
+        stats.groupby(['pavement_quality_rating', 'quality'], sort=False, dropna=False)['length'].sum().reset_index()
     )
     total_length = summary['length'].sum()
     summary['percent'] = summary['length'] / total_length * 100
