@@ -17,7 +17,7 @@ from mobility_tools.settings import ORSSettings
 from ohsome import OhsomeClient
 from pydantic_extra_types.color import Color
 
-from walkability.components.comfort.comfort_poi_filters import PointsOfInterest, distance_enrich_paths, request_pois
+from walkability.components.comfort.comfort_poi_filters import PointsOfInterest, distance_enrich_paths
 from walkability.components.utils.geometry import CAN_DEFAULT_CRS, get_buffered_aoi, get_utm_zone
 from walkability.components.utils.misc import Topics, generate_colors
 
@@ -40,7 +40,7 @@ def compute_comfort_artifacts(
         PointsOfInterest.SEATING,
         PointsOfInterest.PUBLIC_TOILET,
     ]:
-        log.debug(f'Computing Comfort for {poi_type}')
+        log.info(f'Computing Comfort for {poi_type}')
         max_walking_distance = max_walking_distance_map[poi_type]
         bin_size = int(max_walking_distance / N_BINS)
         bins = [x for x in range(bin_size, int(max_walking_distance) + 1, bin_size)]
@@ -65,27 +65,8 @@ def compute_comfort_artifacts(
         )
 
         if poi_type == PointsOfInterest.SEATING:
-            sheltered_benches = request_pois(
-                aoi=buffered_aoi,
-                poi=PointsOfInterest.SHELTERED_BENCH,
-                ohsome_client=ohsome_client,
-            )
-
-            sheltered_benches = sheltered_benches.clip(aoi)
-            sheltered_benches['value'] = 0
-            sheltered_benches['poi_type'] = PointsOfInterest.SHELTERED_BENCH.value
-            sheltered_benches['label'] = PointsOfInterest.SHELTERED_BENCH.value
-            sheltered_benches['color'] = Color('brown')
-
-            bench_intersections = gpd.sjoin(cleaned_data, sheltered_benches, how='left', predicate='intersects')
-            cleaned_data = cleaned_data.loc[bench_intersections['index_right'].isna()].copy()
-
-            cleaned_data = pd.concat(
-                [cleaned_data, sheltered_benches],
-                ignore_index=True,
-            )
-            cleaned_data['label'] = cleaned_data['label'].replace({'benches': 'unsheltered benches'})
-
+            cleaned_data['label'] = cleaned_data.apply(filter_sheltered_benches, axis=1)
+            cleaned_data.loc[cleaned_data['label'] == 'sheltered benches', 'color'] = Color('brown')
             bench_chart_artifact = build_benches_chart_artifact(benches_data=cleaned_data, resources=resources)
             artifacts.append(bench_chart_artifact)
 
@@ -108,6 +89,19 @@ def compute_comfort_artifacts(
     )
     artifacts.append(comfort_chart_artifact)
     return artifacts
+
+
+def filter_sheltered_benches(row: pd.Series) -> str:
+    if row['label'] != 'benches':
+        return row['label']
+
+    sheltered = row['osm_tags'].get('shelter')
+    covered = row['osm_tags'].get('covered')
+
+    if sheltered == 'yes' or covered == 'yes':
+        return 'sheltered benches'
+    else:
+        return 'unsheltered benches'
 
 
 def build_isodistance_artifact(
@@ -240,7 +234,7 @@ def build_benches_chart_artifact(benches_data: gpd.GeoDataFrame, resources: Comp
 def clean_data(
     data: gpd.GeoDataFrame, max_walking_distance: float, min_value: float, poi_type: PointsOfInterest
 ) -> gpd.GeoDataFrame:
-    data = data[['value', 'geometry']]
+    data = data[['value', 'geometry', 'osm_tags']]
     data['label'] = data.apply(assign_label, poi_type=poi_type, max_walking_distance=max_walking_distance, axis=1)
 
     data = assign_color(data, max_walking_distance=max_walking_distance, min_value=min_value, poi_type=poi_type)

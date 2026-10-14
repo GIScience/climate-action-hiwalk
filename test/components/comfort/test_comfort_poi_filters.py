@@ -7,6 +7,7 @@ import responses
 import shapely
 from approvaltests import verify
 from geopandas.testing import assert_geodataframe_equal
+from ohsome_filter_to_sql import validate_filter
 from responses.registries import OrderedRegistry
 from shapely import Point
 
@@ -14,6 +15,7 @@ from walkability.components.comfort.comfort_poi_filters import (
     PointsOfInterest,
     apply_isochrones_to_paths,
     distance_enrich_paths,
+    get_ohsome_filter,
     real_isochrones,
 )
 from walkability.components.utils.geometry import CAN_DEFAULT_CRS
@@ -55,6 +57,21 @@ def test_distance_enrich_paths_one_poi(default_aoi_paths, default_aoi, default_o
 
     valid_values = [0, 50, np.nan]
     assert all(received['value'].isin(valid_values))
+
+
+COMPUTED_POIS = {PointsOfInterest.DRINKING_WATER, PointsOfInterest.SEATING, PointsOfInterest.PUBLIC_TOILET}
+
+
+@pytest.mark.parametrize('poi', argvalues=COMPUTED_POIS)
+def test_get_ohsome_filter(poi):
+    received = get_ohsome_filter(poi=poi)
+    validate_filter(received)
+
+
+@pytest.mark.parametrize('poi', argvalues=set(PointsOfInterest) - COMPUTED_POIS)
+def test_get_ohsome_filter_no_filter(poi):
+    with pytest.raises(NotImplementedError):
+        get_ohsome_filter(poi=poi)
 
 
 def test_distance_enrich_paths_empty_response(

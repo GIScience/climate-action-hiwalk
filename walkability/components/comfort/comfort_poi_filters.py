@@ -20,7 +20,6 @@ class PointsOfInterest(Enum):
     SEATING = 'benches'
     REMAINDER = 'remainder'
     PUBLIC_TOILET = 'public toilets'
-    SHELTERED_BENCH = 'sheltered benches'
 
 
 def distance_enrich_paths(
@@ -76,15 +75,6 @@ def get_ohsome_filter(poi: PointsOfInterest):
                 'amenity=toilets '
                 'and not (access=private or access=no or access=customers or access=destination or access=permit) '
                 'and not locked=* and not centralkey=* and not seasonal=yes'
-            )
-        case PointsOfInterest.SHELTERED_BENCH:
-            return str(
-                '((amenity=bench and covered=yes) '
-                'or (amenity=shelter and bench=yes) '
-                'or ((highway=bus_stop or public_transport=platform) and (covered=yes or shelter=yes) and bench=yes) '
-                'or (leisure=picnic_table and not bench=no and (covered=yes or shelter=yes)) '
-                'or (tourism=picnic_site and (covered=yes or shelter=yes))) '
-                'and (not "bench:type"=stand_up) and not (access=private or access=no or access=customers) and (not seasonal=yes)'
             )
         case _:
             raise NotImplementedError('POI type has no ohsome filter')
