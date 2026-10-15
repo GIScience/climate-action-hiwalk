@@ -160,7 +160,7 @@ def test_path_categorisation_empty_input():
 
 @pytest.mark.parametrize('category', validation_objects)
 def test_apply_path_category_filters(category: PathCategory):
-    ohsome_test_data_categorisation = gpd.read_file('test/resources/ohsome_categorisation_response.geojson')
+    ohsome_test_data_categorisation = gpd.read_file('test/test_resources/ohsome_categorisation_response.geojson')
 
     ohsome_test_data_categorisation['category'] = ohsome_test_data_categorisation.apply(
         apply_path_category_filters, axis=1

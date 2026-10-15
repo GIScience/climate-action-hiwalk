@@ -56,8 +56,8 @@ def responses_mock():
 @pytest.fixture
 def ohsome_api(responses_mock):
     with (
-        open('test/resources/ohsome_line_response.geojson', 'r') as line_file,
-        open('test/resources/ohsome_polygon_response.geojson', 'r') as polygon_file,
+        open('test/test_resources/ohsome_line_response.geojson', 'r') as line_file,
+        open('test/test_resources/ohsome_polygon_response.geojson', 'r') as polygon_file,
     ):
         line_body = line_file.read()
         polygon_body = polygon_file.read()
@@ -79,7 +79,7 @@ def ohsome_api(responses_mock):
 
 @pytest.fixture
 def ors_isochrone_api(responses_mock):
-    with open('test/resources/ors_isochrones.geojson', 'r') as isochrones:
+    with open('test/test_resources/ors_isochrones.geojson', 'r') as isochrones:
         isochrones_body = isochrones.read()
 
     responses_mock.post('https://api.openrouteservice.org/v2/isochrones/foot-walking/geojson', body=isochrones_body)
@@ -96,9 +96,9 @@ def test_plugin_compute_request_all_optionals(
 ):
     # Too complex to test ohsome v2 with mocks
     with (
-        open('test/resources/ohsome_admin_response.geojson', 'r') as admin_file,
-        open('test/resources/ohsome_drinking_water.geojson', 'r') as drinking_water,
-        open('test/resources/ohsome_crossing_response.geojson', 'r') as crossings,
+        open('test/test_resources/ohsome_admin_response.geojson', 'r') as admin_file,
+        open('test/test_resources/ohsome_drinking_water.geojson', 'r') as drinking_water,
+        open('test/test_resources/ohsome_crossing_response.geojson', 'r') as crossings,
     ):
         admin_body = admin_file.read()
         drinking_water_body = drinking_water.read()

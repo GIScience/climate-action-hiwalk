@@ -11,7 +11,6 @@ import numpy as np
 import pandas as pd
 import pytest
 import shapely
-from approvaltests import DiffReporter, set_default_reporter
 from botocore import UNSIGNED
 from botocore.config import Config
 from climatoology.base.baseoperator import AoiProperties
@@ -33,7 +32,7 @@ from walkability.core.input import ComputeInputWalkability
 from walkability.core.operator_worker import OperatorWalkability
 from walkability.core.settings import Settings
 
-TEST_RESOURCES_DIR = Path('test/resources')
+TEST_RESOURCES_DIR = Path('test/test_resources')
 
 load_dotenv()  # To load the `OHSOME_BASE_URL` environment variable, for recording new cassettes
 pytest_plugins = ('ohsome_py2.test.fixtures',)
@@ -44,7 +43,7 @@ def vcr_config(vcr_config_ohsomepy2):
     vcr_config_ohsomepy2.update(
         {
             'filter_headers': ['authorization'],
-            'cassette_library_dir': 'test/resources/vcr_cassettes',
+            'cassette_library_dir': 'test/test_resources/vcr_cassettes',
             'match_on': ['method', 'scheme', 'host', 'port', 'path', 'query', 'body'],
         }
     )
@@ -313,11 +312,6 @@ def default_max_walking_distance_map() -> dict[PointsOfInterest, float]:
         PointsOfInterest.SEATING: m_per_minute * 5,
         PointsOfInterest.REMAINDER: m_per_minute * 15,
     }
-
-
-@pytest.fixture(autouse=True)
-def configure_approvaltests():
-    set_default_reporter(DiffReporter())
 
 
 @pytest.fixture

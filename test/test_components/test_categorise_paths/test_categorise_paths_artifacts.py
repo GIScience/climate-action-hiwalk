@@ -1,4 +1,4 @@
-from approvaltests import verify
+from pytest_approval import verify
 
 from walkability.components.categorise_paths.path_categorisation_artifacts import (
     generate_detailed_pavement_quality_mapping_info,

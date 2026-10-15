@@ -149,7 +149,7 @@ def apply_isochrones_to_paths(iso: gpd.GeoDataFrame, paths: gpd.GeoDataFrame) ->
     path_list = []
     remaining_paths = paths.geometry.copy(deep=True)
     for value, geometry in grouped_iso.geometry.items():
-        value_paths = remaining_paths.clip(geometry, keep_geom_type=True).to_frame()
+        value_paths = remaining_paths.clip(geometry).to_frame()
         value_paths['value'] = value
         path_list.append(value_paths)
 

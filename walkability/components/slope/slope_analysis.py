@@ -18,7 +18,7 @@ from plotly.graph_objs import Figure
 from shapely.ops import linemerge
 
 from walkability.components.categorise_paths.path_categorisation import PathCategory
-from walkability.components.utils.geometry import length_weighted_mean
+from walkability.components.utils.geometry import CAN_DEFAULT_CRS, length_weighted_mean
 from walkability.components.utils.misc import Topics, generate_colors
 
 log = logging.getLogger(__name__)
@@ -64,7 +64,9 @@ def merge_similar_slopes(paths: gpd.GeoDataFrame, merging_tolerance: float = 1.0
             geometry = linemerge(paths.loc[indices].geometry.to_list())
             if isinstance(geometry, shapely.MultiLineString):
                 geometry = linemerge(geometry)
-            smoothed_path = gpd.GeoDataFrame(data={'osm_id': [osm_id], 'slope': mean_slope}, geometry=[geometry])
+            smoothed_path = gpd.GeoDataFrame(
+                data={'osm_id': [osm_id], 'slope': mean_slope}, geometry=[geometry], crs=CAN_DEFAULT_CRS
+            )
             reconstituted_paths.append(smoothed_path)
             continue
 

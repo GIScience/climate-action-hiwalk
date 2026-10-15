@@ -30,7 +30,9 @@ def test_get_paths(operator, small_aoi, parametrized_ohsome_client):
 
 def test_get_paths_with_erroneous_clipping(operator):
     # No difference between ohsome v1 and v2
-    mocked_paths_response = gpd.read_file('test/resources/ohsome_erroneous_clipping.geojson').rename_geometry('geom')
+    mocked_paths_response = gpd.read_file('test/test_resources/ohsome_erroneous_clipping.geojson').rename_geometry(
+        'geom'
+    )
     operator.ohsome.features_extraction = Mock(return_value=mocked_paths_response)
 
     with pytest.raises(

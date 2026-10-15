@@ -146,8 +146,8 @@ def build_number_of_pois_artifact(
     :param max_val: Maximum number of POIs for the legend, the default is 50
     :return: Map artifact showing the total number of POIs per grid cell
     """
-    cmap = matplotlib.colormaps.get(cmap_name)
-    cmap.set_under('#808080')
+    cmap = matplotlib.colormaps[cmap_name]
+    cmap = cmap.with_extremes(under='#808080')
     data['color'] = generate_colors(
         color_by=data['total_number_of_pois'], cmap_name=cmap_name, min_value=min_val, max_value=max_val
     )

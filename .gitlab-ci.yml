@@ -27,8 +27,8 @@ unit_tests:
     - poetry config virtualenvs.in-project true
     - poetry sync --with test,dev
   script:
-    - poetry run pytest -x --ignore test/core/ --cov --cov-report term --cov-report xml:coverage.xml
-    - poetry run pytest -x test/core/
+    - poetry run pytest -x --ignore test/test_core/ --cov --cov-report term --cov-report xml:coverage.xml
+    - poetry run pytest -x test/test_core/
     - poetry run pre-commit run --all-files
   coverage: '/TOTAL.*? (100(?:\.0+)?\%|[1-9]?\d(?:\.\d+)?\%)$/'
   artifacts:

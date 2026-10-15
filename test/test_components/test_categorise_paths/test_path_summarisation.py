@@ -60,7 +60,7 @@ def test_summarise_by_area_no_boundaries(default_ohsome_client_v2, default_aoi, 
 
 def test_summarise_by_area_mixed_geometry_boundaries(default_ohsome_client_v2, default_aoi):
     # Ohsome response is mocked, so don't parametrize
-    extracted_features = gpd.read_file('test/resources/ohsome_boundaries_mixed_geometries.geojson')
+    extracted_features = gpd.read_file('test/test_resources/ohsome_boundaries_mixed_geometries.geojson')
     features_extraction_mock = Mock(return_value=extracted_features.rename_geometry('geom'))
     default_ohsome_client_v2.features_extraction = features_extraction_mock
 
@@ -86,7 +86,7 @@ def test_summarise_by_area_mixed_geometry_boundaries(default_ohsome_client_v2, d
 
 def test_summarise_by_area_boundaries_no_name(default_ohsome_client_v2, default_aoi, default_path_geometry):
     # Ohsome response is mocked, so don't parametrize
-    extracted_features = gpd.read_file('test/resources/ohsome_admin_response_no_name.geojson')
+    extracted_features = gpd.read_file('test/test_resources/ohsome_admin_response_no_name.geojson')
     features_extraction_mock = Mock(return_value=extracted_features.rename_geometry('geom'))
     default_ohsome_client_v2.features_extraction = features_extraction_mock
 

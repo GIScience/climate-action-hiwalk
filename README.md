@@ -34,42 +34,25 @@ To run all tests:
 poetry run pytest
 ```
 
-Some tests are [ApprovalTests](https://github.com/approvals/approvaltests.Python).
+Some tests are [pytest-approval](https://github.com/GIScience/pytest-approval).
 Approval tests capture the output (snapshot) of a piece of code and compare it
 with a previously approved version of the output.
 
 Once the output has been *approved* then as long as the output stays the same
 the test will pass. A test fails if the *received* output is not identical to
 the approved version. In that case, the difference of the received and the
-approved output is reported to the tester. The representation of the report can
-take many forms: The default is a print out of the difference to the console. You can also choose to use a diff-tool
-instead:
-
-```bash
-# Meld
-pytest \
-    --approvaltests-add-reporter="meld"
-# PyCharm
-pytest \
-    --approvaltests-add-reporter="pycharm-community" \
-    --approvaltests-add-reporter-args="diff"
-# Nvim
-pytest \
-    -s  \
-    --approvaltests-add-reporter="nvim" \
-    --approvaltests-add-reporter-args="-d"
-```
+approved output is reported to the tester.
 
 #### Coverage
 
 To get a coverage report of how much of your code is run during testing, execute
-`poetry run pytest --ignore test/core/ --cov`.
-We ignore the `test/core/` folder when assessing coverage because the core tests run the whole plugin to be sure
+`poetry run pytest --ignore test/test_core/ --cov`.
+We ignore the `test/test_core/` folder when assessing coverage because the core tests run the whole plugin to be sure
 everything successfully runs with a very basic configuration.
 Yet, they don't actually test functionality and therefore artificially inflate the test coverage results.
 
 To get a more detailed report including which lines in each file are **not** tested,
-run `poetry run pytest --ignore test/core/ --cov --cov-report term-missing`
+run `poetry run pytest --ignore test/test_core/ --cov --cov-report term-missing`
 
 
 ## Docker (for admins and interested devs)

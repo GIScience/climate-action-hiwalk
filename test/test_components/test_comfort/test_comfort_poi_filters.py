@@ -5,9 +5,9 @@ import numpy as np
 import pytest
 import responses
 import shapely
-from approvaltests import verify
 from geopandas.testing import assert_geodataframe_equal
 from ohsome_filter_to_sql import validate_filter
+from pytest_approval import verify
 from responses.registries import OrderedRegistry
 from shapely import Point
 
@@ -112,12 +112,12 @@ def test_apply_isochrones_to_paths():
 
 
 def test_real_isochrones_one_bin_failure(default_ors_settings):
-    ors_settings_low_batch = default_ors_settings.copy()
+    ors_settings_low_batch = default_ors_settings.model_copy()
     ors_settings_low_batch.ors_isochrone_max_batch_size = 1
 
     pois = gpd.GeoSeries.from_xy(x=list(range(3)), y=list(range(3)), crs=CAN_DEFAULT_CRS)
 
-    with open('test/resources/test_real_isochrones.json') as file:
+    with open('test/test_resources/test_real_isochrones.json') as file:
         working_isochrones = file.read()
 
     with responses.RequestsMock(registry=OrderedRegistry) as mock:

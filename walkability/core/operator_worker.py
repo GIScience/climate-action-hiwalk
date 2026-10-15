@@ -270,7 +270,7 @@ class OperatorWalkability(BaseOperator[ComputeInputWalkability]):
         geometries['geometry'] = geometries.make_valid()
 
         # reclipping
-        geometries = gpd.clip(geometries, aoi, keep_geom_type=True).explode(ignore_index=True)
+        geometries = gpd.clip(geometries, aoi).explode(ignore_index=True)
         geometries = geometries[geometries['geometry'].geom_type.str.contains(geom_name)]
 
         # setting precision and remove paths that are sub-precision length, i.e. empty after set_precision

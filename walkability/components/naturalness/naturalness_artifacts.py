@@ -13,7 +13,7 @@ from climatoology.base.artifact_creators import (
 from climatoology.base.baseoperator import Artifact
 from climatoology.base.computation import ComputationResources
 from climatoology.base.exception import ClimatoologyUserError
-from matplotlib.colors import to_hex
+from matplotlib.colors import Colormap, to_hex
 from pydantic_extra_types.color import Color
 
 from walkability.components.utils.misc import Topics
@@ -39,8 +39,8 @@ def build_naturalness_artifact(
     naturalness_locations['naturalness'] = naturalness_locations['naturalness'].round(2)
 
     # Define colors and legend
-    cmap = matplotlib.colormaps.get(cmap_name)
-    cmap.set_under('#808080')
+    cmap: Colormap = matplotlib.colormaps[cmap_name]
+    cmap = cmap.with_extremes(under='#808080')
     naturalness_locations['color'] = naturalness_locations['naturalness_col'].apply(lambda v: Color(to_hex(cmap(v))))
     legend = ContinuousLegendData(
         cmap_name=cmap_name,
