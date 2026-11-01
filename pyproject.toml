@@ -35,7 +35,7 @@ plugin = "walkability.plugin:main"
 [tool.poetry.group.test.dependencies]
 responses = "^0.26.0"
 pytest-cov = "^7.0.0"
-pytest-recording = "^0.13.4"
+pytest-recording = "^0.14.0"
 moto = "^5.2.1"
 python-dotenv = "^1.2.2"
 
