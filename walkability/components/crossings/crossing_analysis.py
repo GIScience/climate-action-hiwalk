@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import geopandas as gpd
 import pandas as pd
 from climatoology.base.artifact_creators import Artifact, ArtifactMetadata, Legend, create_vector_artifact
@@ -30,6 +32,9 @@ def build_crossing_artifact(data: gpd.GeoDataFrame, resources: ComputationResour
     metadata = ArtifactMetadata(
         name='Pedestrian Crossings',
         summary='Map of pedestrian crossings by type',
+        description=Path(
+            'resources/components/crossings/description.md',
+        ).read_text(),
         primary=False,
         tags={Topics.SAFETY},
     )

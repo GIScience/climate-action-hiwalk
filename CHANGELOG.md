@@ -19,6 +19,9 @@ and this project mostly adheres to [Semantic Versioning](https://semver.org/spec
 - test suite switch from approvaltests to pytest-approval
 - prefix all test folders with `test_` to make them more clearly visible in folder overviews
 
+### Fixed
+- Add description to crossing indicator ([#424](https://gitlab.heigit.org/climate-action/plugins/walkability/-/work_items/424))
+
 ## [4.3.0](https://gitlab.heigit.org/climate-action/plugins/walkability/-/releases/4.3.0) - 2026-09-10
 
 ### Added
