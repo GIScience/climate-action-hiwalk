@@ -7,7 +7,7 @@ readme = "README.md"
 
 requires-python = ">=3.13.5,<3.14"
 dependencies = [
-    "climatoology @ git+https://gitlab.heigit.org/climate-action/climatoology@7.4.3",
+    "climatoology @ git+https://gitlab.heigit.org/climate-action/climatoology@7.5.0",
     "pydantic (>=2.12.5,<3.0.0)",
     "pydantic-settings (>=2.1.0,<3.0.0)",
     "shapely (>=2.0.2,<3.0.0)",
@@ -17,7 +17,7 @@ dependencies = [
     "openrouteservice (>=2.3.3,<3.0.0)",
     "h3pandas (>=0.3.0,<1.0.0)",
     "numpy (>=2.3.3,<3.0.0)",
-    "mobility-tools @ git+https://gitlab.heigit.org/climate-action/utilities/mobility-tools.git@3.0.1",
+    "mobility-tools @ git+https://gitlab.heigit.org/climate-action/utilities/mobility-tools.git@3.0.2",
     "ohsome-py2 @ git+https://gitlab.heigit.org/climate-action/utilities/ohsome-py2.git@0.3.2",
     "boto3 (>=1.40.7)",
     "botocore (>=1.40.7)",
