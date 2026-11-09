@@ -73,7 +73,7 @@ def get_info(*, feature_flag_experimental: bool) -> PluginInfo:
                 website='https://heigit.org/heigit-team/',
             ),
         ],
-        concerns={Concern.MOBILITY_PEDESTRIAN},
+        concerns={Concern.MOBILITY},
         purpose=Path('resources/info/purpose.md'),
         teaser='Assess the safety, comfort, and quality of walkable infrastructure in an area of interest.',
         methodology=Path('resources/info/methodology.md'),
