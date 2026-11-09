@@ -7,10 +7,12 @@ and this project mostly adheres to [Semantic Versioning](https://semver.org/spec
 
 ## [Unreleased](https://gitlab.heigit.org/climate-action/plugins/walkability/-/compare/4.4.0...main)
 
+### Fixed
+- correctly classify benches without further osm tags as sheltered bench
+
 ## [4.4.0](https://gitlab.heigit.org/climate-action/plugins/walkability/-/releases/4.4.0) - 2026-11-05
 
 ### Changed
-
 - Set different color for path category "Cars of unknown speed"  ([#402](https://gitlab.heigit.org/climate-action/plugins/walkability/-/work_items/402))
 - Reduced size of docker image by using python-slim, multi-stage build, and including only the required files
 - Fix the greenness indicator failure caused by nan values ([347](https://gitlab.heigit.org/climate-action/plugins/walkability/-/work_items/347))

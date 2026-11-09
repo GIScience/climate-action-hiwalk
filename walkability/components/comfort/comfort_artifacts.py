@@ -94,6 +94,8 @@ def compute_comfort_artifacts(
 def filter_sheltered_benches(row: pd.Series) -> str:
     if row['label'] != 'benches':
         return row['label']
+    elif not isinstance(row['osm_tags'], dict):
+        return 'unsheltered benches'
 
     sheltered = row['osm_tags'].get('shelter')
     covered = row['osm_tags'].get('covered')

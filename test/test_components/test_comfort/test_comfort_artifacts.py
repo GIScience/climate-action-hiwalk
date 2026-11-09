@@ -1,4 +1,5 @@
 import geopandas as gpd
+import numpy as np
 import pandas as pd
 import pytest
 import shapely
@@ -7,16 +8,17 @@ from pydantic_extra_types.color import Color
 from walkability.components.comfort.comfort_artifacts import assign_color, assign_label, filter_sheltered_benches
 from walkability.components.comfort.comfort_poi_filters import PointsOfInterest
 
-VALIDATION_BENCHES = {
-    '< 120m': pd.Series(data={'label': '< 120m', 'osm_tags': dict()}),
-    '< 40m': pd.Series(data={'label': '< 40m', 'osm_tags': dict()}),
-    '< 80m': pd.Series(data={'label': '< 80m', 'osm_tags': dict()}),
-    'unsheltered benches': pd.Series(data={'label': 'benches', 'osm_tags': {'covered': 'no'}}),
-    'sheltered benches': pd.Series(data={'label': 'benches', 'osm_tags': {'covered': 'no', 'shelter': 'yes'}}),
-}
+VALIDATION_BENCHES = [
+    ('< 120m', pd.Series(data={'label': '< 120m', 'osm_tags': dict()})),
+    ('< 40m', pd.Series(data={'label': '< 40m', 'osm_tags': dict()})),
+    ('< 80m', pd.Series(data={'label': '< 80m', 'osm_tags': dict()})),
+    ('unsheltered benches', pd.Series(data={'label': 'benches', 'osm_tags': {'covered': 'no'}})),
+    ('unsheltered benches', pd.Series(data={'label': 'benches', 'osm_tags': np.nan})),
+    ('sheltered benches', pd.Series(data={'label': 'benches', 'osm_tags': {'covered': 'no', 'shelter': 'yes'}})),
+]
 
 
-@pytest.mark.parametrize(argnames=['expected', 'row'], argvalues=VALIDATION_BENCHES.items())
+@pytest.mark.parametrize(argnames=['expected', 'row'], argvalues=VALIDATION_BENCHES)
 def test_filter_sheltered_benches(row, expected):
     received = filter_sheltered_benches(row=row)
     assert received == expected
