@@ -78,6 +78,19 @@ def ohsome_api(responses_mock):
 
 
 @pytest.fixture
+def ohsome_api_count(responses_mock):
+    with open('test/test_resources/ohsome_count_response.json', 'rb') as paths_count_file:
+        paths_count_body = paths_count_file.read()
+
+    responses_mock.post(
+        'https://api.ohsome.org/v1/elements/count',
+        body=paths_count_body,
+    )
+
+    return responses_mock
+
+
+@pytest.fixture
 def ors_isochrone_api(responses_mock):
     with open('test/test_resources/ors_isochrones.geojson', 'r') as isochrones:
         isochrones_body = isochrones.read()
@@ -91,6 +104,7 @@ def test_plugin_compute_request_all_optionals(
     default_aoi_properties,
     compute_resources,
     ohsome_api,
+    ohsome_api_count,
     ors_isochrone_api,
     slopes_mock,
 ):

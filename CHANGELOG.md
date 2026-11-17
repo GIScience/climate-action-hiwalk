@@ -7,6 +7,10 @@ and this project mostly adheres to [Semantic Versioning](https://semver.org/spec
 
 ## [Unreleased](https://gitlab.heigit.org/climate-action/plugins/walkability/-/compare/4.4.1...main)
 
+### Changed
+
+- Reintroduce path count check for AOI size limit ([#434](https://gitlab.heigit.org/climate-action/plugins/walkability/-/work_items/434))
+
 ## [4.4.1](https://gitlab.heigit.org/climate-action/plugins/walkability/-/releases/4.4.1) - 2026-11-16
 
 ### Fixed

@@ -1,0 +1,44 @@
+interactions:
+- request:
+    body: '{"aoi":{"type":"MultiPolygon","coordinates":[[[[8.6774288,49.4046213],[8.6774288,49.4064122],[8.6742192,49.4064122],[8.6742192,49.4046213],[8.6774288,49.4046213]]]]},"filter":"geometry:line
+      and (highway=* or route=ferry or railway=platform or public_transport=platform
+      or (waterway=lock_gate and foot in (yes, designated, official, permissive)))
+      and not (footway=separate or sidewalk=separate or sidewalk:both=separate or
+      (sidewalk:right=separate and sidewalk:left=separate) or (sidewalk:right=separate
+      and sidewalk:left=no) or (sidewalk:right=no and sidewalk:left=separate))","clip":true,"time":"latest"}'
+    headers:
+      accept:
+      - '*/*'
+      accept-encoding:
+      - gzip, deflate
+      connection:
+      - keep-alive
+      content-length:
+      - '605'
+      content-type:
+      - application/json
+      host:
+      - http://ohsome-secret-url
+      user-agent:
+      - can-walkability-test
+    method: POST
+    uri: http://ohsome-secret-url/stats/features/count.json
+  response:
+    body:
+      string: "{\"apiVersion\":\"2.1.1\",\"attribution\":{\"url\":\"https://ohsome.org/copyrights\",\"text\":\"\xA9
+        OpenStreetMap contributors\"},\"result\":{\"timestamp\":[\"2026-11-17T10:33:34Z\"],\"value\":[128]}}"
+    headers:
+      content-length:
+      - '177'
+      content-type:
+      - application/json
+      date:
+      - Tue, 17 Nov 2026 10:35:26 GMT
+      server:
+      - envoy
+      x-envoy-upstream-service-time:
+      - '602'
+    status:
+      code: 200
+      message: OK
+version: 1
