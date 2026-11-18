@@ -19,7 +19,7 @@ def get_info(*, feature_flag_experimental: bool) -> PluginInfo:
 
     aoi_constraints = [
         [
-            AreaConstraint(max_area=500),
+            AreaConstraint(max_area=750),
         ]
     ]
 

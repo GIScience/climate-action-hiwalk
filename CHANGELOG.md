@@ -10,6 +10,7 @@ and this project mostly adheres to [Semantic Versioning](https://semver.org/spec
 ### Changed
 
 - Reintroduce path count check for AOI size limit ([#434](https://gitlab.heigit.org/climate-action/plugins/walkability/-/work_items/434))
+- Set aoi size limit to area of bounding box of cologne (roughly) ([#433](https://gitlab.heigit.org/climate-action/plugins/walkability/-/work_items/433))
 
 ## [4.4.1](https://gitlab.heigit.org/climate-action/plugins/walkability/-/releases/4.4.1) - 2026-11-16
 
